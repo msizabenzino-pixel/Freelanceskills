@@ -1,0 +1,74 @@
+Below is a refined technical + product strategy based directly on your answers, followed by clear next steps.
+
+⸻
+
+Refined MVP Strategy (based on your inputs)
+
+1) Revenue model (✅ solid choice)
+
+Starting with free signup + commission per completed job is the correct move.
+
+For MVP:
+	•	No subscriptions
+	•	Platform commission applied on job completion
+	•	Strict job lifecycle control (similar to Fiverr):
+	•	Job posted → hired → in progress → delivered → completed
+	•	Payment released only after completion
+	•	Admin oversight on disputes
+
+This builds trust and avoids friction at signup.
+
+⸻
+
+2) Job types: Fixed + Hourly (how we handle this cleanly)
+
+You’re right to support both, but to keep MVP fast and stable:
+
+MVP implementation:
+	•	Job type selector: Fixed-price OR Hourly
+	•	Fixed-price:
+	•	One-time agreed amount
+	•	Hourly:
+	•	Provider sets hourly rate
+	•	Buyer selects estimated hours
+	•	Payment = rate × hours (locked at hire)
+
+This avoids complex live time-tracking in MVP while still supporting hourly logic.
+Advanced tracking can be Phase 2.
+
+⸻
+
+3) Open tags + data-driven vision (this is powerful)
+
+Your idea here is actually a strong long-term differentiator.
+
+MVP approach:
+	•	Open tagging system (skills, professions, services)
+	•	Category-level grouping only for navigation (not restriction)
+	•	Store structured data:
+	•	Profession
+	•	Education level (optional field)
+	•	Experience level
+	•	Location (or remote)
+
+This allows Phase 2 analytics like:
+	•	Unemployment insights
+	•	Demand vs supply per profession
+	•	Remote education / homeschooling opportunities
+	•	Skilled trade visibility (plumbers, landscaping, etc.)
+
+We won’t block flexibility early, but we will collect the right data.
+
+⸻
+
+4) Verification (mandatory, credibility-focused)
+
+For MVP:
+	•	Email verification
+	•	Phone OTP mandatory
+	•	Profile completeness score (visual trust indicator)
+	•	Reviews + ratings after first job
+
+Optional Phase 2:
+	•	ID verification
+	•	Certificate uploads (engineers, teachers, specialists)

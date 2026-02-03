@@ -1,0 +1,120 @@
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Card } from "@/components/ui/card";
+import { ArrowLeft, Sparkles } from "lucide-react";
+import { Link } from "wouter";
+
+export default function PostJob() {
+  return (
+    <div className="min-h-screen bg-background flex flex-col">
+      <Navbar />
+      
+      <div className="container mx-auto px-4 md:px-6 pt-24 md:pt-32 max-w-3xl flex-1 pb-20">
+        <Link href="/">
+          <a className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-6 transition-colors">
+            <ArrowLeft className="w-4 h-4 mr-1" /> Back to Home
+          </a>
+        </Link>
+        
+        <div className="mb-8">
+          <h1 className="text-3xl font-display font-bold text-primary mb-2">Post a New Job</h1>
+          <p className="text-muted-foreground">Reach thousands of verified South African freelancers in minutes.</p>
+        </div>
+
+        <Card className="p-8 shadow-lg border-border">
+          <form className="space-y-8">
+            
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="title" className="text-base">Job Title</Label>
+                <Input id="title" placeholder="e.g. Senior React Developer needed for Fintech Project" className="h-12 text-lg" />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="category">Category</Label>
+                <Select>
+                  <SelectTrigger className="h-12">
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="dev">Development & IT</SelectItem>
+                    <SelectItem value="design">Design & Creative</SelectItem>
+                    <SelectItem value="writing">Writing & Translation</SelectItem>
+                    <SelectItem value="admin">Admin & Customer Support</SelectItem>
+                    <SelectItem value="finance">Finance & Accounting</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description" className="text-base">Description</Label>
+              <div className="relative">
+                <Textarea 
+                  id="description" 
+                  placeholder="Describe the project, requirements, and deliverables..." 
+                  className="min-h-[200px] text-base resize-none p-4" 
+                />
+                <Button 
+                  size="sm" 
+                  variant="ghost" 
+                  className="absolute bottom-2 right-2 text-xs text-accent hover:text-accent hover:bg-accent/10"
+                  type="button"
+                >
+                  <Sparkles className="w-3 h-3 mr-1" /> AI Assist
+                </Button>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label>Project Type</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button type="button" className="border-2 border-primary bg-primary/5 p-4 rounded-xl text-left transition-all">
+                    <div className="font-bold text-primary">Hourly</div>
+                    <div className="text-xs text-muted-foreground">Pay by time</div>
+                  </button>
+                  <button type="button" className="border border-border p-4 rounded-xl text-left hover:border-primary/50 transition-all">
+                    <div className="font-bold text-foreground">Fixed Price</div>
+                    <div className="text-xs text-muted-foreground">Pay by project</div>
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="budget">Budget (ZAR)</Label>
+                <Input id="budget" type="number" placeholder="e.g. 5000" className="h-[60px] text-lg" />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Required Skills</Label>
+              <Input placeholder="Type skills and press Enter (e.g. React, Python)" className="h-12" />
+              <div className="flex flex-wrap gap-2 pt-2">
+                <span className="bg-secondary px-3 py-1 rounded-full text-sm flex items-center gap-1">
+                  React <button className="hover:text-destructive">×</button>
+                </span>
+                <span className="bg-secondary px-3 py-1 rounded-full text-sm flex items-center gap-1">
+                  TypeScript <button className="hover:text-destructive">×</button>
+                </span>
+              </div>
+            </div>
+
+            <div className="pt-6 border-t border-border flex justify-end gap-4">
+              <Button variant="ghost" className="h-12 px-8">Save Draft</Button>
+              <Button className="h-12 px-8 bg-primary text-white hover:bg-primary/90 font-bold shadow-lg">Post Job Now</Button>
+            </div>
+
+          </form>
+        </Card>
+      </div>
+
+      <Footer />
+    </div>
+  );
+}
