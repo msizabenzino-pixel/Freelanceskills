@@ -20,7 +20,7 @@ export function Navbar() {
   const navLinks = [
     { name: "Find Talent", href: "/freelancers" },
     { name: "Find Work", href: "/jobs" },
-    { name: "Why Ispani", href: "/about" },
+    { name: "Why FreelanceSkill", href: "/about" },
   ];
 
   return (
@@ -45,7 +45,7 @@ export function Navbar() {
               "font-display font-bold text-xl tracking-tight",
               isScrolled || location !== "/" ? "text-primary" : "text-white"
             )}>
-              Ispani<span className="text-accent">.</span>
+              FreelanceSkill<span className="text-accent">.</span>
             </span>
           </a>
         </Link>

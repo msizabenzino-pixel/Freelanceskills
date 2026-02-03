@@ -40,7 +40,7 @@ export function Hero() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto leading-relaxed"
           >
-            Ispani connects businesses with South Africa's top 1% of freelance developers, designers, writers, and financial experts.
+            FreelanceSkill connects businesses with South Africa's top 1% of freelance developers, designers, writers, and financial experts.
           </motion.p>
 
           <motion.div 

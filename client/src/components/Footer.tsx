@@ -7,8 +7,8 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary text-white rounded-lg flex items-center justify-center font-bold">I</div>
-              <span className="font-display font-bold text-xl text-primary">Ispani.</span>
+              <div className="w-8 h-8 bg-primary text-white rounded-lg flex items-center justify-center font-bold">F</div>
+              <span className="font-display font-bold text-xl text-primary">FreelanceSkill.</span>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed">
               Empowering South Africa's workforce through digital connection. The safest way to hire local talent online.
@@ -53,7 +53,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
-          <p>© 2026 Ispani Pty Ltd. All rights reserved.</p>
+          <p>© 2026 FreelanceSkill Pty Ltd. All rights reserved.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-primary">Terms of Service</a>
             <a href="#" className="hover:text-primary">Privacy Policy</a>
