@@ -6,10 +6,37 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, Sparkles } from "lucide-react";
+import { ArrowLeft, Sparkles, Wand2, Loader2 } from "lucide-react";
 import { Link } from "wouter";
+import { useState } from "react";
 
 export default function PostJob() {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [description, setDescription] = useState("");
+  const [title, setTitle] = useState("");
+  const [budget, setBudget] = useState("");
+  const [isEstimating, setIsEstimating] = useState(false);
+
+  const handleAIGenerate = () => {
+    if (!title) return;
+    setIsGenerating(true);
+    // Simulate AI delay
+    setTimeout(() => {
+      setDescription(
+        `We are looking for an experienced ${title} to join our project. \n\nKey Responsibilities:\n- Deliver high-quality work according to specifications\n- Collaborate with our local team in South Africa\n- Adhere to safety and compliance standards\n\nRequirements:\n- Proven experience in the field\n- Relevant certifications/qualifications\n- Reliability and punctuality\n\nThis is a great opportunity for a dedicated professional looking for consistent work.`
+      );
+      setIsGenerating(false);
+    }, 1500);
+  };
+
+  const handleAIEstimate = () => {
+    setIsEstimating(true);
+    setTimeout(() => {
+      setBudget("15000");
+      setIsEstimating(false);
+    }, 1000);
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
@@ -21,9 +48,15 @@ export default function PostJob() {
           </a>
         </Link>
         
-        <div className="mb-8">
-          <h1 className="text-3xl font-display font-bold text-primary mb-2">Post a New Job</h1>
-          <p className="text-muted-foreground">Reach thousands of verified South African freelancers in minutes.</p>
+        <div className="mb-8 flex justify-between items-end">
+          <div>
+            <h1 className="text-3xl font-display font-bold text-primary mb-2">Post a New Job</h1>
+            <p className="text-muted-foreground">Reach thousands of verified South African freelancers in minutes.</p>
+          </div>
+          <div className="hidden md:flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">
+            <Sparkles className="w-3 h-3" />
+            AI Powered
+          </div>
         </div>
 
         <Card className="p-8 shadow-lg border-border">
@@ -32,7 +65,13 @@ export default function PostJob() {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="title" className="text-base">Job Title</Label>
-                <Input id="title" placeholder="e.g. Certified Safety Officer for 6 Months" className="h-12 text-lg" />
+                <Input 
+                  id="title" 
+                  placeholder="e.g. Certified Safety Officer for 6 Months" 
+                  className="h-12 text-lg"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
               </div>
 
               <div className="space-y-2">
@@ -55,21 +94,32 @@ export default function PostJob() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description" className="text-base">Description</Label>
+              <div className="flex justify-between items-center">
+                <Label htmlFor="description" className="text-base">Description</Label>
+                <Button 
+                  size="sm" 
+                  variant="ghost" 
+                  className="text-xs text-accent hover:text-accent hover:bg-accent/10 h-8"
+                  type="button"
+                  onClick={handleAIGenerate}
+                  disabled={isGenerating || !title}
+                >
+                  {isGenerating ? (
+                    <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                  ) : (
+                    <Wand2 className="w-3 h-3 mr-1" />
+                  )}
+                  {isGenerating ? "Generating..." : "AI Auto-Write"}
+                </Button>
+              </div>
               <div className="relative">
                 <Textarea 
                   id="description" 
                   placeholder="Describe the project, requirements, and deliverables..." 
                   className="min-h-[200px] text-base resize-none p-4" 
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                 />
-                <Button 
-                  size="sm" 
-                  variant="ghost" 
-                  className="absolute bottom-2 right-2 text-xs text-accent hover:text-accent hover:bg-accent/10"
-                  type="button"
-                >
-                  <Sparkles className="w-3 h-3 mr-1" /> AI Assist
-                </Button>
               </div>
             </div>
 
@@ -89,8 +139,25 @@ export default function PostJob() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="budget">Budget (ZAR)</Label>
-                <Input id="budget" type="number" placeholder="e.g. 25000" className="h-[60px] text-lg" />
+                <div className="flex justify-between items-center">
+                   <Label htmlFor="budget">Budget (ZAR)</Label>
+                   <button 
+                     type="button" 
+                     className="text-[10px] text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors"
+                     onClick={handleAIEstimate}
+                   >
+                     {isEstimating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3 text-accent" />}
+                     AI Suggestion
+                   </button>
+                </div>
+                <Input 
+                  id="budget" 
+                  type="number" 
+                  placeholder="e.g. 25000" 
+                  className="h-[60px] text-lg"
+                  value={budget}
+                  onChange={(e) => setBudget(e.target.value)}
+                />
               </div>
             </div>
 
