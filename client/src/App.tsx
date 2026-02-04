@@ -18,6 +18,7 @@ import HowToHire from "@/pages/HowToHire";
 import HowToGetHired from "@/pages/HowToGetHired";
 import Support from "@/pages/Support";
 import ResolutionCenter from "@/pages/ResolutionCenter";
+import Explore from "@/pages/Explore";
 import { SupportChat } from "@/components/SupportChat";
 import NotFound from "@/pages/not-found";
 
@@ -38,6 +39,7 @@ function Router() {
       <Route path="/how-to-get-hired" component={HowToGetHired} />
       <Route path="/support" component={Support} />
       <Route path="/resolution-center" component={ResolutionCenter} />
+      <Route path="/explore" component={Explore} />
       <Route component={NotFound} />
     </Switch>
   );

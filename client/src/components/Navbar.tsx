@@ -27,8 +27,8 @@ export function Navbar() {
   }, []);
 
   const navLinks = [
-    { name: "Book a Tasker", href: "/services", highlight: true },
-    { name: "Find Talent", href: "/freelancers" },
+    { name: "Explore", href: "/explore", highlight: true },
+    { name: "Book a Tasker", href: "/services" },
     { name: "Find Work", href: "/jobs" },
     { name: "Pricing", href: "/pricing" },
     ...(isAuthenticated ? [
