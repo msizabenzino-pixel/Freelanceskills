@@ -16,6 +16,8 @@ import Services from "@/pages/Services";
 import HowItWorks from "@/pages/HowItWorks";
 import HowToHire from "@/pages/HowToHire";
 import HowToGetHired from "@/pages/HowToGetHired";
+import Support from "@/pages/Support";
+import { SupportChat } from "@/components/SupportChat";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -33,6 +35,7 @@ function Router() {
       <Route path="/how-it-works" component={HowItWorks} />
       <Route path="/how-to-hire" component={HowToHire} />
       <Route path="/how-to-get-hired" component={HowToGetHired} />
+      <Route path="/support" component={Support} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -46,6 +49,7 @@ function App() {
           <Toaster />
           <CountrySelectorDialog />
           <Router />
+          <SupportChat />
         </TooltipProvider>
       </CountryProvider>
     </QueryClientProvider>
