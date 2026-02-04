@@ -2,6 +2,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import { VideoPlayer, VideoLanguageInfo } from "@/components/VideoPlayer";
 import { 
   User, 
   Shield, 
@@ -10,7 +11,6 @@ import {
   Star,
   MessageSquare,
   Wallet,
-  Play,
   ArrowRight,
   CheckCircle,
   Award,
@@ -51,30 +51,26 @@ export default function HowToGetHired() {
         <section className="py-12 bg-slate-50">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-2xl font-bold mb-6">Video Guide: Setting Up for Success</h2>
+              <h2 className="text-2xl font-bold mb-4">Video Guide: Setting Up for Success</h2>
+              <div className="mb-6">
+                <VideoLanguageInfo />
+              </div>
               <div className="grid md:grid-cols-3 gap-4">
-                {[
-                  { title: "Creating a Winning Profile", duration: "4:20", img: "photo-1507003211169-0a1dd7228f2d" },
-                  { title: "Getting Verified", duration: "3:10", img: "photo-1450101499163-c8848c66ca85" },
-                  { title: "Your First Client", duration: "5:30", img: "photo-1552664730-d307ca884978" },
-                ].map((video, i) => (
-                  <div key={i} className="aspect-video bg-slate-900 rounded-xl overflow-hidden relative group cursor-pointer">
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <Play className="h-6 w-6 text-white ml-0.5" />
-                      </div>
-                    </div>
-                    <img 
-                      src={`https://images.unsplash.com/${video.img}?w=400&auto=format`}
-                      alt={video.title}
-                      className="w-full h-full object-cover opacity-50"
-                    />
-                    <div className="absolute bottom-3 left-3 text-white">
-                      <p className="font-medium text-sm">{video.title}</p>
-                      <p className="text-xs text-white/70">{video.duration}</p>
-                    </div>
-                  </div>
-                ))}
+                <VideoPlayer 
+                  title="Creating a Winning Profile"
+                  duration="4:20 min"
+                  thumbnail="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format"
+                />
+                <VideoPlayer 
+                  title="Getting Verified"
+                  duration="3:10 min"
+                  thumbnail="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=400&auto=format"
+                />
+                <VideoPlayer 
+                  title="Your First Client"
+                  duration="5:30 min"
+                  thumbnail="https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&auto=format"
+                />
               </div>
             </div>
           </div>

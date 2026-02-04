@@ -2,6 +2,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import { VideoPlayer, VideoLanguageInfo } from "@/components/VideoPlayer";
 import { 
   Search, 
   MessageSquare, 
@@ -11,7 +12,6 @@ import {
   Shield,
   Clock,
   Users,
-  Play,
   ArrowRight,
   FileText,
   Eye,
@@ -51,40 +51,21 @@ export default function HowToHire() {
         <section className="py-12 bg-slate-50">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-2xl font-bold mb-6">Video Guide: Hiring Your First Freelancer</h2>
+              <h2 className="text-2xl font-bold mb-4">Video Guide: Hiring Your First Freelancer</h2>
+              <div className="mb-6">
+                <VideoLanguageInfo />
+              </div>
               <div className="grid md:grid-cols-2 gap-6">
-                <div className="aspect-video bg-slate-900 rounded-xl overflow-hidden relative group cursor-pointer">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Play className="h-8 w-8 text-white ml-1" />
-                    </div>
-                  </div>
-                  <img 
-                    src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&auto=format" 
-                    alt="Posting a job"
-                    className="w-full h-full object-cover opacity-50"
-                  />
-                  <div className="absolute bottom-4 left-4 text-white">
-                    <p className="font-semibold">How to Post a Job</p>
-                    <p className="text-xs text-white/70">3:15 min</p>
-                  </div>
-                </div>
-                <div className="aspect-video bg-slate-900 rounded-xl overflow-hidden relative group cursor-pointer">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Play className="h-8 w-8 text-white ml-1" />
-                    </div>
-                  </div>
-                  <img 
-                    src="https://images.unsplash.com/photo-1560472355-536de3962603?w=400&auto=format" 
-                    alt="Booking a tasker"
-                    className="w-full h-full object-cover opacity-50"
-                  />
-                  <div className="absolute bottom-4 left-4 text-white">
-                    <p className="font-semibold">Instant Booking a Tasker</p>
-                    <p className="text-xs text-white/70">2:45 min</p>
-                  </div>
-                </div>
+                <VideoPlayer 
+                  title="How to Post a Job"
+                  duration="3:15 min"
+                  thumbnail="https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&auto=format"
+                />
+                <VideoPlayer 
+                  title="Instant Booking a Tasker"
+                  duration="2:45 min"
+                  thumbnail="https://images.unsplash.com/photo-1560472355-536de3962603?w=400&auto=format"
+                />
               </div>
             </div>
           </div>

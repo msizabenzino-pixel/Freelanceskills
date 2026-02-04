@@ -2,6 +2,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import { VideoPlayer, VideoLanguageInfo } from "@/components/VideoPlayer";
 import { 
   Search, 
   MessageSquare, 
@@ -13,7 +14,6 @@ import {
   Users,
   Briefcase,
   ArrowRight,
-  Play,
   FileCheck,
   Wallet,
   ThumbsUp
@@ -56,24 +56,19 @@ export default function HowItWorks() {
         <section className="py-16 bg-slate-50">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl font-bold text-center mb-8">Watch How It Works</h2>
-              <div className="aspect-video bg-slate-900 rounded-2xl overflow-hidden relative group cursor-pointer shadow-xl">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Play className="h-10 w-10 text-white ml-1" />
-                  </div>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-6 left-6 text-white">
-                  <p className="text-lg font-semibold">Getting Started with FreelanceSkill</p>
-                  <p className="text-white/70 text-sm">2:30 min • Introduction</p>
-                </div>
-                <img 
-                  src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&auto=format" 
-                  alt="Video thumbnail"
-                  className="w-full h-full object-cover opacity-60"
-                />
+              <h2 className="text-3xl font-bold text-center mb-4">Watch How It Works</h2>
+              <p className="text-center text-muted-foreground mb-6">
+                Choose your language and learn at your own pace
+              </p>
+              <div className="mb-6">
+                <VideoLanguageInfo />
               </div>
+              <VideoPlayer 
+                title="Getting Started with FreelanceSkill"
+                duration="2:30 min"
+                thumbnail="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&auto=format"
+                description="A complete introduction to using our platform - available in your language"
+              />
             </div>
           </div>
         </section>
