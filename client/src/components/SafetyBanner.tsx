@@ -27,7 +27,7 @@ export function SafetyBanner() {
         <div className="flex items-center gap-3">
           <Shield className="h-5 w-5 text-amber-600 flex-shrink-0" />
           <p className="text-sm text-amber-800">
-            <strong>Stay Safe:</strong> Never share bank details or pay outside FreelanceSkill. 
+            <strong>Stay Safe:</strong> Never share bank details or pay outside FreelanceSkills. 
             <SafetyDialog>
               <button className="underline ml-1 hover:text-amber-900">Learn more about our protection</button>
             </SafetyDialog>
@@ -49,7 +49,7 @@ export function SafetyDialog({ children }: { children: React.ReactNode }) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <Shield className="h-6 w-6 text-primary" />
-            FreelanceSkill Trust & Safety
+            FreelanceSkills Trust & Safety
           </DialogTitle>
         </DialogHeader>
         
@@ -60,7 +60,7 @@ export function SafetyDialog({ children }: { children: React.ReactNode }) {
               Your Payment Protection
             </h3>
             <div className="bg-green-50 border border-green-200 rounded-lg p-4 space-y-2">
-              <p className="text-sm text-green-800">When you book through FreelanceSkill:</p>
+              <p className="text-sm text-green-800">When you book through FreelanceSkills:</p>
               <ul className="text-sm text-green-700 space-y-1 ml-4">
                 <li className="flex items-start gap-2">
                   <CheckCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
@@ -89,7 +89,7 @@ export function SafetyDialog({ children }: { children: React.ReactNode }) {
             </h3>
             <div className="bg-red-50 border border-red-200 rounded-lg p-4">
               <p className="text-sm text-red-800 font-medium mb-2">
-                Deals made outside FreelanceSkill are NOT protected:
+                Deals made outside FreelanceSkills are NOT protected:
               </p>
               <ul className="text-sm text-red-700 space-y-1 ml-4">
                 <li>• We cannot help recover payments made off-platform</li>
@@ -160,7 +160,7 @@ export function SafetyDialog({ children }: { children: React.ReactNode }) {
 
           <div className="bg-slate-100 rounded-lg p-4 text-center">
             <p className="text-sm text-slate-600">
-              <strong>Disclaimer:</strong> FreelanceSkill is not responsible for transactions, agreements, 
+              <strong>Disclaimer:</strong> FreelanceSkills is not responsible for transactions, agreements, 
               or payments made outside our platform. For your protection, always use our secure 
               booking and payment system.
             </p>

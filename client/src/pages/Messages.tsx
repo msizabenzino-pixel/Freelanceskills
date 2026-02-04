@@ -5,7 +5,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { VideoCallDialog } from "@/components/VideoCall";
 import { ContractBuilder } from "@/components/ContractMilestones";
-import { Search, MoreVertical, Phone, Video, Send, Paperclip, CheckCheck, ShieldCheck, FileText } from "lucide-react";
+import { Search, MoreVertical, Phone, Video, Send, Paperclip, CheckCheck, ShieldCheck, FileText, Shield, X, AlertTriangle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
@@ -55,6 +61,14 @@ export default function Messages() {
   const [inputText, setInputText] = useState("");
   const [showVideoCall, setShowVideoCall] = useState(false);
   const [showContract, setShowContract] = useState(false);
+  const [showSafetyPopup, setShowSafetyPopup] = useState(() => {
+    return localStorage.getItem("messageSafetyShown") !== "true";
+  });
+
+  const dismissSafetyPopup = () => {
+    setShowSafetyPopup(false);
+    localStorage.setItem("messageSafetyShown", "true");
+  };
 
   return (
     <div className="h-screen bg-background flex flex-col overflow-hidden">
@@ -142,6 +156,20 @@ export default function Messages() {
               <div className="flex justify-center">
                 <span className="text-xs bg-muted text-muted-foreground px-3 py-1 rounded-full">Today</span>
               </div>
+
+              {/* Safety System Message */}
+              <div className="flex justify-center">
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 max-w-md text-center">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <Shield className="w-5 h-5 text-amber-600" />
+                    <span className="font-semibold text-amber-800 text-sm">Stay Protected</span>
+                  </div>
+                  <p className="text-xs text-amber-700 leading-relaxed">
+                    Keep all communication on FreelanceSkills. Never share bank details or pay outside the platform. 
+                    Your payments are protected by escrow.
+                  </p>
+                </div>
+              </div>
               
               {messages.map((msg) => (
                 <div key={msg.id} className={cn(
@@ -193,7 +221,7 @@ export default function Messages() {
               </Button>
             </div>
             <p className="text-[10px] text-muted-foreground text-center mt-2 flex items-center justify-center gap-1">
-              <ShieldCheck className="w-3 h-3" /> Keep conversations on FreelanceSkill for your protection.
+              <ShieldCheck className="w-3 h-3" /> Keep conversations on FreelanceSkills for your protection.
             </p>
           </div>
         </div>
@@ -210,6 +238,56 @@ export default function Messages() {
         onClose={() => setShowContract(false)}
         onComplete={(contract) => console.log("Contract created:", contract)}
       />
+
+      {/* Safety Popup on First Visit */}
+      <Dialog open={showSafetyPopup} onOpenChange={setShowSafetyPopup}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <Shield className="h-6 w-6 text-primary" />
+              Stay Safe on FreelanceSkills
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 mt-2">
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <p className="font-medium text-green-800 mb-2 text-sm">Your payments are protected:</p>
+              <ul className="text-sm text-green-700 space-y-1">
+                <li className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4" /> Funds held in secure escrow
+                </li>
+                <li className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4" /> Released only after you approve
+                </li>
+                <li className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4" /> Full dispute resolution support
+                </li>
+              </ul>
+            </div>
+
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <p className="font-medium text-red-800 mb-2 text-sm flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4" /> Never do this:
+              </p>
+              <ul className="text-sm text-red-700 space-y-1">
+                <li className="flex items-center gap-2">
+                  <X className="w-4 h-4" /> Share bank details in messages
+                </li>
+                <li className="flex items-center gap-2">
+                  <X className="w-4 h-4" /> Pay outside the platform
+                </li>
+                <li className="flex items-center gap-2">
+                  <X className="w-4 h-4" /> Move to WhatsApp/email to avoid fees
+                </li>
+              </ul>
+            </div>
+
+            <Button onClick={dismissSafetyPopup} className="w-full">
+              I Understand - Start Chatting
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
