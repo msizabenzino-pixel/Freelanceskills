@@ -1,8 +1,8 @@
-# FreelanceSkill - South African Freelance Marketplace
+# FreelanceSkills - South African Freelance Marketplace
 
 ## Overview
 
-FreelanceSkill is a full-stack freelance marketplace platform targeting the South African market. It connects local professionals (plumbers, electricians, safety officers) and remote digital talent (developers, designers) with clients seeking their services. The platform supports both job postings and TaskRabbit-style service packages with booking functionality.
+FreelanceSkills is a full-stack freelance marketplace platform targeting the South African market. It connects local professionals (plumbers, electricians, safety officers) and remote digital talent (developers, designers) with clients seeking their services. The platform supports both job postings and TaskRabbit-style service packages with booking functionality.
 
 The revenue model is commission-based (10% on completed jobs) with no upfront subscription fees. The platform handles the complete job lifecycle: open → hired → in_progress → delivered → completed, with escrow-style payment release only after completion.
 
