@@ -8,58 +8,59 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Search, MapPin, List, Map as MapIcon, Star, Filter, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-
-// Mock Data for Map
-const freelancers = [
-  {
-    id: 1,
-    name: "Thabo M.",
-    title: "Senior Electrician",
-    rate: "R450/hr",
-    rating: 5.0,
-    reviews: 42,
-    coords: { top: "40%", left: "50%" },
-    verified: true,
-    image: "https://images.unsplash.com/photo-1531384441138-2736e62e0919?auto=format&fit=crop&q=80&w=200&h=200"
-  },
-  {
-    id: 2,
-    name: "Sarah L.",
-    title: "Safety Officer",
-    rate: "R600/hr",
-    rating: 4.9,
-    reviews: 85,
-    coords: { top: "30%", left: "60%" },
-    verified: true,
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200&h=200"
-  },
-  {
-    id: 3,
-    name: "David K.",
-    title: "Plumber",
-    rate: "R550/hr",
-    rating: 4.8,
-    reviews: 29,
-    coords: { top: "55%", left: "45%" },
-    verified: true,
-    image: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&q=80&w=200&h=200"
-  },
-  {
-    id: 4,
-    name: "Nandi Z.",
-    title: "Web Developer",
-    rate: "R750/hr",
-    rating: 5.0,
-    reviews: 63,
-    coords: { top: "45%", left: "55%" },
-    verified: true,
-    image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=200&h=200"
-  }
-];
+import { useCurrency } from "@/lib/currency";
 
 export default function FindTalent() {
   const [view, setView] = useState<'list' | 'map'>('map');
   const [selectedPro, setSelectedPro] = useState<number | null>(null);
+  const { formatRate, formatAmount } = useCurrency();
+
+  const freelancers = [
+    {
+      id: 1,
+      name: "Thabo M.",
+      title: "Senior Electrician",
+      rate: formatRate(450, "hr"),
+      rating: 5.0,
+      reviews: 42,
+      coords: { top: "40%", left: "50%" },
+      verified: true,
+      image: "https://images.unsplash.com/photo-1531384441138-2736e62e0919?auto=format&fit=crop&q=80&w=200&h=200"
+    },
+    {
+      id: 2,
+      name: "Sarah L.",
+      title: "Safety Officer",
+      rate: formatRate(600, "hr"),
+      rating: 4.9,
+      reviews: 85,
+      coords: { top: "30%", left: "60%" },
+      verified: true,
+      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200&h=200"
+    },
+    {
+      id: 3,
+      name: "David K.",
+      title: "Plumber",
+      rate: formatRate(550, "hr"),
+      rating: 4.8,
+      reviews: 29,
+      coords: { top: "55%", left: "45%" },
+      verified: true,
+      image: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&q=80&w=200&h=200"
+    },
+    {
+      id: 4,
+      name: "Nandi Z.",
+      title: "Web Developer",
+      rate: formatRate(750, "hr"),
+      rating: 5.0,
+      reviews: 63,
+      coords: { top: "45%", left: "55%" },
+      verified: true,
+      image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=200&h=200"
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -100,7 +101,7 @@ export default function FindTalent() {
           </div>
           
           <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
-            {['Verified Only', 'Available Now', 'Under R500/hr', '5 Star Rating'].map((filter) => (
+            {['Verified Only', 'Available Now', `Under ${formatRate(500, "hr")}`, '5 Star Rating'].map((filter) => (
               <Badge key={filter} variant="outline" className="cursor-pointer hover:bg-secondary transition-colors whitespace-nowrap">
                 {filter}
               </Badge>

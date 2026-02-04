@@ -6,8 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Star, MapPin, ShieldCheck, Clock, CheckCircle, MessageSquare } from "lucide-react";
 import { Link } from "wouter";
+import { useCurrency } from "@/lib/currency";
 
 export default function FreelancerProfile() {
+  const { formatAmount } = useCurrency();
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
@@ -104,7 +107,7 @@ export default function FreelancerProfile() {
               <div className="flex justify-between items-start mb-6">
                  <div>
                    <h2 className="text-2xl font-bold text-primary">About Me</h2>
-                   <p className="text-xl font-medium text-accent mt-1">R750.00 <span className="text-sm text-muted-foreground font-normal">/ hour</span></p>
+                   <p className="text-xl font-medium text-accent mt-1">{formatAmount(750)} <span className="text-sm text-muted-foreground font-normal">/ hour</span></p>
                  </div>
               </div>
               
@@ -189,7 +192,7 @@ export default function FreelancerProfile() {
                       <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
                         <span className="bg-secondary px-2 py-1 rounded">Nov 2025</span>
                         <span>•</span>
-                        <span>R45,000.00 Paid</span>
+                        <span>{formatAmount(45000)} Paid</span>
                       </div>
                     </div>
                   ))}

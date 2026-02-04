@@ -9,6 +9,7 @@ import { Slider } from "@/components/ui/slider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Search, Filter, Briefcase, Sparkles } from "lucide-react";
 import { AIProposalHelper } from "@/components/AIProposalHelper";
+import { useCurrency } from "@/lib/currency";
 
 interface Job {
   title: string;
@@ -24,12 +25,14 @@ interface Job {
 export default function Jobs() {
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [showProposalHelper, setShowProposalHelper] = useState(false);
+  const { formatAmount, formatRateRange, formatRate } = useCurrency();
+
   const jobs = [
     {
       title: "Senior React Developer",
       company: "Capitec Bank",
       type: "Remote",
-      budget: "R650 - R850 / hr",
+      budget: formatRateRange(650, 850, "hr"),
       location: "Cape Town",
       postedAt: "2h ago",
       tags: ["React", "TypeScript"],
@@ -39,7 +42,7 @@ export default function Jobs() {
       title: "Graphic Designer for Rebranding",
       company: "Woolworths",
       type: "Project",
-      budget: "R45,000",
+      budget: formatAmount(45000),
       location: "Remote",
       postedAt: "5h ago",
       tags: ["Design", "Branding"],
@@ -49,7 +52,7 @@ export default function Jobs() {
       title: "SEO Copywriter",
       company: "Discovery",
       type: "Part-time",
-      budget: "R350 / hr",
+      budget: formatRate(350, "hr"),
       location: "Sandton",
       postedAt: "1d ago",
       tags: ["Copywriting", "SEO"],
@@ -59,7 +62,7 @@ export default function Jobs() {
       title: "Mobile App Developer (Flutter)",
       company: "Startup Inc",
       type: "Contract",
-      budget: "R60,000",
+      budget: formatAmount(60000),
       location: "Remote",
       postedAt: "2d ago",
       tags: ["Flutter", "Dart"],
@@ -69,7 +72,7 @@ export default function Jobs() {
       title: "Data Analyst",
       company: "MTN",
       type: "Full-time",
-      budget: "R45,000 / mo",
+      budget: formatRate(45000, "mo"),
       location: "Johannesburg",
       postedAt: "3d ago",
       tags: ["Python", "SQL", "Tableau"],
@@ -79,7 +82,7 @@ export default function Jobs() {
       title: "Virtual Assistant",
       company: "Private Client",
       type: "Hourly",
-      budget: "R150 / hr",
+      budget: formatRate(150, "hr"),
       location: "Remote",
       postedAt: "4d ago",
       tags: ["Admin", "Scheduling"],
@@ -149,11 +152,11 @@ export default function Jobs() {
                 <div className="h-px bg-border" />
 
                  <div>
-                  <h4 className="text-sm font-semibold mb-3">Budget Range (ZAR)</h4>
+                  <h4 className="text-sm font-semibold mb-3">Budget Range</h4>
                   <Slider defaultValue={[50]} max={100} step={1} className="my-4" />
                   <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>R100</span>
-                    <span>R5000+</span>
+                    <span>{formatAmount(100)}</span>
+                    <span>{formatAmount(5000)}+</span>
                   </div>
                 </div>
               </div>

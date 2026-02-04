@@ -7,22 +7,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboard, Wallet, MessageSquare, Settings, AlertCircle, PlusCircle } from "lucide-react";
 import { useState } from "react";
+import { useCurrency } from "@/lib/currency";
 
 export default function Dashboard() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const { formatAmount } = useCurrency();
 
   const activeContracts = [
     {
       title: "Mobile App UI Design",
       freelancer: "Sarah L.",
-      budget: "R12,500",
+      budget: formatAmount(12500),
       initialStatus: "in_progress" as const,
       description: "Finalizing the high-fidelity mockups for the checkout screen and profile settings."
     },
     {
       title: "Python Scraper Development",
       freelancer: "Thabo M.",
-      budget: "R5,000",
+      budget: formatAmount(5000),
       initialStatus: "delivered" as const,
       description: "Work has been submitted. Please review the codebase and documentation before releasing payment."
     }
@@ -32,7 +34,7 @@ export default function Dashboard() {
     {
       title: "SEO Strategy Whitepaper",
       freelancer: "Nandi Z.",
-      budget: "R8,000",
+      budget: formatAmount(8000),
       initialStatus: "completed" as const,
       description: "Complete 50-page SEO strategy delivered and approved."
     }
@@ -60,7 +62,7 @@ export default function Dashboard() {
                </div>
                <div>
                  <div className="text-[10px] text-muted-foreground font-bold uppercase leading-none">Escrow Balance</div>
-                 <div className="text-lg font-bold text-primary">R17,500.00</div>
+                 <div className="text-lg font-bold text-primary">{formatAmount(17500)}</div>
                </div>
                <Button size="sm" className="ml-2 h-8" onClick={() => setShowPaymentModal(true)}>
                  <PlusCircle className="w-4 h-4 mr-1" /> Deposit

@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/sheet";
 import { SERVICE_CATEGORIES, EXPERIENCE_LEVELS, AVAILABILITY_OPTIONS, BUDGET_RANGES, RATING_OPTIONS } from "@shared/categories";
 import { Link } from "wouter";
+import { useCurrency } from "@/lib/currency";
 import { 
   Search, 
   Filter, 
@@ -117,13 +118,6 @@ const FEATURED_FREELANCERS = [
   }
 ];
 
-const TRENDING_PROJECTS = [
-  { title: "E-commerce Website Development", budget: "R15,000 - R25,000", bids: 23, category: "Programming" },
-  { title: "Office Electrical Installation", budget: "R8,000 - R12,000", bids: 15, category: "Trades" },
-  { title: "Monthly Pool Maintenance Contract", budget: "R2,500/month", bids: 8, category: "Pool" },
-  { title: "Safety File Compilation", budget: "R5,000 - R7,500", bids: 12, category: "Safety" },
-];
-
 export default function Explore() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -133,6 +127,14 @@ export default function Explore() {
   const [availability, setAvailability] = useState<string>("");
   const [experience, setExperience] = useState<string>("");
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const { formatAmount, formatRange, formatRate } = useCurrency();
+
+  const TRENDING_PROJECTS = [
+    { title: "E-commerce Website Development", budget: formatRange(15000, 25000), bids: 23, category: "Programming" },
+    { title: "Office Electrical Installation", budget: formatRange(8000, 12000), bids: 15, category: "Trades" },
+    { title: "Monthly Pool Maintenance Contract", budget: formatRate(2500, "month"), bids: 8, category: "Pool" },
+    { title: "Safety File Compilation", budget: formatRange(5000, 7500), bids: 12, category: "Safety" },
+  ];
 
   const addFilter = (filter: string) => {
     if (!activeFilters.includes(filter)) {

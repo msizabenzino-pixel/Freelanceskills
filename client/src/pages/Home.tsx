@@ -6,14 +6,17 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, Shield, Sparkles } from "lucide-react";
 import { Link } from "wouter";
+import { useCurrency } from "@/lib/currency";
 
 export default function Home() {
+  const { formatAmount, formatRange, formatRate, formatRateRange } = useCurrency();
+
   const featuredJobs = [
     {
       title: "Certified Safety Officer (6 Months)",
       company: "Construction Co. (Tender Project)",
       type: "On-site",
-      budget: "R25,000 / month",
+      budget: formatRate(25000, "month"),
       location: "Pretoria East (5km away)",
       postedAt: "1h ago",
       tags: ["Safety Officer", "Construction", "OHS"],
@@ -23,7 +26,7 @@ export default function Home() {
       title: "Emergency Plumber Needed",
       company: "Private Household",
       type: "Urgent",
-      budget: "R850 - R1,200",
+      budget: formatRange(850, 1200),
       location: "Sandton (2km away)",
       postedAt: "15m ago",
       tags: ["Plumbing", "Maintenance", "Urgent"],
@@ -33,7 +36,7 @@ export default function Home() {
       title: "Senior React Developer for Fintech App",
       company: "Capitec Bank (via FreelanceSkills Enterprise)",
       type: "Remote",
-      budget: "R650 - R850 / hr",
+      budget: formatRateRange(650, 850, "hr"),
       location: "Cape Town / Remote",
       postedAt: "2h ago",
       tags: ["React", "TypeScript", "Node.js"],
@@ -43,7 +46,7 @@ export default function Home() {
       title: "Tender Documentation Consultant",
       company: "SME Logistics",
       type: "Contract",
-      budget: "R15,000 / project",
+      budget: formatRate(15000, "project"),
       location: "Durban / Remote",
       postedAt: "4h ago",
       tags: ["Tender Compliance", "Writing", "Government"],
@@ -55,7 +58,7 @@ export default function Home() {
     {
       name: "Thabo M.",
       title: "Senior Software Engineer",
-      rate: "R750",
+      rate: formatAmount(750),
       rating: 5.0,
       reviews: 42,
       skills: ["Python", "Django", "AWS", "React"],
@@ -65,7 +68,7 @@ export default function Home() {
     {
       name: "Sarah L.",
       title: "Brand Strategist & Designer",
-      rate: "R600",
+      rate: formatAmount(600),
       rating: 4.9,
       reviews: 85,
       skills: ["Branding", "Logo Design", "Adobe CC"],
@@ -75,7 +78,7 @@ export default function Home() {
     {
       name: "David K.",
       title: "Mobile App Developer",
-      rate: "R800",
+      rate: formatAmount(800),
       rating: 4.8,
       reviews: 29,
       skills: ["Flutter", "iOS", "Android", "Firebase"],
@@ -85,7 +88,7 @@ export default function Home() {
     {
       name: "Nandi Z.",
       title: "Digital Marketing Specialist",
-      rate: "R450",
+      rate: formatAmount(450),
       rating: 5.0,
       reviews: 63,
       skills: ["SEO", "Google Ads", "Social Media"],
