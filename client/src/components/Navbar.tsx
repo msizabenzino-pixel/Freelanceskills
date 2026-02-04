@@ -21,6 +21,7 @@ export function Navbar() {
     { name: "Find Talent", href: "/freelancers" },
     { name: "Find Work", href: "/jobs" },
     { name: "Pricing", href: "/pricing" },
+    { name: "Messages", href: "/messages" },
     { name: "Dashboard", href: "/dashboard" },
   ];
 
