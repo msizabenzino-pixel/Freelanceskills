@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Menu, X, Zap, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import { CurrencySelector } from "./CurrencySelector";
+import { CountrySelector } from "./CountrySelector";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -76,7 +76,7 @@ export function Navbar() {
           <div className={cn(
             isScrolled || location !== "/" ? "text-slate-600" : "text-white/90"
           )}>
-            <CurrencySelector />
+            <CountrySelector />
           </div>
           <Link href="/post-job">
             <Button 
