@@ -3,7 +3,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, MoreVertical, Phone, Video, Send, Paperclip, CheckCheck, ShieldCheck } from "lucide-react";
+import { VideoCallDialog } from "@/components/VideoCall";
+import { ContractBuilder } from "@/components/ContractMilestones";
+import { Search, MoreVertical, Phone, Video, Send, Paperclip, CheckCheck, ShieldCheck, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
@@ -51,6 +53,8 @@ const messages = [
 export default function Messages() {
   const [selectedChat, setSelectedChat] = useState(conversations[0]);
   const [inputText, setInputText] = useState("");
+  const [showVideoCall, setShowVideoCall] = useState(false);
+  const [showContract, setShowContract] = useState(false);
 
   return (
     <div className="h-screen bg-background flex flex-col overflow-hidden">
@@ -125,8 +129,9 @@ export default function Messages() {
               </div>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground">
-              <Button variant="ghost" size="icon"><Phone className="w-5 h-5" /></Button>
-              <Button variant="ghost" size="icon"><Video className="w-5 h-5" /></Button>
+              <Button variant="ghost" size="icon" data-testid="button-phone-call"><Phone className="w-5 h-5" /></Button>
+              <Button variant="ghost" size="icon" onClick={() => setShowVideoCall(true)} data-testid="button-video-call-message"><Video className="w-5 h-5" /></Button>
+              <Button variant="ghost" size="icon" onClick={() => setShowContract(true)} data-testid="button-create-contract"><FileText className="w-5 h-5" /></Button>
               <Button variant="ghost" size="icon"><MoreVertical className="w-5 h-5" /></Button>
             </div>
           </div>
@@ -193,6 +198,18 @@ export default function Messages() {
           </div>
         </div>
       </div>
+      
+      <VideoCallDialog 
+        open={showVideoCall} 
+        onClose={() => setShowVideoCall(false)}
+        recipientName={selectedChat.name}
+      />
+      
+      <ContractBuilder
+        open={showContract}
+        onClose={() => setShowContract(false)}
+        onComplete={(contract) => console.log("Contract created:", contract)}
+      />
     </div>
   );
 }

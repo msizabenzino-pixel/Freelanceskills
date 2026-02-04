@@ -1,11 +1,12 @@
-import { Globe } from "lucide-react";
+import { Globe, Shield, Phone, Mail } from "lucide-react";
+import { Link } from "wouter";
 
 export function Footer() {
   return (
     <footer className="bg-secondary pt-16 pb-8 border-t border-border mt-auto">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-          <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-12">
+          <div className="space-y-4 md:col-span-2">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-primary text-white rounded-lg flex items-center justify-center font-bold">F</div>
               <span className="font-display font-bold text-xl text-primary">FreelanceSkill.</span>
@@ -13,47 +14,54 @@ export function Footer() {
             <p className="text-muted-foreground text-sm leading-relaxed">
               Empowering South Africa's workforce through digital connection. The safest way to hire local talent online.
             </p>
-            <div className="flex gap-4">
-              {/* Social Icons Mockup */}
-              <div className="w-8 h-8 rounded-full bg-background border border-border flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-white transition-colors cursor-pointer">
-                <Globe className="w-4 h-4" />
-              </div>
+            <div className="flex gap-4 text-sm text-muted-foreground">
+              <a href="https://wa.me/27601234567" className="flex items-center gap-1 hover:text-primary">
+                <Phone className="w-4 h-4" />
+                WhatsApp
+              </a>
+              <a href="mailto:support@freelanceskill.co.za" className="flex items-center gap-1 hover:text-primary">
+                <Mail className="w-4 h-4" />
+                Email
+              </a>
             </div>
           </div>
 
           <div>
             <h4 className="font-bold text-primary mb-4">For Clients</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-primary transition-colors">How to Hire</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Talent Marketplace</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Payroll Services</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Enterprise</a></li>
+              <li><Link href="/how-to-hire" className="hover:text-primary transition-colors" data-testid="link-how-to-hire">How to Hire</Link></li>
+              <li><Link href="/services" className="hover:text-primary transition-colors">Find Talent</Link></li>
+              <li><Link href="/post-job" className="hover:text-primary transition-colors">Post a Job</Link></li>
+              <li><Link href="/pricing" className="hover:text-primary transition-colors">Pricing</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-bold text-primary mb-4">For Talent</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-primary transition-colors">How to Find Work</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Direct Contracts</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Find Opportunity</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Community</a></li>
+              <li><Link href="/how-to-get-hired" className="hover:text-primary transition-colors">How to Get Hired</Link></li>
+              <li><Link href="/jobs" className="hover:text-primary transition-colors">Browse Jobs</Link></li>
+              <li><Link href="/pricing" className="hover:text-primary transition-colors">Fees & Earnings</Link></li>
+              <li><Link href="/support" className="hover:text-primary transition-colors">AI Profile Builder</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-bold text-primary mb-4">Company</h4>
+            <h4 className="font-bold text-primary mb-4">Trust & Safety</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-primary transition-colors">About Us</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Careers</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Press</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Contact</a></li>
+              <li><Link href="/how-it-works" className="hover:text-primary transition-colors">How It Works</Link></li>
+              <li><Link href="/resolution-center" className="hover:text-primary transition-colors" data-testid="link-resolution-center">Resolution Center</Link></li>
+              <li><Link href="/support" className="hover:text-primary transition-colors">Help & Support</Link></li>
+              <li><Link href="/pricing" className="hover:text-primary transition-colors">Escrow Protection</Link></li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
-          <p>© 2026 FreelanceSkill Pty Ltd. All rights reserved.</p>
+          <div className="flex items-center gap-2">
+            <Shield className="h-4 w-4 text-green-500" />
+            <p>© 2026 FreelanceSkill Pty Ltd. All rights reserved. Payments protected by escrow.</p>
+          </div>
           <div className="flex gap-6">
             <a href="#" className="hover:text-primary">Terms of Service</a>
             <a href="#" className="hover:text-primary">Privacy Policy</a>
