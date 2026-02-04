@@ -11,6 +11,7 @@ import FindTalent from "@/pages/FindTalent";
 import Messages from "@/pages/Messages";
 import FreelancerProfile from "@/pages/FreelancerProfile";
 import PostJob from "@/pages/PostJob";
+import Services from "@/pages/Services";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/profile/:id" component={FreelancerProfile} />
       <Route path="/messages" component={Messages} />
       <Route path="/post-job" component={PostJob} />
+      <Route path="/services" component={Services} />
       <Route component={NotFound} />
     </Switch>
   );

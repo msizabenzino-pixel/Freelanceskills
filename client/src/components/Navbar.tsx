@@ -2,12 +2,14 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Zap, LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [location] = useLocation();
+  const { user, isLoading, isAuthenticated } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -18,11 +20,14 @@ export function Navbar() {
   }, []);
 
   const navLinks = [
+    { name: "Book a Tasker", href: "/services", highlight: true },
     { name: "Find Talent", href: "/freelancers" },
     { name: "Find Work", href: "/jobs" },
     { name: "Pricing", href: "/pricing" },
-    { name: "Messages", href: "/messages" },
-    { name: "Dashboard", href: "/dashboard" },
+    ...(isAuthenticated ? [
+      { name: "Messages", href: "/messages" },
+      { name: "Dashboard", href: "/dashboard" },
+    ] : []),
   ];
 
   return (
@@ -74,20 +79,71 @@ export function Navbar() {
                 "hover:text-accent hover:bg-transparent font-medium",
                 isScrolled || location !== "/" ? "text-primary" : "text-white"
               )}
+              data-testid="button-post-job"
             >
               Post a Job
             </Button>
           </Link>
-          <Button 
-            className={cn(
-              "font-semibold shadow-lg transition-all hover:scale-105 active:scale-95",
-              isScrolled || location !== "/" 
-                ? "bg-primary text-white hover:bg-primary/90" 
-                : "bg-accent text-primary hover:bg-accent/90"
-            )}
-          >
-            Sign Up
-          </Button>
+          {isAuthenticated ? (
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                {user?.profileImageUrl ? (
+                  <img src={user.profileImageUrl} alt="" className="w-8 h-8 rounded-full" />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm">
+                    {user?.firstName?.[0] || user?.email?.[0]?.toUpperCase() || "U"}
+                  </div>
+                )}
+                <span className={cn(
+                  "text-sm font-medium",
+                  isScrolled || location !== "/" ? "text-slate-700" : "text-white"
+                )}>
+                  {user?.firstName || "User"}
+                </span>
+              </div>
+              <a href="/api/logout">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className={cn(
+                    "hover:text-red-500",
+                    isScrolled || location !== "/" ? "text-slate-500" : "text-white/80"
+                  )}
+                  data-testid="button-logout"
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </a>
+            </div>
+          ) : (
+            <>
+              <a href="/api/login">
+                <Button 
+                  variant="ghost"
+                  className={cn(
+                    "hover:text-accent hover:bg-transparent font-medium",
+                    isScrolled || location !== "/" ? "text-primary" : "text-white"
+                  )}
+                  data-testid="button-login"
+                >
+                  Log In
+                </Button>
+              </a>
+              <a href="/api/login">
+                <Button 
+                  className={cn(
+                    "font-semibold shadow-lg transition-all hover:scale-105 active:scale-95",
+                    isScrolled || location !== "/" 
+                      ? "bg-primary text-white hover:bg-primary/90" 
+                      : "bg-accent text-primary hover:bg-accent/90"
+                  )}
+                  data-testid="button-signup"
+                >
+                  Sign Up
+                </Button>
+              </a>
+            </>
+          )}
         </div>
 
         {/* Mobile Toggle */}
