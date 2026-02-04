@@ -1,4 +1,4 @@
-import { Globe, Shield, Phone, Mail } from "lucide-react";
+import { Shield, Phone, Mail, Facebook, Instagram, Youtube, Twitter, Linkedin } from "lucide-react";
 import { Link } from "wouter";
 
 export function Footer() {
@@ -14,7 +14,54 @@ export function Footer() {
             <p className="text-muted-foreground text-sm leading-relaxed">
               Empowering South Africa's workforce through digital connection. The safest way to hire local talent online.
             </p>
-            <div className="flex gap-4 text-sm text-muted-foreground">
+            <div className="flex gap-3 mt-4">
+              <a 
+                href="https://facebook.com/freelanceskill" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-600 hover:text-white transition-colors"
+                data-testid="link-facebook"
+              >
+                <Facebook className="w-5 h-5" />
+              </a>
+              <a 
+                href="https://instagram.com/freelanceskill" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-gradient-to-br hover:from-purple-600 hover:to-pink-500 hover:text-white transition-colors"
+                data-testid="link-instagram"
+              >
+                <Instagram className="w-5 h-5" />
+              </a>
+              <a 
+                href="https://youtube.com/@freelanceskill" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-red-600 hover:text-white transition-colors"
+                data-testid="link-youtube"
+              >
+                <Youtube className="w-5 h-5" />
+              </a>
+              <a 
+                href="https://twitter.com/freelanceskill" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-black hover:text-white transition-colors"
+                data-testid="link-twitter"
+              >
+                <Twitter className="w-5 h-5" />
+              </a>
+              <a 
+                href="https://linkedin.com/company/freelanceskill" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-700 hover:text-white transition-colors"
+                data-testid="link-linkedin"
+              >
+                <Linkedin className="w-5 h-5" />
+              </a>
+            </div>
+            <div className="flex gap-4 text-sm text-muted-foreground mt-4">
               <a href="https://wa.me/27601234567" className="flex items-center gap-1 hover:text-primary">
                 <Phone className="w-4 h-4" />
                 WhatsApp
