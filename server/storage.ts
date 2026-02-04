@@ -2,7 +2,8 @@ import {
   type Job, type InsertJob, type Profile, type InsertProfile, 
   type ServicePackage, type InsertServicePackage, type Booking, type InsertBooking,
   type Review, type InsertReview, type Conversation, type Message, type InsertMessage,
-  jobs, profiles, servicePackages, bookings, reviews, conversations, messages
+  jobs, profiles, servicePackages, bookings, reviews, conversations, messages,
+  freelancerVerifications, privateFeedback
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, sql, desc } from "drizzle-orm";
@@ -43,6 +44,15 @@ export interface IStorage {
   getUserConversations(userId: string): Promise<Conversation[]>;
   sendMessage(message: InsertMessage): Promise<Message>;
   getConversationMessages(conversationId: string): Promise<Message[]>;
+  
+  // Verification operations
+  getFreelancerVerification(freelancerId: string): Promise<any>;
+  submitVerification(freelancerId: string, data: any): Promise<any>;
+  
+  // Private feedback operations
+  submitPrivateFeedback(feedback: any): Promise<any>;
+  hasPublicReview(bookingId: string, userId: string): Promise<boolean>;
+  hasPrivateFeedback(bookingId: string, userId: string): Promise<boolean>;
 }
 
 class DatabaseStorage implements IStorage {
@@ -212,6 +222,62 @@ class DatabaseStorage implements IStorage {
     return db.select().from(messages)
       .where(eq(messages.conversationId, conversationId))
       .orderBy(messages.createdAt);
+  }
+
+  // Verification operations
+  async getFreelancerVerification(freelancerId: string): Promise<any> {
+    const [verification] = await db.select().from(freelancerVerifications)
+      .where(eq(freelancerVerifications.freelancerId, freelancerId));
+    return verification;
+  }
+
+  async submitVerification(freelancerId: string, data: any): Promise<any> {
+    const existing = await this.getFreelancerVerification(freelancerId);
+    
+    const updateData: any = {};
+    
+    if (data.verificationType === 'identity') {
+      updateData.identityDocType = data.documentUrls?.[0] ? 'pending_review' : null;
+    } else if (data.verificationType === 'qualifications') {
+      updateData.qualificationDocs = data.documentUrls;
+    } else if (data.verificationType === 'experience') {
+      updateData.claimedYearsExperience = data.claimedYearsExperience;
+      updateData.referenceContacts = data.referenceContacts;
+    } else if (data.verificationType === 'professional_body') {
+      updateData.professionalBodyName = data.professionalBodyCode;
+      updateData.registrationNumber = data.registrationNumber;
+    }
+
+    if (existing) {
+      const [updated] = await db.update(freelancerVerifications)
+        .set({ ...updateData, updatedAt: new Date() })
+        .where(eq(freelancerVerifications.freelancerId, freelancerId))
+        .returning();
+      return updated;
+    } else {
+      const [created] = await db.insert(freelancerVerifications)
+        .values({ freelancerId, ...updateData })
+        .returning();
+      return created;
+    }
+  }
+
+  // Private feedback operations
+  async submitPrivateFeedback(feedback: any): Promise<any> {
+    const [created] = await db.insert(privateFeedback).values(feedback).returning();
+    return created;
+  }
+
+  async hasPublicReview(bookingId: string, userId: string): Promise<boolean> {
+    const existing = await db.select().from(reviews)
+      .where(and(eq(reviews.bookingId, bookingId), eq(reviews.reviewerId, userId)));
+    return existing.length > 0;
+  }
+
+  async hasPrivateFeedback(bookingId: string, userId: string): Promise<boolean> {
+    const existing = await db.select().from(privateFeedback)
+      .where(and(eq(privateFeedback.bookingId, bookingId), eq(privateFeedback.reviewerId, userId)));
+    return existing.length > 0;
   }
 }
 

@@ -360,6 +360,144 @@ export async function registerRoutes(
     res.json(result);
   });
 
+  // ============ VERIFICATION & VETTING SYSTEM ============
+  
+  const { VERIFICATION_LEVELS, SA_PROFESSIONAL_BODIES, CONCERN_CATEGORIES } = await import("@shared/schema");
+  
+  // Get verification status for a freelancer
+  app.get("/api/freelancers/:id/verification", async (req, res) => {
+    try {
+      const verification = await storage.getFreelancerVerification(req.params.id);
+      res.json(verification || { 
+        verificationLevel: "unverified", 
+        verificationScore: 0,
+        identityVerified: false,
+        qualificationsVerified: false,
+        experienceVerified: false,
+        professionalBodyVerified: false,
+        backgroundCheckCompleted: false,
+      });
+    } catch (error) {
+      console.error("Error fetching verification:", error);
+      res.status(500).json({ message: "Failed to fetch verification status" });
+    }
+  });
+
+  // Submit verification documents (freelancer submits for review)
+  app.post("/api/verification/submit", isAuthenticated, async (req: any, res) => {
+    try {
+      const freelancerId = req.user.claims.sub;
+      const { 
+        verificationType, // 'identity', 'qualifications', 'experience', 'professional_body'
+        documentUrls,
+        professionalBodyCode,
+        registrationNumber,
+        claimedYearsExperience,
+        referenceContacts,
+      } = req.body;
+
+      // In a real implementation, this would queue for manual review
+      // For now, we'll create/update the verification record
+      const verification = await storage.submitVerification(freelancerId, {
+        verificationType,
+        documentUrls,
+        professionalBodyCode,
+        registrationNumber,
+        claimedYearsExperience,
+        referenceContacts,
+      });
+
+      res.json({ 
+        message: "Verification documents submitted for review. You will be notified within 2-3 business days.",
+        verification 
+      });
+    } catch (error) {
+      console.error("Error submitting verification:", error);
+      res.status(500).json({ message: "Failed to submit verification" });
+    }
+  });
+
+  // Get professional bodies list
+  app.get("/api/verification/professional-bodies", (_req, res) => {
+    res.json(SA_PROFESSIONAL_BODIES);
+  });
+
+  // Get verification levels info
+  app.get("/api/verification/levels", (_req, res) => {
+    res.json(VERIFICATION_LEVELS);
+  });
+
+  // ============ PRIVATE FEEDBACK SYSTEM (Fiverr-style double testimonial) ============
+  
+  // Submit private feedback after order completion
+  app.post("/api/bookings/:id/private-feedback", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const bookingId = req.params.id;
+      
+      // Verify user was part of this booking
+      const booking = await storage.getBooking(bookingId);
+      if (!booking) {
+        return res.status(404).json({ message: "Booking not found" });
+      }
+      
+      if (booking.clientId !== userId && booking.freelancerId !== userId) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      const revieweeId = booking.clientId === userId ? booking.freelancerId : booking.clientId;
+
+      const feedback = await storage.submitPrivateFeedback({
+        bookingId,
+        reviewerId: userId,
+        revieweeId,
+        privateRating: req.body.privateRating,
+        wouldRecommend: req.body.wouldRecommend,
+        wouldHireAgain: req.body.wouldHireAgain,
+        communicationRating: req.body.communicationRating,
+        professionalismRating: req.body.professionalismRating,
+        qualityRating: req.body.qualityRating,
+        valueRating: req.body.valueRating,
+        privateComments: req.body.privateComments,
+        concernsRaised: req.body.concernsRaised || [],
+        flaggedForReview: (req.body.concernsRaised || []).length > 0,
+      });
+
+      res.json({ 
+        message: "Thank you for your private feedback. This helps us maintain quality on the platform.",
+        feedback 
+      });
+    } catch (error) {
+      console.error("Error submitting private feedback:", error);
+      res.status(500).json({ message: "Failed to submit private feedback" });
+    }
+  });
+
+  // Check if private feedback is pending for a booking
+  app.get("/api/bookings/:id/feedback-status", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const bookingId = req.params.id;
+      
+      const hasPublicReview = await storage.hasPublicReview(bookingId, userId);
+      const hasPrivateFeedback = await storage.hasPrivateFeedback(bookingId, userId);
+      
+      res.json({
+        hasPublicReview,
+        hasPrivateFeedback,
+        feedbackComplete: hasPublicReview && hasPrivateFeedback,
+      });
+    } catch (error) {
+      console.error("Error checking feedback status:", error);
+      res.status(500).json({ message: "Failed to check feedback status" });
+    }
+  });
+
+  // Get concern categories for private feedback
+  app.get("/api/feedback/concern-categories", (_req, res) => {
+    res.json(CONCERN_CATEGORIES);
+  });
+
   // ============ AI-POWERED MATCHING ============
   
   app.post("/api/ai/match-taskers", async (req, res) => {
