@@ -38,6 +38,7 @@ export interface IStorage {
   getFreelancerReviews(freelancerId: string): Promise<Review[]>;
   
   // Messaging operations
+  getConversation(id: string): Promise<Conversation | undefined>;
   getOrCreateConversation(user1Id: string, user2Id: string, jobId?: string): Promise<Conversation>;
   getUserConversations(userId: string): Promise<Conversation[]>;
   sendMessage(message: InsertMessage): Promise<Message>;
@@ -173,6 +174,11 @@ class DatabaseStorage implements IStorage {
   }
 
   // Messaging operations
+  async getConversation(id: string): Promise<Conversation | undefined> {
+    const [conversation] = await db.select().from(conversations).where(eq(conversations.id, id));
+    return conversation;
+  }
+
   async getOrCreateConversation(user1Id: string, user2Id: string, jobId?: string): Promise<Conversation> {
     const existing = await db.select().from(conversations)
       .where(or(

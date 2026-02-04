@@ -211,13 +211,21 @@ export async function registerRoutes(
 
   app.patch("/api/bookings/:id/status", isAuthenticated, async (req: any, res) => {
     try {
+      const userId = req.user.claims.sub;
       const { status } = req.body;
-      const booking = await storage.updateBookingStatus(req.params.id, status);
       
-      if (!booking) {
+      // Get the booking first to check ownership
+      const existingBooking = await storage.getBooking(req.params.id);
+      if (!existingBooking) {
         return res.status(404).json({ message: "Booking not found" });
       }
       
+      // Authorization: only client or freelancer can update booking status
+      if (existingBooking.clientId !== userId && existingBooking.freelancerId !== userId) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+      
+      const booking = await storage.updateBookingStatus(req.params.id, status);
       res.json(booking);
     } catch (error) {
       console.error("Error updating booking:", error);
@@ -280,6 +288,18 @@ export async function registerRoutes(
 
   app.get("/api/conversations/:id/messages", isAuthenticated, async (req: any, res) => {
     try {
+      const userId = req.user.claims.sub;
+      const conversation = await storage.getConversation(req.params.id);
+      
+      if (!conversation) {
+        return res.status(404).json({ message: "Conversation not found" });
+      }
+      
+      // Authorization: only participants can view messages
+      if (conversation.participant1Id !== userId && conversation.participant2Id !== userId) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+      
       const messages = await storage.getConversationMessages(req.params.id);
       res.json(messages);
     } catch (error) {
@@ -302,6 +322,157 @@ export async function registerRoutes(
     } catch (error) {
       console.error("Error sending message:", error);
       res.status(500).json({ message: "Failed to send message" });
+    }
+  });
+
+  // ============ AI-POWERED MATCHING ============
+  
+  app.post("/api/ai/match-taskers", async (req, res) => {
+    try {
+      const { taskDescription, category, location, budget, urgency } = req.body;
+      
+      // Get all freelancers
+      const freelancers = await storage.searchFreelancers(undefined, location);
+      
+      // AI scoring algorithm
+      const scoredFreelancers = freelancers.map((freelancer) => {
+        let score = 0;
+        let reasons: string[] = [];
+        
+        // Rating score (0-30 points)
+        const ratingScore = (freelancer.rating || 0) / 500 * 30;
+        score += ratingScore;
+        if (ratingScore > 25) reasons.push("Top-rated professional");
+        
+        // Experience score (0-25 points)
+        const experienceScore = Math.min(freelancer.completedJobs * 2.5, 25);
+        score += experienceScore;
+        if (freelancer.completedJobs > 10) reasons.push(`${freelancer.completedJobs} completed jobs`);
+        
+        // Pro status bonus (10 points)
+        if (freelancer.isPro) {
+          score += 10;
+          reasons.push("Pro verified member");
+        }
+        
+        // Location match (20 points for exact, 10 for partial)
+        if (location && freelancer.location) {
+          if (freelancer.location.toLowerCase().includes(location.toLowerCase())) {
+            score += 20;
+            reasons.push("Local professional");
+          }
+        }
+        
+        // Budget compatibility (15 points)
+        if (budget && freelancer.hourlyRate) {
+          const rateRatio = budget / (freelancer.hourlyRate / 100);
+          if (rateRatio >= 0.8 && rateRatio <= 1.5) {
+            score += 15;
+            reasons.push("Within budget");
+          } else if (rateRatio >= 0.5) {
+            score += 8;
+          }
+        }
+        
+        // Urgency bonus for available taskers
+        if (urgency === "same-day") {
+          score += 5;
+          reasons.push("Available today");
+        }
+        
+        return {
+          ...freelancer,
+          matchScore: Math.min(Math.round(score), 100),
+          matchReasons: reasons,
+          estimatedResponseTime: freelancer.isPro ? "< 1 hour" : "< 4 hours",
+        };
+      });
+      
+      // Sort by match score
+      const rankedFreelancers = scoredFreelancers
+        .sort((a, b) => b.matchScore - a.matchScore)
+        .slice(0, 10);
+      
+      res.json({
+        matches: rankedFreelancers,
+        aiInsights: {
+          totalMatches: rankedFreelancers.length,
+          topMatch: rankedFreelancers[0]?.matchScore || 0,
+          averageRating: freelancers.length > 0 
+            ? (freelancers.reduce((sum, f) => sum + (f.rating || 0), 0) / freelancers.length / 100).toFixed(1)
+            : "N/A",
+          recommendation: rankedFreelancers.length > 0 
+            ? `We found ${rankedFreelancers.length} great matches for your task. The top candidate has a ${rankedFreelancers[0]?.matchScore}% match score.`
+            : "No matches found. Try expanding your search criteria.",
+        }
+      });
+    } catch (error) {
+      console.error("Error matching taskers:", error);
+      res.status(500).json({ message: "Failed to match taskers" });
+    }
+  });
+
+  // AI-powered job description generator
+  app.post("/api/ai/generate-description", async (req, res) => {
+    try {
+      const { title, category, locationType } = req.body;
+      
+      const templates: Record<string, string> = {
+        trades: `We are seeking an experienced ${title} to assist with our project in South Africa.\n\nKey Responsibilities:\n- Deliver professional, high-quality work that meets local building standards\n- Ensure compliance with safety regulations and SANS codes\n- Communicate clearly about timeline and requirements\n- Provide all necessary certificates upon completion\n\nRequirements:\n- Valid trade certification/registration\n- Proven track record with verifiable references\n- Own tools and reliable transportation\n- Professional liability insurance preferred`,
+        
+        cleaning: `Looking for a reliable ${title} for ${locationType === 'onsite' ? 'our premises' : 'regular service'}.\n\nScope of Work:\n- Thorough cleaning to the highest standards\n- Use of eco-friendly products when possible\n- Attention to detail in all areas\n- Flexible scheduling available\n\nRequirements:\n- Previous cleaning experience\n- Professional attitude\n- Own transport`,
+        
+        safety: `We require a certified ${title} for compliance purposes.\n\nResponsibilities:\n- Conduct thorough safety audits and inspections\n- Prepare compliance documentation and certificates\n- Identify hazards and recommend corrective actions\n- Ensure adherence to OHS Act and SANS standards\n\nRequirements:\n- SAMTRAC or equivalent qualification\n- Registered with relevant professional body\n- Experience in similar environments\n- Strong documentation skills`,
+        
+        default: `We are looking for an experienced ${title} to join our project.\n\nKey Responsibilities:\n- Deliver high-quality work according to specifications\n- Collaborate effectively with our team in South Africa\n- Adhere to safety and compliance standards\n- Meet agreed-upon deadlines\n\nRequirements:\n- Proven experience in the field\n- Relevant certifications/qualifications\n- Excellent communication skills\n- Reliability and professionalism`,
+      };
+      
+      const description = templates[category?.toLowerCase()] || templates.default;
+      
+      res.json({ description });
+    } catch (error) {
+      console.error("Error generating description:", error);
+      res.status(500).json({ message: "Failed to generate description" });
+    }
+  });
+
+  // AI budget estimation
+  app.post("/api/ai/estimate-budget", async (req, res) => {
+    try {
+      const { title, category, duration, location } = req.body;
+      
+      // Market rate database (ZAR)
+      const baseRates: Record<string, { min: number; max: number; unit: string }> = {
+        trades: { min: 350, max: 800, unit: "hour" },
+        cleaning: { min: 150, max: 400, unit: "hour" },
+        safety: { min: 2500, max: 8000, unit: "day" },
+        tech: { min: 500, max: 1500, unit: "hour" },
+        creative: { min: 300, max: 1200, unit: "hour" },
+        moving: { min: 1200, max: 3500, unit: "half-day" },
+        default: { min: 250, max: 750, unit: "hour" },
+      };
+      
+      const rate = baseRates[category?.toLowerCase()] || baseRates.default;
+      
+      // Location adjustment (metro areas typically higher)
+      let locationMultiplier = 1;
+      const metroAreas = ["johannesburg", "cape town", "pretoria", "durban", "sandton"];
+      if (location && metroAreas.some(m => location.toLowerCase().includes(m))) {
+        locationMultiplier = 1.2;
+      }
+      
+      const estimated = {
+        low: Math.round(rate.min * locationMultiplier),
+        high: Math.round(rate.max * locationMultiplier),
+        recommended: Math.round((rate.min + rate.max) / 2 * locationMultiplier),
+        unit: rate.unit,
+        insight: `Based on current South African market rates for ${category || 'similar services'} in ${location || 'your area'}. Pro tip: Offering fair rates attracts top-rated professionals faster.`,
+      };
+      
+      res.json(estimated);
+    } catch (error) {
+      console.error("Error estimating budget:", error);
+      res.status(500).json({ message: "Failed to estimate budget" });
     }
   });
 
