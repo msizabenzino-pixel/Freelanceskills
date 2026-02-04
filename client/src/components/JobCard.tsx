@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { MapPin, Clock, DollarSign, Bookmark } from "lucide-react";
+import { MapPin, Clock, Wallet, Bookmark } from "lucide-react";
 
 interface JobCardProps {
   title: string;
@@ -32,7 +32,7 @@ export function JobCard({ title, company, type, budget, location, postedAt, tags
         
         <div className="flex flex-wrap gap-3 text-xs text-muted-foreground font-medium">
           <div className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md">
-            <DollarSign className="w-3.5 h-3.5" />
+            <Wallet className="w-3.5 h-3.5" />
             {budget}
           </div>
           <div className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md">
