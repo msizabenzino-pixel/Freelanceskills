@@ -47,6 +47,11 @@ export default function Pricing() {
               </ul>
             </div>
             <div className="p-8 bg-muted/30 border-t border-border">
+              <div className="flex items-center justify-center gap-2 mb-4 grayscale opacity-70">
+                 <span className="text-[10px] font-bold">Secured by</span>
+                 <div className="w-12 h-4 bg-gray-400 rounded"></div> {/* PayFast mockup */}
+                 <div className="w-8 h-4 bg-gray-400 rounded"></div> {/* Ozow mockup */}
+              </div>
               <Link href="/signup">
                 <Button variant="outline" className="w-full font-bold">Get Started</Button>
               </Link>

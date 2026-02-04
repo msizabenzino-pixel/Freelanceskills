@@ -1,11 +1,16 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { JobLifecycleCard } from "@/components/JobLifecycleCard";
+import { PaymentModal } from "@/components/PaymentModal";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LayoutDashboard, Wallet, MessageSquare, Settings, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { LayoutDashboard, Wallet, MessageSquare, Settings, AlertCircle, PlusCircle } from "lucide-react";
+import { useState } from "react";
 
 export default function Dashboard() {
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+
   const activeContracts = [
     {
       title: "Mobile App UI Design",
@@ -36,6 +41,11 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
+      <PaymentModal 
+        isOpen={showPaymentModal} 
+        onClose={() => setShowPaymentModal(false)} 
+        amount="5000" 
+      />
       
       <div className="container mx-auto px-4 md:px-6 pt-24 md:pt-32 pb-20 flex-1">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
@@ -52,6 +62,9 @@ export default function Dashboard() {
                  <div className="text-[10px] text-muted-foreground font-bold uppercase leading-none">Escrow Balance</div>
                  <div className="text-lg font-bold text-primary">R17,500.00</div>
                </div>
+               <Button size="sm" className="ml-2 h-8" onClick={() => setShowPaymentModal(true)}>
+                 <PlusCircle className="w-4 h-4 mr-1" /> Deposit
+               </Button>
             </div>
             <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
               10% platform commission applied on completion
