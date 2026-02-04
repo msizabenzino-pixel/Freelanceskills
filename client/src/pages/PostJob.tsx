@@ -6,35 +6,60 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, Sparkles, Wand2, Loader2 } from "lucide-react";
+import { ArrowLeft, Sparkles, Wand2, Loader2, ChevronDown, ChevronUp } from "lucide-react";
 import { Link } from "wouter";
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { AIJobPostHelper } from "@/components/AIJobPostHelper";
+import { SERVICE_CATEGORIES } from "@shared/categories";
+
+interface JobPostSuggestion {
+  title: string;
+  description: string;
+  suggestedCategory: string;
+  suggestedBudget: { min: number; max: number };
+  requiredSkills: string[];
+  questions: string[];
+}
 
 export default function PostJob() {
-  const [isGenerating, setIsGenerating] = useState(false);
   const [description, setDescription] = useState("");
   const [title, setTitle] = useState("");
   const [budget, setBudget] = useState("");
-  const [isEstimating, setIsEstimating] = useState(false);
+  const [category, setCategory] = useState("");
+  const [skills, setSkills] = useState<string[]>([]);
+  const [showAIHelper, setShowAIHelper] = useState(false);
+
+  const generateMutation = useMutation({
+    mutationFn: async (): Promise<{ description: string; suggestedBudget: { min: number; max: number } }> => {
+      const response = await fetch("/api/ai/generate-job-post", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ briefDescription: title }),
+      });
+      if (!response.ok) throw new Error("Failed to generate");
+      return response.json();
+    },
+    onSuccess: (data) => {
+      setDescription(data.description);
+      setBudget(data.suggestedBudget?.max?.toString() || "15000");
+    },
+  });
 
   const handleAIGenerate = () => {
-    if (!title) return;
-    setIsGenerating(true);
-    // Simulate AI delay
-    setTimeout(() => {
-      setDescription(
-        `We are looking for an experienced ${title} to join our project. \n\nKey Responsibilities:\n- Deliver high-quality work according to specifications\n- Collaborate with our local team in South Africa\n- Adhere to safety and compliance standards\n\nRequirements:\n- Proven experience in the field\n- Relevant certifications/qualifications\n- Reliability and punctuality\n\nThis is a great opportunity for a dedicated professional looking for consistent work.`
-      );
-      setIsGenerating(false);
-    }, 1500);
+    if (title.length >= 5) {
+      generateMutation.mutate();
+    }
   };
 
-  const handleAIEstimate = () => {
-    setIsEstimating(true);
-    setTimeout(() => {
-      setBudget("15000");
-      setIsEstimating(false);
-    }, 1000);
+  const handleApplyAISuggestion = (suggestion: JobPostSuggestion) => {
+    setTitle(suggestion.title);
+    setDescription(suggestion.description);
+    setCategory(suggestion.suggestedCategory);
+    setBudget(suggestion.suggestedBudget.max.toString());
+    setSkills(suggestion.requiredSkills);
+    setShowAIHelper(false);
   };
 
   return (
@@ -57,6 +82,27 @@ export default function PostJob() {
           </div>
         </div>
 
+        <div className="mb-6">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setShowAIHelper(!showAIHelper)}
+            className="w-full justify-between"
+            data-testid="button-toggle-ai-helper"
+          >
+            <span className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-primary" />
+              Need help writing your job post? Try our AI Assistant
+            </span>
+            {showAIHelper ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </Button>
+          {showAIHelper && (
+            <div className="mt-4">
+              <AIJobPostHelper onApply={handleApplyAISuggestion} />
+            </div>
+          )}
+        </div>
+
         <Card className="p-8 shadow-lg border-border">
           <form className="space-y-8">
             
@@ -69,23 +115,20 @@ export default function PostJob() {
                   className="h-12 text-lg"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
+                  data-testid="input-job-title"
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="category">Category</Label>
-                <Select>
-                  <SelectTrigger className="h-12">
+                <Select value={category} onValueChange={setCategory}>
+                  <SelectTrigger className="h-12" data-testid="select-category">
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="trades">Trades (Plumbing, Electrical, etc.)</SelectItem>
-                    <SelectItem value="construction">Construction & Safety</SelectItem>
-                    <SelectItem value="dev">Development & IT</SelectItem>
-                    <SelectItem value="design">Design & Creative</SelectItem>
-                    <SelectItem value="writing">Writing & Translation</SelectItem>
-                    <SelectItem value="admin">Admin & Customer Support</SelectItem>
-                    <SelectItem value="finance">Finance & Accounting</SelectItem>
+                    {SERVICE_CATEGORIES.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -100,14 +143,15 @@ export default function PostJob() {
                   className="text-xs text-accent hover:text-accent hover:bg-accent/10 h-8"
                   type="button"
                   onClick={handleAIGenerate}
-                  disabled={isGenerating || !title}
+                  disabled={generateMutation.isPending || title.length < 5}
+                  data-testid="button-ai-write"
                 >
-                  {isGenerating ? (
+                  {generateMutation.isPending ? (
                     <Loader2 className="w-3 h-3 mr-1 animate-spin" />
                   ) : (
                     <Wand2 className="w-3 h-3 mr-1" />
                   )}
-                  {isGenerating ? "Generating..." : "AI Auto-Write"}
+                  {generateMutation.isPending ? "Generating..." : "AI Auto-Write"}
                 </Button>
               </div>
               <div className="relative">
@@ -117,6 +161,7 @@ export default function PostJob() {
                   className="min-h-[200px] text-base resize-none p-4" 
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
+                  data-testid="textarea-description"
                 />
               </div>
             </div>
@@ -139,14 +184,6 @@ export default function PostJob() {
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                    <Label htmlFor="budget">Budget (ZAR)</Label>
-                   <button 
-                     type="button" 
-                     className="text-[10px] text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors"
-                     onClick={handleAIEstimate}
-                   >
-                     {isEstimating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3 text-accent" />}
-                     AI Suggestion
-                   </button>
                 </div>
                 <Input 
                   id="budget" 
@@ -155,26 +192,47 @@ export default function PostJob() {
                   className="h-[60px] text-lg"
                   value={budget}
                   onChange={(e) => setBudget(e.target.value)}
+                  data-testid="input-budget"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
               <Label>Required Skills</Label>
-              <Input placeholder="Type skills and press Enter (e.g. React, Python)" className="h-12" />
-              <div className="flex flex-wrap gap-2 pt-2">
-                <span className="bg-secondary px-3 py-1 rounded-full text-sm flex items-center gap-1">
-                  React <button className="hover:text-destructive">×</button>
-                </span>
-                <span className="bg-secondary px-3 py-1 rounded-full text-sm flex items-center gap-1">
-                  TypeScript <button className="hover:text-destructive">×</button>
-                </span>
+              <Input 
+                placeholder="Type skills and press Enter (e.g. React, Python)" 
+                className="h-12" 
+                data-testid="input-skills"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    const value = (e.target as HTMLInputElement).value.trim();
+                    if (value && !skills.includes(value)) {
+                      setSkills([...skills, value]);
+                      (e.target as HTMLInputElement).value = "";
+                    }
+                  }
+                }}
+              />
+              <div className="flex flex-wrap gap-2 pt-2" data-testid="skills-list">
+                {skills.map((skill, i) => (
+                  <span key={i} className="bg-secondary px-3 py-1 rounded-full text-sm flex items-center gap-1">
+                    {skill} 
+                    <button 
+                      type="button"
+                      className="hover:text-destructive"
+                      onClick={() => setSkills(skills.filter((_, idx) => idx !== i))}
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
               </div>
             </div>
 
             <div className="pt-6 border-t border-border flex justify-end gap-4">
-              <Button variant="ghost" className="h-12 px-8">Save Draft</Button>
-              <Button className="h-12 px-8 bg-primary text-white hover:bg-primary/90 font-bold shadow-lg">Post Job Now</Button>
+              <Button variant="ghost" className="h-12 px-8" data-testid="button-save-draft">Save Draft</Button>
+              <Button className="h-12 px-8 bg-primary text-white hover:bg-primary/90 font-bold shadow-lg" data-testid="button-post-job">Post Job Now</Button>
             </div>
 
           </form>

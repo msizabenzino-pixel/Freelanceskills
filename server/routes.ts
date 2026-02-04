@@ -698,5 +698,107 @@ export async function registerRoutes(
     }
   });
 
+  // AI Proposal Helper routes
+  const { generateProposalSuggestion, generateProposalInputSchema, improveProposal, improveProposalInputSchema } = await import("./replit_integrations/recommendations/proposal-helper");
+  
+  app.post("/api/ai/generate-proposal", isAuthenticated, async (req: any, res) => {
+    try {
+      const validatedInput = generateProposalInputSchema.parse(req.body);
+      const proposal = await generateProposalSuggestion(validatedInput);
+      res.json(proposal);
+    } catch (error: any) {
+      if (error.name === "ZodError") {
+        return res.status(400).json({ message: error.errors[0]?.message || "Invalid input" });
+      }
+      console.error("Error generating proposal:", error);
+      res.status(500).json({ message: "Failed to generate proposal" });
+    }
+  });
+
+  app.post("/api/ai/improve-proposal", isAuthenticated, async (req: any, res) => {
+    try {
+      const validatedInput = improveProposalInputSchema.parse(req.body);
+      const improved = await improveProposal(
+        validatedInput.currentProposal,
+        validatedInput.jobDescription,
+        validatedInput.improvementFocus
+      );
+      res.json(improved);
+    } catch (error: any) {
+      if (error.name === "ZodError") {
+        return res.status(400).json({ message: error.errors[0]?.message || "Invalid input" });
+      }
+      console.error("Error improving proposal:", error);
+      res.status(500).json({ message: "Failed to improve proposal" });
+    }
+  });
+
+  // AI Job Post Helper routes
+  const { generateJobPost, generateJobPostInputSchema, improveJobPost, improveJobPostInputSchema } = await import("./replit_integrations/recommendations/job-post-helper");
+  
+  app.post("/api/ai/generate-job-post", isAuthenticated, async (req: any, res) => {
+    try {
+      const validatedInput = generateJobPostInputSchema.parse(req.body);
+      const jobPost = await generateJobPost(validatedInput);
+      res.json(jobPost);
+    } catch (error: any) {
+      if (error.name === "ZodError") {
+        return res.status(400).json({ message: error.errors[0]?.message || "Invalid input" });
+      }
+      console.error("Error generating job post:", error);
+      res.status(500).json({ message: "Failed to generate job post" });
+    }
+  });
+
+  app.post("/api/ai/improve-job-post", isAuthenticated, async (req: any, res) => {
+    try {
+      const validatedInput = improveJobPostInputSchema.parse(req.body);
+      const improved = await improveJobPost(validatedInput.title, validatedInput.description);
+      res.json(improved);
+    } catch (error: any) {
+      if (error.name === "ZodError") {
+        return res.status(400).json({ message: error.errors[0]?.message || "Invalid input" });
+      }
+      console.error("Error improving job post:", error);
+      res.status(500).json({ message: "Failed to improve job post" });
+    }
+  });
+
+  // AI Quality Check and Profile Optimization routes
+  const { checkContentQuality, contentQualityCheckInputSchema, optimizeProfile, profileOptimizationInputSchema } = await import("./replit_integrations/recommendations/quality-check");
+  
+  app.post("/api/ai/check-quality", isAuthenticated, async (req: any, res) => {
+    try {
+      const validatedInput = contentQualityCheckInputSchema.parse(req.body);
+      const result = await checkContentQuality(validatedInput);
+      res.json(result);
+    } catch (error: any) {
+      if (error.name === "ZodError") {
+        return res.status(400).json({ message: error.errors[0]?.message || "Invalid input" });
+      }
+      console.error("Error checking content quality:", error);
+      res.status(500).json({ message: "Failed to check content quality" });
+    }
+  });
+
+  app.post("/api/ai/optimize-profile", isAuthenticated, async (req: any, res) => {
+    try {
+      const validatedInput = profileOptimizationInputSchema.parse(req.body);
+      const result = await optimizeProfile(
+        validatedInput.bio,
+        validatedInput.title,
+        validatedInput.skills,
+        validatedInput.category
+      );
+      res.json(result);
+    } catch (error: any) {
+      if (error.name === "ZodError") {
+        return res.status(400).json({ message: error.errors[0]?.message || "Invalid input" });
+      }
+      console.error("Error optimizing profile:", error);
+      res.status(500).json({ message: "Failed to optimize profile" });
+    }
+  });
+
   return httpServer;
 }

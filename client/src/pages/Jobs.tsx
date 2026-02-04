@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { JobCard } from "@/components/JobCard";
 import { Footer } from "@/components/Footer";
@@ -5,9 +6,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
-import { Search, Filter, Briefcase } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Search, Filter, Briefcase, Sparkles } from "lucide-react";
+import { AIProposalHelper } from "@/components/AIProposalHelper";
+
+interface Job {
+  title: string;
+  company: string;
+  type: string;
+  budget: string;
+  location: string;
+  postedAt: string;
+  tags: string[];
+  description: string;
+}
 
 export default function Jobs() {
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [showProposalHelper, setShowProposalHelper] = useState(false);
   const jobs = [
     {
       title: "Senior React Developer",
@@ -160,7 +176,9 @@ export default function Jobs() {
 
             <div className="grid gap-4">
               {jobs.map((job, i) => (
-                <JobCard key={i} {...job} />
+                <div key={i} onClick={() => { setSelectedJob(job); setShowProposalHelper(true); }} className="cursor-pointer">
+                  <JobCard {...job} />
+                </div>
               ))}
             </div>
 
@@ -172,6 +190,30 @@ export default function Jobs() {
       </div>
 
       <Footer />
+
+      <Dialog open={showProposalHelper} onOpenChange={setShowProposalHelper}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-blue-600" />
+              Apply for: {selectedJob?.title}
+            </DialogTitle>
+            <DialogDescription>
+              Use our AI assistant to craft a compelling proposal for this job
+            </DialogDescription>
+          </DialogHeader>
+          {selectedJob && (
+            <AIProposalHelper
+              jobTitle={selectedJob.title}
+              jobDescription={selectedJob.description}
+              onApply={(proposal) => {
+                console.log("Proposal submitted:", proposal);
+                setShowProposalHelper(false);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

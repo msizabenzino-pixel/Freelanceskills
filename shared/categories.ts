@@ -283,6 +283,25 @@ export const SERVICE_CATEGORIES = [
       "Art Classes",
       "Online Courses"
     ]
+  },
+  {
+    id: "ai_services",
+    name: "AI Services",
+    icon: "Bot",
+    color: "bg-violet-600",
+    description: "AI specialists, prompt engineering, and AI-augmented services",
+    subcategories: [
+      "Prompt Engineering",
+      "AI Model Training",
+      "AI Content Editing",
+      "Chatbot Development",
+      "AI Data Annotation",
+      "AI Image Generation",
+      "AI Voice & Audio",
+      "AI Automation",
+      "AI Consulting",
+      "Machine Learning"
+    ]
   }
 ];
 

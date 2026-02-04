@@ -45,15 +45,47 @@ Preferred communication style: Simple, everyday language.
 
 ### AI Features
 - **AI Task Recommendation Engine**: Located at `/task-assistant`, helps clients describe their needs and get AI-powered recommendations for:
-  - Relevant service categories (from 15 predefined categories in `shared/categories.ts`)
+  - Relevant service categories (from 16 predefined categories in `shared/categories.ts`, including AI Services)
   - Budget estimates in ZAR based on South African market rates
   - Required skills for the task
   - Task breakdown into steps
   - Pro tips for hiring
+
+- **AI Proposal Assistant**: Helps freelancers write compelling proposals with:
+  - Full proposal generation based on job details and freelancer skills
+  - Cover letter generation
+  - Key points highlighting
+  - Improvement suggestions
+
+- **AI Job Post Helper**: Assists clients in creating professional job posts with:
+  - Title and description generation
+  - Category and budget suggestions
+  - Screening questions
+  - Post improvement recommendations
+
+- **AI Profile Optimization**: Enhances freelancer profiles with:
+  - Bio optimization for SEO
+  - Title suggestions
+  - Skill recommendations
+  - Keyword suggestions for discoverability
+
+- **AI Content Quality Check**: Analyzes content for:
+  - Originality detection (AI-generated probability)
+  - Plagiarism risk assessment
+  - Quality metrics (clarity, professionalism, relevance, grammar)
+  - Improvement suggestions
+
 - **API Endpoints**: 
-  - `POST /api/ai/analyze-task` - Analyzes task descriptions with Zod validation
-  - `POST /api/ai/match-packages` - Matches tasks to existing service packages
-- **Implementation**: `server/replit_integrations/recommendations/index.ts`
+  - `POST /api/ai/analyze-task` - Analyzes task descriptions
+  - `POST /api/ai/match-packages` - Matches tasks to service packages
+  - `POST /api/ai/generate-proposal` - Generates proposal for freelancers
+  - `POST /api/ai/improve-proposal` - Improves existing proposals
+  - `POST /api/ai/generate-job-post` - Generates job posts for clients
+  - `POST /api/ai/improve-job-post` - Improves existing job posts
+  - `POST /api/ai/check-quality` - Checks content quality
+  - `POST /api/ai/optimize-profile` - Optimizes freelancer profiles
+
+- **Implementation**: `server/replit_integrations/recommendations/`
 
 ### Authentication Flow
 - Replit OIDC handles login/logout at `/api/login` and `/api/logout`
