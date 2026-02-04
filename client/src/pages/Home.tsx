@@ -3,6 +3,7 @@ import { Hero } from "@/components/Hero";
 import { JobCard } from "@/components/JobCard";
 import { FreelancerCard } from "@/components/FreelancerCard";
 import { Footer } from "@/components/Footer";
+import { SafetyBanner } from "@/components/SafetyBanner";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, Shield } from "lucide-react";
 import { Link } from "wouter";
@@ -97,6 +98,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background font-sans flex flex-col">
       <Navbar />
+      <SafetyBanner />
       <Hero />
 
       {/* Trusted By Section */}

@@ -12,6 +12,7 @@ export async function registerRoutes(
   registerAuthRoutes(app);
   const { isAuthenticated } = await import("./replit_integrations/auth");
   const { insertJobSchema, insertProfileSchema, insertServicePackageSchema, insertBookingSchema, insertReviewSchema, insertMessageSchema } = await import("@shared/schema");
+  const { checkMessageSafety, SAFETY_DISCLAIMERS, REPORT_REASONS } = await import("@shared/safety");
 
   // Job routes
   app.get("/api/jobs", async (_req, res) => {
@@ -311,18 +312,52 @@ export async function registerRoutes(
   app.post("/api/conversations/:id/messages", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
+      
+      // Safety check on message content
+      const safetyResult = checkMessageSafety(req.body.content || "");
+      
+      if (!safetyResult.isClean) {
+        const blockedViolations = safetyResult.violations.filter(v => v.severity === 'blocked');
+        if (blockedViolations.length > 0) {
+          return res.status(400).json({ 
+            message: "Message blocked for safety reasons",
+            violations: blockedViolations,
+            hint: "For your protection, sharing contact details and requesting off-platform payments is not allowed."
+          });
+        }
+      }
+      
       const validatedData = insertMessageSchema.parse({
         ...req.body,
+        content: safetyResult.sanitizedContent,
         conversationId: req.params.id,
         senderId: userId,
       });
       
       const message = await storage.sendMessage(validatedData);
-      res.status(201).json(message);
+      res.status(201).json({
+        ...message,
+        safetyWarnings: safetyResult.violations.filter(v => v.severity === 'warning'),
+      });
     } catch (error) {
       console.error("Error sending message:", error);
       res.status(500).json({ message: "Failed to send message" });
     }
+  });
+
+  // Safety & Trust endpoints
+  app.get("/api/safety/disclaimers", (_req, res) => {
+    res.json(SAFETY_DISCLAIMERS);
+  });
+
+  app.get("/api/safety/report-reasons", (_req, res) => {
+    res.json(REPORT_REASONS);
+  });
+
+  app.post("/api/safety/check-content", (req, res) => {
+    const { content } = req.body;
+    const result = checkMessageSafety(content || "");
+    res.json(result);
   });
 
   // ============ AI-POWERED MATCHING ============
