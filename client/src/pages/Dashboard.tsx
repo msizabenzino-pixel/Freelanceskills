@@ -3,7 +3,7 @@ import { Footer } from "@/components/Footer";
 import { JobLifecycleCard } from "@/components/JobLifecycleCard";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LayoutDashboard, Wallet, MessageSquare, Settings } from "lucide-react";
+import { LayoutDashboard, Wallet, MessageSquare, Settings, AlertCircle } from "lucide-react";
 
 export default function Dashboard() {
   const activeContracts = [
@@ -43,14 +43,19 @@ export default function Dashboard() {
             <h1 className="text-3xl font-display font-bold text-primary">Client Dashboard</h1>
             <p className="text-muted-foreground">Manage your active jobs and intellectual service contracts.</p>
           </div>
-          <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-border shadow-sm">
-             <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent">
-               <Wallet className="w-5 h-5" />
-             </div>
-             <div>
-               <div className="text-[10px] text-muted-foreground font-bold uppercase leading-none">Escrow Balance</div>
-               <div className="text-lg font-bold text-primary">R17,500.00</div>
-             </div>
+          <div className="flex flex-col items-end gap-2">
+            <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-border shadow-sm">
+               <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent">
+                 <Wallet className="w-5 h-5" />
+               </div>
+               <div>
+                 <div className="text-[10px] text-muted-foreground font-bold uppercase leading-none">Escrow Balance</div>
+                 <div className="text-lg font-bold text-primary">R17,500.00</div>
+               </div>
+            </div>
+            <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
+              10% platform commission applied on completion
+            </div>
           </div>
         </div>
 

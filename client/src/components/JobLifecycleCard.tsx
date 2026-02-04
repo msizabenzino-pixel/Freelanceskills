@@ -36,6 +36,9 @@ export function JobLifecycleCard({ title, freelancer, budget, initialStatus, des
     else if (status === 'delivered') setStatus('completed');
   };
 
+  const commission = parseFloat(budget.replace(/[^0-9.]/g, '')) * 0.1;
+  const netAmount = parseFloat(budget.replace(/[^0-9.]/g, '')) - commission;
+
   return (
     <Card className="group hover:shadow-lg transition-all duration-300 border-border/50 overflow-hidden">
       <CardHeader className="space-y-4 pb-2">
@@ -54,6 +57,12 @@ export function JobLifecycleCard({ title, freelancer, budget, initialStatus, des
           <div className="text-right">
             <div className="text-lg font-bold text-primary">{budget}</div>
             <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Budget Escrowed</p>
+            {status === 'completed' && (
+              <div className="mt-1 text-[10px] text-muted-foreground">
+                Commission (10%): R{commission.toFixed(2)}<br/>
+                Net Paid: R{netAmount.toFixed(2)}
+              </div>
+            )}
           </div>
         </div>
       </CardHeader>
