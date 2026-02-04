@@ -3,6 +3,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import { useCountry } from "@/components/CountrySelector";
 import { 
   Check, 
   Shield, 
@@ -89,11 +90,14 @@ const FAQ_ITEMS = [
 
 export default function Pricing() {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  const { country, formatPrice } = useCountry();
+  const currencySymbol = country.currency.symbol;
 
-  const exampleJob = 5000;
+  const exampleJob = 500000; // 5000 in cents
   const freeEarnings = exampleJob * 0.9;
   const proEarnings = exampleJob * 0.95;
   const proSavings = proEarnings - freeEarnings;
+  const proMonthlyPrice = 7900; // R79 in cents
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -157,7 +161,7 @@ export default function Pricing() {
             <div className="p-8 flex-1">
               <h3 className="text-xl font-bold text-white mb-2">Pro Talent</h3>
               <div className="flex items-baseline gap-1 mb-4">
-                <span className="text-4xl font-display font-bold">R79</span>
+                <span className="text-4xl font-display font-bold">{formatPrice(proMonthlyPrice)}</span>
                 <span className="text-white/60">/ month</span>
               </div>
               <p className="text-white/80 mb-6">For serious professionals.</p>
@@ -232,17 +236,17 @@ export default function Pricing() {
             <Calculator className="h-5 w-5 text-primary" />
             <h3 className="font-semibold">See Your Savings</h3>
           </div>
-          <p className="text-sm text-muted-foreground mb-4">On a R5,000 job:</p>
+          <p className="text-sm text-muted-foreground mb-4">On a {formatPrice(exampleJob)} job:</p>
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-white rounded-lg p-4">
               <p className="text-sm text-muted-foreground">Free Plan (10%)</p>
-              <p className="text-2xl font-bold">R{freeEarnings.toLocaleString()}</p>
+              <p className="text-2xl font-bold">{formatPrice(freeEarnings)}</p>
               <p className="text-xs text-muted-foreground">You earn</p>
             </div>
             <div className="bg-green-50 rounded-lg p-4 border border-green-200">
               <p className="text-sm text-green-700">Pro Plan (5%)</p>
-              <p className="text-2xl font-bold text-green-700">R{proEarnings.toLocaleString()}</p>
-              <p className="text-xs text-green-600">You earn R{proSavings} more!</p>
+              <p className="text-2xl font-bold text-green-700">{formatPrice(proEarnings)}</p>
+              <p className="text-xs text-green-600">You earn {formatPrice(proSavings)} more!</p>
             </div>
           </div>
         </div>
