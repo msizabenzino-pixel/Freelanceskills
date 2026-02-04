@@ -210,7 +210,7 @@ export function SupportChat() {
                 <Bot className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-semibold">FreelanceSkill Support</h3>
+                <h3 className="font-semibold">FreelanceSkills Support</h3>
                 <p className="text-xs text-white/80">We typically reply instantly</p>
               </div>
             </div>

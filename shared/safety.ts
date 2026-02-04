@@ -102,7 +102,7 @@ export function checkMessageSafety(content: string): SafetyCheckResult {
   if (externalPayments) {
     violations.push({
       type: 'external_payment',
-      description: 'External payment methods are not allowed. All payments must go through FreelanceSkill for escrow protection.',
+      description: 'External payment methods are not allowed. All payments must go through FreelanceSkills for escrow protection.',
       severity: 'blocked',
       matchedContent: externalPayments[0],
     });
@@ -115,7 +115,7 @@ export function checkMessageSafety(content: string): SafetyCheckResult {
   if (messagingApps) {
     violations.push({
       type: 'messaging_app',
-      description: 'External messaging apps are not allowed. Keep all communication on FreelanceSkill for your protection.',
+      description: 'External messaging apps are not allowed. Keep all communication on FreelanceSkills for your protection.',
       severity: 'warning',
       matchedContent: messagingApps[0],
     });
@@ -173,14 +173,14 @@ export function checkMessageSafety(content: string): SafetyCheckResult {
 // Platform safety disclaimers and warnings
 export const SAFETY_DISCLAIMERS = {
   messaging: `
-    🔒 KEEP IT SAFE: All communication should stay on FreelanceSkill.
+    🔒 KEEP IT SAFE: All communication should stay on FreelanceSkills.
     • Never share personal contact details before booking
     • Never agree to pay outside the platform
     • Report suspicious behavior immediately
   `,
   
   booking: `
-    ✅ YOUR PROTECTION: When you book through FreelanceSkill:
+    ✅ YOUR PROTECTION: When you book through FreelanceSkills:
     • Your payment is held securely in escrow
     • Funds are only released when you confirm completion
     • You have access to our dispute resolution team
@@ -188,7 +188,7 @@ export const SAFETY_DISCLAIMERS = {
   `,
   
   offPlatform: `
-    ⚠️ WARNING: Deals made outside FreelanceSkill are NOT protected.
+    ⚠️ WARNING: Deals made outside FreelanceSkills are NOT protected.
     • We cannot help recover payments made off-platform
     • You lose access to dispute resolution
     • No refund protection available

@@ -29,7 +29,7 @@ export default function HowItWorks() {
         <section className="bg-gradient-to-br from-primary to-primary/80 text-white py-20">
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              How FreelanceSkill Works
+              How FreelanceSkills Works
             </h1>
             <p className="text-xl text-white/90 max-w-2xl mx-auto mb-8">
               Whether you're looking to hire skilled professionals or offer your services, 
@@ -64,7 +64,7 @@ export default function HowItWorks() {
                 <VideoLanguageInfo />
               </div>
               <VideoPlayer 
-                title="Getting Started with FreelanceSkill"
+                title="Getting Started with FreelanceSkills"
                 duration="2:30 min"
                 thumbnail="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&auto=format"
                 description="A complete introduction to using our platform - available in your language"
@@ -161,10 +161,10 @@ export default function HowItWorks() {
           </div>
         </section>
 
-        {/* Why FreelanceSkill */}
+        {/* Why FreelanceSkills */}
         <section className="py-16 bg-primary text-white">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-12">Why Choose FreelanceSkill?</h2>
+            <h2 className="text-3xl font-bold text-center mb-12">Why Choose FreelanceSkills?</h2>
             <div className="grid md:grid-cols-4 gap-8 max-w-5xl mx-auto">
               {[
                 { icon: Shield, title: "Escrow Protection", desc: "Your payment is held safely until you approve the work" },

@@ -324,7 +324,7 @@ export function AIProfileBuilder({
 
             <div className="space-y-3">
               <a 
-                href="https://wa.me/27601234567?text=Hi!%20I%20need%20help%20creating%20my%20FreelanceSkill%20profile"
+                href="https://wa.me/27601234567?text=Hi!%20I%20need%20help%20creating%20my%20FreelanceSkills%20profile"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-4 p-4 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors"

@@ -102,13 +102,12 @@ export function Navbar() {
       )}
     >
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
-        <Link href="/">
-          <a className="flex items-center gap-2 group">
+        <Link href="/" className="flex items-center gap-2 group">
             <div className={cn(
               "w-8 h-8 rounded-lg flex items-center justify-center font-bold text-lg transition-colors",
                isScrolled || location !== "/" ? "bg-primary text-white" : "bg-white text-primary"
             )}>
-              I
+              F
             </div>
             <span className={cn(
               "font-display font-bold text-xl tracking-tight",
@@ -116,19 +115,16 @@ export function Navbar() {
             )}>
               FreelanceSkills
             </span>
-          </a>
         </Link>
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
-            <Link key={link.name} href={link.href}>
-              <a className={cn(
+            <Link key={link.name} href={link.href} className={cn(
                 "text-sm font-medium transition-colors hover:text-accent",
                 isScrolled || location !== "/" ? "text-muted-foreground" : "text-white/90"
               )}>
                 {link.name}
-              </a>
             </Link>
           ))}
         </div>
@@ -231,16 +227,12 @@ export function Navbar() {
       {isMobileMenuOpen && (
         <div className="absolute top-full left-0 right-0 bg-background border-b border-border p-4 flex flex-col gap-4 shadow-xl md:hidden animate-in slide-in-from-top-2">
           {navLinks.map((link) => (
-            <Link key={link.name} href={link.href}>
-              <a className="text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md">
+            <Link key={link.name} href={link.href} className="text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md">
                 {link.name}
-              </a>
             </Link>
           ))}
-          <Link href="/post-job">
-            <a className="text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md">
+          <Link href="/post-job" className="text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md">
               Post a Job
-            </a>
           </Link>
           <div className="h-px bg-border my-2" />
           <Button variant="outline" className="w-full justify-center">Log In</Button>

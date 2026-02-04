@@ -71,7 +71,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "How does escrow protection work?",
-    a: "When a client books your service, they pay upfront. The money is held securely by FreelanceSkill until you deliver the work and the client approves it. This protects both parties."
+    a: "When a client books your service, they pay upfront. The money is held securely by FreelanceSkills until you deliver the work and the client approves it. This protects both parties."
   },
   {
     q: "Can I set my own prices in any currency?",

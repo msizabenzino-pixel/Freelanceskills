@@ -251,7 +251,7 @@ export default function Services() {
                 Ready to offer your services?
               </h2>
               <p className="text-lg text-slate-600 mb-6">
-                Join thousands of South African professionals earning on FreelanceSkill. 
+                Join thousands of South African professionals earning on FreelanceSkills. 
                 Create service packages and get booked instantly.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">

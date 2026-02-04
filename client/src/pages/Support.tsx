@@ -25,7 +25,7 @@ const FAQ_ITEMS = [
     questions: [
       { q: "How do I create a profile?", a: "You can sign up and create a profile manually, or use our AI Profile Builder to automatically create one from your CV." },
       { q: "How do I get verified?", a: "Go to your dashboard and upload your ID, qualifications, and professional registrations. Our team will verify within 2-3 days." },
-      { q: "Is FreelanceSkill free to use?", a: "Yes! Creating an account is free. We only charge a 10% commission when you complete a job (5% for Pro members)." },
+      { q: "Is FreelanceSkills free to use?", a: "Yes! Creating an account is free. We only charge a 10% commission when you complete a job (5% for Pro members)." },
     ]
   },
   {
@@ -40,7 +40,7 @@ const FAQ_ITEMS = [
     category: "Safety & Trust",
     questions: [
       { q: "How am I protected?", a: "All payments go through our secure escrow system. Money is only released when work is approved. We also have dispute resolution." },
-      { q: "What if someone asks for off-platform payment?", a: "Never pay outside FreelanceSkill! Report them immediately. Off-platform deals are not protected and violate our terms." },
+      { q: "What if someone asks for off-platform payment?", a: "Never pay outside FreelanceSkills! Report them immediately. Off-platform deals are not protected and violate our terms." },
       { q: "How do I report a problem?", a: "Use our support chat, WhatsApp, or email. We take all reports seriously and respond within 24 hours." },
     ]
   },
