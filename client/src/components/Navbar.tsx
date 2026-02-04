@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Menu, X, Zap, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { CurrencySelector } from "./CurrencySelector";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -72,6 +73,11 @@ export function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
+          <div className={cn(
+            isScrolled || location !== "/" ? "text-slate-600" : "text-white/90"
+          )}>
+            <CurrencySelector />
+          </div>
           <Link href="/post-job">
             <Button 
               variant="ghost" 
