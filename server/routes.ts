@@ -649,5 +649,54 @@ export async function registerRoutes(
     }
   });
 
+  // AI Recommendation routes
+  const { analyzeTaskAndRecommend, suggestServicePackages, analyzeTaskInputSchema, matchPackagesInputSchema } = await import("./replit_integrations/recommendations");
+  
+  app.post("/api/ai/analyze-task", async (req, res) => {
+    try {
+      const validatedInput = analyzeTaskInputSchema.parse(req.body);
+      const recommendations = await analyzeTaskAndRecommend(validatedInput.taskDescription, validatedInput.location);
+      res.json(recommendations);
+    } catch (error: any) {
+      if (error.name === "ZodError") {
+        return res.status(400).json({ message: error.errors[0]?.message || "Invalid input" });
+      }
+      console.error("Error analyzing task:", error);
+      res.status(500).json({ message: "Failed to analyze task" });
+    }
+  });
+  
+  app.post("/api/ai/match-packages", async (req, res) => {
+    try {
+      const validatedInput = matchPackagesInputSchema.parse(req.body);
+      
+      // Get active service packages with freelancer info
+      const allPackages = await storage.getActiveServicePackages();
+      const packagesWithDetails = await Promise.all(
+        allPackages.slice(0, 50).map(async (pkg) => {
+          const profile = await storage.getProfile(pkg.freelancerId);
+          return {
+            id: pkg.id,
+            title: pkg.title,
+            description: pkg.description,
+            category: pkg.category,
+            price: pkg.price,
+            freelancerName: profile?.title || undefined,
+            rating: profile?.rating ?? undefined,
+          };
+        })
+      );
+      
+      const matches = await suggestServicePackages(validatedInput.taskDescription, packagesWithDetails);
+      res.json(matches);
+    } catch (error: any) {
+      if (error.name === "ZodError") {
+        return res.status(400).json({ message: error.errors[0]?.message || "Invalid input" });
+      }
+      console.error("Error matching packages:", error);
+      res.status(500).json({ message: "Failed to match packages" });
+    }
+  });
+
   return httpServer;
 }

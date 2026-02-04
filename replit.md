@@ -41,6 +41,19 @@ Preferred communication style: Simple, everyday language.
 - **Bookings**: Scheduled work tied to packages or jobs
 - **Reviews**: Feedback system tied to completed bookings
 - **Messages/Conversations**: Direct messaging between users
+- **AI Conversations/Messages**: Separate tables for AI chat functionality (aiConversations, aiMessages)
+
+### AI Features
+- **AI Task Recommendation Engine**: Located at `/task-assistant`, helps clients describe their needs and get AI-powered recommendations for:
+  - Relevant service categories (from 15 predefined categories in `shared/categories.ts`)
+  - Budget estimates in ZAR based on South African market rates
+  - Required skills for the task
+  - Task breakdown into steps
+  - Pro tips for hiring
+- **API Endpoints**: 
+  - `POST /api/ai/analyze-task` - Analyzes task descriptions with Zod validation
+  - `POST /api/ai/match-packages` - Matches tasks to existing service packages
+- **Implementation**: `server/replit_integrations/recommendations/index.ts`
 
 ### Authentication Flow
 - Replit OIDC handles login/logout at `/api/login` and `/api/logout`

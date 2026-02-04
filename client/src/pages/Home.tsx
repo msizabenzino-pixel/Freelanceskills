@@ -4,7 +4,7 @@ import { JobCard } from "@/components/JobCard";
 import { FreelancerCard } from "@/components/FreelancerCard";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle2, Shield } from "lucide-react";
+import { ArrowRight, CheckCircle2, Shield, Sparkles } from "lucide-react";
 import { Link } from "wouter";
 
 export default function Home() {
@@ -98,6 +98,29 @@ export default function Home() {
     <div className="min-h-screen bg-background font-sans flex flex-col">
       <Navbar />
       <Hero />
+
+      {/* AI Task Assistant CTA */}
+      <section className="py-12 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 border-b border-primary/10">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 max-w-4xl mx-auto">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-primary/10">
+                <Sparkles className="h-8 w-8 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-foreground">Not sure where to start?</h3>
+                <p className="text-muted-foreground">Let our AI help you find the right service category and budget estimate</p>
+              </div>
+            </div>
+            <Link href="/task-assistant">
+              <Button size="lg" className="gap-2 whitespace-nowrap" data-testid="button-homepage-ai-assistant">
+                <Sparkles className="h-4 w-4" />
+                Try AI Task Assistant
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* Trusted By Section */}
       <section className="py-10 border-b border-border bg-white">

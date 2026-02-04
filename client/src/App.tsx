@@ -21,6 +21,7 @@ import ResolutionCenter from "@/pages/ResolutionCenter";
 import Explore from "@/pages/Explore";
 import Terms from "@/pages/Terms";
 import Privacy from "@/pages/Privacy";
+import TaskAssistant from "@/pages/TaskAssistant";
 import { SupportChat } from "@/components/SupportChat";
 import NotFound from "@/pages/not-found";
 
@@ -42,6 +43,7 @@ function Router() {
       <Route path="/support" component={Support} />
       <Route path="/resolution-center" component={ResolutionCenter} />
       <Route path="/explore" component={Explore} />
+      <Route path="/task-assistant" component={TaskAssistant} />
       <Route path="/terms" component={Terms} />
       <Route path="/privacy" component={Privacy} />
       <Route component={NotFound} />

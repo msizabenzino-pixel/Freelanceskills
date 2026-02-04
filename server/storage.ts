@@ -27,6 +27,7 @@ export interface IStorage {
   getServicePackage(id: string): Promise<ServicePackage | undefined>;
   getFreelancerPackages(freelancerId: string): Promise<ServicePackage[]>;
   getAllPackages(category?: string): Promise<ServicePackage[]>;
+  getActiveServicePackages(): Promise<ServicePackage[]>;
   
   // Booking operations
   createBooking(booking: InsertBooking): Promise<Booking>;
@@ -141,6 +142,12 @@ class DatabaseStorage implements IStorage {
         .where(and(eq(servicePackages.isActive, true), eq(servicePackages.category, category)))
         .orderBy(desc(servicePackages.bookingCount));
     }
+    return db.select().from(servicePackages)
+      .where(eq(servicePackages.isActive, true))
+      .orderBy(desc(servicePackages.bookingCount));
+  }
+
+  async getActiveServicePackages(): Promise<ServicePackage[]> {
     return db.select().from(servicePackages)
       .where(eq(servicePackages.isActive, true))
       .orderBy(desc(servicePackages.bookingCount));

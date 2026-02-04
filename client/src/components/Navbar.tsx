@@ -2,7 +2,7 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Menu, X, Zap, LogOut, HelpCircle, Users, Briefcase, ChevronDown } from "lucide-react";
+import { Menu, X, Zap, LogOut, HelpCircle, Users, Briefcase, ChevronDown, Sparkles } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { CountrySelector } from "./CountrySelector";
 import {
@@ -28,6 +28,7 @@ export function Navbar() {
 
   const navLinks = [
     { name: "Explore", href: "/explore", highlight: true },
+    { name: "AI Assistant", href: "/task-assistant", icon: Sparkles },
     { name: "Book a Tasker", href: "/services" },
     { name: "Find Work", href: "/jobs" },
     { name: "Pricing", href: "/pricing" },
@@ -123,9 +124,11 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => (
               <Link key={link.name} href={link.href} className={cn(
-                  "text-sm font-medium transition-colors hover:text-accent",
-                  isScrolled || location !== "/" ? "text-muted-foreground" : "text-white/90"
+                  "text-sm font-medium transition-colors hover:text-accent flex items-center gap-1.5",
+                  isScrolled || location !== "/" ? "text-muted-foreground" : "text-white/90",
+                  link.icon && "text-primary"
                 )}>
+                  {link.icon && <link.icon className="h-4 w-4" />}
                   {link.name}
               </Link>
             ))}
@@ -230,7 +233,11 @@ export function Navbar() {
       {isMobileMenuOpen && (
         <div className="absolute top-full left-0 right-0 bg-background border-b border-border p-4 flex flex-col gap-4 shadow-xl md:hidden animate-in slide-in-from-top-2">
           {navLinks.map((link) => (
-            <Link key={link.name} href={link.href} className="text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md">
+            <Link key={link.name} href={link.href} className={cn(
+              "text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md flex items-center gap-2",
+              link.icon && "text-primary"
+            )}>
+                {link.icon && <link.icon className="h-4 w-4" />}
                 {link.name}
             </Link>
           ))}
