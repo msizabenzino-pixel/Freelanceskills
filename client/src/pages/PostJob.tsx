@@ -42,10 +42,8 @@ export default function PostJob() {
       <Navbar />
       
       <div className="container mx-auto px-4 md:px-6 pt-24 md:pt-32 max-w-3xl flex-1 pb-20">
-        <Link href="/">
-          <a className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-6 transition-colors">
+        <Link href="/" className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-6 transition-colors">
             <ArrowLeft className="w-4 h-4 mr-1" /> Back to Home
-          </a>
         </Link>
         
         <div className="mb-8 flex justify-between items-end">

@@ -74,7 +74,7 @@ export default function Messages() {
     <div className="h-screen bg-background flex flex-col overflow-hidden">
       <Navbar />
       
-      <div className="flex-1 flex pt-20 overflow-hidden">
+      <div className="flex-1 flex pt-24 overflow-hidden">
         {/* Sidebar */}
         <div className="w-full md:w-80 lg:w-96 border-r border-border bg-white flex flex-col">
           <div className="p-4 border-b border-border">

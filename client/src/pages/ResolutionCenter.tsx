@@ -86,9 +86,9 @@ export default function ResolutionCenter() {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      <main className="pt-24">
+      <main>
         {/* Hero */}
-        <section className="bg-gradient-to-br from-slate-900 to-slate-800 text-white py-16">
+        <section className="bg-gradient-to-br from-slate-900 to-slate-800 text-white pt-32 pb-16">
           <div className="container mx-auto px-4 text-center">
             <Scale className="h-16 w-16 mx-auto mb-6 text-primary" />
             <h1 className="text-4xl md:text-5xl font-bold mb-4">Resolution Center</h1>

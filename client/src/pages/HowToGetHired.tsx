@@ -26,9 +26,9 @@ export default function HowToGetHired() {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      <main className="pt-24">
+      <main>
         {/* Hero */}
-        <section className="bg-gradient-to-br from-amber-500 to-amber-600 text-white py-16">
+        <section className="bg-gradient-to-br from-amber-500 to-amber-600 text-white pt-32 pb-16">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl">
               <div className="flex items-center gap-2 text-white/80 mb-4">
@@ -37,7 +37,7 @@ export default function HowToGetHired() {
                 <span>Getting Hired Guide</span>
               </div>
               <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                How to Get Hired on FreelanceSkill
+                How to Get Hired on FreelanceSkills
               </h1>
               <p className="text-xl text-white/90">
                 Build your reputation, get verified, and start earning.

@@ -73,8 +73,8 @@ export default function Jobs() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <Navbar />
       <div className="bg-primary pb-24 pt-32">
-        <Navbar />
         <div className="container mx-auto px-4 md:px-6 text-center text-white">
           <h1 className="text-4xl font-display font-bold mb-4">Find Your Next Opportunity</h1>
           <p className="text-white/70 max-w-xl mx-auto mb-8">Browse thousands of jobs from top South African companies and international clients.</p>

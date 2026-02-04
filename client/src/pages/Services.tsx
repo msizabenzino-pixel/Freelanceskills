@@ -111,8 +111,8 @@ export default function Services() {
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
       <Navbar />
       
-      <div className="pt-20">
-        <div className="bg-gradient-to-r from-primary via-primary/90 to-accent text-white py-16">
+      <div>
+        <div className="bg-gradient-to-r from-primary via-primary/90 to-accent text-white pt-32 pb-16">
           <div className="container mx-auto px-4 md:px-6">
             <div className="max-w-3xl mx-auto text-center">
               <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium mb-6">

@@ -24,9 +24,9 @@ export default function HowItWorks() {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      <main className="pt-24">
+      <main>
         {/* Hero Section */}
-        <section className="bg-gradient-to-br from-primary to-primary/80 text-white py-20">
+        <section className="bg-gradient-to-br from-primary to-primary/80 text-white pt-32 pb-16">
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
               How FreelanceSkills Works
