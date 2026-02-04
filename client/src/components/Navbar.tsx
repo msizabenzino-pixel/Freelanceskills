@@ -114,7 +114,7 @@ export function Navbar() {
               "font-display font-bold text-xl tracking-tight",
               isScrolled || location !== "/" ? "text-primary" : "text-white"
             )}>
-              FreelanceSkill<span className="text-accent">.</span>
+              FreelanceSkills
             </span>
           </a>
         </Link>

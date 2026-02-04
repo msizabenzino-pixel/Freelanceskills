@@ -32,7 +32,7 @@ export default function Home() {
     },
     {
       title: "Senior React Developer for Fintech App",
-      company: "Capitec Bank (via FreelanceSkill Enterprise)",
+      company: "Capitec Bank (via FreelanceSkills Enterprise)",
       type: "Remote",
       budget: "R650 - R850 / hr",
       location: "Cape Town / Remote",
@@ -152,7 +152,7 @@ export default function Home() {
                 <Shield className="w-4 h-4" /> Secure & Reliable
               </div>
               <h2 className="text-3xl md:text-5xl font-bold leading-tight">
-                Why businesses choose <span className="text-accent">FreelanceSkill</span>
+                Why businesses choose <span className="text-accent">FreelanceSkills</span>
               </h2>
               <p className="text-white/80 text-lg leading-relaxed">
                 We've built a platform specifically for the South African market, addressing the unique challenges of trust, payment security, and quality verification.
