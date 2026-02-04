@@ -20,6 +20,7 @@ export function Navbar() {
   const navLinks = [
     { name: "Find Talent", href: "/freelancers" },
     { name: "Find Work", href: "/jobs" },
+    { name: "Pricing", href: "/pricing" },
     { name: "Dashboard", href: "/dashboard" },
   ];
 

@@ -32,7 +32,7 @@ export default function PostJob() {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="title" className="text-base">Job Title</Label>
-                <Input id="title" placeholder="e.g. Senior React Developer needed for Fintech Project" className="h-12 text-lg" />
+                <Input id="title" placeholder="e.g. Certified Safety Officer for 6 Months" className="h-12 text-lg" />
               </div>
 
               <div className="space-y-2">
@@ -42,6 +42,8 @@ export default function PostJob() {
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="trades">Trades (Plumbing, Electrical, etc.)</SelectItem>
+                    <SelectItem value="construction">Construction & Safety</SelectItem>
                     <SelectItem value="dev">Development & IT</SelectItem>
                     <SelectItem value="design">Design & Creative</SelectItem>
                     <SelectItem value="writing">Writing & Translation</SelectItem>
@@ -73,22 +75,22 @@ export default function PostJob() {
 
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label>Project Type</Label>
+                <Label>Location Type</Label>
                 <div className="grid grid-cols-2 gap-2">
                   <button type="button" className="border-2 border-primary bg-primary/5 p-4 rounded-xl text-left transition-all">
-                    <div className="font-bold text-primary">Hourly</div>
-                    <div className="text-xs text-muted-foreground">Pay by time</div>
+                    <div className="font-bold text-primary">On-site</div>
+                    <div className="text-xs text-muted-foreground">Work at a specific location</div>
                   </button>
                   <button type="button" className="border border-border p-4 rounded-xl text-left hover:border-primary/50 transition-all">
-                    <div className="font-bold text-foreground">Fixed Price</div>
-                    <div className="text-xs text-muted-foreground">Pay by project</div>
+                    <div className="font-bold text-foreground">Remote</div>
+                    <div className="text-xs text-muted-foreground">Work from anywhere</div>
                   </button>
                 </div>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="budget">Budget (ZAR)</Label>
-                <Input id="budget" type="number" placeholder="e.g. 5000" className="h-[60px] text-lg" />
+                <Input id="budget" type="number" placeholder="e.g. 25000" className="h-[60px] text-lg" />
               </div>
             </div>
 

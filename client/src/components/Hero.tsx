@@ -24,12 +24,12 @@ export function Hero() {
           >
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 backdrop-blur-md text-white/90 text-sm font-medium mb-6">
               <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-              #1 Freelance Marketplace in South Africa
+              #1 Marketplace for Local Pros & Global Talent
             </div>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-[1.1]">
-              World-class African talent <br className="hidden md:block" />
+              Find the perfect <br className="hidden md:block" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-orange-300">
-                at your fingertips.
+                expert near you.
               </span>
             </h1>
           </motion.div>
@@ -40,7 +40,8 @@ export function Hero() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto leading-relaxed"
           >
-            FreelanceSkill connects businesses with South Africa's top 1% of freelance developers, designers, writers, and financial experts.
+            From local plumbers and safety officers to remote developers and accountants. 
+            FreelanceSkill connects you with trusted professionals instantly.
           </motion.p>
 
           <motion.div 
@@ -53,12 +54,12 @@ export function Hero() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/60 w-5 h-5" />
               <input 
                 type="text" 
-                placeholder="What service are you looking for?"
+                placeholder="Plumber, Safety Officer, Web Dev..."
                 className="w-full h-12 pl-10 pr-4 rounded-xl bg-white/10 border-transparent text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
               />
             </div>
-            <Button size="lg" className="w-full md:w-auto h-12 rounded-xl bg-accent hover:bg-accent/90 text-primary font-bold px-8 shadow-lg shadow-accent/20">
-              Search
+            <Button size="lg" className="w-full md:w-auto h-12 rounded-xl bg-accent hover:bg-accent/90 text-primary font-bold px-8 shadow-lg shadow-accent/20 whitespace-nowrap">
+              Search Near Me
             </Button>
           </motion.div>
 
@@ -69,10 +70,10 @@ export function Hero() {
              className="pt-8 flex flex-wrap justify-center gap-x-8 gap-y-4 text-white/60 text-sm font-medium"
           >
             <span>Popular:</span>
-            <a href="#" className="hover:text-accent transition-colors underline decoration-dotted">Web Development</a>
-            <a href="#" className="hover:text-accent transition-colors underline decoration-dotted">Graphic Design</a>
-            <a href="#" className="hover:text-accent transition-colors underline decoration-dotted">Copywriting</a>
-            <a href="#" className="hover:text-accent transition-colors underline decoration-dotted">Accounting</a>
+            <a href="#" className="hover:text-accent transition-colors underline decoration-dotted">Plumbing</a>
+            <a href="#" className="hover:text-accent transition-colors underline decoration-dotted">Safety Officer</a>
+            <a href="#" className="hover:text-accent transition-colors underline decoration-dotted">Tender Consulting</a>
+            <a href="#" className="hover:text-accent transition-colors underline decoration-dotted">Web Dev</a>
           </motion.div>
         </div>
       </div>

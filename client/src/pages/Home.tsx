@@ -10,6 +10,26 @@ import { Link } from "wouter";
 export default function Home() {
   const featuredJobs = [
     {
+      title: "Certified Safety Officer (6 Months)",
+      company: "Construction Co. (Tender Project)",
+      type: "On-site",
+      budget: "R25,000 / month",
+      location: "Pretoria East (5km away)",
+      postedAt: "1h ago",
+      tags: ["Safety Officer", "Construction", "OHS"],
+      description: "Looking for a certified Safety Officer for a government tender project in Pretoria East. Must have SACPCMP registration."
+    },
+    {
+      title: "Emergency Plumber Needed",
+      company: "Private Household",
+      type: "Urgent",
+      budget: "R850 - R1,200",
+      location: "Sandton (2km away)",
+      postedAt: "15m ago",
+      tags: ["Plumbing", "Maintenance", "Urgent"],
+      description: "Geyser burst in the garage. Need someone immediately to assist with shutoff and repair."
+    },
+    {
       title: "Senior React Developer for Fintech App",
       company: "Capitec Bank (via FreelanceSkill Enterprise)",
       type: "Remote",
@@ -17,37 +37,17 @@ export default function Home() {
       location: "Cape Town / Remote",
       postedAt: "2h ago",
       tags: ["React", "TypeScript", "Node.js"],
-      description: "We are looking for an experienced Senior React Developer to join our digital transformation team. You will be building secure, high-performance banking interfaces used by millions of South Africans."
+      description: "We are looking for an experienced Senior React Developer to join our digital transformation team. You will be building secure, high-performance banking interfaces."
     },
     {
-      title: "UX/UI Designer for E-commerce Platform",
-      company: "Takealot Group",
+      title: "Tender Documentation Consultant",
+      company: "SME Logistics",
       type: "Contract",
-      budget: "R45,000 / project",
-      location: "Remote",
-      postedAt: "5h ago",
-      tags: ["Figma", "UI Design", "E-commerce"],
-      description: "Redesigning our checkout flow to improve conversion rates. Requires deep understanding of local payment gateways and mobile-first design principles."
-    },
-    {
-      title: "Content Writer - Financial Services",
-      company: "Discovery",
-      type: "Part-time",
-      budget: "R25,000 / month",
-      location: "Sandton / Hybrid",
-      postedAt: "1d ago",
-      tags: ["Copywriting", "SEO", "Finance"],
-      description: "Looking for a seasoned writer to produce weekly blog content and whitepapers on medical aid and investment trends in South Africa."
-    },
-    {
-      title: "Full Stack Developer (Laravel + Vue)",
-      company: "Local Startup",
-      type: "Full-time",
-      budget: "R500 - R600 / hr",
+      budget: "R15,000 / project",
       location: "Durban / Remote",
-      postedAt: "1d ago",
-      tags: ["PHP", "Laravel", "Vue.js"],
-      description: "Join a fast-growing logistics startup. We need a full-stack developer to help maintain and expand our driver management portal."
+      postedAt: "4h ago",
+      tags: ["Tender Compliance", "Writing", "Government"],
+      description: "Need expert assistance in compiling a compliant bid for a municipal transport tender."
     }
   ];
 
@@ -102,14 +102,14 @@ export default function Home() {
       {/* Trusted By Section */}
       <section className="py-10 border-b border-border bg-white">
         <div className="container mx-auto px-4 md:px-6">
-          <p className="text-center text-sm font-semibold text-muted-foreground mb-6 uppercase tracking-wider">Trusted by South Africa's leading companies</p>
+          <p className="text-center text-sm font-semibold text-muted-foreground mb-6 uppercase tracking-wider">Connecting Households, SMEs & Enterprise</p>
           <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
             {/* Logos represented by text for mockup, in reality would be SVGs */}
-            <span className="text-xl font-bold font-display">MultiChoice</span>
+            <span className="text-xl font-bold font-display">Dept. of Public Works</span>
             <span className="text-xl font-bold font-display">Standard Bank</span>
-            <span className="text-xl font-bold font-display">Naspers</span>
+            <span className="text-xl font-bold font-display">Builders Warehouse</span>
             <span className="text-xl font-bold font-display">MTN</span>
-            <span className="text-xl font-bold font-display">Woolworths</span>
+            <span className="text-xl font-bold font-display">Private Households</span>
           </div>
         </div>
       </section>
