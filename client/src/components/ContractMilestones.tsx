@@ -11,6 +11,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { useCurrency } from "@/lib/currency";
 import { 
   FileText, 
   CheckCircle, 
@@ -52,6 +53,7 @@ export function ContractBuilder({
   onComplete: (contract: any) => void;
 }) {
   const { toast } = useToast();
+  const { formatAmount } = useCurrency();
   const [step, setStep] = useState<"details" | "milestones" | "review">("details");
   const [projectTitle, setProjectTitle] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
@@ -185,7 +187,7 @@ export function ContractBuilder({
               </div>
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">Total Budget</p>
-                <p className="font-bold">R{parseFloat(totalBudget || "0").toLocaleString()}</p>
+                <p className="font-bold">{formatAmount(parseFloat(totalBudget || "0"))}</p>
               </div>
             </div>
 
@@ -308,14 +310,14 @@ export function ContractBuilder({
                           )}
                         </div>
                       </div>
-                      <span className="font-bold">R{m.amount.toLocaleString()}</span>
+                      <span className="font-bold">{formatAmount(m.amount)}</span>
                     </div>
                   ))}
                 </div>
 
                 <div className="flex items-center justify-between mt-4 pt-4 border-t">
                   <span className="font-semibold">Total</span>
-                  <span className="font-bold text-xl">R{totalMilestoneAmount.toLocaleString()}</span>
+                  <span className="font-bold text-xl">{formatAmount(totalMilestoneAmount)}</span>
                 </div>
               </div>
             </div>
@@ -347,6 +349,7 @@ export function ContractBuilder({
 }
 
 export function MilestoneTracker({ milestones }: { milestones: Milestone[] }) {
+  const { formatAmount } = useCurrency();
   return (
     <div className="space-y-4">
       <h3 className="font-semibold flex items-center gap-2">
@@ -379,7 +382,7 @@ export function MilestoneTracker({ milestones }: { milestones: Milestone[] }) {
                   <h4 className="font-medium">{milestone.title}</h4>
                   <p className="text-sm text-muted-foreground mt-1">{milestone.description}</p>
                 </div>
-                <span className="font-bold">R{milestone.amount.toLocaleString()}</span>
+                <span className="font-bold">{formatAmount(milestone.amount)}</span>
               </div>
               
               {milestone.dueDate && (

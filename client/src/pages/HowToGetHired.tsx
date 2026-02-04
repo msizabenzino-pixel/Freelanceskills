@@ -3,6 +3,7 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { VideoPlayer, VideoLanguageInfo } from "@/components/VideoPlayer";
+import { useCurrency } from "@/lib/currency";
 import { 
   User, 
   Shield, 
@@ -22,6 +23,7 @@ import {
 } from "lucide-react";
 
 export default function HowToGetHired() {
+  const { formatAmount } = useCurrency();
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -196,7 +198,7 @@ export default function HowToGetHired() {
                             <h4 className="font-semibold">Example: Geyser Installation</h4>
                             <p className="text-sm text-muted-foreground">Complete geyser replacement including COC</p>
                           </div>
-                          <span className="font-bold text-primary">R4,500</span>
+                          <span className="font-bold text-primary">{formatAmount(4500)}</span>
                         </div>
                         <div className="flex gap-2 text-xs">
                           <span className="px-2 py-1 bg-green-50 text-green-700 rounded">Same-day available</span>

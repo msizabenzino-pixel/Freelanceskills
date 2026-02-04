@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
 import { useState } from "react";
+import { useCurrency } from "@/lib/currency";
 import { 
   Search, MapPin, Clock, Star, CheckCircle2, Zap, 
   Wrench, Sparkles, Home, Truck, Shield, Laptop,
@@ -106,6 +107,7 @@ const featuredPackages = [
 export default function Services() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const { formatAmount } = useCurrency();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
@@ -233,7 +235,7 @@ export default function Services() {
                   
                   <div className="flex items-center justify-between pt-3 border-t border-slate-100">
                     <div>
-                      <span className="text-2xl font-bold text-primary">R{pkg.price.toLocaleString()}</span>
+                      <span className="text-2xl font-bold text-primary">{formatAmount(pkg.price)}</span>
                       {pkg.duration === "per hour" && <span className="text-sm text-slate-500">/hr</span>}
                     </div>
                     <Button className="bg-primary hover:bg-primary/90" data-testid={`button-book-${pkg.id}`}>

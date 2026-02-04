@@ -456,7 +456,7 @@ export default function Explore() {
                               </div>
                             </div>
                             <div className="text-right">
-                              <p className="font-bold text-primary">R{freelancer.hourlyRate}</p>
+                              <p className="font-bold text-primary">{formatAmount(freelancer.hourlyRate)}</p>
                               <p className="text-xs text-muted-foreground">/hour</p>
                             </div>
                           </div>
