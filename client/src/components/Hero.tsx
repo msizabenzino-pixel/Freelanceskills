@@ -9,7 +9,7 @@ export function Hero() {
       {/* Background Image with Overlay */}
       <div 
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/hero-bg.png')" }}
+        style={{ backgroundImage: "url('/images/hero-background.png')" }}
       >
         <div className="absolute inset-0 bg-primary/80 mix-blend-multiply" />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
@@ -41,7 +41,7 @@ export function Hero() {
             className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto leading-relaxed"
           >
             From local plumbers and safety officers to remote developers and accountants. 
-            FreelanceSkill connects you with trusted professionals instantly.
+            FreelanceSkills connects you with trusted professionals instantly.
           </motion.p>
 
           <motion.div 
