@@ -88,7 +88,7 @@ const AI_RESPONSES: Record<string, { message: string; followUp?: string[] }> = {
     message: "We use a secure **escrow system** to protect both parties:\n\n1. Client pays when booking\n2. Money is held safely by us\n3. Freelancer completes the work\n4. Client approves the work\n5. Payment released to freelancer\n\nNo one can run off with the money!"
   },
   "What are the fees?": {
-    message: "Our pricing is simple:\n\n**Free Plan:**\n- No monthly fees\n- 10% commission on completed jobs\n\n**Pro Plan (R79/month):**\n- Only 5% commission\n- Priority in search results\n- Pro badge on profile\n\nYou only pay when you earn!"
+    message: "Our pricing is simple:\n\n**Free Plan:**\n- No monthly fees\n- 10% commission on completed jobs\n\n**Pro Plan:**\n- Only 5% commission\n- Priority in search results\n- Pro badge on profile\n\nYou only pay when you earn!"
   },
   "How do I book a tasker?": {
     message: "Booking is quick and easy:\n\n1. Browse **Services** or search for what you need\n2. View profiles and reviews\n3. Click **Book Now** on a service package\n4. Choose date/time and pay securely\n5. Get confirmation and chat with your tasker\n\nNeed same-day service? Filter by 'Available Today'!"

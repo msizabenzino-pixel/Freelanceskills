@@ -33,7 +33,7 @@ const FAQ_ITEMS = [
     questions: [
       { q: "How do I get paid?", a: "Payments are held in escrow when clients book. Once they approve your work, funds are released to your account within 24-48 hours." },
       { q: "What payment methods are accepted?", a: "We accept credit/debit cards, EFT, and SnapScan. All payments are processed securely." },
-      { q: "What are the fees?", a: "Free accounts pay 10% commission. Pro members (R79/month) pay only 5% commission." },
+      { q: "What are the fees?", a: "Free accounts pay 10% commission. Pro members pay only 5% commission with a small monthly subscription." },
     ]
   },
   {

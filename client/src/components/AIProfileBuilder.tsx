@@ -126,7 +126,7 @@ export function AIProfileBuilder({
       skills: ["Geyser Installation", "Pipe Repairs", "Drain Cleaning", "Water Heater Maintenance", "Emergency Plumbing", "Bathroom Renovations"],
       experience: "8 years",
       location: "Johannesburg, Gauteng",
-      hourlyRate: "R450",
+      hourlyRate: "450",
       education: "N3 Plumbing Certificate, PIRB Registered"
     };
     

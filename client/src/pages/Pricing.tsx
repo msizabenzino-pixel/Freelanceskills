@@ -23,33 +23,33 @@ import {
   MapPin
 } from "lucide-react";
 
-const WITHDRAWAL_METHODS = [
+const WITHDRAWAL_METHODS_BASE = [
   { 
     name: "Bank Transfer (EFT)", 
     fee: "Free", 
     time: "1-3 business days",
-    minAmount: "R100",
+    minAmountZar: 100,
     icon: Building2
   },
   { 
     name: "PayFast Instant", 
     fee: "1.5%", 
     time: "Instant",
-    minAmount: "R50",
+    minAmountZar: 50,
     icon: Zap
   },
   { 
     name: "PayPal", 
     fee: "2.5%", 
     time: "1-2 business days",
-    minAmount: "$10",
+    minAmountZar: 188, // ~$10 equivalent
     icon: Wallet
   },
   { 
     name: "Wise (TransferWise)", 
     fee: "0.5%", 
     time: "1-2 business days",
-    minAmount: "$20",
+    minAmountZar: 377, // ~$20 equivalent
     icon: Globe
   },
 ];
@@ -84,7 +84,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "Is there a minimum withdrawal amount?",
-    a: "Yes, the minimum depends on your withdrawal method. Bank transfers require R100 minimum, while PayFast allows R50 minimum."
+    a: "Yes, the minimum depends on your withdrawal method. Minimums vary by method and are displayed in your local currency."
   },
 ];
 
@@ -93,11 +93,16 @@ export default function Pricing() {
   const { country, formatPrice } = useCountry();
   const currencySymbol = country.currency.symbol;
 
-  const exampleJob = 500000; // 5000 in cents
+  const exampleJob = 500000; // 5000 ZAR in cents
   const freeEarnings = exampleJob * 0.9;
   const proEarnings = exampleJob * 0.95;
   const proSavings = proEarnings - freeEarnings;
-  const proMonthlyPrice = 7900; // R79 in cents
+  const proMonthlyPrice = 7900; // 79 ZAR in cents
+
+  const WITHDRAWAL_METHODS = WITHDRAWAL_METHODS_BASE.map(method => ({
+    ...method,
+    minAmount: formatPrice(method.minAmountZar * 100)
+  }));
 
   return (
     <div className="min-h-screen bg-background flex flex-col">

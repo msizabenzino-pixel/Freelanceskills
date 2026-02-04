@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ShieldCheck, Smartphone, Mail, Lock, CreditCard, Banknote, Smartphone as PhoneIcon, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useCurrency } from "@/lib/currency";
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ export function PaymentModal({ isOpen, onClose, amount }: PaymentModalProps) {
   const [step, setStep] = useState<'verify' | 'payment' | 'success'>('verify');
   const [otp, setOtp] = useState("");
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
+  const { formatAmount } = useCurrency();
 
   const handleVerify = () => {
     if (otp.length === 4) {
@@ -40,7 +42,7 @@ export function PaymentModal({ isOpen, onClose, amount }: PaymentModalProps) {
           </DialogTitle>
           <DialogDescription>
             {step === 'verify' && "For your security, please verify your identity to proceed."}
-            {step === 'payment' && `Select a payment method to fund R${amount}.`}
+            {step === 'payment' && `Select a payment method to fund ${formatAmount(Number(amount))}.`}
             {step === 'success' && "Transaction processed successfully."}
           </DialogDescription>
         </DialogHeader>

@@ -315,7 +315,7 @@ export default function HowToGetHired() {
                         <div>
                           <p className="font-semibold text-green-800">Grow Your Business</p>
                           <p className="text-sm text-green-700">
-                            Consider upgrading to Pro (R79/month) for lower commission (5% vs 10%) 
+                            Consider upgrading to Pro for lower commission (5% vs 10%) 
                             and priority placement in search results.
                           </p>
                         </div>

@@ -73,7 +73,7 @@ export default function Terms() {
               </p>
               <ul className="list-disc pl-6 text-slate-600 space-y-2 mt-4">
                 <li><strong>Standard Users:</strong> 10% commission on completed jobs</li>
-                <li><strong>Pro Subscribers:</strong> 5% commission (R79/month subscription)</li>
+                <li><strong>Pro Subscribers:</strong> 5% commission (monthly subscription applies)</li>
                 <li>All payments are processed through our secure escrow system</li>
                 <li>Funds are released to Freelancers only upon successful completion and Client approval</li>
                 <li>Refunds are subject to our Resolution Center policies</li>
