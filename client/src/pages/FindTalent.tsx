@@ -66,7 +66,7 @@ export default function FindTalent() {
       <Navbar />
       
       {/* Search Header */}
-      <div className="pt-28 pb-6 bg-white border-b border-border z-10 sticky top-0">
+      <div className="pt-24 pb-6 bg-white border-b border-border z-10 sticky top-0">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col md:flex-row gap-4 items-center">
             <div className="relative flex-1 w-full">
