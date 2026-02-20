@@ -100,12 +100,7 @@ export function CountryProvider({ children }: { children: ReactNode }) {
     return countries[0];
   });
   
-  const [showSelector, setShowSelector] = useState(() => {
-    if (typeof window !== "undefined") {
-      return !localStorage.getItem("preferredCountry");
-    }
-    return false;
-  });
+  const [showSelector, setShowSelector] = useState(false);
 
   const setCountry = (c: Country) => {
     setCountryState(c);

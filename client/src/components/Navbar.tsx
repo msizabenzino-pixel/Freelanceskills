@@ -2,8 +2,9 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Menu, X, Zap, LogOut, HelpCircle, Users, Briefcase, ChevronDown, Sparkles } from "lucide-react";
+import { Menu, X, Zap, LogOut, HelpCircle, Users, Briefcase, ChevronDown, Sparkles, Moon, Sun } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { useDarkMode } from "@/hooks/use-dark-mode";
 import { CountrySelector } from "./CountrySelector";
 import {
   DropdownMenu,
@@ -17,6 +18,7 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [location] = useLocation();
   const { user, isLoading, isAuthenticated } = useAuth();
+  const { isDark, toggle: toggleDarkMode } = useDarkMode();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,7 +47,7 @@ export function Navbar() {
           className={cn(
             "flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors",
             isScrolled || location !== "/" 
-              ? "text-slate-600 hover:text-primary hover:bg-slate-100" 
+              ? "text-muted-foreground hover:text-primary hover:bg-muted" 
               : "text-white/90 hover:text-white hover:bg-white/10"
           )}
           data-testid="button-help-menu"
@@ -95,6 +97,8 @@ export function Navbar() {
 
   return (
     <nav
+      role="navigation"
+      aria-label="Main navigation"
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-transparent",
         isScrolled || location !== "/"
@@ -137,8 +141,21 @@ export function Navbar() {
 
         <div className="hidden md:flex items-center gap-4">
           <HelpMenu />
+          <button
+            onClick={toggleDarkMode}
+            className={cn(
+              "p-2 rounded-lg transition-colors",
+              isScrolled || location !== "/"
+                ? "text-muted-foreground hover:bg-muted"
+                : "text-white/90 hover:bg-white/10"
+            )}
+            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            data-testid="button-dark-mode"
+          >
+            {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </button>
           <div className={cn(
-            isScrolled || location !== "/" ? "text-slate-600" : "text-white/90"
+            isScrolled || location !== "/" ? "text-muted-foreground" : "text-white/90"
           )}>
             <CountrySelector />
           </div>
@@ -166,7 +183,7 @@ export function Navbar() {
                 )}
                 <span className={cn(
                   "text-sm font-medium",
-                  isScrolled || location !== "/" ? "text-slate-700" : "text-white"
+                  isScrolled || location !== "/" ? "text-foreground" : "text-white"
                 )}>
                   {user?.firstName || "User"}
                 </span>
@@ -177,7 +194,7 @@ export function Navbar() {
                   size="sm"
                   className={cn(
                     "hover:text-red-500",
-                    isScrolled || location !== "/" ? "text-slate-500" : "text-white/80"
+                    isScrolled || location !== "/" ? "text-muted-foreground" : "text-white/80"
                   )}
                   data-testid="button-logout"
                 >
@@ -245,8 +262,35 @@ export function Navbar() {
               Post a Job
           </Link>
           <div className="h-px bg-border my-2" />
-          <Button variant="outline" className="w-full justify-center">Log In</Button>
-          <Button className="w-full justify-center bg-primary text-white">Sign Up</Button>
+          <div className="flex items-center justify-between p-2 bg-muted/30 rounded-md">
+            <span className="text-sm text-muted-foreground">Region & Currency</span>
+            <CountrySelector />
+          </div>
+          <button
+            onClick={toggleDarkMode}
+            className="flex items-center justify-between p-2 bg-muted/30 rounded-md text-foreground/80"
+            data-testid="button-dark-mode-mobile"
+          >
+            <span className="text-sm font-medium">{isDark ? "Light Mode" : "Dark Mode"}</span>
+            {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </button>
+          <div className="h-px bg-border my-2" />
+          {isAuthenticated ? (
+            <a href="/api/logout">
+              <Button variant="outline" className="w-full justify-center text-red-500 border-red-200 hover:bg-red-50">
+                <LogOut className="w-4 h-4 mr-2" /> Log Out
+              </Button>
+            </a>
+          ) : (
+            <>
+              <a href="/api/login">
+                <Button variant="outline" className="w-full justify-center">Log In</Button>
+              </a>
+              <a href="/api/login">
+                <Button className="w-full justify-center bg-primary text-white">Sign Up</Button>
+              </a>
+            </>
+          )}
         </div>
       )}
     </nav>

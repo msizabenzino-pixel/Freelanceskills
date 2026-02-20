@@ -66,7 +66,7 @@ export default function PostJob() {
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       
-      <div className="container mx-auto px-4 md:px-6 pt-24 md:pt-32 max-w-3xl flex-1 pb-20">
+      <main id="main-content" className="container mx-auto px-4 md:px-6 pt-24 md:pt-32 max-w-3xl flex-1 pb-20">
         <Link href="/" className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-6 transition-colors">
             <ArrowLeft className="w-4 h-4 mr-1" /> Back to Home
         </Link>
@@ -237,7 +237,7 @@ export default function PostJob() {
 
           </form>
         </Card>
-      </div>
+      </main>
 
       <Footer />
     </div>

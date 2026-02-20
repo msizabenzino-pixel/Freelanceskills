@@ -21,7 +21,7 @@ export function FreelancerCard({ name, title, rate, rating, reviews, skills, ima
       <div className="px-6 -mt-10 mb-4">
         <div className="relative inline-block">
           <Avatar className="w-20 h-20 border-4 border-background shadow-md">
-            <AvatarImage src={imageUrl} alt={name} />
+            <AvatarImage src={imageUrl} alt={`Profile photo of ${name}`} />
             <AvatarFallback>{name.charAt(0)}</AvatarFallback>
           </Avatar>
           {verified && (

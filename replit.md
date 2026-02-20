@@ -116,3 +116,36 @@ Preferred communication style: Simple, everyday language.
 ### Development Tools
 - Replit-specific Vite plugins for dev banner, cartographer, and runtime error overlay
 - Custom meta images plugin for OpenGraph tags
+
+## Recent Changes (February 2026)
+
+### UX & Accessibility Improvements
+- Removed intrusive country selector popup on first visit; defaults to South Africa; selector available in navbar and mobile menu
+- Added skip-to-content link for keyboard users
+- Added ARIA landmarks (nav, main, footer) across all pages
+- Added proper labels and alt text for search inputs and images
+- Added `id="main-content"` to all page routes
+
+### Dark Mode
+- Implemented dark mode with system preference detection and localStorage persistence
+- Dark mode toggle (sun/moon icon) in desktop navbar and mobile menu
+- All 15+ pages converted from hardcoded slate-* colors to theme-aware variables (text-muted-foreground, bg-card, bg-muted, etc.)
+- CSS variables for dark theme already defined in index.css
+
+### Security Headers
+- X-Content-Type-Options: nosniff
+- X-Frame-Options: DENY
+- X-XSS-Protection: 1; mode=block
+- Referrer-Policy: strict-origin-when-cross-origin
+- Permissions-Policy: camera=(self), microphone=(self), geolocation=(self)
+- HSTS enabled in production
+
+### SEO Optimization
+- Added structured meta tags: title, description, keywords, author, canonical URL
+- Open Graph locale set to en_ZA, site_name added
+- Local search keywords for South African market
+
+### PWA Support
+- manifest.json with app icons (72x72 to 512x512)
+- Service worker for offline caching
+- Apple touch icon and mobile web app meta tags

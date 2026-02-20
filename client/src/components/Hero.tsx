@@ -15,7 +15,7 @@ export function Hero() {
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
       </div>
 
-      <div className="container relative z-10 px-4 md:px-6 pt-20">
+      <div className="container relative z-10 px-4 md:px-6 pt-20" role="banner">
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -52,10 +52,13 @@ export function Hero() {
           >
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/60 w-5 h-5" />
+              <label htmlFor="hero-search" className="sr-only">Search for services or professionals</label>
               <input 
+                id="hero-search"
                 type="text" 
                 placeholder="Plumber, Safety Officer, Web Dev..."
                 className="w-full h-12 pl-10 pr-4 rounded-xl bg-white/10 border-transparent text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+                aria-label="Search for services or professionals"
               />
             </div>
             <Button size="lg" className="w-full md:w-auto h-12 rounded-xl bg-accent hover:bg-accent/90 text-primary font-bold px-8 shadow-lg shadow-accent/20 whitespace-nowrap">

@@ -101,6 +101,7 @@ export default function Home() {
     <div className="min-h-screen bg-background font-sans flex flex-col">
       <Navbar />
       <Hero />
+      <main id="main-content" role="main">
 
       {/* AI Task Assistant CTA */}
       <section className="py-12 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 border-b border-primary/10">
@@ -126,7 +127,7 @@ export default function Home() {
       </section>
 
       {/* Trusted By Section */}
-      <section className="py-10 border-b border-border bg-white">
+      <section className="py-10 border-b border-border bg-card">
         <div className="container mx-auto px-4 md:px-6">
           <p className="text-center text-sm font-semibold text-muted-foreground mb-6 uppercase tracking-wider">Connecting Households, SMEs & Enterprise</p>
           <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
@@ -253,6 +254,7 @@ export default function Home() {
         </div>
       </section>
 
+      </main>
       <Footer />
     </div>
   );

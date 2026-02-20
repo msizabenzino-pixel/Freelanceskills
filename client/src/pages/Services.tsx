@@ -110,10 +110,10 @@ export default function Services() {
   const { formatAmount } = useCurrency();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div className="min-h-screen bg-background">
       <Navbar />
       
-      <div>
+      <main id="main-content">
         <div className="bg-gradient-to-r from-primary via-primary/90 to-accent text-white pt-32 pb-16">
           <div className="container mx-auto px-4 md:px-6">
             <div className="max-w-3xl mx-auto text-center">
@@ -130,20 +130,20 @@ export default function Services() {
               
               <div className="flex flex-col sm:flex-row gap-3 max-w-2xl mx-auto">
                 <div className="relative flex-1">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <Input 
                     placeholder="What do you need help with?" 
-                    className="pl-12 h-14 text-lg bg-white text-slate-900 border-0 shadow-lg"
+                    className="pl-12 h-14 text-lg bg-white text-foreground border-0 shadow-lg"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     data-testid="input-search-services"
                   />
                 </div>
                 <div className="relative sm:w-48">
-                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <Input 
                     placeholder="Location" 
-                    className="pl-12 h-14 bg-white text-slate-900 border-0 shadow-lg"
+                    className="pl-12 h-14 bg-white text-foreground border-0 shadow-lg"
                     data-testid="input-location"
                   />
                 </div>
@@ -166,15 +166,15 @@ export default function Services() {
                 className={`p-4 rounded-xl border-2 transition-all text-left hover:shadow-md ${
                   selectedCategory === category.id 
                     ? 'border-primary bg-primary/5' 
-                    : 'border-slate-200 hover:border-primary/50'
+                    : 'border-border hover:border-primary/50'
                 }`}
                 data-testid={`category-${category.id}`}
               >
                 <div className={`w-12 h-12 rounded-xl ${category.color} flex items-center justify-center mb-3`}>
                   <category.icon className="w-6 h-6" />
                 </div>
-                <h3 className="font-semibold text-slate-900">{category.name}</h3>
-                <p className="text-sm text-slate-500">{category.count.toLocaleString()} taskers</p>
+                <h3 className="font-semibold text-foreground">{category.name}</h3>
+                <p className="text-sm text-muted-foreground">{category.count.toLocaleString()} taskers</p>
               </button>
             ))}
           </div>
@@ -207,7 +207,7 @@ export default function Services() {
                   )}
                 </div>
                 <div className="p-5">
-                  <h3 className="font-bold text-lg text-slate-900 mb-2 group-hover:text-primary transition-colors">
+                  <h3 className="font-bold text-lg text-foreground mb-2 group-hover:text-primary transition-colors">
                     {pkg.title}
                   </h3>
                   <div className="flex items-center gap-2 mb-3">
@@ -215,16 +215,16 @@ export default function Services() {
                       {pkg.freelancer.charAt(0)}
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-slate-700">{pkg.freelancer}</p>
+                      <p className="text-sm font-medium text-foreground">{pkg.freelancer}</p>
                       <div className="flex items-center gap-1">
                         <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
                         <span className="text-xs font-medium">{pkg.rating}</span>
-                        <span className="text-xs text-slate-400">({pkg.reviews})</span>
+                        <span className="text-xs text-muted-foreground">({pkg.reviews})</span>
                       </div>
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-4 text-sm text-slate-500 mb-4">
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
                     <span className="flex items-center gap-1">
                       <Clock className="w-4 h-4" /> {pkg.duration}
                     </span>
@@ -233,10 +233,10 @@ export default function Services() {
                     </span>
                   </div>
                   
-                  <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                  <div className="flex items-center justify-between pt-3 border-t border-border">
                     <div>
                       <span className="text-2xl font-bold text-primary">{formatAmount(pkg.price)}</span>
-                      {pkg.duration === "per hour" && <span className="text-sm text-slate-500">/hr</span>}
+                      {pkg.duration === "per hour" && <span className="text-sm text-muted-foreground">/hr</span>}
                     </div>
                     <Button className="bg-primary hover:bg-primary/90" data-testid={`button-book-${pkg.id}`}>
                       <Zap className="w-4 h-4 mr-1" /> Book Now
@@ -252,7 +252,7 @@ export default function Services() {
               <h2 className="text-3xl font-bold text-primary mb-4">
                 Ready to offer your services?
               </h2>
-              <p className="text-lg text-slate-600 mb-6">
+              <p className="text-lg text-muted-foreground mb-6">
                 Join thousands of South African professionals earning on FreelanceSkills. 
                 Create service packages and get booked instantly.
               </p>
@@ -271,7 +271,7 @@ export default function Services() {
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

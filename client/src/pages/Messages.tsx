@@ -74,9 +74,9 @@ export default function Messages() {
     <div className="h-screen bg-background flex flex-col overflow-hidden">
       <Navbar />
       
-      <div className="flex-1 flex pt-24 overflow-hidden">
+      <main id="main-content" className="flex-1 flex pt-24 overflow-hidden">
         {/* Sidebar */}
-        <div className="w-full md:w-80 lg:w-96 border-r border-border bg-white flex flex-col">
+        <div className="w-full md:w-80 lg:w-96 border-r border-border bg-card flex flex-col">
           <div className="p-4 border-b border-border">
             <h1 className="text-xl font-bold font-display text-primary mb-4">Messages</h1>
             <div className="relative">
@@ -127,9 +127,9 @@ export default function Messages() {
         </div>
 
         {/* Chat Area */}
-        <div className="flex-1 flex flex-col bg-slate-50 relative hidden md:flex">
+        <div className="flex-1 flex flex-col bg-muted relative hidden md:flex">
           {/* Chat Header */}
-          <div className="h-16 border-b border-border bg-white flex items-center justify-between px-6 shadow-sm z-10">
+          <div className="h-16 border-b border-border bg-card flex items-center justify-between px-6 shadow-sm z-10">
             <div className="flex items-center gap-3">
               <Avatar>
                 <AvatarImage src={selectedChat.avatar} />
@@ -187,7 +187,7 @@ export default function Messages() {
                     "p-3 rounded-2xl text-sm shadow-sm",
                     msg.sender === 'me' 
                       ? "bg-primary text-white rounded-tr-none" 
-                      : "bg-white text-foreground rounded-tl-none border border-border"
+                      : "bg-card text-foreground rounded-tl-none border border-border"
                   )}>
                     <p>{msg.text}</p>
                     <div className={cn(
@@ -204,7 +204,7 @@ export default function Messages() {
           </ScrollArea>
 
           {/* Input Area */}
-          <div className="p-4 bg-white border-t border-border">
+          <div className="p-4 bg-card border-t border-border">
             <div className="bg-muted/30 border border-border rounded-xl flex items-end p-2 gap-2">
               <Button variant="ghost" size="icon" className="text-muted-foreground h-10 w-10 shrink-0">
                 <Paperclip className="w-5 h-5" />
@@ -225,7 +225,7 @@ export default function Messages() {
             </p>
           </div>
         </div>
-      </div>
+      </main>
       
       <VideoCallDialog 
         open={showVideoCall} 

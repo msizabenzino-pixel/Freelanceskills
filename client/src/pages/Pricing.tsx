@@ -108,6 +108,7 @@ export default function Pricing() {
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       
+      <main id="main-content">
       <div className="bg-primary text-white pt-32 pb-20">
         <div className="container mx-auto px-4 md:px-6 text-center">
           <h1 className="text-4xl md:text-5xl font-display font-bold mb-6">Simple, Transparent Pricing</h1>
@@ -236,14 +237,14 @@ export default function Pricing() {
         </div>
 
         {/* Savings Calculator */}
-        <div className="max-w-2xl mx-auto mt-12 bg-slate-100 rounded-xl p-6">
+        <div className="max-w-2xl mx-auto mt-12 bg-muted rounded-xl p-6">
           <div className="flex items-center gap-2 mb-4">
             <Calculator className="h-5 w-5 text-primary" />
             <h3 className="font-semibold">See Your Savings</h3>
           </div>
           <p className="text-sm text-muted-foreground mb-4">On a {formatPrice(exampleJob)} job:</p>
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-white rounded-lg p-4">
+            <div className="bg-card rounded-lg p-4">
               <p className="text-sm text-muted-foreground">Free Plan (10%)</p>
               <p className="text-2xl font-bold">{formatPrice(freeEarnings)}</p>
               <p className="text-xs text-muted-foreground">You earn</p>
@@ -258,7 +259,7 @@ export default function Pricing() {
       </div>
 
       {/* Escrow Section */}
-      <section className="py-16 bg-slate-50">
+      <section className="py-16 bg-muted">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
@@ -286,7 +287,7 @@ export default function Pricing() {
               ))}
             </div>
 
-            <div className="mt-8 bg-white rounded-xl p-6 border">
+            <div className="mt-8 bg-card rounded-xl p-6 border">
               <h4 className="font-semibold mb-4 flex items-center gap-2">
                 <Lock className="h-5 w-5 text-green-600" />
                 Milestone Payments
@@ -298,7 +299,7 @@ export default function Pricing() {
                 <div className="flex-1 h-3 bg-green-500 rounded-l-full"></div>
                 <div className="flex-1 h-3 bg-green-500"></div>
                 <div className="flex-1 h-3 bg-amber-400"></div>
-                <div className="flex-1 h-3 bg-slate-200 rounded-r-full"></div>
+                <div className="flex-1 h-3 bg-muted rounded-r-full"></div>
               </div>
               <div className="flex justify-between text-xs text-muted-foreground mt-2">
                 <span>Milestone 1 ✓</span>
@@ -323,9 +324,9 @@ export default function Pricing() {
 
             <div className="grid md:grid-cols-2 gap-4">
               {WITHDRAWAL_METHODS.map((method, i) => (
-                <div key={i} className="bg-white rounded-xl p-6 border hover:shadow-md transition-shadow">
+                <div key={i} className="bg-card rounded-xl p-6 border hover:shadow-md transition-shadow">
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center">
+                    <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
                       <method.icon className="h-6 w-6 text-primary" />
                     </div>
                     <div className="flex-1">
@@ -354,7 +355,7 @@ export default function Pricing() {
       </section>
 
       {/* Currencies */}
-      <section className="py-16 bg-slate-50">
+      <section className="py-16 bg-muted">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
@@ -365,7 +366,7 @@ export default function Pricing() {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {CURRENCIES.map((currency) => (
-                <div key={currency.code} className="bg-white rounded-lg p-4 text-center border">
+                <div key={currency.code} className="bg-card rounded-lg p-4 text-center border">
                   <span className="text-2xl mb-2 block">{currency.flag}</span>
                   <p className="font-semibold">{currency.code}</p>
                   <p className="text-sm text-muted-foreground">{currency.name}</p>
@@ -387,10 +388,10 @@ export default function Pricing() {
 
             <div className="space-y-3">
               {FAQ_ITEMS.map((faq, i) => (
-                <div key={i} className="bg-white rounded-lg border overflow-hidden">
+                <div key={i} className="bg-card rounded-lg border overflow-hidden">
                   <button
                     onClick={() => setExpandedFaq(expandedFaq === i ? null : i)}
-                    className="w-full p-4 text-left flex items-center justify-between hover:bg-slate-50"
+                    className="w-full p-4 text-left flex items-center justify-between hover:bg-muted"
                   >
                     <span className="font-medium">{faq.q}</span>
                     {expandedFaq === i ? (
@@ -409,6 +410,7 @@ export default function Pricing() {
         </div>
       </section>
 
+      </main>
       <Footer />
     </div>
   );

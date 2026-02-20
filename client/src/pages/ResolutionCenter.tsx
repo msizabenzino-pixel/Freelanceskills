@@ -86,7 +86,7 @@ export default function ResolutionCenter() {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      <main>
+      <main id="main-content">
         {/* Hero */}
         <section className="bg-gradient-to-br from-slate-900 to-slate-800 text-white pt-32 pb-16">
           <div className="container mx-auto px-4 text-center">
@@ -114,7 +114,7 @@ export default function ResolutionCenter() {
                         </div>
                         <h4 className="font-semibold mb-1">{item.title}</h4>
                         <p className="text-sm text-muted-foreground mb-2">{item.desc}</p>
-                        <span className="text-xs bg-slate-100 px-2 py-1 rounded-full">{item.duration}</span>
+                        <span className="text-xs bg-muted px-2 py-1 rounded-full">{item.duration}</span>
                       </div>
                     ))}
                   </div>
@@ -123,11 +123,11 @@ export default function ResolutionCenter() {
             </section>
 
             {/* Protection Info */}
-            <section className="py-16 bg-slate-50">
+            <section className="py-16 bg-muted">
               <div className="container mx-auto px-4">
                 <div className="max-w-4xl mx-auto">
                   <div className="grid md:grid-cols-2 gap-8">
-                    <div className="bg-white rounded-xl p-6 border">
+                    <div className="bg-card rounded-xl p-6 border">
                       <div className="flex items-center gap-3 mb-4">
                         <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                           <Users className="h-6 w-6 text-blue-600" />
@@ -154,7 +154,7 @@ export default function ResolutionCenter() {
                       </ul>
                     </div>
 
-                    <div className="bg-white rounded-xl p-6 border">
+                    <div className="bg-card rounded-xl p-6 border">
                       <div className="flex items-center gap-3 mb-4">
                         <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                           <Shield className="h-6 w-6 text-green-600" />
@@ -224,7 +224,7 @@ export default function ResolutionCenter() {
                   ← Back to Information
                 </Button>
                 
-                <div className="bg-white rounded-xl border p-8">
+                <div className="bg-card rounded-xl border p-8">
                   <h2 className="text-2xl font-bold mb-6">Submit a Dispute</h2>
                   
                   <form onSubmit={handleSubmit} className="space-y-6">
@@ -328,7 +328,7 @@ export default function ResolutionCenter() {
                   Your dispute has been submitted successfully. Our team will review your case and respond within 24-48 hours.
                 </p>
                 
-                <div className="bg-slate-100 rounded-lg p-4 mb-6">
+                <div className="bg-muted rounded-lg p-4 mb-6">
                   <p className="text-sm">
                     <strong>Reference:</strong> DSP-2024-{Math.random().toString(36).substr(2, 6).toUpperCase()}
                   </p>

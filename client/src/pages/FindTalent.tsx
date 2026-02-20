@@ -66,8 +66,9 @@ export default function FindTalent() {
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       
+      <main id="main-content">
       {/* Search Header */}
-      <div className="pt-24 pb-6 bg-white border-b border-border z-10 sticky top-0">
+      <div className="pt-24 pb-6 bg-card border-b border-border z-10 sticky top-0">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col md:flex-row gap-4 items-center">
             <div className="relative flex-1 w-full">
@@ -83,7 +84,7 @@ export default function FindTalent() {
                 onClick={() => setView('list')}
                 className={cn(
                   "px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2",
-                  view === 'list' ? "bg-white text-primary shadow-sm" : "text-muted-foreground hover:text-primary"
+                  view === 'list' ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-primary"
                 )}
               >
                 <List className="w-4 h-4" /> List
@@ -92,7 +93,7 @@ export default function FindTalent() {
                 onClick={() => setView('map')}
                 className={cn(
                   "px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2",
-                  view === 'map' ? "bg-white text-primary shadow-sm" : "text-muted-foreground hover:text-primary"
+                  view === 'map' ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-primary"
                 )}
               >
                 <MapIcon className="w-4 h-4" /> Map
@@ -112,7 +113,7 @@ export default function FindTalent() {
 
       <div className="flex-1 relative overflow-hidden flex">
         {view === 'map' ? (
-          <div className="relative w-full h-[calc(100vh-180px)] bg-slate-100">
+          <div className="relative w-full h-[calc(100vh-180px)] bg-muted">
             {/* Mock Map Background */}
             <div className="absolute inset-0 opacity-50 bg-[url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Map_of_Pretoria%2C_South_Africa.svg/2000px-Map_of_Pretoria%2C_South_Africa.svg.png')] bg-cover bg-center grayscale" />
             
@@ -210,7 +211,7 @@ export default function FindTalent() {
              ))}
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }

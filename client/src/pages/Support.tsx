@@ -54,7 +54,7 @@ export default function Support() {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      <main>
+      <main id="main-content">
         {/* Hero */}
         <section className="bg-gradient-to-br from-primary to-primary/80 text-white pt-32 pb-16">
           <div className="container mx-auto px-4 text-center">
@@ -66,14 +66,14 @@ export default function Support() {
         </section>
 
         {/* Contact Options */}
-        <section className="py-12 bg-slate-50">
+        <section className="py-12 bg-muted">
           <div className="container mx-auto px-4">
             <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
               <a 
                 href="https://wa.me/27601234567"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow text-center group"
+                className="bg-card p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow text-center group"
               >
                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                   <MessageCircle className="h-8 w-8 text-green-600" />
@@ -89,7 +89,7 @@ export default function Support() {
 
               <a 
                 href="tel:0800123456"
-                className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow text-center group"
+                className="bg-card p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow text-center group"
               >
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                   <Phone className="h-8 w-8 text-blue-600" />
@@ -101,7 +101,7 @@ export default function Support() {
 
               <a 
                 href="mailto:support@freelanceskill.co.za"
-                className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow text-center group"
+                className="bg-card p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow text-center group"
               >
                 <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                   <Mail className="h-8 w-8 text-purple-600" />
@@ -136,7 +136,7 @@ export default function Support() {
               </button>
 
               <Link href="/how-to-hire">
-                <div className="p-6 bg-white border rounded-xl hover:shadow-md transition-shadow text-left h-full">
+                <div className="p-6 bg-card border rounded-xl hover:shadow-md transition-shadow text-left h-full">
                   <Users className="h-8 w-8 text-blue-500 mb-3" />
                   <h3 className="font-semibold mb-1">Hiring Guide</h3>
                   <p className="text-sm text-muted-foreground">Learn how to hire someone</p>
@@ -144,7 +144,7 @@ export default function Support() {
               </Link>
 
               <Link href="/how-to-get-hired">
-                <div className="p-6 bg-white border rounded-xl hover:shadow-md transition-shadow text-left h-full">
+                <div className="p-6 bg-card border rounded-xl hover:shadow-md transition-shadow text-left h-full">
                   <FileText className="h-8 w-8 text-amber-500 mb-3" />
                   <h3 className="font-semibold mb-1">Getting Hired</h3>
                   <p className="text-sm text-muted-foreground">Start earning on the platform</p>
@@ -152,7 +152,7 @@ export default function Support() {
               </Link>
 
               <Link href="/how-it-works">
-                <div className="p-6 bg-white border rounded-xl hover:shadow-md transition-shadow text-left h-full">
+                <div className="p-6 bg-card border rounded-xl hover:shadow-md transition-shadow text-left h-full">
                   <Shield className="h-8 w-8 text-green-500 mb-3" />
                   <h3 className="font-semibold mb-1">Safety & Trust</h3>
                   <p className="text-sm text-muted-foreground">How we protect you</p>
@@ -163,7 +163,7 @@ export default function Support() {
         </section>
 
         {/* FAQ */}
-        <section className="py-12 bg-slate-50">
+        <section className="py-12 bg-muted">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold text-center mb-8">Frequently Asked Questions</h2>
             <div className="max-w-3xl mx-auto space-y-6">
@@ -177,11 +177,11 @@ export default function Support() {
                     {section.questions.map((faq, j) => (
                       <div 
                         key={j}
-                        className="bg-white rounded-lg border overflow-hidden"
+                        className="bg-card rounded-lg border overflow-hidden"
                       >
                         <button
                           onClick={() => setExpandedFaq(expandedFaq === `${i}-${j}` ? null : `${i}-${j}`)}
-                          className="w-full p-4 text-left flex items-center justify-between hover:bg-slate-50"
+                          className="w-full p-4 text-left flex items-center justify-between hover:bg-muted"
                         >
                           <span className="font-medium">{faq.q}</span>
                           <ChevronRight className={`h-4 w-4 text-muted-foreground transition-transform ${

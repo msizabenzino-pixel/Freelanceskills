@@ -15,6 +15,7 @@ export default function FreelancerProfile() {
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       
+      <main id="main-content">
       {/* Header / Cover */}
       <div className="h-64 bg-primary relative overflow-hidden shrink-0">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-20 mix-blend-overlay" />
@@ -203,6 +204,7 @@ export default function FreelancerProfile() {
         </div>
       </div>
       
+      </main>
       <Footer />
     </div>
   );

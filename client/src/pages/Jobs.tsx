@@ -93,6 +93,7 @@ export default function Jobs() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
+      <main id="main-content">
       <div className="bg-primary pb-16 pt-32">
         <div className="container mx-auto px-4 md:px-6 text-center text-white">
           <h1 className="text-4xl font-display font-bold mb-4">Find Your Next Opportunity</h1>
@@ -165,7 +166,7 @@ export default function Jobs() {
 
           {/* Job Listings */}
           <div className="lg:col-span-3 space-y-6">
-            <div className="bg-white rounded-xl p-2 flex items-center justify-between border border-border shadow-sm">
+            <div className="bg-card rounded-xl p-2 flex items-center justify-between border border-border shadow-sm">
                <span className="text-sm font-medium px-4 text-muted-foreground">Showing <span className="text-foreground font-bold">2,451</span> jobs</span>
                <div className="flex items-center gap-2">
                  <span className="text-sm text-muted-foreground">Sort by:</span>
@@ -192,6 +193,7 @@ export default function Jobs() {
         </div>
       </div>
 
+      </main>
       <Footer />
 
       <Dialog open={showProposalHelper} onOpenChange={setShowProposalHelper}>

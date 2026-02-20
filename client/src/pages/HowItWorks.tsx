@@ -24,7 +24,7 @@ export default function HowItWorks() {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      <main>
+      <main id="main-content">
         {/* Hero Section */}
         <section className="bg-gradient-to-br from-primary to-primary/80 text-white pt-32 pb-16">
           <div className="container mx-auto px-4 text-center">
@@ -53,7 +53,7 @@ export default function HowItWorks() {
         </section>
 
         {/* Video Introduction */}
-        <section className="py-16 bg-slate-50">
+        <section className="py-16 bg-muted">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-center mb-4">Watch How It Works</h2>
@@ -98,7 +98,7 @@ export default function HowItWorks() {
                     { icon: CreditCard, step: "3", title: "Book & Pay", desc: "Secure escrow payment protects both parties" },
                     { icon: CheckCircle, step: "4", title: "Get Results", desc: "Approve work and release payment when satisfied" },
                   ].map((item, i) => (
-                    <div key={i} className="flex gap-4 p-4 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors">
+                    <div key={i} className="flex gap-4 p-4 rounded-lg bg-muted hover:bg-muted/80 transition-colors">
                       <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm flex-shrink-0">
                         {item.step}
                       </div>

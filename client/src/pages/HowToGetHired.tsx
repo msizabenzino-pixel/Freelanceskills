@@ -28,7 +28,7 @@ export default function HowToGetHired() {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      <main>
+      <main id="main-content">
         {/* Hero */}
         <section className="bg-gradient-to-br from-amber-500 to-amber-600 text-white pt-32 pb-16">
           <div className="container mx-auto px-4">
@@ -50,7 +50,7 @@ export default function HowToGetHired() {
         </section>
 
         {/* Video Tutorial */}
-        <section className="py-12 bg-slate-50">
+        <section className="py-12 bg-muted">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-2xl font-bold mb-4">Video Guide: Setting Up for Success</h2>
@@ -154,7 +154,7 @@ export default function HowToGetHired() {
                         { level: "Pro", points: "+25", items: ["Qualifications checked", "References verified"] },
                         { level: "Elite", points: "+25", items: ["Professional registration", "Background check"] },
                       ].map((tier, i) => (
-                        <div key={i} className="p-3 bg-slate-50 rounded-lg border">
+                        <div key={i} className="p-3 bg-muted rounded-lg border">
                           <div className="flex justify-between items-center mb-2">
                             <span className="font-semibold">{tier.level}</span>
                             <span className="text-sm text-green-600 font-medium">{tier.points} points</span>
@@ -192,7 +192,7 @@ export default function HowToGetHired() {
                       Make it easy for clients to book you instantly:
                     </p>
                     <div className="space-y-3 mb-4">
-                      <div className="p-4 bg-white border rounded-lg">
+                      <div className="p-4 bg-card border rounded-lg">
                         <div className="flex justify-between items-start mb-2">
                           <div>
                             <h4 className="font-semibold">Example: Geyser Installation</h4>
@@ -252,23 +252,23 @@ export default function HowToGetHired() {
                         </p>
                       </div>
                     </div>
-                    <div className="p-4 bg-slate-50 rounded-lg">
+                    <div className="p-4 bg-muted rounded-lg">
                       <h4 className="font-semibold mb-2">Keys to 5-Star Reviews:</h4>
                       <ul className="text-sm space-y-1">
                         <li className="flex items-center gap-2">
-                          <Clock className="h-4 w-4 text-slate-500" />
+                          <Clock className="h-4 w-4 text-muted-foreground" />
                           Respond within 1 hour
                         </li>
                         <li className="flex items-center gap-2">
-                          <CheckCircle className="h-4 w-4 text-slate-500" />
+                          <CheckCircle className="h-4 w-4 text-muted-foreground" />
                           Arrive on time (or early!)
                         </li>
                         <li className="flex items-center gap-2">
-                          <Star className="h-4 w-4 text-slate-500" />
+                          <Star className="h-4 w-4 text-muted-foreground" />
                           Exceed expectations
                         </li>
                         <li className="flex items-center gap-2">
-                          <MessageSquare className="h-4 w-4 text-slate-500" />
+                          <MessageSquare className="h-4 w-4 text-muted-foreground" />
                           Communicate clearly throughout
                         </li>
                       </ul>

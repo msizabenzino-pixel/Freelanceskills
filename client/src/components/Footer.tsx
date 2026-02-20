@@ -3,7 +3,7 @@ import { Link } from "wouter";
 
 export function Footer() {
   return (
-    <footer className="bg-secondary pt-16 pb-8 border-t border-border mt-auto">
+    <footer role="contentinfo" aria-label="Site footer" className="bg-secondary pt-16 pb-8 border-t border-border mt-auto">
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-12">
           <div className="space-y-4 md:col-span-2">
@@ -22,7 +22,7 @@ export function Footer() {
                 href="https://facebook.com/freelanceskills" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-600 hover:text-white transition-colors"
+                className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:bg-blue-600 hover:text-white transition-colors"
                 data-testid="link-facebook"
               >
                 <Facebook className="w-5 h-5" />
@@ -31,7 +31,7 @@ export function Footer() {
                 href="https://instagram.com/freelanceskills" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-gradient-to-br hover:from-purple-600 hover:to-pink-500 hover:text-white transition-colors"
+                className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:bg-gradient-to-br hover:from-purple-600 hover:to-pink-500 hover:text-white transition-colors"
                 data-testid="link-instagram"
               >
                 <Instagram className="w-5 h-5" />
@@ -40,7 +40,7 @@ export function Footer() {
                 href="https://youtube.com/@freelanceskills" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-red-600 hover:text-white transition-colors"
+                className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:bg-red-600 hover:text-white transition-colors"
                 data-testid="link-youtube"
               >
                 <Youtube className="w-5 h-5" />
@@ -49,7 +49,7 @@ export function Footer() {
                 href="https://x.com/freelanceskills" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-black hover:text-white transition-colors"
+                className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:bg-black hover:text-white transition-colors"
                 data-testid="link-x"
                 aria-label="X (formerly Twitter)"
               >
@@ -61,7 +61,7 @@ export function Footer() {
                 href="https://linkedin.com/company/freelanceskills" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-700 hover:text-white transition-colors"
+                className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:bg-blue-700 hover:text-white transition-colors"
                 data-testid="link-linkedin"
               >
                 <Linkedin className="w-5 h-5" />

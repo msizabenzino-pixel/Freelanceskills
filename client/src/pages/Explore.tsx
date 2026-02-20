@@ -160,7 +160,7 @@ export default function Explore() {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      <main>
+      <main id="main-content">
         {/* Search Hero */}
         <section className="bg-gradient-to-br from-primary via-primary to-primary/80 text-white pt-32 pb-16">
           <div className="container mx-auto px-4">
@@ -175,12 +175,12 @@ export default function Explore() {
 
             {/* Main Search Bar */}
             <div className="max-w-4xl mx-auto">
-              <div className="bg-white rounded-2xl p-2 shadow-xl flex flex-col md:flex-row gap-2">
+              <div className="bg-card rounded-2xl p-2 shadow-xl flex flex-col md:flex-row gap-2">
                 <div className="flex-1 relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input
                     placeholder="Search for services, skills, or freelancers..."
-                    className="pl-12 h-14 border-0 text-lg text-slate-900"
+                    className="pl-12 h-14 border-0 text-lg text-foreground"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     data-testid="input-search"
@@ -188,10 +188,10 @@ export default function Explore() {
                 </div>
                 <div className="flex gap-2">
                   <div className="relative flex-1 md:w-48">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                     <Input
                       placeholder="Location"
-                      className="pl-10 h-14 border-0 text-slate-900"
+                      className="pl-10 h-14 border-0 text-foreground"
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
                       data-testid="input-location"
@@ -223,7 +223,7 @@ export default function Explore() {
         </section>
 
         {/* Categories Grid */}
-        <section className="py-12 bg-slate-50">
+        <section className="py-12 bg-muted">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between mb-8">
               <div>
@@ -242,7 +242,7 @@ export default function Explore() {
                       setSelectedCategory(category.id);
                       addFilter(category.name);
                     }}
-                    className={`p-4 bg-white rounded-xl border-2 hover:border-primary hover:shadow-lg transition-all text-left group ${
+                    className={`p-4 bg-card rounded-xl border-2 hover:border-primary hover:shadow-lg transition-all text-left group ${
                       selectedCategory === category.id ? "border-primary shadow-lg" : "border-transparent"
                     }`}
                     data-testid={`button-category-${category.id}`}
@@ -265,7 +265,7 @@ export default function Explore() {
             <div className="flex flex-col lg:flex-row gap-8">
               {/* Filters Sidebar - Desktop */}
               <div className="hidden lg:block w-72 shrink-0">
-                <div className="bg-white rounded-xl border p-6 sticky top-24">
+                <div className="bg-card rounded-xl border p-6 sticky top-24">
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="font-bold text-lg">Filters</h3>
                     {activeFilters.length > 0 && (
@@ -429,7 +429,7 @@ export default function Explore() {
                   <div className="grid md:grid-cols-2 gap-4">
                     {FEATURED_FREELANCERS.map((freelancer) => (
                       <Link key={freelancer.id} href={`/freelancer/${freelancer.id}`}>
-                        <div className="bg-white rounded-xl border p-4 hover:shadow-lg transition-shadow cursor-pointer" data-testid={`card-freelancer-${freelancer.id}`}>
+                        <div className="bg-card rounded-xl border p-4 hover:shadow-lg transition-shadow cursor-pointer" data-testid={`card-freelancer-${freelancer.id}`}>
                           <div className="flex gap-4">
                             <img 
                               src={freelancer.avatar} 
@@ -474,7 +474,7 @@ export default function Explore() {
                   </div>
                   <div className="space-y-3">
                     {TRENDING_PROJECTS.map((project, i) => (
-                      <div key={i} className="bg-white rounded-xl border p-4 hover:shadow-md transition-shadow cursor-pointer" data-testid={`card-project-${i}`}>
+                      <div key={i} className="bg-card rounded-xl border p-4 hover:shadow-md transition-shadow cursor-pointer" data-testid={`card-project-${i}`}>
                         <div className="flex items-center justify-between">
                           <div>
                             <h4 className="font-semibold">{project.title}</h4>
