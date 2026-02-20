@@ -149,3 +149,12 @@ Preferred communication style: Simple, everyday language.
 - manifest.json with app icons (72x72 to 512x512)
 - Service worker for offline caching
 - Apple touch icon and mobile web app meta tags
+
+### Elon-Inspired Strategic Pages (Feb 2026)
+- **Social Impact Dashboard** (`/impact`): Public metrics (jobs created, income generated, communities reached), freelancer success stories, mission progress tracker ("1 Million Africans by 2031")
+- **AI Upskilling Academy** (`/academy`): 3-tier course structure (Free AI Basics, Personalized Micro-Courses, Intensive Bootcamps), 6 course categories, earn-while-learn model, AI tutor teaser, blockchain certification concept, partner showcase
+- **Enterprise & Government Solutions** (`/enterprise`): Bulk hiring dashboard, tender integration, verified talent pool, youth employment programs, trusted partner showcase
+- **Referral Program** (`/referral`): 4-tier rewards (Bronze/Silver/Gold/Platinum), leaderboard, share mechanics (WhatsApp, Facebook, X, Email), FAQ
+- **JSON-LD Structured Data**: Organization and WebSite schema markup in index.html for AI search engine visibility (ChatGPT, Gemini, Grok discovery)
+- **Homepage Updates**: Impact metrics banner, "More Than a Marketplace" section with Academy/Enterprise/Referral CTAs
+- **Footer Updates**: New "Company" column with links to all strategic pages
