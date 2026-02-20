@@ -158,3 +158,18 @@ Preferred communication style: Simple, everyday language.
 - **JSON-LD Structured Data**: Organization and WebSite schema markup in index.html for AI search engine visibility (ChatGPT, Gemini, Grok discovery)
 - **Homepage Updates**: Impact metrics banner, "More Than a Marketplace" section with Academy/Enterprise/Referral CTAs
 - **Footer Updates**: New "Company" column with links to all strategic pages
+
+### Freelancer Features (Feb 2026)
+- **Freelancer Onboarding** (`/onboarding`): 4-step profile creation flow (Basic Info, Skills & Expertise, Portfolio & Verification, Review & Submit) with progress indicator, category selection from SERVICE_CATEGORIES, skill badge input, hourly rate, availability settings
+- **Service Package Creation**: Dashboard "My Services" tab allows freelancers to create service packages via POST `/api/packages` API - persisted to database with title, description, category, price, duration, features
+- **Dashboard Navigation**: Sidebar nav now includes Overview, My Services, Messages, Payments, Settings sections with active state management
+
+### Enterprise Contact Form (Feb 2026)
+- Enterprise page "Contact Sales" buttons scroll to inline contact form
+- Form fields: Company Name, Contact Person, Email, Phone, Company Size (dropdown), Message
+- Client-side + HTML5 validation on required fields
+- Success state shown after valid submission
+
+### AI & Error Handling Improvements (Feb 2026)
+- AI Task Assistant: Better error messages for API key issues, retry button with dismissible error card
+- Server-side: Detects API key errors vs general failures and returns appropriate user-facing messages
