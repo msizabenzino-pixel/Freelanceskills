@@ -26,6 +26,7 @@ import Impact from "@/pages/Impact";
 import Academy from "@/pages/Academy";
 import Enterprise from "@/pages/Enterprise";
 import Referral from "@/pages/Referral";
+import Checkout from "@/pages/Checkout";
 import { SupportChat } from "@/components/SupportChat";
 import NotFound from "@/pages/not-found";
 
@@ -54,6 +55,7 @@ function Router() {
       <Route path="/academy" component={Academy} />
       <Route path="/enterprise" component={Enterprise} />
       <Route path="/referral" component={Referral} />
+      <Route path="/checkout" component={Checkout} />
       <Route component={NotFound} />
     </Switch>
   );

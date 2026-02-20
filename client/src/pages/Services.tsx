@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useState } from "react";
 import { useCurrency } from "@/lib/currency";
 import { 
@@ -108,6 +108,7 @@ export default function Services() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const { formatAmount } = useCurrency();
+  const [, navigate] = useLocation();
 
   return (
     <div className="min-h-screen bg-background">
@@ -238,7 +239,7 @@ export default function Services() {
                       <span className="text-2xl font-bold text-primary">{formatAmount(pkg.price)}</span>
                       {pkg.duration === "per hour" && <span className="text-sm text-muted-foreground">/hr</span>}
                     </div>
-                    <Button className="bg-primary hover:bg-primary/90" data-testid={`button-book-${pkg.id}`}>
+                    <Button className="bg-primary hover:bg-primary/90" data-testid={`button-book-${pkg.id}`} onClick={() => navigate("/checkout")}>
                       <Zap className="w-4 h-4 mr-1" /> Book Now
                     </Button>
                   </div>
