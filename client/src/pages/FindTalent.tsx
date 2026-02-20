@@ -211,6 +211,7 @@ export default function FindTalent() {
              ))}
           </div>
         )}
+      </div>
       </main>
     </div>
   );
