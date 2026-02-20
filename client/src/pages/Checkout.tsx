@@ -42,17 +42,6 @@ const OZOW_BANKS = [
   { id: "bidvest", name: "Bidvest Bank", color: "bg-[#1B3A5C]", textColor: "text-white", logo: "BV" },
 ];
 
-const SAMPLE_SERVICE = {
-  title: "Emergency Plumbing Repair",
-  freelancer: "Thabo M.",
-  rating: 4.9,
-  reviews: 234,
-  price: 850,
-  duration: "2-4 hours",
-  location: "Johannesburg",
-  image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=400&h=250&fit=crop",
-};
-
 type Step = "review" | "payment" | "bank" | "authenticate" | "processing" | "success";
 
 export default function Checkout() {
@@ -64,7 +53,17 @@ export default function Checkout() {
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const service = SAMPLE_SERVICE;
+  const params = new URLSearchParams(window.location.search);
+  const service = {
+    title: params.get("title") || "Service Booking",
+    freelancer: params.get("freelancer") || "Freelancer",
+    rating: parseFloat(params.get("rating") || "4.9"),
+    reviews: parseInt(params.get("reviews") || "0"),
+    price: parseInt(params.get("price") || "0"),
+    duration: params.get("duration") || "",
+    location: params.get("location") || "",
+    image: params.get("image") || "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=400&h=250&fit=crop",
+  };
   const serviceFee = Math.round(service.price * 0.1);
   const total = service.price + serviceFee;
 
@@ -104,6 +103,25 @@ export default function Checkout() {
   };
 
   const selectedBankInfo = OZOW_BANKS.find(b => b.id === selectedBank);
+
+  if (service.price === 0) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <Navbar />
+        <main id="main-content" className="flex-1 pt-24 pb-12">
+          <div className="container mx-auto px-4 md:px-6 max-w-4xl text-center py-20">
+            <AlertCircle className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-foreground mb-2">No service selected</h2>
+            <p className="text-muted-foreground mb-6">Please select a service to proceed with checkout.</p>
+            <Button onClick={() => navigate("/services")} data-testid="button-browse-services">
+              Browse Services
+            </Button>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col">

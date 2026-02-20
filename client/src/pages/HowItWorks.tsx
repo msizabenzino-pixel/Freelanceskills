@@ -1,7 +1,7 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
+import { useLocation } from "wouter";
 import { VideoPlayer, VideoLanguageInfo } from "@/components/VideoPlayer";
 import { 
   Search, 
@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 
 export default function HowItWorks() {
+  const [, navigate] = useLocation();
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -36,18 +37,14 @@ export default function HowItWorks() {
               we make it simple, safe, and rewarding.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/how-to-hire">
-                <Button size="lg" className="bg-white text-primary hover:bg-white/90 gap-2">
+              <Button size="lg" className="bg-white text-primary hover:bg-white/90 gap-2" onClick={() => navigate("/how-to-hire")}>
                   <Users className="h-5 w-5" />
                   I Want to Hire
                 </Button>
-              </Link>
-              <Link href="/how-to-get-hired">
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 gap-2">
+              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 gap-2" onClick={() => navigate("/how-to-get-hired")}>
                   <Briefcase className="h-5 w-5" />
                   I Want to Work
                 </Button>
-              </Link>
             </div>
           </div>
         </section>
@@ -113,11 +110,9 @@ export default function HowItWorks() {
                   ))}
                 </div>
 
-                <Link href="/how-to-hire">
-                  <Button className="w-full gap-2">
+                <Button className="w-full gap-2" onClick={() => navigate("/how-to-hire")}>
                     Learn More About Hiring <ArrowRight className="h-4 w-4" />
                   </Button>
-                </Link>
               </div>
 
               {/* For Freelancers */}
@@ -151,11 +146,9 @@ export default function HowItWorks() {
                   ))}
                 </div>
 
-                <Link href="/how-to-get-hired">
-                  <Button variant="outline" className="w-full gap-2 border-amber-500 text-amber-600 hover:bg-amber-50">
+                <Button variant="outline" className="w-full gap-2 border-amber-500 text-amber-600 hover:bg-amber-50" onClick={() => navigate("/how-to-get-hired")}>
                     Learn More About Getting Hired <ArrowRight className="h-4 w-4" />
                   </Button>
-                </Link>
               </div>
             </div>
           </div>
@@ -192,12 +185,8 @@ export default function HowItWorks() {
               Check out our detailed guides or contact our support team.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/how-to-hire">
-                <Button variant="outline" size="lg">How to Hire Guide</Button>
-              </Link>
-              <Link href="/how-to-get-hired">
-                <Button variant="outline" size="lg">How to Get Hired Guide</Button>
-              </Link>
+              <Button variant="outline" size="lg" onClick={() => navigate("/how-to-hire")}>How to Hire Guide</Button>
+              <Button variant="outline" size="lg" onClick={() => navigate("/how-to-get-hired")}>How to Get Hired Guide</Button>
             </div>
           </div>
         </section>

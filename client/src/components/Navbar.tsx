@@ -16,7 +16,7 @@ import {
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
   const { user, isLoading, isAuthenticated } = useAuth();
   const { isDark, toggle: toggleDarkMode } = useDarkMode();
 
@@ -159,18 +159,17 @@ export function Navbar() {
           )}>
             <CountrySelector />
           </div>
-          <Link href="/post-job">
-            <Button 
+          <Button 
               variant="ghost" 
               className={cn(
                 "hover:text-accent hover:bg-transparent font-medium",
                 isScrolled || location !== "/" ? "text-primary" : "text-white"
               )}
               data-testid="button-post-job"
+              onClick={() => navigate("/post-job")}
             >
               Post a Job
             </Button>
-          </Link>
           {isAuthenticated ? (
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">

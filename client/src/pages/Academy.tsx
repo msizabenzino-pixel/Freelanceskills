@@ -3,7 +3,7 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Link } from "wouter";
+import { useLocation } from "wouter";
 import {
   Sparkles,
   BookOpen,
@@ -123,6 +123,7 @@ const partners = [
 ];
 
 export default function Academy() {
+  const [, navigate] = useLocation();
   return (
     <div className="min-h-screen bg-background font-sans flex flex-col">
       <Navbar />
@@ -460,12 +461,10 @@ export default function Academy() {
                   <Rocket className="w-5 h-5" />
                   Start Learning Free Today
                 </Button>
-                <Link href="/explore">
-                  <Button size="lg" variant="outline" className="font-semibold gap-2" data-testid="button-cta-explore">
+                <Button size="lg" variant="outline" className="font-semibold gap-2" data-testid="button-cta-explore" onClick={() => navigate("/explore")}>
                     Explore FreelanceSkills
                     <ArrowRight className="w-4 h-4" />
                   </Button>
-                </Link>
               </div>
             </div>
           </div>

@@ -5,13 +5,122 @@ import { PaymentModal } from "@/components/PaymentModal";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Wallet, MessageSquare, Settings, AlertCircle, PlusCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { LayoutDashboard, Wallet, MessageSquare, Settings, AlertCircle, PlusCircle, Package, Star, Clock, MapPin, CheckCircle2, X, Edit, Loader2 } from "lucide-react";
 import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCurrency } from "@/lib/currency";
+import { SERVICE_CATEGORIES } from "@shared/categories";
+import { apiRequest } from "@/lib/queryClient";
+
+interface ServicePackageForm {
+  title: string;
+  description: string;
+  category: string;
+  price: string;
+  deliveryDays: string;
+  revisions: string;
+  features: string[];
+  featureInput: string;
+}
+
+const emptyPackageForm: ServicePackageForm = {
+  title: "",
+  description: "",
+  category: "",
+  price: "",
+  deliveryDays: "",
+  revisions: "1",
+  features: [],
+  featureInput: "",
+};
 
 export default function Dashboard() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [activeNav, setActiveNav] = useState("Overview");
+  const [showCreatePackage, setShowCreatePackage] = useState(false);
+  const [packageForm, setPackageForm] = useState<ServicePackageForm>(emptyPackageForm);
+  const [packageSaved, setPackageSaved] = useState(false);
   const { formatAmount } = useCurrency();
+  const queryClient = useQueryClient();
+
+  const { data: userRes } = useQuery<{ id: string } | null>({
+    queryKey: ["/api/auth/user"],
+    queryFn: async () => {
+      const res = await fetch("/api/auth/user");
+      if (!res.ok) return null;
+      return res.json();
+    },
+  });
+
+  const { data: myPackages = [], isLoading: packagesLoading } = useQuery<any[]>({
+    queryKey: ["/api/packages", "my"],
+    queryFn: async () => {
+      if (!userRes?.id) return [];
+      const res = await fetch(`/api/freelancers/${userRes.id}/packages`);
+      if (!res.ok) return [];
+      return res.json();
+    },
+    enabled: !!userRes?.id,
+  });
+
+  const createPackageMutation = useMutation({
+    mutationFn: async (data: { title: string; description: string; category: string; price: number; duration?: string }) => {
+      const res = await apiRequest("POST", "/api/packages", data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/packages"] });
+      setPackageForm(emptyPackageForm);
+      setPackageSaved(true);
+      setTimeout(() => {
+        setPackageSaved(false);
+        setShowCreatePackage(false);
+      }, 2000);
+    },
+  });
+
+  const handleAddFeature = () => {
+    const feature = packageForm.featureInput.trim();
+    if (feature && !packageForm.features.includes(feature)) {
+      setPackageForm(prev => ({
+        ...prev,
+        features: [...prev.features, feature],
+        featureInput: "",
+      }));
+    }
+  };
+
+  const handleRemoveFeature = (feature: string) => {
+    setPackageForm(prev => ({
+      ...prev,
+      features: prev.features.filter(f => f !== feature),
+    }));
+  };
+
+  const handleSavePackage = () => {
+    if (!packageForm.title || !packageForm.description || !packageForm.category || !packageForm.price) return;
+    const features = packageForm.features.length > 0 ? ` | Includes: ${packageForm.features.join(", ")}` : "";
+    const deliveryInfo = packageForm.deliveryDays ? ` | ${packageForm.deliveryDays} day delivery` : "";
+    const revisionsInfo = packageForm.revisions !== "1" ? ` | ${packageForm.revisions} revisions` : "";
+    createPackageMutation.mutate({
+      title: packageForm.title,
+      description: packageForm.description + features + deliveryInfo + revisionsInfo,
+      category: packageForm.category,
+      price: Number(packageForm.price),
+      duration: packageForm.deliveryDays ? `${packageForm.deliveryDays} days` : undefined,
+    });
+  };
 
   const activeContracts = [
     {
@@ -80,12 +189,18 @@ export default function Dashboard() {
             <Card className="border-none shadow-none bg-transparent">
               <nav className="space-y-1">
                 {[
-                  { icon: LayoutDashboard, label: "Overview", active: true },
+                  { icon: LayoutDashboard, label: "Overview" },
+                  { icon: Package, label: "My Services" },
                   { icon: MessageSquare, label: "Messages", count: 3 },
                   { icon: Wallet, label: "Payments" },
                   { icon: Settings, label: "Settings" }
                 ].map((item) => (
-                  <button key={item.label} className={`w-full flex items-center justify-between p-3 rounded-xl text-sm font-medium transition-colors ${item.active ? 'bg-primary text-white' : 'text-muted-foreground hover:bg-muted'}`}>
+                  <button
+                    key={item.label}
+                    data-testid={`nav-${item.label.toLowerCase().replace(/\s/g, '-')}`}
+                    onClick={() => setActiveNav(item.label)}
+                    className={`w-full flex items-center justify-between p-3 rounded-xl text-sm font-medium transition-colors ${activeNav === item.label ? 'bg-primary text-white' : 'text-muted-foreground hover:bg-muted'}`}
+                  >
                     <div className="flex items-center gap-3">
                       <item.icon className="w-4 h-4" />
                       {item.label}
@@ -98,37 +213,280 @@ export default function Dashboard() {
           </div>
 
           <div className="lg:col-span-3">
-            <Tabs defaultValue="active" className="w-full">
-              <TabsList className="bg-muted/50 p-1 rounded-xl mb-6">
-                <TabsTrigger value="active" className="rounded-lg font-bold px-6">Active Jobs</TabsTrigger>
-                <TabsTrigger value="completed" className="rounded-lg font-bold px-6">History</TabsTrigger>
-                <TabsTrigger value="disputed" className="rounded-lg font-bold px-6 text-red-500">Disputes</TabsTrigger>
-              </TabsList>
+            {activeNav === "Overview" && (
+              <Tabs defaultValue="active" className="w-full">
+                <TabsList className="bg-muted/50 p-1 rounded-xl mb-6">
+                  <TabsTrigger value="active" className="rounded-lg font-bold px-6">Active Jobs</TabsTrigger>
+                  <TabsTrigger value="completed" className="rounded-lg font-bold px-6">History</TabsTrigger>
+                  <TabsTrigger value="disputed" className="rounded-lg font-bold px-6 text-red-500">Disputes</TabsTrigger>
+                </TabsList>
 
-              <TabsContent value="active" className="space-y-6">
-                <div className="grid gap-6">
-                  {activeContracts.map((job, i) => (
-                    <JobLifecycleCard key={i} {...job} />
-                  ))}
-                </div>
-              </TabsContent>
+                <TabsContent value="active" className="space-y-6">
+                  <div className="grid gap-6">
+                    {activeContracts.map((job, i) => (
+                      <JobLifecycleCard key={i} {...job} />
+                    ))}
+                  </div>
+                </TabsContent>
 
-              <TabsContent value="completed" className="space-y-6">
-                <div className="grid gap-6">
-                  {recentlyCompleted.map((job, i) => (
-                    <JobLifecycleCard key={i} {...job} />
-                  ))}
+                <TabsContent value="completed" className="space-y-6">
+                  <div className="grid gap-6">
+                    {recentlyCompleted.map((job, i) => (
+                      <JobLifecycleCard key={i} {...job} />
+                    ))}
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="disputed" className="flex flex-col items-center justify-center py-20 text-center">
+                   <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                     <AlertCircle className="w-8 h-8 text-muted-foreground" />
+                   </div>
+                   <h3 className="font-bold text-lg text-primary">No active disputes</h3>
+                   <p className="text-muted-foreground text-sm max-w-xs mx-auto">Disputes are rare and handled by our admin team within 48 hours.</p>
+                </TabsContent>
+              </Tabs>
+            )}
+
+            {activeNav === "My Services" && (
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xl font-bold text-primary">My Service Packages</h2>
+                    <p className="text-sm text-muted-foreground">Create and manage your service offerings</p>
+                  </div>
+                  {!showCreatePackage && (
+                    <Button
+                      data-testid="button-create-package"
+                      onClick={() => setShowCreatePackage(true)}
+                      className="gap-2"
+                    >
+                      <PlusCircle className="w-4 h-4" /> Create Package
+                    </Button>
+                  )}
                 </div>
-              </TabsContent>
-              
-              <TabsContent value="disputed" className="flex flex-col items-center justify-center py-20 text-center">
-                 <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-                   <AlertCircle className="w-8 h-8 text-muted-foreground" />
-                 </div>
-                 <h3 className="font-bold text-lg text-primary">No active disputes</h3>
-                 <p className="text-muted-foreground text-sm max-w-xs mx-auto">Disputes are rare and handled by our admin team within 48 hours.</p>
-              </TabsContent>
-            </Tabs>
+
+                {showCreatePackage && (
+                  <Card className="border border-border">
+                    <CardHeader>
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <Package className="w-5 h-5 text-primary" />
+                        {packageSaved ? "Package Saved!" : "Create Service Package"}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {packageSaved ? (
+                        <div className="text-center py-8">
+                          <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-3" />
+                          <p className="text-lg font-medium">Your service package is now live!</p>
+                          <p className="text-sm text-muted-foreground">Clients can find and book it on the Services page.</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-5">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="pkg-title">Package Title *</Label>
+                              <Input
+                                id="pkg-title"
+                                data-testid="input-package-title"
+                                placeholder="e.g., Professional Plumbing Service"
+                                value={packageForm.title}
+                                onChange={(e) => setPackageForm(prev => ({ ...prev, title: e.target.value }))}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="pkg-category">Category *</Label>
+                              <Select
+                                value={packageForm.category}
+                                onValueChange={(val) => setPackageForm(prev => ({ ...prev, category: val }))}
+                              >
+                                <SelectTrigger data-testid="select-package-category">
+                                  <SelectValue placeholder="Select category" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {SERVICE_CATEGORIES.map((cat) => (
+                                    <SelectItem key={cat.id} value={cat.id}>
+                                      {cat.icon} {cat.name}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="pkg-description">Description *</Label>
+                            <Textarea
+                              id="pkg-description"
+                              data-testid="input-package-description"
+                              placeholder="Describe what's included in this service package..."
+                              value={packageForm.description}
+                              onChange={(e) => setPackageForm(prev => ({ ...prev, description: e.target.value }))}
+                              className="min-h-[100px]"
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="pkg-price">Price (ZAR) *</Label>
+                              <Input
+                                id="pkg-price"
+                                data-testid="input-package-price"
+                                type="number"
+                                placeholder="e.g., 500"
+                                value={packageForm.price}
+                                onChange={(e) => setPackageForm(prev => ({ ...prev, price: e.target.value }))}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="pkg-delivery">Delivery (days)</Label>
+                              <Input
+                                id="pkg-delivery"
+                                data-testid="input-package-delivery"
+                                type="number"
+                                placeholder="e.g., 3"
+                                value={packageForm.deliveryDays}
+                                onChange={(e) => setPackageForm(prev => ({ ...prev, deliveryDays: e.target.value }))}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="pkg-revisions">Revisions</Label>
+                              <Select
+                                value={packageForm.revisions}
+                                onValueChange={(val) => setPackageForm(prev => ({ ...prev, revisions: val }))}
+                              >
+                                <SelectTrigger data-testid="select-package-revisions">
+                                  <SelectValue placeholder="Revisions" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {["1", "2", "3", "5", "Unlimited"].map((r) => (
+                                    <SelectItem key={r} value={r}>{r}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label>What's Included</Label>
+                            <div className="flex gap-2">
+                              <Input
+                                data-testid="input-package-feature"
+                                placeholder="e.g., Site inspection included"
+                                value={packageForm.featureInput}
+                                onChange={(e) => setPackageForm(prev => ({ ...prev, featureInput: e.target.value }))}
+                                onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddFeature())}
+                              />
+                              <Button type="button" variant="outline" onClick={handleAddFeature} data-testid="button-add-feature">
+                                Add
+                              </Button>
+                            </div>
+                            {packageForm.features.length > 0 && (
+                              <div className="flex flex-wrap gap-2 mt-2">
+                                {packageForm.features.map((f) => (
+                                  <Badge key={f} variant="secondary" className="gap-1 pr-1">
+                                    {f}
+                                    <button onClick={() => handleRemoveFeature(f)} className="ml-1 hover:text-destructive">
+                                      <X className="w-3 h-3" />
+                                    </button>
+                                  </Badge>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+
+                          {createPackageMutation.isError && (
+                            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3 text-center">
+                              <p className="text-sm text-destructive">
+                                {createPackageMutation.error?.message || "Failed to save package. Please try again."}
+                              </p>
+                            </div>
+                          )}
+
+                          <div className="flex gap-3 pt-2">
+                            <Button
+                              data-testid="button-save-package"
+                              onClick={handleSavePackage}
+                              disabled={!packageForm.title || !packageForm.description || !packageForm.category || !packageForm.price || createPackageMutation.isPending}
+                            >
+                              {createPackageMutation.isPending ? (
+                                <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Saving...</>
+                              ) : (
+                                <><CheckCircle2 className="w-4 h-4 mr-2" /> Save Package</>
+                              )}
+                            </Button>
+                            <Button
+                              variant="outline"
+                              data-testid="button-cancel-package"
+                              onClick={() => { setShowCreatePackage(false); setPackageForm(emptyPackageForm); }}
+                            >
+                              Cancel
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                )}
+
+                {packagesLoading ? (
+                  <div className="flex justify-center py-12">
+                    <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+                  </div>
+                ) : myPackages.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {myPackages.map((pkg: any) => {
+                      const cat = SERVICE_CATEGORIES.find(c => c.id === pkg.category);
+                      return (
+                        <Card key={pkg.id} className="border border-border" data-testid={`card-package-${pkg.id}`}>
+                          <CardContent className="p-5">
+                            <div className="flex justify-between items-start mb-3">
+                              <div>
+                                <h3 className="font-bold text-primary">{pkg.title}</h3>
+                                <p className="text-xs text-muted-foreground">{cat?.icon} {cat?.name}</p>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-lg font-bold text-primary">{formatAmount(pkg.price)}</div>
+                                {pkg.duration && (
+                                  <p className="text-xs text-muted-foreground flex items-center gap-1 justify-end">
+                                    <Clock className="w-3 h-3" /> {pkg.duration}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                            <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{pkg.description}</p>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                ) : !showCreatePackage && (
+                  <Card className="border border-dashed border-border">
+                    <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                      <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                        <Package className="w-8 h-8 text-muted-foreground" />
+                      </div>
+                      <h3 className="font-bold text-lg text-primary mb-1">No service packages yet</h3>
+                      <p className="text-muted-foreground text-sm max-w-xs mx-auto mb-4">
+                        Create your first service package to start getting bookings from clients.
+                      </p>
+                      <Button data-testid="button-create-first-package" onClick={() => setShowCreatePackage(true)} className="gap-2">
+                        <PlusCircle className="w-4 h-4" /> Create Your First Package
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            )}
+
+            {activeNav !== "Overview" && activeNav !== "My Services" && (
+              <div className="flex flex-col items-center justify-center py-20 text-center">
+                <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                  <AlertCircle className="w-8 h-8 text-muted-foreground" />
+                </div>
+                <h3 className="font-bold text-lg text-primary">{activeNav}</h3>
+                <p className="text-muted-foreground text-sm max-w-xs mx-auto">This section is coming soon.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

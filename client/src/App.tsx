@@ -27,6 +27,7 @@ import Academy from "@/pages/Academy";
 import Enterprise from "@/pages/Enterprise";
 import Referral from "@/pages/Referral";
 import Checkout from "@/pages/Checkout";
+import FreelancerOnboarding from "@/pages/FreelancerOnboarding";
 import { SupportChat } from "@/components/SupportChat";
 import NotFound from "@/pages/not-found";
 
@@ -56,6 +57,7 @@ function Router() {
       <Route path="/enterprise" component={Enterprise} />
       <Route path="/referral" component={Referral} />
       <Route path="/checkout" component={Checkout} />
+      <Route path="/onboarding" component={FreelancerOnboarding} />
       <Route component={NotFound} />
     </Switch>
   );

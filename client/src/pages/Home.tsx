@@ -5,11 +5,12 @@ import { FreelancerCard } from "@/components/FreelancerCard";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users, Gift, Building2 } from "lucide-react";
-import { Link } from "wouter";
+import { useLocation } from "wouter";
 import { useCurrency } from "@/lib/currency";
 
 export default function Home() {
   const { formatAmount, formatRange, formatRate, formatRateRange } = useCurrency();
+  const [, navigate] = useLocation();
 
   const featuredJobs = [
     {
@@ -116,12 +117,10 @@ export default function Home() {
                 <p className="text-muted-foreground">Let our AI help you find the right service category and budget estimate</p>
               </div>
             </div>
-            <Link href="/task-assistant">
-              <Button size="lg" className="gap-2 whitespace-nowrap" data-testid="button-homepage-ai-assistant">
+            <Button size="lg" className="gap-2 whitespace-nowrap" data-testid="button-homepage-ai-assistant" onClick={() => navigate("/task-assistant")}>
                 <Sparkles className="h-4 w-4" />
                 Try AI Task Assistant
               </Button>
-            </Link>
           </div>
         </div>
       </section>
@@ -149,11 +148,9 @@ export default function Home() {
               <h2 className="text-3xl md:text-4xl font-bold text-primary mb-3">Latest Opportunities</h2>
               <p className="text-muted-foreground text-lg">Find high-paying projects from verified local businesses.</p>
             </div>
-            <Link href="/jobs">
-              <Button variant="outline" className="gap-2 group">
+            <Button variant="outline" className="gap-2 group" onClick={() => navigate("/jobs")}>
                 View All Jobs <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Button>
-            </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
@@ -245,11 +242,9 @@ export default function Home() {
           </div>
 
           <div className="text-center mt-12">
-            <Link href="/freelancers">
-              <Button size="lg" className="bg-primary text-white hover:bg-primary/90 px-8">
+            <Button size="lg" className="bg-primary text-white hover:bg-primary/90 px-8" onClick={() => navigate("/freelancers")}>
                 View All Talent
               </Button>
-            </Link>
           </div>
         </div>
       </section>
@@ -276,11 +271,9 @@ export default function Home() {
             ))}
           </div>
           <div className="text-center mt-8">
-            <Link href="/impact">
-              <Button variant="outline" className="border-white text-white hover:bg-white hover:text-emerald-700 gap-2" data-testid="button-view-impact">
+            <Button variant="outline" className="border-white text-white hover:bg-white hover:text-emerald-700 gap-2" data-testid="button-view-impact" onClick={() => navigate("/impact")}>
                 View Full Impact Dashboard <ArrowRight className="w-4 h-4" />
               </Button>
-            </Link>
           </div>
         </div>
       </section>
@@ -299,11 +292,9 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-bold text-foreground mb-2">AI Upskilling Academy</h3>
               <p className="text-muted-foreground mb-4">Free AI-powered courses for African freelancers. From plumbing to programming — master AI tools that 10x your earnings.</p>
-              <Link href="/academy">
-                <Button variant="outline" className="gap-2" data-testid="button-academy-cta">
+              <Button variant="outline" className="gap-2" data-testid="button-academy-cta" onClick={() => navigate("/academy")}>
                   Start Learning Free <ArrowRight className="w-4 h-4" />
                 </Button>
-              </Link>
             </div>
             <div className="bg-card rounded-2xl p-8 border border-border shadow-sm hover:shadow-md transition-shadow" data-testid="card-enterprise-cta">
               <div className="p-3 rounded-xl bg-blue-100 dark:bg-blue-900/30 w-fit mb-4">
@@ -311,11 +302,9 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-bold text-foreground mb-2">Enterprise Solutions</h3>
               <p className="text-muted-foreground mb-4">Bulk hiring, tender integration, and youth employment programs for corporates and government partners.</p>
-              <Link href="/enterprise">
-                <Button variant="outline" className="gap-2" data-testid="button-enterprise-cta">
+              <Button variant="outline" className="gap-2" data-testid="button-enterprise-cta" onClick={() => navigate("/enterprise")}>
                   Learn More <ArrowRight className="w-4 h-4" />
                 </Button>
-              </Link>
             </div>
             <div className="bg-card rounded-2xl p-8 border border-border shadow-sm hover:shadow-md transition-shadow" data-testid="card-referral-cta">
               <div className="p-3 rounded-xl bg-amber-100 dark:bg-amber-900/30 w-fit mb-4">
@@ -323,11 +312,9 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-bold text-foreground mb-2">Refer & Earn</h3>
               <p className="text-muted-foreground mb-4">Share FreelanceSkills with friends and earn up to R250 per referral. Build a community, get rewarded.</p>
-              <Link href="/referral">
-                <Button variant="outline" className="gap-2" data-testid="button-referral-cta">
+              <Button variant="outline" className="gap-2" data-testid="button-referral-cta" onClick={() => navigate("/referral")}>
                   Get Your Link <ArrowRight className="w-4 h-4" />
                 </Button>
-              </Link>
             </div>
           </div>
         </div>

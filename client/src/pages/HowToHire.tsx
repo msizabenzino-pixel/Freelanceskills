@@ -1,7 +1,7 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { VideoPlayer, VideoLanguageInfo } from "@/components/VideoPlayer";
 import { 
   Search, 
@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 
 export default function HowToHire() {
+  const [, navigate] = useLocation();
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -281,18 +282,14 @@ export default function HowToHire() {
               <div className="text-center pt-8 border-t">
                 <h3 className="text-xl font-bold mb-4">Ready to Get Started?</h3>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Link href="/post-job">
-                    <Button size="lg" className="gap-2">
+                  <Button size="lg" className="gap-2" onClick={() => navigate("/post-job")}>
                       <FileText className="h-5 w-5" />
                       Post a Job
                     </Button>
-                  </Link>
-                  <Link href="/services">
-                    <Button size="lg" variant="outline" className="gap-2">
+                  <Button size="lg" variant="outline" className="gap-2" onClick={() => navigate("/services")}>
                       <Clock className="h-5 w-5" />
                       Book a Tasker Now
                     </Button>
-                  </Link>
                 </div>
               </div>
             </div>

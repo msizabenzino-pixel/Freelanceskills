@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles, MapPin, Loader2, TrendingUp, Lightbulb, CheckCircle2, ArrowRight } from "lucide-react";
 import { useCountry } from "@/components/CountrySelector";
-import { Link } from "wouter";
+import { useLocation } from "wouter";
 
 interface TaskRecommendation {
   suggestedCategories: {
@@ -44,6 +44,7 @@ async function analyzeTask(taskDescription: string, location?: string): Promise<
 export function AITaskAssistant() {
   const [taskDescription, setTaskDescription] = useState("");
   const [location, setLocation] = useState("");
+  const [, navigate] = useLocation();
   const { formatPrice } = useCountry();
 
   const analyzeMutation = useMutation({
@@ -121,9 +122,20 @@ export function AITaskAssistant() {
           </Button>
 
           {analyzeMutation.isError && (
-            <p className="text-sm text-destructive text-center">
-              {analyzeMutation.error?.message || "Something went wrong. Please try again."}
-            </p>
+            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 text-center">
+              <p className="text-sm text-destructive font-medium">
+                {analyzeMutation.error?.message || "Something went wrong. Please try again."}
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-2"
+                onClick={() => analyzeMutation.reset()}
+                data-testid="button-retry-analysis"
+              >
+                Try Again
+              </Button>
+            </div>
           )}
         </CardContent>
       </Card>
@@ -160,11 +172,9 @@ export function AITaskAssistant() {
                         ))}
                       </div>
                     </div>
-                    <Link href={`/services?category=${cat.categoryId}`}>
-                      <Button variant="ghost" size="sm" data-testid={`button-browse-${cat.categoryId}`}>
+                    <Button variant="ghost" size="sm" data-testid={`button-browse-${cat.categoryId}`} onClick={() => navigate(`/services?category=${cat.categoryId}`)}>
                         Browse <ArrowRight className="ml-1 h-4 w-4" />
                       </Button>
-                    </Link>
                   </div>
                 ))}
               </div>
@@ -259,17 +269,17 @@ export function AITaskAssistant() {
           </Card>
 
           <div className="flex flex-col sm:flex-row gap-3">
-            <Link href="/post-job" className="flex-1">
-              <Button className="w-full" size="lg" data-testid="button-post-job">
+            <div className="flex-1">
+              <Button className="w-full" size="lg" data-testid="button-post-job" onClick={() => navigate("/post-job")}>
                 Post a Job
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-            </Link>
-            <Link href="/services" className="flex-1">
-              <Button variant="outline" className="w-full" size="lg" data-testid="button-browse-services">
+            </div>
+            <div className="flex-1">
+              <Button variant="outline" className="w-full" size="lg" data-testid="button-browse-services" onClick={() => navigate("/services")}>
                 Browse Services
               </Button>
-            </Link>
+            </div>
           </div>
         </div>
       )}

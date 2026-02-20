@@ -662,7 +662,10 @@ export async function registerRoutes(
         return res.status(400).json({ message: error.errors[0]?.message || "Invalid input" });
       }
       console.error("Error analyzing task:", error);
-      res.status(500).json({ message: "Failed to analyze task" });
+      const message = error?.status === 401 || error?.code === "invalid_api_key"
+        ? "AI service is temporarily unavailable. Please try again later."
+        : "Failed to analyze task. Please try again.";
+      res.status(500).json({ message });
     }
   });
   

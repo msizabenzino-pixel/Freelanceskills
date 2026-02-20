@@ -1,7 +1,13 @@
+import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card } from "@/components/ui/card";
+import { useLocation } from "wouter";
 import { Building2, Users, Shield, BarChart3, Briefcase, Award, Phone, CheckCircle2, ArrowRight } from "lucide-react";
 
 const FEATURES = [
@@ -52,6 +58,29 @@ const METRICS = [
 ];
 
 export default function Enterprise() {
+  const [, navigate] = useLocation();
+  const [formData, setFormData] = useState({
+    companyName: "",
+    contactPerson: "",
+    email: "",
+    phone: "",
+    companySize: "",
+    message: "",
+  });
+  const [submitted, setSubmitted] = useState(false);
+
+  const scrollToForm = () => {
+    document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.companyName.trim() || !formData.contactPerson.trim() || !formData.email.trim() || !formData.message.trim()) {
+      return;
+    }
+    setSubmitted(true);
+  };
+
   return (
     <div className="min-h-screen bg-background font-sans flex flex-col">
       <Navbar />
@@ -69,16 +98,12 @@ export default function Enterprise() {
               Bulk hiring, tender integration, and youth employment programs — all on one platform built for South Africa's largest employers.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/support">
-                <Button size="lg" className="bg-accent text-primary hover:bg-accent/90 font-bold gap-2" data-testid="button-contact-sales-hero">
+              <Button size="lg" className="bg-accent text-primary hover:bg-accent/90 font-bold gap-2" data-testid="button-contact-sales-hero" onClick={scrollToForm}>
                   <Phone className="h-4 w-4" /> Contact Sales
                 </Button>
-              </Link>
-              <Link href="/how-it-works">
-                <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 gap-2" data-testid="button-learn-more">
+              <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 gap-2" data-testid="button-learn-more" onClick={() => navigate("/how-it-works")}>
                   Learn More <ArrowRight className="h-4 w-4" />
                 </Button>
-              </Link>
             </div>
           </div>
         </section>
@@ -166,12 +191,119 @@ export default function Enterprise() {
                   ))}
                 </div>
 
-                <Link href="/support">
-                  <Button size="lg" className="bg-primary text-white hover:bg-primary/90 font-bold gap-2 px-8" data-testid="button-contact-sales-pricing">
+                <Button size="lg" className="bg-primary text-white hover:bg-primary/90 font-bold gap-2 px-8" data-testid="button-contact-sales-pricing" onClick={scrollToForm}>
                     <Phone className="h-4 w-4" /> Contact Sales
                   </Button>
-                </Link>
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="contact-form" className="py-20 bg-card border-t border-border">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="max-w-2xl mx-auto">
+              <div className="text-center mb-10">
+                <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">Contact Our Sales Team</h2>
+                <p className="text-muted-foreground text-lg">Fill in the form below and our enterprise team will get back to you within 24 hours.</p>
+              </div>
+
+              {submitted ? (
+                <Card className="p-8 md:p-12 text-center" data-testid="contact-form-success">
+                  <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                  <h3 className="text-2xl font-bold text-foreground mb-2">Thank you!</h3>
+                  <p className="text-muted-foreground text-lg">Our enterprise team will contact you within 24 hours.</p>
+                </Card>
+              ) : (
+                <Card className="p-8 md:p-12" data-testid="contact-form-card">
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="companyName">Company Name *</Label>
+                        <Input
+                          id="companyName"
+                          data-testid="input-company-name"
+                          required
+                          value={formData.companyName}
+                          onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+                          placeholder="Your company name"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="contactPerson">Contact Person *</Label>
+                        <Input
+                          id="contactPerson"
+                          data-testid="input-contact-person"
+                          required
+                          value={formData.contactPerson}
+                          onChange={(e) => setFormData({ ...formData, contactPerson: e.target.value })}
+                          placeholder="Your full name"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Email *</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          data-testid="input-email"
+                          required
+                          value={formData.email}
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          placeholder="you@company.com"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="phone">Phone Number</Label>
+                        <Input
+                          id="phone"
+                          data-testid="input-phone"
+                          value={formData.phone}
+                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                          placeholder="+27 XX XXX XXXX"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="companySize">Company Size</Label>
+                      <Select
+                        value={formData.companySize}
+                        onValueChange={(value) => setFormData({ ...formData, companySize: value })}
+                      >
+                        <SelectTrigger data-testid="select-company-size">
+                          <SelectValue placeholder="Select company size" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1-10" data-testid="select-option-1-10">1-10</SelectItem>
+                          <SelectItem value="11-50" data-testid="select-option-11-50">11-50</SelectItem>
+                          <SelectItem value="51-200" data-testid="select-option-51-200">51-200</SelectItem>
+                          <SelectItem value="201-500" data-testid="select-option-201-500">201-500</SelectItem>
+                          <SelectItem value="500+" data-testid="select-option-500+">500+</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="message">Message / Requirements *</Label>
+                      <Textarea
+                        id="message"
+                        data-testid="textarea-message"
+                        required
+                        value={formData.message}
+                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                        placeholder="Tell us about your hiring needs, team size, and any specific requirements..."
+                        rows={5}
+                      />
+                    </div>
+
+                    <Button type="submit" size="lg" className="w-full bg-primary text-white hover:bg-primary/90 font-bold gap-2" data-testid="button-submit-enquiry">
+                      <Phone className="h-4 w-4" /> Submit Enquiry
+                    </Button>
+                  </form>
+                </Card>
+              )}
             </div>
           </div>
         </section>

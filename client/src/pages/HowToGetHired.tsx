@@ -1,7 +1,7 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { VideoPlayer, VideoLanguageInfo } from "@/components/VideoPlayer";
 import { useCurrency } from "@/lib/currency";
 import { 
@@ -24,6 +24,7 @@ import {
 
 export default function HowToGetHired() {
   const { formatAmount } = useCurrency();
+  const [, navigate] = useLocation();
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -337,12 +338,10 @@ export default function HowToGetHired() {
                       Create Your Profile
                     </Button>
                   </a>
-                  <Link href="/jobs">
-                    <Button size="lg" variant="outline" className="gap-2">
+                  <Button size="lg" variant="outline" className="gap-2" onClick={() => navigate("/jobs")}>
                       <Briefcase className="h-5 w-5" />
                       Browse Available Jobs
                     </Button>
-                  </Link>
                 </div>
               </div>
             </div>

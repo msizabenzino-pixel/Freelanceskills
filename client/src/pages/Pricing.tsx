@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
+import { useLocation } from "wouter";
 import { useCountry } from "@/components/CountrySelector";
 import { 
   Check, 
@@ -90,6 +90,7 @@ const FAQ_ITEMS = [
 
 export default function Pricing() {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  const [, navigate] = useLocation();
   const { country, formatPrice } = useCountry();
   const currencySymbol = country.currency.symbol;
 
@@ -151,9 +152,7 @@ export default function Pricing() {
               </ul>
             </div>
             <div className="p-8 bg-muted/30 border-t border-border">
-              <Link href="/auth">
-                <Button variant="outline" className="w-full font-bold" data-testid="button-get-started-free">Get Started Free</Button>
-              </Link>
+              <Button variant="outline" className="w-full font-bold" data-testid="button-get-started-free" onClick={() => navigate("/auth")}>Get Started Free</Button>
             </div>
           </div>
 
@@ -197,11 +196,9 @@ export default function Pricing() {
               </ul>
             </div>
             <div className="p-8 bg-white/10 border-t border-white/10">
-              <Link href="/auth">
-                <Button className="w-full bg-accent text-primary hover:bg-accent/90 font-bold h-12 shadow-lg" data-testid="button-upgrade-pro">
+              <Button className="w-full bg-accent text-primary hover:bg-accent/90 font-bold h-12 shadow-lg" data-testid="button-upgrade-pro" onClick={() => navigate("/auth")}>
                   Upgrade to Pro
                 </Button>
-              </Link>
             </div>
           </div>
 
@@ -229,9 +226,7 @@ export default function Pricing() {
               </ul>
             </div>
             <div className="p-8 bg-muted/30 border-t border-border">
-              <Link href="/support">
-                <Button variant="outline" className="w-full font-bold" data-testid="button-contact-sales">Contact Sales</Button>
-              </Link>
+              <Button variant="outline" className="w-full font-bold" data-testid="button-contact-sales" onClick={() => navigate("/support")}>Contact Sales</Button>
             </div>
           </div>
         </div>

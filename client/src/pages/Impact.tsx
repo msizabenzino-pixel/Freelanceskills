@@ -2,7 +2,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link } from "wouter";
+import { useLocation } from "wouter";
 import { useCurrency } from "@/lib/currency";
 import {
   Briefcase,
@@ -91,6 +91,7 @@ const successStories = [
 
 export default function Impact() {
   const { formatAmount } = useCurrency();
+  const [, navigate] = useLocation();
 
   return (
     <div className="min-h-screen bg-background font-sans flex flex-col">
@@ -272,16 +273,12 @@ export default function Impact() {
               you can be part of Africa's largest freelance skills revolution.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/explore">
-                <Button size="lg" className="gap-2 font-bold px-8" data-testid="button-become-freelancer">
+              <Button size="lg" className="gap-2 font-bold px-8" data-testid="button-become-freelancer" onClick={() => navigate("/explore")}>
                   Become a Freelancer <ArrowRight className="w-4 h-4" />
                 </Button>
-              </Link>
-              <Link href="/post-job">
-                <Button size="lg" variant="outline" className="gap-2 font-bold px-8" data-testid="button-hire-talent">
+              <Button size="lg" variant="outline" className="gap-2 font-bold px-8" data-testid="button-hire-talent" onClick={() => navigate("/post-job")}>
                   Hire Talent <Users className="w-4 h-4" />
                 </Button>
-              </Link>
             </div>
           </div>
         </section>
