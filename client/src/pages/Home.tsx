@@ -4,7 +4,7 @@ import { JobCard } from "@/components/JobCard";
 import { FreelancerCard } from "@/components/FreelancerCard";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle2, Shield, Sparkles } from "lucide-react";
+import { ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users, Gift, Building2 } from "lucide-react";
 import { Link } from "wouter";
 import { useCurrency } from "@/lib/currency";
 
@@ -250,6 +250,85 @@ export default function Home() {
                 View All Talent
               </Button>
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Impact Metrics Banner */}
+      <section className="py-16 bg-gradient-to-r from-emerald-600 to-teal-600 text-white" data-testid="section-impact-banner">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl md:text-4xl font-bold mb-3">Our Impact on Africa</h2>
+            <p className="text-white/80 text-lg">Empowering 1 Million Africans by 2031</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+            {[
+              { value: "12,847", label: "Jobs Created", icon: TrendingUp },
+              { value: formatAmount(47200000), label: "Income Generated", icon: TrendingUp },
+              { value: "8,432", label: "Freelancers Empowered", icon: Users },
+              { value: "156", label: "Communities Reached", icon: Users },
+            ].map((stat, i) => (
+              <div key={i} className="text-center" data-testid={`stat-impact-${i}`}>
+                <stat.icon className="h-6 w-6 mx-auto mb-2 text-white/70" />
+                <div className="text-2xl md:text-3xl font-bold">{stat.value}</div>
+                <div className="text-white/70 text-sm">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <Link href="/impact">
+              <Button variant="outline" className="border-white text-white hover:bg-white hover:text-emerald-700 gap-2" data-testid="button-view-impact">
+                View Full Impact Dashboard <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Academy & Strategic CTAs */}
+      <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">More Than a Marketplace</h2>
+            <p className="text-muted-foreground text-lg">We're building Africa's economic revolution — upskilling, connecting, and empowering.</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-card rounded-2xl p-8 border border-border shadow-sm hover:shadow-md transition-shadow" data-testid="card-academy-cta">
+              <div className="p-3 rounded-xl bg-purple-100 dark:bg-purple-900/30 w-fit mb-4">
+                <GraduationCap className="h-8 w-8 text-purple-600" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-2">AI Upskilling Academy</h3>
+              <p className="text-muted-foreground mb-4">Free AI-powered courses for African freelancers. From plumbing to programming — master AI tools that 10x your earnings.</p>
+              <Link href="/academy">
+                <Button variant="outline" className="gap-2" data-testid="button-academy-cta">
+                  Start Learning Free <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+            </div>
+            <div className="bg-card rounded-2xl p-8 border border-border shadow-sm hover:shadow-md transition-shadow" data-testid="card-enterprise-cta">
+              <div className="p-3 rounded-xl bg-blue-100 dark:bg-blue-900/30 w-fit mb-4">
+                <Building2 className="h-8 w-8 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-2">Enterprise Solutions</h3>
+              <p className="text-muted-foreground mb-4">Bulk hiring, tender integration, and youth employment programs for corporates and government partners.</p>
+              <Link href="/enterprise">
+                <Button variant="outline" className="gap-2" data-testid="button-enterprise-cta">
+                  Learn More <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+            </div>
+            <div className="bg-card rounded-2xl p-8 border border-border shadow-sm hover:shadow-md transition-shadow" data-testid="card-referral-cta">
+              <div className="p-3 rounded-xl bg-amber-100 dark:bg-amber-900/30 w-fit mb-4">
+                <Gift className="h-8 w-8 text-amber-600" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-2">Refer & Earn</h3>
+              <p className="text-muted-foreground mb-4">Share FreelanceSkills with friends and earn up to R250 per referral. Build a community, get rewarded.</p>
+              <Link href="/referral">
+                <Button variant="outline" className="gap-2" data-testid="button-referral-cta">
+                  Get Your Link <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

@@ -100,12 +100,14 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-bold text-primary mb-4">Trust & Safety</h4>
+            <h4 className="font-bold text-primary mb-4">Company</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/how-it-works" className="hover:text-primary transition-colors">How It Works</Link></li>
+              <li><Link href="/impact" className="hover:text-primary transition-colors" data-testid="link-impact">Social Impact</Link></li>
+              <li><Link href="/academy" className="hover:text-primary transition-colors" data-testid="link-academy">AI Academy</Link></li>
+              <li><Link href="/enterprise" className="hover:text-primary transition-colors" data-testid="link-enterprise">Enterprise</Link></li>
+              <li><Link href="/referral" className="hover:text-primary transition-colors" data-testid="link-referral">Referral Program</Link></li>
               <li><Link href="/resolution-center" className="hover:text-primary transition-colors" data-testid="link-resolution-center">Resolution Center</Link></li>
               <li><Link href="/support" className="hover:text-primary transition-colors">Help & Support</Link></li>
-              <li><Link href="/pricing" className="hover:text-primary transition-colors">Escrow Protection</Link></li>
             </ul>
           </div>
         </div>

@@ -22,6 +22,10 @@ import Explore from "@/pages/Explore";
 import Terms from "@/pages/Terms";
 import Privacy from "@/pages/Privacy";
 import TaskAssistant from "@/pages/TaskAssistant";
+import Impact from "@/pages/Impact";
+import Academy from "@/pages/Academy";
+import Enterprise from "@/pages/Enterprise";
+import Referral from "@/pages/Referral";
 import { SupportChat } from "@/components/SupportChat";
 import NotFound from "@/pages/not-found";
 
@@ -46,6 +50,10 @@ function Router() {
       <Route path="/task-assistant" component={TaskAssistant} />
       <Route path="/terms" component={Terms} />
       <Route path="/privacy" component={Privacy} />
+      <Route path="/impact" component={Impact} />
+      <Route path="/academy" component={Academy} />
+      <Route path="/enterprise" component={Enterprise} />
+      <Route path="/referral" component={Referral} />
       <Route component={NotFound} />
     </Switch>
   );
