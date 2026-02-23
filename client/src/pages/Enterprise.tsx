@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
 import { useLocation } from "wouter";
-import { Building2, Users, Shield, BarChart3, Briefcase, Award, Phone, CheckCircle2, ArrowRight } from "lucide-react";
+import { Building2, Users, Shield, BarChart3, Briefcase, Award, Phone, CheckCircle2, ArrowRight, Loader2 } from "lucide-react";
 
 const FEATURES = [
   {
@@ -68,17 +69,41 @@ export default function Enterprise() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const scrollToForm = () => {
     document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  const submitMutation = useMutation({
+    mutationFn: async (data: typeof formData) => {
+      const res = await fetch("/api/enterprise/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "Failed to submit");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      setSubmitted(true);
+      setSubmitError(null);
+    },
+    onError: (error: Error) => {
+      setSubmitError(error.message);
+    },
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.companyName.trim() || !formData.contactPerson.trim() || !formData.email.trim() || !formData.message.trim()) {
       return;
     }
-    setSubmitted(true);
+    setSubmitError(null);
+    submitMutation.mutate(formData);
   };
 
   return (
@@ -298,8 +323,23 @@ export default function Enterprise() {
                       />
                     </div>
 
-                    <Button type="submit" size="lg" className="w-full bg-primary text-white hover:bg-primary/90 font-bold gap-2" data-testid="button-submit-enquiry">
-                      <Phone className="h-4 w-4" /> Submit Enquiry
+                    {submitError && (
+                      <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-lg">
+                        {submitError}
+                      </div>
+                    )}
+                    <Button
+                      type="submit"
+                      size="lg"
+                      className="w-full bg-primary text-white hover:bg-primary/90 font-bold gap-2"
+                      data-testid="button-submit-enquiry"
+                      disabled={submitMutation.isPending}
+                    >
+                      {submitMutation.isPending ? (
+                        <><Loader2 className="h-4 w-4 animate-spin" /> Submitting...</>
+                      ) : (
+                        <><Phone className="h-4 w-4" /> Submit Enquiry</>
+                      )}
                     </Button>
                   </form>
                 </Card>

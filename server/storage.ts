@@ -2,8 +2,9 @@ import {
   type Job, type InsertJob, type Profile, type InsertProfile, 
   type ServicePackage, type InsertServicePackage, type Booking, type InsertBooking,
   type Review, type InsertReview, type Conversation, type Message, type InsertMessage,
+  type InsertEnterpriseLead, type EnterpriseLead,
   jobs, profiles, servicePackages, bookings, reviews, conversations, messages,
-  freelancerVerifications, privateFeedback
+  freelancerVerifications, privateFeedback, enterpriseLeads
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, sql, desc } from "drizzle-orm";
@@ -54,6 +55,9 @@ export interface IStorage {
   submitPrivateFeedback(feedback: any): Promise<any>;
   hasPublicReview(bookingId: string, userId: string): Promise<boolean>;
   hasPrivateFeedback(bookingId: string, userId: string): Promise<boolean>;
+
+  // Enterprise lead operations
+  createEnterpriseLead(lead: InsertEnterpriseLead): Promise<EnterpriseLead>;
 }
 
 class DatabaseStorage implements IStorage {
@@ -285,6 +289,12 @@ class DatabaseStorage implements IStorage {
     const existing = await db.select().from(privateFeedback)
       .where(and(eq(privateFeedback.bookingId, bookingId), eq(privateFeedback.reviewerId, userId)));
     return existing.length > 0;
+  }
+
+  // Enterprise lead operations
+  async createEnterpriseLead(lead: InsertEnterpriseLead): Promise<EnterpriseLead> {
+    const [created] = await db.insert(enterpriseLeads).values(lead).returning();
+    return created;
   }
 }
 

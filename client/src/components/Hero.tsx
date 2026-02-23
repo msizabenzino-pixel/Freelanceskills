@@ -1,12 +1,28 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Search, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import { useLocation } from "wouter";
 
 export function Hero() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [, navigate] = useLocation();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/services?q=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      navigate("/services");
+    }
+  };
+
+  const handlePopularClick = (term: string) => {
+    navigate(`/services?q=${encodeURIComponent(term)}`);
+  };
+
   return (
     <div className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-      {/* Background Image with Overlay */}
       <div 
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: "url('/images/hero-background.png')" }}
@@ -44,7 +60,8 @@ export function Hero() {
             FreelanceSkills connects you with trusted professionals instantly.
           </motion.p>
 
-          <motion.div 
+          <motion.form 
+            onSubmit={handleSearch}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -57,14 +74,17 @@ export function Hero() {
                 id="hero-search"
                 type="text" 
                 placeholder="Plumber, Safety Officer, Web Dev..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full h-12 pl-10 pr-4 rounded-xl bg-white/10 border-transparent text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
                 aria-label="Search for services or professionals"
+                data-testid="input-hero-search"
               />
             </div>
-            <Button size="lg" className="w-full md:w-auto h-12 rounded-xl bg-accent hover:bg-accent/90 text-primary font-bold px-8 shadow-lg shadow-accent/20 whitespace-nowrap">
-              Search Near Me
+            <Button type="submit" size="lg" className="w-full md:w-auto h-12 rounded-xl bg-accent hover:bg-accent/90 text-primary font-bold px-8 shadow-lg shadow-accent/20 whitespace-nowrap" data-testid="button-hero-search">
+              Search Now
             </Button>
-          </motion.div>
+          </motion.form>
 
           <motion.div
              initial={{ opacity: 0 }}
@@ -73,10 +93,16 @@ export function Hero() {
              className="pt-8 flex flex-wrap justify-center gap-x-8 gap-y-4 text-white/60 text-sm font-medium"
           >
             <span>Popular:</span>
-            <a href="#" className="hover:text-accent transition-colors underline decoration-dotted">Plumbing</a>
-            <a href="#" className="hover:text-accent transition-colors underline decoration-dotted">Safety Officer</a>
-            <a href="#" className="hover:text-accent transition-colors underline decoration-dotted">Tender Consulting</a>
-            <a href="#" className="hover:text-accent transition-colors underline decoration-dotted">Web Dev</a>
+            {["Plumbing", "Safety Officer", "Tender Consulting", "Web Dev"].map((term) => (
+              <button
+                key={term}
+                onClick={() => handlePopularClick(term)}
+                className="hover:text-accent transition-colors underline decoration-dotted cursor-pointer"
+                data-testid={`link-popular-${term.toLowerCase().replace(/\s/g, '-')}`}
+              >
+                {term}
+              </button>
+            ))}
           </motion.div>
         </div>
       </div>

@@ -1,10 +1,11 @@
 import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Link, useLocation } from "wouter";
-import { useState } from "react";
+import { useLocation, useSearch } from "wouter";
+import { useState, useEffect } from "react";
 import { useCurrency } from "@/lib/currency";
 import { useQuery } from "@tanstack/react-query";
 import { 
@@ -14,14 +15,14 @@ import {
 } from "lucide-react";
 
 const categories = [
-  { id: "trades", name: "Trades & Repairs", icon: Wrench, color: "bg-orange-100 text-orange-600", count: 2847 },
-  { id: "cleaning", name: "Cleaning", icon: Sparkles, color: "bg-blue-100 text-blue-600", count: 1523 },
-  { id: "home", name: "Home Services", icon: Home, color: "bg-green-100 text-green-600", count: 985 },
-  { id: "moving", name: "Moving & Delivery", icon: Truck, color: "bg-purple-100 text-purple-600", count: 742 },
-  { id: "safety", name: "Safety & Compliance", icon: Shield, color: "bg-red-100 text-red-600", count: 456 },
-  { id: "tech", name: "Tech & IT", icon: Laptop, color: "bg-indigo-100 text-indigo-600", count: 1234 },
-  { id: "creative", name: "Creative & Design", icon: Paintbrush, color: "bg-pink-100 text-pink-600", count: 892 },
-  { id: "events", name: "Events & Photography", icon: Camera, color: "bg-yellow-100 text-yellow-600", count: 567 },
+  { id: "trades", name: "Trades & Repairs", icon: Wrench, color: "bg-orange-100 text-orange-600 dark:bg-orange-900/30", count: 2847 },
+  { id: "cleaning", name: "Cleaning", icon: Sparkles, color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30", count: 1523 },
+  { id: "home", name: "Home Services", icon: Home, color: "bg-green-100 text-green-600 dark:bg-green-900/30", count: 985 },
+  { id: "moving", name: "Moving & Delivery", icon: Truck, color: "bg-purple-100 text-purple-600 dark:bg-purple-900/30", count: 742 },
+  { id: "safety", name: "Safety & Compliance", icon: Shield, color: "bg-red-100 text-red-600 dark:bg-red-900/30", count: 456 },
+  { id: "tech", name: "Tech & IT", icon: Laptop, color: "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30", count: 1234 },
+  { id: "creative", name: "Creative & Design", icon: Paintbrush, color: "bg-pink-100 text-pink-600 dark:bg-pink-900/30", count: 892 },
+  { id: "events", name: "Events & Photography", icon: Camera, color: "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30", count: 567 },
 ];
 
 const featuredPackages = [
@@ -118,10 +119,19 @@ const featuredPackages = [
 ];
 
 export default function Services() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const searchParams = useSearch();
+  const urlParams = new URLSearchParams(searchParams);
+  const initialQuery = urlParams.get("q") || "";
+
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const { formatAmount } = useCurrency();
   const [, navigate] = useLocation();
+
+  useEffect(() => {
+    const q = urlParams.get("q");
+    if (q) setSearchQuery(q);
+  }, [searchParams]);
 
   const { data: apiPackages = [], isLoading } = useQuery<any[]>({
     queryKey: ["/api/packages"],
@@ -133,7 +143,7 @@ export default function Services() {
   });
 
   const displayPackages = [
-    ...apiPackages.map((pkg) => ({
+    ...apiPackages.map((pkg: any) => ({
       id: pkg.id,
       title: pkg.title,
       description: pkg.description || "",
@@ -152,17 +162,20 @@ export default function Services() {
   ];
 
   const filteredPackages = displayPackages.filter((pkg) => {
-    const matchesSearch = pkg.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         pkg.description?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = !searchQuery.trim() || 
+                         pkg.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         pkg.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         pkg.freelancer?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         pkg.category?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = !selectedCategory || pkg.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       
-      <main id="main-content">
+      <main id="main-content" className="flex-1">
         <div className="bg-gradient-to-r from-primary via-primary/90 to-accent text-white pt-32 pb-16">
           <div className="container mx-auto px-4 md:px-6">
             <div className="max-w-3xl mx-auto text-center">
@@ -229,12 +242,17 @@ export default function Services() {
           </div>
 
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-primary">Featured Services</h2>
-            <Link href="/find-talent">
-              <a className="text-primary hover:text-accent flex items-center gap-1 font-medium transition-colors">
-                View All <ArrowRight className="w-4 h-4" />
-              </a>
-            </Link>
+            <h2 className="text-2xl font-bold text-primary">
+              {searchQuery ? `Results for "${searchQuery}"` : "Featured Services"}
+              <span className="text-sm font-normal text-muted-foreground ml-2">({filteredPackages.length})</span>
+            </h2>
+            <button
+              onClick={() => navigate("/explore")}
+              className="text-primary hover:text-accent flex items-center gap-1 font-medium transition-colors"
+              data-testid="link-view-all-services"
+            >
+              View All <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
           
           {isLoading && (
@@ -242,10 +260,26 @@ export default function Services() {
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
           )}
+
+          {!isLoading && filteredPackages.length === 0 && (
+            <div className="text-center py-16">
+              <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">No services found</h3>
+              <p className="text-muted-foreground mb-4">Try different search terms or browse categories above</p>
+              <Button variant="outline" onClick={() => { setSearchQuery(""); setSelectedCategory(null); }} data-testid="button-clear-search">
+                Clear Search
+              </Button>
+            </div>
+          )}
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredPackages.map((pkg) => (
-              <Card key={pkg.id} className="overflow-hidden hover:shadow-xl transition-all group cursor-pointer" data-testid={`package-${pkg.id}`}>
+              <Card
+                key={pkg.id}
+                className="overflow-hidden hover:shadow-xl transition-all group cursor-pointer"
+                data-testid={`package-${pkg.id}`}
+                onClick={() => navigate(`/checkout?title=${encodeURIComponent(pkg.title)}&price=${pkg.price}&freelancer=${encodeURIComponent(pkg.freelancer)}&duration=${encodeURIComponent(pkg.duration)}&location=${encodeURIComponent(pkg.location)}&rating=${pkg.rating}&reviews=${pkg.reviews}&image=${encodeURIComponent(pkg.image)}`)}
+              >
                 <div className="relative">
                   <img 
                     src={pkg.image} 
@@ -293,7 +327,7 @@ export default function Services() {
                       <span className="text-2xl font-bold text-primary">{formatAmount(pkg.price)}</span>
                       {pkg.duration === "per hour" && <span className="text-sm text-muted-foreground">/hr</span>}
                     </div>
-                    <Button className="bg-primary hover:bg-primary/90" data-testid={`button-book-${pkg.id}`} onClick={() => navigate(`/checkout?title=${encodeURIComponent(pkg.title)}&price=${pkg.price}&freelancer=${encodeURIComponent(pkg.freelancer)}&duration=${encodeURIComponent(pkg.duration)}&location=${encodeURIComponent(pkg.location)}&rating=${pkg.rating}&reviews=${pkg.reviews}&image=${encodeURIComponent(pkg.image)}`)}>
+                    <Button className="bg-primary hover:bg-primary/90" data-testid={`button-book-${pkg.id}`}>
                       <Zap className="w-4 h-4 mr-1" /> Book Now
                     </Button>
                   </div>
@@ -312,7 +346,7 @@ export default function Services() {
                 Create service packages and get booked instantly.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="bg-primary hover:bg-primary/90" data-testid="button-become-tasker" onClick={() => navigate("/post-job")}>
+                <Button size="lg" className="bg-primary hover:bg-primary/90" data-testid="button-become-tasker" onClick={() => navigate("/onboarding")}>
                     <Users className="w-5 h-5 mr-2" /> Become a Tasker
                   </Button>
                 <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/5" data-testid="button-view-pricing" onClick={() => navigate("/pricing")}>
@@ -323,6 +357,8 @@ export default function Services() {
           </div>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 }

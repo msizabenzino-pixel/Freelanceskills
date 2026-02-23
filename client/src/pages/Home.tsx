@@ -194,7 +194,7 @@ export default function Home() {
                 ))}
               </ul>
 
-              <Button size="lg" className="bg-white text-primary hover:bg-white/90 font-bold mt-4">
+              <Button size="lg" className="bg-white text-primary hover:bg-white/90 font-bold mt-4" onClick={() => navigate("/services")} data-testid="button-hire-talent">
                 Hire Talent Now
               </Button>
             </div>

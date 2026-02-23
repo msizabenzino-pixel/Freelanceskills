@@ -167,9 +167,19 @@ Preferred communication style: Simple, everyday language.
 ### Enterprise Contact Form (Feb 2026)
 - Enterprise page "Contact Sales" buttons scroll to inline contact form
 - Form fields: Company Name, Contact Person, Email, Phone, Company Size (dropdown), Message
-- Client-side + HTML5 validation on required fields
-- Success state shown after valid submission
+- Client-side + server-side validation (Zod schema) on required fields
+- Form persists to `enterprise_leads` table via POST `/api/enterprise/contact`
+- Loading state during submission, error display, success confirmation message
 
 ### AI & Error Handling Improvements (Feb 2026)
 - AI Task Assistant: Better error messages for API key issues, retry button with dismissible error card
 - Server-side: Detects API key errors vs general failures and returns appropriate user-facing messages
+
+### UX Audit Fixes (Feb 2026)
+- **Functional Search**: Hero search navigates to /services?q=, Jobs page search filters results, Services page reads URL params
+- **Working Filters & Sort**: Jobs page Job Type filter, Budget Range filter, Sort dropdown (Newest/Oldest/Budget High-Low/Low-High), Load More pagination
+- **Fixed Navigation CTAs**: "Hire Talent Now" → /services, "Become a Tasker" → /onboarding, all dead # links replaced with proper routes
+- **Client Names**: Jobs API returns clientName from profile data instead of raw IDs
+- **Security Hardening**: CSP header (env-aware for dev WS), rate limiting (100 req/min/IP with TTL cleanup), HSTS with preload, right-click/source protection, text selection disabled on non-input elements
+- **Meta Tags**: twitter:site updated to @FreelanceSkills, copyright meta, robots meta
+- **Footer Consistency**: All public pages include Footer component

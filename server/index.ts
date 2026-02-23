@@ -28,9 +28,48 @@ app.use((_req, res, next) => {
   res.setHeader("X-XSS-Protection", "1; mode=block");
   res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
   res.setHeader("Permissions-Policy", "camera=(self), microphone=(self), geolocation=(self)");
+  const isDev = process.env.NODE_ENV !== "production";
+  res.setHeader("Content-Security-Policy",
+    "default-src 'self'; " +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com; " +
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+    "font-src 'self' https://fonts.gstatic.com; " +
+    "img-src 'self' data: https: blob:; " +
+    `connect-src 'self' https: ${isDev ? "ws: wss:" : "wss:"}; ` +
+    "frame-ancestors 'none';"
+  );
   if (process.env.NODE_ENV === "production") {
-    res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+    res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
   }
+  next();
+});
+
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, entry] of rateLimitMap) {
+    if (now > entry.resetTime) rateLimitMap.delete(key);
+  }
+}, 60000);
+
+app.use("/api/", (req, res, next) => {
+  const ip = req.ip || req.connection.remoteAddress || "unknown";
+  const now = Date.now();
+  const windowMs = 60000;
+  const maxRequests = 100;
+
+  const entry = rateLimitMap.get(ip);
+  if (!entry || now > entry.resetTime) {
+    rateLimitMap.set(ip, { count: 1, resetTime: now + windowMs });
+    return next();
+  }
+
+  entry.count++;
+  if (entry.count > maxRequests) {
+    res.setHeader("Retry-After", Math.ceil((entry.resetTime - now) / 1000).toString());
+    return res.status(429).json({ message: "Too many requests. Please try again shortly." });
+  }
+
   next();
 });
 

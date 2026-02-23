@@ -18,7 +18,20 @@ export async function registerRoutes(
   app.get("/api/jobs", async (_req, res) => {
     try {
       const allJobs = await storage.getAllJobs();
-      res.json(allJobs);
+      const jobsWithNames = await Promise.all(
+        allJobs.map(async (job) => {
+          try {
+            const profile = await storage.getProfile(job.clientId);
+            return {
+              ...job,
+              clientName: profile?.title || profile?.bio?.substring(0, 30) || "FreelanceSkills Client",
+            };
+          } catch {
+            return { ...job, clientName: "FreelanceSkills Client" };
+          }
+        })
+      );
+      res.json(jobsWithNames);
     } catch (error) {
       console.error("Error fetching jobs:", error);
       res.status(500).json({ message: "Failed to fetch jobs" });
@@ -800,6 +813,23 @@ export async function registerRoutes(
       }
       console.error("Error optimizing profile:", error);
       res.status(500).json({ message: "Failed to optimize profile" });
+    }
+  });
+
+  // ============ ENTERPRISE LEADS ============
+  const { insertEnterpriseLeadSchema } = await import("@shared/schema");
+
+  app.post("/api/enterprise/contact", async (req, res) => {
+    try {
+      const validatedData = insertEnterpriseLeadSchema.parse(req.body);
+      const lead = await storage.createEnterpriseLead(validatedData);
+      res.status(201).json({ message: "Thank you! Our enterprise team will contact you within 24 hours.", lead });
+    } catch (error: any) {
+      if (error.name === "ZodError") {
+        return res.status(400).json({ message: error.errors[0]?.message || "Invalid input" });
+      }
+      console.error("Error creating enterprise lead:", error);
+      res.status(500).json({ message: "Failed to submit enquiry" });
     }
   });
 
