@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CountryProvider, CountrySelectorDialog } from "@/components/CountrySelector";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Home from "@/pages/Home";
 import Jobs from "@/pages/Jobs";
 import Dashboard from "@/pages/Dashboard";
@@ -65,16 +66,18 @@ function Router() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <CountryProvider>
-        <TooltipProvider>
-          <Toaster />
-          <CountrySelectorDialog />
-          <Router />
-          <SupportChat />
-        </TooltipProvider>
-      </CountryProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <CountryProvider>
+          <TooltipProvider>
+            <Toaster />
+            <CountrySelectorDialog />
+            <Router />
+            <SupportChat />
+          </TooltipProvider>
+        </CountryProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 

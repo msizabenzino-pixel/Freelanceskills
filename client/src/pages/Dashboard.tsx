@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { AuthGuard } from "@/components/AuthGuard";
 import { JobLifecycleCard } from "@/components/JobLifecycleCard";
 import { PaymentModal } from "@/components/PaymentModal";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -81,6 +82,7 @@ export default function Dashboard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/packages"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/packages", "my"] });
       setPackageForm(emptyPackageForm);
       setPackageSaved(true);
       setTimeout(() => {
@@ -150,6 +152,7 @@ export default function Dashboard() {
   ];
 
   return (
+    <AuthGuard message="Sign in to access your dashboard, manage jobs, and track payments.">
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       <main id="main-content">
@@ -494,5 +497,6 @@ export default function Dashboard() {
       </main>
       <Footer />
     </div>
+    </AuthGuard>
   );
 }

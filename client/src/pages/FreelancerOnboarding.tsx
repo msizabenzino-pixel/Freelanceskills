@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { AuthGuard } from "@/components/AuthGuard";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,6 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { useCurrency } from "@/lib/currency";
+import { apiRequest } from "@/lib/queryClient";
 import { SERVICE_CATEGORIES } from "@shared/categories";
 import {
   CheckCircle2,
@@ -24,14 +27,16 @@ import {
   ClipboardCheck,
   ShieldCheck,
   X,
+  AlertCircle,
 } from "lucide-react";
 
 const STEPS = ["Basic Info", "Skills & Expertise", "Portfolio & Verification", "Review & Submit"];
 
-export default function FreelancerOnboarding() {
+function FreelancerOnboardingContent() {
   const { formatAmount } = useCurrency();
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const [displayName, setDisplayName] = useState("");
   const [professionalTitle, setProfessionalTitle] = useState("");
@@ -49,6 +54,27 @@ export default function FreelancerOnboarding() {
   const [yearsOfExperience, setYearsOfExperience] = useState("");
   const [certifications, setCertifications] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+
+  const createProfileMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("POST", "/api/profile", {
+        userType: "freelancer",
+        bio,
+        title: professionalTitle,
+        skills,
+        hourlyRate: hourlyRate ? Number(hourlyRate) * 100 : 0,
+        location,
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      setSubmitted(true);
+      setApiError(null);
+    },
+    onError: (error) => {
+      setApiError(error instanceof Error ? error.message : "Failed to create profile. Please try again.");
+    },
+  });
 
   const getInitials = () => {
     if (!displayName) return "?";
@@ -82,7 +108,11 @@ export default function FreelancerOnboarding() {
   };
 
   const handleSubmit = () => {
-    setSubmitted(true);
+    if (!agreedToTerms) {
+      setApiError("You must agree to the terms to complete registration.");
+      return;
+    }
+    createProfileMutation.mutate();
   };
 
   const categoryName = SERVICE_CATEGORIES.find((c) => c.id === category)?.name || category;
@@ -160,6 +190,15 @@ export default function FreelancerOnboarding() {
           </div>
 
           <Card className="p-8 shadow-lg border-border">
+            {apiError && (
+              <div className="mb-6 p-4 bg-destructive/10 border border-destructive/30 rounded-lg flex gap-3">
+                <AlertCircle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
+                <div className="text-sm text-destructive" data-testid="error-message">
+                  {apiError}
+                </div>
+              </div>
+            )}
+
             {step === 0 && (
               <div className="space-y-6" data-testid="step-basic-info">
                 <h2 className="text-xl font-bold text-foreground mb-4">Basic Information</h2>
@@ -523,10 +562,20 @@ export default function FreelancerOnboarding() {
               ) : (
                 <Button
                   onClick={handleSubmit}
+                  disabled={createProfileMutation.isPending}
                   className="h-12 px-8 bg-primary text-white hover:bg-primary/90 font-bold shadow-lg"
                   data-testid="button-complete-registration"
                 >
-                  Complete Registration <CheckCircle2 className="w-4 h-4 ml-2" />
+                  {createProfileMutation.isPending ? (
+                    <>
+                      <span className="inline-block w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      Complete Registration <CheckCircle2 className="w-4 h-4 ml-2" />
+                    </>
+                  )}
                 </Button>
               )}
             </div>
@@ -536,5 +585,13 @@ export default function FreelancerOnboarding() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function FreelancerOnboarding() {
+  return (
+    <AuthGuard message="Sign in to create your freelancer profile and start earning.">
+      <FreelancerOnboardingContent />
+    </AuthGuard>
   );
 }

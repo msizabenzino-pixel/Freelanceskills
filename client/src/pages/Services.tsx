@@ -6,10 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Link, useLocation } from "wouter";
 import { useState } from "react";
 import { useCurrency } from "@/lib/currency";
+import { useQuery } from "@tanstack/react-query";
 import { 
   Search, MapPin, Clock, Star, CheckCircle2, Zap, 
   Wrench, Sparkles, Home, Truck, Shield, Laptop,
-  Paintbrush, Camera, Users, FileText, ArrowRight
+  Paintbrush, Camera, Users, FileText, ArrowRight, Loader2
 } from "lucide-react";
 
 const categories = [
@@ -27,6 +28,8 @@ const featuredPackages = [
   {
     id: "1",
     title: "Emergency Plumbing Repair",
+    description: "Professional emergency plumbing repair services available 24/7",
+    category: "trades",
     freelancer: "Thabo M.",
     rating: 4.9,
     reviews: 234,
@@ -40,6 +43,8 @@ const featuredPackages = [
   {
     id: "2", 
     title: "Electrical Certificate (COC)",
+    description: "Professional electrical certification and compliance verification",
+    category: "trades",
     freelancer: "David K.",
     rating: 5.0,
     reviews: 189,
@@ -53,6 +58,8 @@ const featuredPackages = [
   {
     id: "3",
     title: "Deep House Cleaning",
+    description: "Comprehensive deep cleaning service for residential properties",
+    category: "cleaning",
     freelancer: "Nomvula S.",
     rating: 4.8,
     reviews: 412,
@@ -66,6 +73,8 @@ const featuredPackages = [
   {
     id: "4",
     title: "SHEQ Safety Audit",
+    description: "Safety, Health, Environment and Quality audit services",
+    category: "safety",
     freelancer: "Sipho N.",
     rating: 4.9,
     reviews: 87,
@@ -79,6 +88,8 @@ const featuredPackages = [
   {
     id: "5",
     title: "Full-Stack Developer",
+    description: "Expert full-stack web development and consultation services",
+    category: "tech",
     freelancer: "Lerato M.",
     rating: 5.0,
     reviews: 156,
@@ -92,6 +103,8 @@ const featuredPackages = [
   {
     id: "6",
     title: "Moving & Packing Service",
+    description: "Professional moving and packing services for residential and commercial",
+    category: "moving",
     freelancer: "Bongani T.",
     rating: 4.7,
     reviews: 298,
@@ -109,6 +122,41 @@ export default function Services() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const { formatAmount } = useCurrency();
   const [, navigate] = useLocation();
+
+  const { data: apiPackages = [], isLoading } = useQuery<any[]>({
+    queryKey: ["/api/packages"],
+    queryFn: async () => {
+      const res = await fetch("/api/packages");
+      if (!res.ok) return [];
+      return res.json();
+    },
+  });
+
+  const displayPackages = [
+    ...apiPackages.map((pkg) => ({
+      id: pkg.id,
+      title: pkg.title,
+      description: pkg.description || "",
+      category: pkg.category || "",
+      freelancer: "Freelancer",
+      rating: 0,
+      reviews: 0,
+      price: pkg.price,
+      duration: pkg.duration || "Contact for details",
+      location: "Remote",
+      badge: "New",
+      image: "https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=300&h=200&fit=crop",
+      verified: false,
+    })),
+    ...featuredPackages,
+  ];
+
+  const filteredPackages = displayPackages.filter((pkg) => {
+    const matchesSearch = pkg.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         pkg.description?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = !selectedCategory || pkg.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -189,8 +237,14 @@ export default function Services() {
             </Link>
           </div>
           
+          {isLoading && (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          )}
+          
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredPackages.map((pkg) => (
+            {filteredPackages.map((pkg) => (
               <Card key={pkg.id} className="overflow-hidden hover:shadow-xl transition-all group cursor-pointer" data-testid={`package-${pkg.id}`}>
                 <div className="relative">
                   <img 

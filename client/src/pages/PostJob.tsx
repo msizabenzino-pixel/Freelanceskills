@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { AuthGuard } from "@/components/AuthGuard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -63,6 +64,7 @@ export default function PostJob() {
   };
 
   return (
+    <AuthGuard message="Sign in to post a job and find talented freelancers.">
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       
@@ -241,5 +243,6 @@ export default function PostJob() {
 
       <Footer />
     </div>
+    </AuthGuard>
   );
 }

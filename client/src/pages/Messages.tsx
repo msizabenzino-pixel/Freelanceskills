@@ -1,4 +1,5 @@
 import { Navbar } from "@/components/Navbar";
+import { AuthGuard } from "@/components/AuthGuard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -71,6 +72,7 @@ export default function Messages() {
   };
 
   return (
+    <AuthGuard message="Sign in to view and send messages to freelancers and clients.">
     <div className="h-screen bg-background flex flex-col overflow-hidden">
       <Navbar />
       
@@ -289,5 +291,6 @@ export default function Messages() {
         </DialogContent>
       </Dialog>
     </div>
+    </AuthGuard>
   );
 }

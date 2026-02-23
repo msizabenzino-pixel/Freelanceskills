@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
 import { JobCard } from "@/components/JobCard";
 import { Footer } from "@/components/Footer";
@@ -7,11 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Search, Filter, Briefcase, Sparkles } from "lucide-react";
+import { Search, Filter, Briefcase, Sparkles, Loader2 } from "lucide-react";
 import { AIProposalHelper } from "@/components/AIProposalHelper";
 import { useCurrency } from "@/lib/currency";
 
-interface Job {
+interface DisplayJob {
   title: string;
   company: string;
   type: string;
@@ -22,12 +23,21 @@ interface Job {
   description: string;
 }
 
-export default function Jobs() {
-  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
-  const [showProposalHelper, setShowProposalHelper] = useState(false);
-  const { formatAmount, formatRateRange, formatRate } = useCurrency();
+interface ApiJob {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  locationType: string;
+  location?: string;
+  budget: number;
+  status: string;
+  clientId: string;
+  createdAt: string;
+}
 
-  const jobs = [
+// Hardcoded sample jobs
+const SAMPLE_JOBS = (formatAmount: (amount: number) => string, formatRateRange: (min: number, max: number, type: string) => string, formatRate: (amount: number, type: string) => string) => [
     {
       title: "Senior React Developer",
       company: "Capitec Bank",
@@ -88,7 +98,67 @@ export default function Jobs() {
       tags: ["Admin", "Scheduling"],
       description: "Managing calendar and emails for an executive."
     }
-  ];
+];
+
+// Helper function to format relative time
+function formatTimeAgo(createdAt: string): string {
+  const now = new Date();
+  const created = new Date(createdAt);
+  const diffMs = now.getTime() - created.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffMins < 1) return "now";
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return created.toLocaleDateString();
+}
+
+// Helper function to map API job to display format
+function mapApiJobToDisplay(apiJob: ApiJob, formatAmount: (amount: number) => string): DisplayJob {
+  return {
+    title: apiJob.title,
+    company: `Client ID: ${apiJob.clientId.substring(0, 8)}`,
+    type: apiJob.locationType === "remote" ? "Remote" : "Onsite",
+    budget: formatAmount(apiJob.budget),
+    location: apiJob.location || "Not specified",
+    postedAt: formatTimeAgo(apiJob.createdAt),
+    tags: [apiJob.category],
+    description: apiJob.description,
+  };
+}
+
+export default function Jobs() {
+  const [selectedJob, setSelectedJob] = useState<DisplayJob | null>(null);
+  const [showProposalHelper, setShowProposalHelper] = useState(false);
+  const { formatAmount, formatRateRange, formatRate } = useCurrency();
+
+  // Fetch jobs from API
+  const { data: apiJobs = [], isLoading } = useQuery({
+    queryKey: ["jobs"],
+    queryFn: async () => {
+      const response = await fetch("/api/jobs");
+      if (!response.ok) {
+        throw new Error("Failed to fetch jobs");
+      }
+      return response.json() as Promise<ApiJob[]>;
+    },
+  });
+
+  // Process jobs: real jobs + fallback to sample jobs
+  const sampleJobs = SAMPLE_JOBS(formatAmount, formatRateRange, formatRate);
+  const displayApiJobs = apiJobs.map((job) => mapApiJobToDisplay(job, formatAmount));
+  const hasRealJobs = displayApiJobs.length > 0;
+  
+  // Combine real and sample jobs
+  const allJobs = hasRealJobs
+    ? [
+        ...displayApiJobs.map((job) => ({ ...job, source: "real" as const })),
+        ...sampleJobs.map((job) => ({ ...job, source: "sample" as const })),
+      ]
+    : sampleJobs.map((job) => ({ ...job, source: "sample" as const }));
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -167,7 +237,18 @@ export default function Jobs() {
           {/* Job Listings */}
           <div className="lg:col-span-3 space-y-6">
             <div className="bg-card rounded-xl p-2 flex items-center justify-between border border-border shadow-sm">
-               <span className="text-sm font-medium px-4 text-muted-foreground">Showing <span className="text-foreground font-bold">2,451</span> jobs</span>
+               <span className="text-sm font-medium px-4 text-muted-foreground">
+                 {isLoading ? (
+                   <>
+                     <Loader2 className="inline w-4 h-4 mr-2 animate-spin" />
+                     Loading jobs...
+                   </>
+                 ) : (
+                   <>
+                     Showing <span className="text-foreground font-bold">{allJobs.length}</span> jobs
+                   </>
+                 )}
+               </span>
                <div className="flex items-center gap-2">
                  <span className="text-sm text-muted-foreground">Sort by:</span>
                  <select className="text-sm font-medium bg-transparent border-none focus:ring-0 cursor-pointer">
@@ -178,13 +259,39 @@ export default function Jobs() {
                </div>
             </div>
 
-            <div className="grid gap-4">
-              {jobs.map((job, i) => (
-                <div key={i} onClick={() => { setSelectedJob(job); setShowProposalHelper(true); }} className="cursor-pointer">
-                  <JobCard {...job} />
-                </div>
-              ))}
-            </div>
+            {isLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              </div>
+            ) : (
+              <div className="space-y-8">
+                {hasRealJobs && (
+                  <div>
+                    <h2 className="text-lg font-bold text-primary mb-4">Posted by clients</h2>
+                    <div className="grid gap-4">
+                      {displayApiJobs.map((job, i) => (
+                        <div key={`real-${i}`} onClick={() => { setSelectedJob(job); setShowProposalHelper(true); }} className="cursor-pointer">
+                          <JobCard {...job} />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {(!hasRealJobs || (hasRealJobs && sampleJobs.length > 0)) && (
+                  <div>
+                    <h2 className="text-lg font-bold text-primary mb-4">Sample Listings</h2>
+                    <div className="grid gap-4">
+                      {sampleJobs.map((job, i) => (
+                        <div key={`sample-${i}`} onClick={() => { setSelectedJob(job); setShowProposalHelper(true); }} className="cursor-pointer">
+                          <JobCard {...job} />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
              <div className="flex justify-center pt-8">
                <Button variant="outline" className="w-full max-w-xs">Load More Jobs</Button>
