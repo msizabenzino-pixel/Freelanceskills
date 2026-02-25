@@ -127,17 +127,32 @@ export function Navbar() {
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-6">
-            {navLinks.map((link) => (
-              <Link key={link.name} href={link.href} className={cn(
-                  "text-sm font-medium transition-colors hover:text-accent flex items-center gap-1.5",
-                  isScrolled || location !== "/" ? "text-muted-foreground" : "text-white/90",
-                  link.icon && "text-primary"
+          <div className="hidden md:flex items-center gap-1">
+            {navLinks.map((link) => {
+              const isActive = location === link.href;
+              return (
+                <Link key={link.name} href={link.href} className={cn(
+                  "text-sm font-medium transition-all px-3 py-2 rounded-lg flex items-center gap-1.5 relative",
+                  isScrolled || location !== "/"
+                    ? isActive
+                      ? "text-primary bg-primary/8 font-semibold"
+                      : "text-muted-foreground hover:text-primary hover:bg-muted/60"
+                    : isActive
+                      ? "text-white font-semibold bg-white/15"
+                      : "text-white/90 hover:text-white hover:bg-white/10",
+                  link.icon && !isActive && (isScrolled || location !== "/" ? "text-primary" : "text-accent")
                 )}>
                   {link.icon && <link.icon className="h-4 w-4" />}
                   {link.name}
-              </Link>
-            ))}
+                  {isActive && (
+                    <span className={cn(
+                      "absolute bottom-0.5 left-3 right-3 h-0.5 rounded-full",
+                      isScrolled || location !== "/" ? "bg-primary" : "bg-accent"
+                    )} />
+                  )}
+                </Link>
+              );
+            })}
           </div>
         </div>
 

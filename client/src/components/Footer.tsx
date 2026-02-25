@@ -4,7 +4,8 @@ import { useCurrency } from "@/lib/currency";
 
 export function Footer() {
   return (
-    <footer role="contentinfo" aria-label="Site footer" className="bg-secondary pt-16 pb-8 border-t border-border mt-auto">
+    <footer role="contentinfo" aria-label="Site footer" className="bg-secondary pt-16 pb-8 border-t border-border mt-auto relative overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 md:grid-cols-6 gap-12 mb-12">
           <div className="space-y-4 md:col-span-2">
@@ -133,7 +134,7 @@ export function Footer() {
           <div className="flex gap-6">
             <Link href="/terms" className="hover:text-primary" data-testid="link-terms">Terms of Service</Link>
             <Link href="/privacy" className="hover:text-primary" data-testid="link-privacy">Privacy Policy</Link>
-            <Link href="/support" className="hover:text-primary">Accessibility</Link>
+            <Link href="/accessibility" className="hover:text-primary">Accessibility</Link>
           </div>
         </div>
       </div>

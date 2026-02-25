@@ -50,6 +50,11 @@ const sampleTranslations: Record<string, { greeting: string; tagline: string; ct
   xh: { greeting: "Wamkelekile ku-FreelanceSkills", tagline: "Fumana abantu abanezokhono kufutshane nawe", cta: "Qala Ngoku" },
   st: { greeting: "Re o amohela ho FreelanceSkills", tagline: "Fumana batho ba nang le bokgoni haufi le wena", cta: "Qala Hona Joale" },
   tn: { greeting: "Re go amogela mo FreelanceSkills", tagline: "Bona batho ba ba nang le bokgoni gaufi le wena", cta: "Simolola Jaanong" },
+  ts: { greeting: "Mu amukeriwa eka FreelanceSkills", tagline: "Kuma swirho swo tiva ehansi ka wena", cta: "Sungula Sweswi" },
+  ss: { greeting: "Siyamukela ku-FreelanceSkills", tagline: "Thola ticotfwa letinebuchwepheshe eduze nawe", cta: "Cala Manje" },
+  ve: { greeting: "Ndi a vhea kha FreelanceSkills", tagline: "Wana vhathu vhane vha na vhugudzi tsini nawe", cta: "Thoma Zwino" },
+  nr: { greeting: "Siyakwamukela ku-FreelanceSkills", tagline: "Thola abantu abanolwazi eduze kwakho", cta: "Qala Manje" },
+  nso: { greeting: "Re go amogela go FreelanceSkills", tagline: "Hwetša batho ba go na le bokgoni gaufi le wena", cta: "Thoma Bjale" },
   pt: { greeting: "Bem-vindo ao FreelanceSkills", tagline: "Encontre profissionais qualificados perto de si", cta: "Começar" },
   fr: { greeting: "Bienvenue sur FreelanceSkills", tagline: "Trouvez des professionnels qualifiés près de chez vous", cta: "Commencer" },
   sw: { greeting: "Karibu FreelanceSkills", tagline: "Pata wataalamu wenye ujuzi karibu nawe", cta: "Anza Sasa" },
@@ -122,9 +127,10 @@ export default function Accessibility() {
       <Navbar />
 
       <main id="main-content" role="main">
-        <section className="bg-primary text-white pt-32 pb-24 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent/10 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3" />
-          <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl -translate-x-1/3 translate-y-1/3" />
+        <section className="animated-gradient-bg text-white pt-32 pb-24 relative overflow-hidden">
+          <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-accent/8 rounded-full blur-[120px] translate-x-1/3 -translate-y-1/3" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/8 rounded-full blur-[100px] -translate-x-1/3 translate-y-1/3" />
           <div className="container mx-auto px-4 md:px-6 text-center relative z-10">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-accent text-sm font-medium mb-6" data-testid="badge-accessibility-hero">
               <AccessibilityIcon className="w-4 h-4" />
@@ -183,9 +189,14 @@ export default function Accessibility() {
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Languages className="w-5 h-5 text-primary" />
                   Real-Time Translation Preview
-                  <Badge variant="outline" className="ml-auto">
-                    {languages.find((l) => l.code === selectedLang)?.name}
-                  </Badge>
+                  <div className="ml-auto flex items-center gap-2">
+                    {languages.find((l) => l.code === selectedLang)?.status === "beta" && (
+                      <Badge variant="secondary" className="text-xs">Beta</Badge>
+                    )}
+                    <Badge variant="outline">
+                      {languages.find((l) => l.code === selectedLang)?.name}
+                    </Badge>
+                  </div>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6 space-y-4">
@@ -203,7 +214,11 @@ export default function Accessibility() {
                 </div>
                 <div className="flex items-center gap-2 pt-2 text-sm text-muted-foreground">
                   <Sparkles className="w-4 h-4 text-primary" />
-                  <span>AI-powered neural translation with cultural context awareness</span>
+                  <span>
+                    {languages.find((l) => l.code === selectedLang)?.status === "beta"
+                      ? "Beta translation — AI-assisted. Community review in progress for full accuracy."
+                      : "AI-powered neural translation with cultural context awareness"}
+                  </span>
                 </div>
               </CardContent>
             </Card>
@@ -382,9 +397,10 @@ export default function Accessibility() {
           </div>
         </section>
 
-        <section className="py-20 bg-primary text-white relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute bottom-0 right-0 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
+        <section className="py-20 animated-gradient-bg text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
+          <div className="absolute top-0 left-0 w-96 h-96 bg-accent/10 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute bottom-0 right-0 w-72 h-72 bg-blue-500/10 rounded-full blur-[80px] translate-x-1/3 translate-y-1/3" />
           <div className="container mx-auto px-4 md:px-6 text-center relative z-10">
             <AccessibilityIcon className="w-12 h-12 mx-auto mb-6 text-accent" />
             <h2 className="text-3xl md:text-5xl font-display font-bold mb-4" data-testid="text-commitment-heading">

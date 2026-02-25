@@ -106,42 +106,46 @@ const competitiveMetrics = {
 const aiPredictions = [
   {
     title: "Income Forecast",
-    description: "Based on your current trajectory, your monthly income is projected to reach R52,000 by Q2 2032.",
+    description: "At your current +18% YoY growth rate, monthly income is projected to reach R52,000 (+24%) within 6 months. Maintaining your 98% completion rate is the key driver.",
     icon: TrendingUp,
     color: "text-green-500",
     bg: "bg-green-500/10",
     predictedValueZar: 52000,
+    badge: "+24% in 6 mo",
   },
   {
-    title: "High-Demand Alert",
-    description: "React Native developers in Gauteng are in critical demand. Consider adding this skill to increase earnings by 35%.",
+    title: "High-Demand Skill Gap",
+    description: "React Native developers in Gauteng command R750–R900/hr — R300 above your current rate. Adding this skill could increase your monthly income by R12,000–R18,000.",
     icon: Zap,
     color: "text-amber-500",
     bg: "bg-amber-500/10",
+    badge: "+R15k/mo potential",
   },
   {
-    title: "Optimal Pricing",
-    description: "AI analysis suggests raising your hourly rate to R650/hr. You're currently 18% below market rate for your experience level.",
+    title: "Pricing Opportunity",
+    description: "Freelancers with your rating (4.9★) and experience level average R650/hr in your category. Raising your rate from your current level could add R3,200/mo without losing clients.",
     icon: Target,
     color: "text-blue-500",
     bg: "bg-blue-500/10",
+    badge: "R650/hr market rate",
   },
   {
-    title: "Client Retention",
-    description: "Send a follow-up to 3 past clients who haven't ordered in 60+ days. Historical data shows 40% reactivation rate.",
+    title: "Client Re-Engagement",
+    description: "3 past clients haven't returned in 60+ days — historically worth R8,500 in reactivated revenue. A personalized follow-up message has a 40% success rate on this platform.",
     icon: Repeat,
     color: "text-purple-500",
     bg: "bg-purple-500/10",
+    badge: "~R8,500 recoverable",
   },
 ];
 
 const performanceMetrics = [
-  { label: "Response Rate", value: 96, unit: "%", icon: MessageSquare, color: "text-blue-500", trend: "+2%" },
-  { label: "Completion Rate", value: 98, unit: "%", icon: CheckCircle2, color: "text-green-500", trend: "+1%" },
-  { label: "Repeat Clients", value: 67, unit: "%", icon: Repeat, color: "text-purple-500", trend: "+5%" },
-  { label: "Avg Response Time", value: 1.2, unit: "hrs", icon: Clock, color: "text-orange-500", trend: "-0.3" },
-  { label: "Profile Views", value: 1842, unit: "/mo", icon: Eye, color: "text-indigo-500", trend: "+12%" },
-  { label: "Client Satisfaction", value: 4.9, unit: "/5", icon: ThumbsUp, color: "text-rose-500", trend: "+0.1" },
+  { label: "Response Rate", value: 96, unit: "%", icon: MessageSquare, color: "text-blue-500", trend: "+2%", trendPositive: true },
+  { label: "Completion Rate", value: 98, unit: "%", icon: CheckCircle2, color: "text-green-500", trend: "+1%", trendPositive: true },
+  { label: "Repeat Clients", value: 67, unit: "%", icon: Repeat, color: "text-purple-500", trend: "+5%", trendPositive: true },
+  { label: "Avg Response Time", value: 1.2, unit: "hrs", icon: Clock, color: "text-orange-500", trend: "-0.3 hrs", trendPositive: true, trendNote: "faster" },
+  { label: "Profile Views", value: 1842, unit: "/mo", icon: Eye, color: "text-indigo-500", trend: "+12%", trendPositive: true },
+  { label: "Client Satisfaction", value: 4.9, unit: "/5", icon: ThumbsUp, color: "text-rose-500", trend: "+0.1", trendPositive: true },
 ];
 
 export default function Analytics() {
@@ -156,9 +160,10 @@ export default function Analytics() {
       <Navbar />
 
       <main id="main-content" role="main">
-        <section className="bg-primary text-white pt-32 pb-16 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent/10 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3" />
-          <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl -translate-x-1/3 translate-y-1/3" />
+        <section className="animated-gradient-bg text-white pt-32 pb-16 relative overflow-hidden">
+          <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-accent/8 rounded-full blur-[120px] translate-x-1/3 -translate-y-1/3" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/8 rounded-full blur-[100px] -translate-x-1/3 translate-y-1/3" />
           <div className="container mx-auto px-4 md:px-6 relative z-10">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
               <div>
@@ -200,15 +205,15 @@ export default function Analytics() {
                     <span className="text-sm text-muted-foreground mb-0.5">{metric.unit}</span>
                   </div>
                   <div className="flex items-center gap-1 mt-1">
-                    {metric.trend.startsWith("+") || metric.trend.startsWith("-") ? (
-                      metric.trend.startsWith("+") ? (
-                        <ArrowUpRight className="w-3 h-3 text-green-500" />
-                      ) : (
-                        <ArrowDownRight className="w-3 h-3 text-red-500" />
-                      )
+                    {"trendPositive" in metric && metric.trendPositive ? (
+                      <ArrowUpRight className="w-3 h-3 text-green-500" />
+                    ) : metric.trend.startsWith("+") ? (
+                      <ArrowUpRight className="w-3 h-3 text-green-500" />
+                    ) : metric.trend.startsWith("-") ? (
+                      <ArrowDownRight className="w-3 h-3 text-red-500" />
                     ) : null}
-                    <span className={`text-xs font-medium ${metric.trend.startsWith("+") ? "text-green-500" : metric.trend.startsWith("-") ? "text-red-500" : "text-muted-foreground"}`}>
-                      {metric.trend}
+                    <span className={`text-xs font-medium ${"trendPositive" in metric && metric.trendPositive ? "text-green-500" : metric.trend.startsWith("+") ? "text-green-500" : metric.trend.startsWith("-") ? "text-red-500" : "text-muted-foreground"}`}>
+                      {"trendNote" in metric && metric.trendNote ? `${metric.trend} (${metric.trendNote})` : metric.trend}
                     </span>
                   </div>
                 </Card>
@@ -249,15 +254,16 @@ export default function Analytics() {
                   <CardContent>
                     <div className="flex items-end gap-1.5 h-56 mt-4">
                       {currentEarnings.map((d, i) => (
-                        <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                          <span className="text-[10px] text-muted-foreground font-medium">
+                        <div key={i} className="flex-1 flex flex-col items-center gap-1 group/bar">
+                          <span className="text-[10px] text-muted-foreground font-medium opacity-0 group-hover/bar:opacity-100 transition-opacity">
                             {formatAmount(d.value)}
                           </span>
-                          <div className="w-full relative group">
+                          <div className="w-full relative">
                             <div
-                              className="w-full bg-gradient-to-t from-primary to-primary/60 rounded-t-md transition-all duration-500 hover:from-accent hover:to-accent/60 cursor-pointer"
+                              className="w-full bg-gradient-to-t from-primary to-primary/60 rounded-t-md transition-all duration-300 group-hover/bar:from-accent group-hover/bar:to-accent/60 cursor-pointer"
                               style={{ height: `${(d.value / maxEarning) * 180}px` }}
                               data-testid={`bar-earning-${i}`}
+                              title={`${d.label}: ${formatAmount(d.value)}`}
                             />
                           </div>
                           <span className="text-[10px] text-muted-foreground font-medium">
@@ -403,7 +409,7 @@ export default function Analytics() {
                             style={{
                               backgroundColor:
                                 skill.demand > 80
-                                  ? "#ef4444"
+                                  ? "#7c3aed"
                                   : skill.demand > 60
                                   ? "#f59e0b"
                                   : "#22c55e",
@@ -436,7 +442,7 @@ export default function Analytics() {
                   </div>
                   <div className="flex items-center gap-4 mt-4 pt-3 border-t border-border text-[10px] text-muted-foreground">
                     <div className="flex items-center gap-1">
-                      <div className="w-2 h-2 rounded-full bg-red-500" /> High demand
+                      <div className="w-2 h-2 rounded-full bg-violet-600" /> High demand
                     </div>
                     <div className="flex items-center gap-1">
                       <div className="w-2 h-2 rounded-full bg-amber-500" /> Medium demand
@@ -480,6 +486,11 @@ export default function Analytics() {
                           <h3 className="font-bold text-foreground">{prediction.title}</h3>
                           <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
                         </div>
+                        {"badge" in prediction && prediction.badge && (
+                          <span className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full mb-2 ${prediction.bg} ${prediction.color}`}>
+                            {prediction.badge}
+                          </span>
+                        )}
                         <p className="text-sm text-muted-foreground leading-relaxed">
                           {prediction.description}
                         </p>
@@ -521,7 +532,7 @@ export default function Analytics() {
                   </div>
                   <div className="text-center p-6 bg-purple-500/5 border border-purple-500/10 rounded-xl">
                     <p className="text-sm font-medium text-muted-foreground mb-1">Annual Potential</p>
-                    <p className="text-3xl font-bold text-purple-600" data-testid="text-annual-potential">{formatAmount(680000)}</p>
+                    <p className="text-3xl font-bold text-purple-600" data-testid="text-annual-potential">{formatAmount(624000)}</p>
                     <div className="flex items-center justify-center gap-1 mt-2 text-purple-500">
                       <Award className="w-4 h-4" />
                       <span className="text-sm font-medium">Top 2% earner</span>

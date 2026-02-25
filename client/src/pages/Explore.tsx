@@ -428,7 +428,7 @@ export default function Explore() {
                   </div>
                   <div className="grid md:grid-cols-2 gap-4">
                     {FEATURED_FREELANCERS.map((freelancer) => (
-                      <Link key={freelancer.id} href={`/freelancer/${freelancer.id}`}>
+                      <Link key={freelancer.id} href={`/profile/${freelancer.id}`}>
                         <div className="bg-card rounded-xl border p-4 hover:shadow-lg transition-shadow cursor-pointer" data-testid={`card-freelancer-${freelancer.id}`}>
                           <div className="flex gap-4">
                             <img 

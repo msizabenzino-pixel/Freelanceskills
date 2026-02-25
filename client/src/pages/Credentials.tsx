@@ -24,48 +24,82 @@ import {
   Hash,
   Clock,
   Zap,
+  ChevronRight,
 } from "lucide-react";
 
 const verificationTiers = [
   {
     level: 1,
     title: "Self-Declared",
-    description: "Skills added by the freelancer to their profile. No external verification.",
+    description: "Skills you add to your profile yourself. Visible to clients with a clear tier label so they know what to expect.",
     icon: Users,
     color: "text-slate-500",
     bgColor: "bg-slate-500/10",
-    borderColor: "border-slate-500/20",
-    features: ["Add any skill to profile", "No verification required", "Visible to clients with tier label"],
+    borderColor: "border-slate-300 dark:border-slate-700",
+    accentBar: "bg-slate-400",
+    badgeColor: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
+    features: [
+      "Add any skill to your profile instantly",
+      "No verification required to get started",
+      "Labeled as 'Self-Declared' for client transparency",
+    ],
+    howTo: "Simply add skills in your profile settings.",
+    ctaLabel: "Add Skills",
   },
   {
     level: 2,
     title: "Peer-Endorsed",
-    description: "Skills endorsed by other verified professionals on the platform.",
+    description: "Skills endorsed by other verified professionals on the platform. Community validation signals real-world credibility.",
     icon: Star,
     color: "text-blue-500",
     bgColor: "bg-blue-500/10",
-    borderColor: "border-blue-500/20",
-    features: ["3+ peer endorsements required", "Endorsers must be verified", "Weighted by endorser reputation"],
+    borderColor: "border-blue-300 dark:border-blue-800",
+    accentBar: "bg-blue-500",
+    badgeColor: "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300",
+    features: [
+      "Requires 3+ endorsements from verified peers",
+      "Endorsers are weighted by their own reputation",
+      "Displayed with peer count on your public profile",
+    ],
+    howTo: "Work with other verified freelancers and request endorsements.",
+    ctaLabel: "Request Endorsements",
   },
   {
     level: 3,
     title: "Platform-Tested",
-    description: "Skills validated through FreelanceSkills' AI-proctored assessments.",
+    description: "Skills validated through FreelanceSkills' AI-proctored assessments — a combination of practical tasks and theory questions.",
     icon: BadgeCheck,
     color: "text-purple-500",
     bgColor: "bg-purple-500/10",
-    borderColor: "border-purple-500/20",
-    features: ["AI-proctored skill test", "Practical + theory assessment", "Score-based grading system"],
+    borderColor: "border-purple-300 dark:border-purple-800",
+    accentBar: "bg-purple-500",
+    badgeColor: "bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300",
+    features: [
+      "AI-proctored online skill assessment",
+      "Practical exercises + theoretical questions",
+      "Score-graded with percentile ranking shown",
+    ],
+    howTo: "Book a skill test from your dashboard. Most tests take 60–90 minutes.",
+    ctaLabel: "Book a Skill Test",
   },
   {
     level: 4,
     title: "Blockchain-Certified",
-    description: "Immutable, tamper-proof credential minted on-chain. The gold standard.",
+    description: "Your credential is minted as an NFT on the blockchain — tamper-proof, permanently verifiable, and globally portable.",
     icon: Shield,
-    color: "text-green-500",
+    color: "text-green-600",
     bgColor: "bg-green-500/10",
-    borderColor: "border-green-500/20",
-    features: ["On-chain NFT credential", "Permanently verifiable", "Globally portable & shareable"],
+    borderColor: "border-green-400 dark:border-green-700",
+    accentBar: "bg-green-500",
+    badgeColor: "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300",
+    features: [
+      "Credential minted as an NFT on Polygon",
+      "Permanently verifiable via public blockchain",
+      "Share anywhere — LinkedIn, email, QR code",
+    ],
+    howTo: "Pass a Platform Test, then mint your credential from your wallet for ~R2.50.",
+    ctaLabel: "Mint a Credential",
+    isGold: true,
   },
 ];
 
@@ -76,7 +110,7 @@ const walletCredentials = [
     issuer: "FreelanceSkills Academy",
     date: "2031-03-15",
     tier: "Blockchain-Certified",
-    tierColor: "bg-green-500/10 text-green-600",
+    tierColor: "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300",
     hash: "0x7f4a...3b2c",
     chain: "Polygon",
     verified: true,
@@ -87,7 +121,7 @@ const walletCredentials = [
     issuer: "SAQA / FreelanceSkills",
     date: "2031-01-22",
     tier: "Blockchain-Certified",
-    tierColor: "bg-green-500/10 text-green-600",
+    tierColor: "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300",
     hash: "0x9e2d...8f1a",
     chain: "Polygon",
     verified: true,
@@ -95,10 +129,10 @@ const walletCredentials = [
   {
     id: "cred-003",
     title: "AI-Powered Project Management",
-    issuer: "Google AI x FreelanceSkills",
+    issuer: "Google AI × FreelanceSkills",
     date: "2030-11-08",
     tier: "Platform-Tested",
-    tierColor: "bg-purple-500/10 text-purple-600",
+    tierColor: "bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300",
     hash: "0x3c8b...6d4e",
     chain: "Ethereum",
     verified: true,
@@ -109,7 +143,7 @@ const walletCredentials = [
     issuer: "TVET College Partnership",
     date: "2030-09-14",
     tier: "Blockchain-Certified",
-    tierColor: "bg-green-500/10 text-green-600",
+    tierColor: "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300",
     hash: "0x1a5f...9c7b",
     chain: "Polygon",
     verified: true,
@@ -120,7 +154,7 @@ const walletCredentials = [
     issuer: "FreelanceSkills",
     date: "2030-07-20",
     tier: "Peer-Endorsed",
-    tierColor: "bg-blue-500/10 text-blue-600",
+    tierColor: "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300",
     hash: null,
     chain: null,
     verified: false,
@@ -153,14 +187,19 @@ export default function Credentials() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const tierIcons = [Users, Star, BadgeCheck, Shield];
+  const tierColors = ["text-slate-500", "text-blue-500", "text-purple-500", "text-green-600"];
+  const tierBgColors = ["bg-slate-500/10", "bg-blue-500/10", "bg-purple-500/10", "bg-green-500/10"];
+
   return (
     <div className="min-h-screen bg-background font-sans flex flex-col">
       <Navbar />
 
       <main id="main-content" role="main">
-        <section className="bg-gradient-to-br from-primary via-primary/90 to-primary/80 text-white pt-32 pb-20 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-green-500/10 rounded-full blur-3xl -translate-x-1/3 translate-y-1/3" />
+        <section className="animated-gradient-bg text-white pt-32 pb-20 relative overflow-hidden">
+          <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent/8 rounded-full blur-[120px] translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-green-500/10 rounded-full blur-[100px] -translate-x-1/3 translate-y-1/3" />
           <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
             <Badge className="mb-6 bg-white/10 text-white border-white/20 hover:bg-white/20" data-testid="badge-credentials-hero">
               <Shield className="w-3 h-3 mr-1" /> Blockchain-Verified Credentials
@@ -169,7 +208,7 @@ export default function Credentials() {
               Your Digital Credential Wallet
             </h1>
             <p className="text-xl md:text-2xl text-white/80 max-w-3xl mx-auto mb-8 leading-relaxed" data-testid="text-credentials-subtitle">
-              Tamper-proof, blockchain-verified skills and certifications. Own your credentials, share them anywhere, and prove your expertise instantly.
+              Tamper-proof, blockchain-verified skills and certifications. Own your credentials, share them anywhere, and prove your expertise in seconds.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="bg-accent text-primary hover:bg-accent/90 font-bold text-lg px-8 shadow-lg gap-2" data-testid="button-mint-credential">
@@ -186,7 +225,7 @@ export default function Credentials() {
                 <Shield className="w-4 h-4" /> 24,500+ Credentials Minted
               </div>
               <div className="flex items-center gap-2" data-testid="stat-verifications">
-                <CheckCircle2 className="w-4 h-4" /> 180,000+ Verifications
+                <CheckCircle2 className="w-4 h-4" /> 180,000+ Verifications Performed
               </div>
               <div className="flex items-center gap-2" data-testid="stat-partners">
                 <Globe className="w-4 h-4" /> 12 Partner Institutions
@@ -197,33 +236,52 @@ export default function Credentials() {
 
         <section className="py-20 md:py-24 bg-muted/30" data-testid="section-verification-tiers">
           <div className="container mx-auto px-4 md:px-6">
-            <div className="text-center max-w-2xl mx-auto mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4" data-testid="text-tiers-heading">Verification Tiers</h2>
+            <div className="text-center max-w-2xl mx-auto mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4" data-testid="text-tiers-heading">
+                4 Levels of Skill Verification
+              </h2>
               <p className="text-muted-foreground text-lg">
-                From self-declared skills to immutable blockchain certification — build trust at every level.
+                Each level builds on the last — the higher your tier, the more trust you earn from clients.
               </p>
+            </div>
+
+            <div className="flex items-center justify-center gap-1 mb-10">
+              {verificationTiers.map((tier, i) => {
+                const Icon = tierIcons[i];
+                return (
+                  <div key={i} className="flex items-center gap-1">
+                    <div className={`w-8 h-8 rounded-full ${tierBgColors[i]} flex items-center justify-center border border-white dark:border-background`}>
+                      <Icon className={`w-4 h-4 ${tierColors[i]}`} />
+                    </div>
+                    {i < verificationTiers.length - 1 && (
+                      <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                    )}
+                  </div>
+                );
+              })}
+              <span className="ml-2 text-xs text-muted-foreground font-medium">Higher tier = more client trust</span>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
               {verificationTiers.map((tier) => (
                 <Card
                   key={tier.level}
-                  className={`border-2 ${tier.borderColor} hover:shadow-xl transition-all duration-300 overflow-hidden`}
+                  className={`border-2 ${tier.borderColor} hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col ${tier.isGold ? "ring-2 ring-green-400/30" : ""}`}
                   data-testid={`card-tier-${tier.level}`}
                 >
-                  <div className={`h-1.5 ${tier.bgColor}`} />
-                  <CardContent className="p-6">
+                  <div className={`h-1.5 w-full ${tier.accentBar}`} />
+                  <CardContent className="p-6 flex flex-col flex-1">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className={`w-12 h-12 rounded-xl ${tier.bgColor} flex items-center justify-center`}>
+                      <div className={`w-12 h-12 rounded-xl ${tier.bgColor} flex items-center justify-center shrink-0`}>
                         <tier.icon className={`w-6 h-6 ${tier.color}`} />
                       </div>
                       <div>
-                        <div className="text-xs font-semibold text-muted-foreground">Level {tier.level}</div>
-                        <h3 className="font-bold text-foreground">{tier.title}</h3>
+                        <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Level {tier.level}</div>
+                        <h3 className="font-bold text-foreground leading-tight">{tier.title}</h3>
                       </div>
                     </div>
-                    <p className="text-muted-foreground text-sm mb-5 leading-relaxed">{tier.description}</p>
-                    <ul className="space-y-2.5">
+                    <p className="text-muted-foreground text-sm mb-4 leading-relaxed">{tier.description}</p>
+                    <ul className="space-y-2.5 mb-5 flex-1">
                       {tier.features.map((feature, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm">
                           <CheckCircle2 className={`w-4 h-4 ${tier.color} shrink-0 mt-0.5`} />
@@ -231,21 +289,21 @@ export default function Credentials() {
                         </li>
                       ))}
                     </ul>
+                    <div className="pt-4 border-t border-border mt-auto">
+                      <p className="text-xs text-muted-foreground mb-3">
+                        <span className="font-semibold text-foreground">How to achieve: </span>{tier.howTo}
+                      </p>
+                      <Button
+                        size="sm"
+                        variant={tier.isGold ? "default" : "outline"}
+                        className="w-full text-xs"
+                        data-testid={`button-tier-cta-${tier.level}`}
+                      >
+                        {tier.ctaLabel} <ArrowRight className="w-3 h-3 ml-1" />
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
-              ))}
-            </div>
-
-            <div className="flex items-center justify-center mt-10 gap-2">
-              {verificationTiers.map((tier, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <div className={`w-8 h-8 rounded-full ${tier.bgColor} flex items-center justify-center`}>
-                    <tier.icon className={`w-4 h-4 ${tier.color}`} />
-                  </div>
-                  {i < verificationTiers.length - 1 && (
-                    <ArrowRight className="w-4 h-4 text-muted-foreground" />
-                  )}
-                </div>
               ))}
             </div>
           </div>
@@ -254,9 +312,9 @@ export default function Credentials() {
         <section className="py-20 md:py-24" data-testid="section-credential-wallet">
           <div className="container mx-auto px-4 md:px-6">
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4" data-testid="text-wallet-heading">Credential Wallet</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4" data-testid="text-wallet-heading">Your Credential Wallet</h2>
               <p className="text-muted-foreground text-lg">
-                Your verified certificates, badges, and skill validations — all in one place.
+                All your verified certificates, badges, and skill validations — in one portable wallet.
               </p>
             </div>
 
@@ -319,32 +377,37 @@ export default function Credentials() {
                           <p className="text-sm text-muted-foreground">{selectedCredential.issuer}</p>
                         </div>
                       </div>
-                      {selectedCredential.verified && (
-                        <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-green-500/10 text-green-600 text-sm font-semibold" data-testid="badge-verified-status">
+                      {selectedCredential.verified ? (
+                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-500/10 text-green-600 text-sm font-semibold" data-testid="badge-verified-status">
                           <CheckCircle2 className="w-4 h-4" /> Verified
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-500/10 text-blue-600 text-sm font-semibold" data-testid="badge-pending-status">
+                          <Star className="w-4 h-4" /> Peer-Endorsed
                         </div>
                       )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 mb-6">
                       <div className="bg-muted/50 rounded-lg p-4">
-                        <p className="text-xs font-semibold text-muted-foreground mb-1">ISSUED</p>
+                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Date Issued</p>
                         <p className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                          <Clock className="w-3.5 h-3.5" /> {selectedCredential.date}
+                          <Clock className="w-3.5 h-3.5 text-muted-foreground" /> {selectedCredential.date}
                         </p>
                       </div>
                       <div className="bg-muted/50 rounded-lg p-4">
-                        <p className="text-xs font-semibold text-muted-foreground mb-1">VERIFICATION TIER</p>
+                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Verification Tier</p>
                         <Badge className={`text-xs ${selectedCredential.tierColor}`}>{selectedCredential.tier}</Badge>
                       </div>
                       {selectedCredential.hash && (
                         <div className="bg-muted/50 rounded-lg p-4">
-                          <p className="text-xs font-semibold text-muted-foreground mb-1">TX HASH</p>
+                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Transaction Hash</p>
                           <p className="text-sm font-mono text-foreground flex items-center gap-1.5">
-                            <Hash className="w-3.5 h-3.5" /> {selectedCredential.hash}
+                            <Hash className="w-3.5 h-3.5 text-muted-foreground" /> {selectedCredential.hash}
                             <button
                               onClick={() => handleCopy(selectedCredential.hash || "")}
                               className="ml-1 text-muted-foreground hover:text-primary transition-colors"
+                              aria-label="Copy transaction hash"
                               data-testid="button-copy-hash"
                             >
                               <Copy className="w-3.5 h-3.5" />
@@ -354,9 +417,9 @@ export default function Credentials() {
                       )}
                       {selectedCredential.chain && (
                         <div className="bg-muted/50 rounded-lg p-4">
-                          <p className="text-xs font-semibold text-muted-foreground mb-1">BLOCKCHAIN</p>
+                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Blockchain Network</p>
                           <p className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                            <Link2 className="w-3.5 h-3.5" /> {selectedCredential.chain}
+                            <Link2 className="w-3.5 h-3.5 text-muted-foreground" /> {selectedCredential.chain}
                           </p>
                         </div>
                       )}
@@ -366,13 +429,17 @@ export default function Credentials() {
                       <Button className="flex-1 gap-2" data-testid="button-share-credential">
                         <Share2 className="w-4 h-4" /> Share Credential
                       </Button>
-                      <Button variant="outline" className="gap-2" data-testid="button-view-on-chain">
-                        <ExternalLink className="w-4 h-4" /> View On-Chain
-                      </Button>
+                      {selectedCredential.chain && (
+                        <Button variant="outline" className="gap-2" data-testid="button-view-on-chain">
+                          <ExternalLink className="w-4 h-4" /> View On-Chain
+                        </Button>
+                      )}
                     </div>
 
                     {copied && (
-                      <p className="text-xs text-green-600 text-center mt-3" data-testid="text-copied-confirmation">Hash copied to clipboard!</p>
+                      <p className="text-xs text-green-600 text-center mt-3 font-medium" data-testid="text-copied-confirmation">
+                        ✓ Hash copied to clipboard
+                      </p>
                     )}
                   </CardContent>
                 </Card>
@@ -381,15 +448,16 @@ export default function Credentials() {
           </div>
         </section>
 
-        <section className="py-20 md:py-24 bg-primary text-white relative overflow-hidden" data-testid="section-verification-chain">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-green-500/10 rounded-full blur-3xl -translate-x-1/3 translate-y-1/3" />
+        <section className="py-20 md:py-24 animated-gradient-bg text-white relative overflow-hidden" data-testid="section-verification-chain">
+          <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent/8 rounded-full blur-[120px] translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-green-500/10 rounded-full blur-[100px] -translate-x-1/3 translate-y-1/3" />
           <div className="container mx-auto px-4 md:px-6 relative z-10">
             <div className="text-center max-w-2xl mx-auto mb-16">
               <Lock className="w-12 h-12 mx-auto mb-4 text-accent" />
-              <h2 className="text-3xl md:text-4xl font-bold mb-4" data-testid="text-chain-heading">Blockchain Verification Chain</h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4" data-testid="text-chain-heading">How Blockchain Verification Works</h2>
               <p className="text-white/70 text-lg">
-                Every credential follows an immutable verification path — from assessment to on-chain minting.
+                Every credential follows a transparent, immutable verification path — from assessment to on-chain minting. Anyone can verify it, anytime.
               </p>
             </div>
 
@@ -424,19 +492,19 @@ export default function Credentials() {
             <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
               <div className="space-y-6">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
-                  <Fingerprint className="w-4 h-4" /> Mint Your Credential
+                  <Fingerprint className="w-4 h-4" /> Mint Your First Credential
                 </div>
                 <h2 className="text-3xl md:text-4xl font-bold text-primary leading-tight" data-testid="text-mint-heading">
-                  Turn your skills into <span className="text-accent">permanent, verifiable</span> assets
+                  Turn your skills into <span className="text-accent">permanent, verifiable</span> proof of expertise
                 </h2>
                 <p className="text-muted-foreground text-lg leading-relaxed">
-                  Complete a skill assessment, pass AI-proctored verification, and mint your credential as an NFT on the blockchain. It's yours forever — no institution can revoke it.
+                  Complete a skill assessment, pass AI-proctored verification, and mint your credential as an NFT on the blockchain. It's yours forever — portable, shareable, and impossible to fake.
                 </p>
                 <ul className="space-y-3">
                   {[
-                    "Complete skill assessment (online or in-person)",
+                    "Complete a skill assessment (online or in-person)",
                     "AI-proctored identity & skill verification",
-                    "Credential minted on Polygon (low gas fees)",
+                    "Credential minted on Polygon (≈R2.50 gas fee)",
                     "Share via link, QR code, or embed on LinkedIn",
                     "SAQA-aligned for South African qualifications",
                   ].map((item, i) => (
@@ -461,18 +529,18 @@ export default function Credentials() {
                       <h3 className="text-lg font-bold text-foreground mb-1">Full-Stack Web Development</h3>
                       <p className="text-sm text-muted-foreground">FreelanceSkills Academy</p>
                     </div>
-                    <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+                    <div className="bg-muted/50 rounded-lg p-4 space-y-2.5 text-left">
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Score</span>
-                        <span className="font-bold text-foreground">94/100</span>
+                        <span className="text-muted-foreground">Assessment Score</span>
+                        <span className="font-bold text-foreground">94 / 100</span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Network</span>
                         <span className="font-bold text-foreground">Polygon</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Gas Fee</span>
-                        <span className="font-bold text-green-600">~R2.50</span>
+                        <span className="text-muted-foreground">Estimated Gas Fee</span>
+                        <span className="font-bold text-green-600">≈ R2.50</span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Status</span>
@@ -480,7 +548,7 @@ export default function Credentials() {
                       </div>
                     </div>
                     <Button className="w-full gap-2 font-bold" data-testid="button-confirm-mint">
-                      <Fingerprint className="w-4 h-4" /> Confirm & Mint NFT
+                      <Fingerprint className="w-4 h-4" /> Confirm & Mint as NFT
                     </Button>
                   </div>
                 </CardContent>
@@ -492,8 +560,8 @@ export default function Credentials() {
         <section className="py-16 bg-muted/30 border-y border-border" data-testid="section-partners">
           <div className="container mx-auto px-4 md:px-6">
             <div className="text-center mb-10">
-              <h2 className="text-2xl md:text-3xl font-bold text-primary mb-2" data-testid="text-partners-heading">Integration Partners</h2>
-              <p className="text-muted-foreground">Trusted blockchain and institutional partners</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-primary mb-2" data-testid="text-partners-heading">Trusted Integration Partners</h2>
+              <p className="text-muted-foreground">Blockchain networks and institutions that power our credential ecosystem</p>
             </div>
             <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
               {partners.map((partner, i) => (
@@ -514,7 +582,7 @@ export default function Credentials() {
                 Own Your Professional Identity
               </h2>
               <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
-                Your skills are yours. Mint them on-chain, share them globally, and let the blockchain speak for your expertise. No middlemen, no gatekeepers.
+                Your skills are yours — permanently. Mint them on-chain, share them globally, and let the blockchain prove your expertise. No middlemen, no gatekeepers, no expiry dates.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button size="lg" className="font-bold text-lg px-10 shadow-lg gap-2" data-testid="button-cta-mint">
@@ -522,8 +590,7 @@ export default function Credentials() {
                   Mint Your First Credential
                 </Button>
                 <Button size="lg" variant="outline" className="font-semibold gap-2" data-testid="button-cta-explore">
-                  <ArrowRight className="w-4 h-4" />
-                  Explore Verified Talent
+                  Explore Verified Talent <ArrowRight className="w-4 h-4" />
                 </Button>
               </div>
             </div>

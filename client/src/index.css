@@ -87,22 +87,22 @@
 }
 
 .dark {
-  --background: 215 28% 13%;
+  --background: 215 28% 10%;
   --foreground: 210 20% 98%;
 
-  --card: 215 28% 15%;
+  --card: 215 28% 13%;
   --card-foreground: 210 20% 98%;
 
-  --popover: 215 28% 15%;
+  --popover: 215 28% 13%;
   --popover-foreground: 210 20% 98%;
 
   --primary: 35 90% 55%; /* Gold becomes primary in dark mode for visibility */
   --primary-foreground: 215 35% 20%;
 
-  --secondary: 215 28% 20%;
+  --secondary: 215 28% 18%;
   --secondary-foreground: 210 20% 98%;
 
-  --muted: 215 28% 20%;
+  --muted: 215 28% 18%;
   --muted-foreground: 215 20% 65%;
 
   --accent: 215 35% 20%;
@@ -111,8 +111,8 @@
   --destructive: 0 62% 30%;
   --destructive-foreground: 0 0% 98%;
 
-  --border: 215 28% 20%;
-  --input: 215 28% 20%;
+  --border: 215 28% 18%;
+  --input: 215 28% 18%;
   --ring: 35 90% 55%;
 
   --chart-1: 35 90% 55%;
@@ -132,4 +132,176 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-display tracking-tight font-semibold;
   }
+}
+
+@layer utilities {
+  /* Premium gradient text utility */
+  .gradient-text {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary/80 to-primary;
+  }
+
+  .gradient-text-gold {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-accent via-orange-400 to-accent;
+  }
+
+  /* Glowing card effect for innovation / future-forward sections */
+  .card-glow {
+    box-shadow: 0 0 0 1px hsl(var(--border)), 0 4px 24px -4px hsl(var(--primary) / 0.08);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+
+  .card-glow:hover {
+    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.2), 0 8px 40px -8px hsl(var(--primary) / 0.15);
+    transform: translateY(-2px);
+  }
+
+  /* Glowing accent card for AI/innovation cards */
+  .card-glow-accent {
+    box-shadow: 0 0 0 1px hsl(var(--border)), 0 4px 24px -4px hsl(var(--accent) / 0.1);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+
+  .card-glow-accent:hover {
+    box-shadow: 0 0 0 1px hsl(var(--accent) / 0.3), 0 8px 40px -8px hsl(var(--accent) / 0.2);
+    transform: translateY(-2px);
+  }
+
+  /* Premium shimmer animation for loading states and hero highlights */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--muted)) 0%,
+      hsl(var(--background)) 50%,
+      hsl(var(--muted)) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+
+  /* Pill badge for feature highlights */
+  .pill-badge {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase;
+  }
+
+  /* Future-forward section header with decorative line */
+  .section-eyebrow {
+    @apply inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-accent mb-3;
+  }
+
+  /* Subtle grid background for AI/tech sections */
+  .bg-grid {
+    background-image:
+      linear-gradient(hsl(var(--border) / 0.4) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border) / 0.4) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* Animated glow dot for "live" indicators */
+  .live-dot {
+    @apply relative inline-flex h-2.5 w-2.5;
+  }
+
+  .live-dot::before {
+    content: '';
+    @apply absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 animate-ping;
+  }
+
+  .live-dot::after {
+    content: '';
+    @apply relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500;
+  }
+
+  /* Frosted glass effect for overlays / hero elements */
+  .glass {
+    backdrop-filter: blur(16px) saturate(180%);
+    background: hsl(var(--background) / 0.7);
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  .glass-dark {
+    backdrop-filter: blur(16px) saturate(180%);
+    background: hsl(var(--primary) / 0.15);
+    border: 1px solid hsl(var(--primary-foreground) / 0.1);
+  }
+
+  /* Gradient border for premium cards */
+  .gradient-border {
+    position: relative;
+  }
+
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, hsl(var(--accent) / 0.5), hsl(var(--primary) / 0.3), hsl(var(--accent) / 0.2));
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* Smooth page transitions */
+  .page-enter {
+    animation: pageEnter 0.4s ease-out;
+  }
+
+  /* Animated gradient background for hero/CTA sections */
+  .animated-gradient-bg {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary)) 0%,
+      hsl(215 40% 25%) 40%,
+      hsl(230 35% 22%) 70%,
+      hsl(var(--primary)) 100%
+    );
+    background-size: 300% 300%;
+    animation: gradientShift 8s ease infinite;
+  }
+
+  .animated-gradient-bg-subtle {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--background)) 0%,
+      hsl(210 25% 96%) 50%,
+      hsl(var(--background)) 100%
+    );
+    background-size: 200% 200%;
+    animation: gradientShift 10s ease infinite;
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 8px hsl(var(--accent) / 0.4); }
+  50% { box-shadow: 0 0 20px hsl(var(--accent) / 0.7), 0 0 40px hsl(var(--accent) / 0.2); }
 }

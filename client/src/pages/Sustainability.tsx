@@ -15,6 +15,7 @@ import {
   Globe,
   Award,
   TrendingDown,
+  TrendingUp,
   Car,
   Home,
   Monitor,
@@ -27,6 +28,8 @@ import {
   Recycle,
   Sun,
   CloudRain,
+  Lock,
+  Info,
 } from "lucide-react";
 
 const carbonMetrics = [
@@ -37,12 +40,12 @@ const carbonMetrics = [
 ];
 
 const greenBadges = [
-  { name: "Eco Starter", description: "Complete 5 remote projects", icon: Leaf, earned: true, level: 1, color: "text-green-500" },
-  { name: "Carbon Saver", description: "Save 100kg CO₂ through remote work", icon: TrendingDown, earned: true, level: 2, color: "text-emerald-500" },
-  { name: "Green Champion", description: "Maintain 90%+ remote work rate for 6 months", icon: Award, earned: true, level: 3, color: "text-teal-500" },
-  { name: "Tree Planter", description: "Equivalent of 50 trees through remote savings", icon: TreePine, earned: false, level: 4, color: "text-green-700" },
-  { name: "Sustainability Leader", description: "Top 10% greenest freelancers", icon: Trophy, earned: false, level: 5, color: "text-amber-500" },
-  { name: "Net Zero Hero", description: "Achieve carbon-neutral freelancing status", icon: Globe, earned: false, level: 6, color: "text-blue-600" },
+  { name: "Eco Starter", description: "Complete 5 remote projects", icon: Leaf, earned: true, level: 1, color: "text-green-500", progress: 100, progressLabel: "5/5 remote projects" },
+  { name: "Carbon Saver", description: "Save 100 kg CO₂ through remote work", icon: TrendingDown, earned: true, level: 2, color: "text-emerald-500", progress: 100, progressLabel: "100+ kg CO₂ saved" },
+  { name: "Green Champion", description: "Maintain 90%+ remote work rate for 6 months", icon: Award, earned: true, level: 3, color: "text-teal-500", progress: 100, progressLabel: "6 months achieved" },
+  { name: "Tree Planter", description: "Save enough CO₂ to equal 50 tree-years of absorption (~1,085 kg CO₂)", icon: TreePine, earned: false, level: 4, color: "text-green-700", progress: 62, progressLabel: "676 / 1,085 kg CO₂ saved" },
+  { name: "Sustainability Leader", description: "Rank in the top 10% of greenest freelancers on the platform", icon: Trophy, earned: false, level: 5, color: "text-amber-500", progress: 28, progressLabel: "Currently top 28%" },
+  { name: "Net Zero Hero", description: "Achieve verified carbon-neutral freelancing status through offsets and remote work", icon: Globe, earned: false, level: 6, color: "text-blue-600", progress: 15, progressLabel: "Complete Tree Planter & Leader first" },
 ];
 
 const leaderboard = [
@@ -57,12 +60,12 @@ const leaderboard = [
 ];
 
 const sdgGoals = [
-  { number: 7, title: "Affordable & Clean Energy", description: "Promoting energy-efficient remote workspaces", icon: Sun, progress: 68, color: "bg-yellow-500" },
-  { number: 8, title: "Decent Work & Economic Growth", description: "Creating sustainable freelance opportunities across Africa", icon: TrendingDown, progress: 82, color: "bg-red-500" },
-  { number: 9, title: "Industry, Innovation & Infrastructure", description: "Building digital infrastructure for remote collaboration", icon: Monitor, progress: 75, color: "bg-orange-500" },
-  { number: 11, title: "Sustainable Cities & Communities", description: "Reducing urban congestion through remote work", icon: Home, progress: 60, color: "bg-amber-600" },
-  { number: 12, title: "Responsible Consumption", description: "Minimizing resource waste in project delivery", icon: Recycle, progress: 55, color: "bg-yellow-700" },
-  { number: 13, title: "Climate Action", description: "Tracking and reducing carbon emissions from work", icon: CloudRain, progress: 72, color: "bg-green-600" },
+  { number: 7, title: "Affordable & Clean Energy", description: "Promoting energy-efficient remote workspaces and encouraging renewable energy adoption among freelancers", icon: Sun, progress: 68, color: "bg-yellow-500" },
+  { number: 8, title: "Decent Work & Economic Growth", description: "Creating dignified, sustainable freelance opportunities and fair income across Africa's gig economy", icon: TrendingUp, progress: 82, color: "bg-red-500" },
+  { number: 9, title: "Industry, Innovation & Infrastructure", description: "Building resilient digital infrastructure enabling remote collaboration and reducing physical resource use", icon: Monitor, progress: 75, color: "bg-orange-500" },
+  { number: 11, title: "Sustainable Cities & Communities", description: "Reducing urban congestion, commute pollution, and strain on city infrastructure through remote work", icon: Home, progress: 60, color: "bg-amber-600" },
+  { number: 12, title: "Responsible Consumption & Production", description: "Minimising resource waste, paper consumption, and environmental impact through digital-first workflows", icon: Recycle, progress: 55, color: "bg-yellow-700" },
+  { number: 13, title: "Climate Action", description: "Actively tracking, reducing, and offsetting carbon emissions from work activities and commuting", icon: CloudRain, progress: 72, color: "bg-green-600" },
 ];
 
 const greenProjectTags = [
@@ -84,7 +87,10 @@ export default function Sustainability() {
 
   const selectedCO2 = workMode === "remote" ? remoteCO2 : workMode === "hybrid" ? hybridCO2 : onsiteCO2;
   const savedCO2 = onsiteCO2 - selectedCO2;
-  const treesEquivalent = Math.round(savedCO2 / 20);
+  const treesEquivalent = Math.round(savedCO2 / 21.7);
+
+  const hybridPercent = onsiteCO2 > 0 ? Math.round((hybridCO2 / onsiteCO2) * 100) : 40;
+  const remotePercent = onsiteCO2 > 0 ? Math.round((remoteCO2 / onsiteCO2) * 100) : 5;
 
   return (
     <div className="min-h-screen bg-background font-sans flex flex-col">
@@ -202,36 +208,54 @@ export default function Sustainability() {
 
                   <div className="flex flex-col justify-center">
                     <div className="space-y-4">
-                      <div className="bg-red-500/5 border border-red-500/10 rounded-xl p-4">
+                      <div className={`border rounded-xl p-4 transition-all ${workMode === "onsite" ? "bg-red-500/10 border-red-500/30 ring-2 ring-red-500/20" : "bg-red-500/5 border-red-500/10"}`}>
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm font-medium text-red-600">Onsite Emissions</span>
+                          <span className="text-sm font-medium text-red-600 flex items-center gap-1.5">
+                            Onsite Emissions
+                            {workMode === "onsite" && <Badge className="text-[10px] bg-red-500 text-white px-1.5 py-0">Current</Badge>}
+                          </span>
                           <span className="text-lg font-bold text-red-600" data-testid="text-onsite-co2">{Math.round(onsiteCO2).toLocaleString()} kg CO₂/yr</span>
                         </div>
                         <Progress value={100} className="h-2 [&>div]:bg-red-500" />
+                        <p className="text-[10px] text-muted-foreground mt-1">Baseline — 5 days/week commuting</p>
                       </div>
-                      <div className="bg-amber-500/5 border border-amber-500/10 rounded-xl p-4">
+                      <div className={`border rounded-xl p-4 transition-all ${workMode === "hybrid" ? "bg-amber-500/10 border-amber-500/30 ring-2 ring-amber-500/20" : "bg-amber-500/5 border-amber-500/10"}`}>
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm font-medium text-amber-600">Hybrid Emissions</span>
+                          <span className="text-sm font-medium text-amber-600 flex items-center gap-1.5">
+                            Hybrid Emissions
+                            {workMode === "hybrid" && <Badge className="text-[10px] bg-amber-500 text-white px-1.5 py-0">Current</Badge>}
+                          </span>
                           <span className="text-lg font-bold text-amber-600" data-testid="text-hybrid-co2">{Math.round(hybridCO2).toLocaleString()} kg CO₂/yr</span>
                         </div>
-                        <Progress value={40} className="h-2 [&>div]:bg-amber-500" />
+                        <Progress value={hybridPercent} className="h-2 [&>div]:bg-amber-500" />
+                        <p className="text-[10px] text-muted-foreground mt-1">{hybridPercent}% of onsite — 2 days/week in office</p>
                       </div>
-                      <div className="bg-green-500/5 border border-green-500/10 rounded-xl p-4">
+                      <div className={`border rounded-xl p-4 transition-all ${workMode === "remote" ? "bg-green-500/10 border-green-500/30 ring-2 ring-green-500/20" : "bg-green-500/5 border-green-500/10"}`}>
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm font-medium text-green-600">Remote Emissions</span>
+                          <span className="text-sm font-medium text-green-600 flex items-center gap-1.5">
+                            Remote Emissions
+                            {workMode === "remote" && <Badge className="text-[10px] bg-green-500 text-white px-1.5 py-0">Current</Badge>}
+                          </span>
                           <span className="text-lg font-bold text-green-600" data-testid="text-remote-co2">{Math.round(remoteCO2).toLocaleString()} kg CO₂/yr</span>
                         </div>
-                        <Progress value={5} className="h-2 [&>div]:bg-green-500" />
+                        <Progress value={remotePercent} className="h-2 [&>div]:bg-green-500" />
+                        <p className="text-[10px] text-muted-foreground mt-1">{remotePercent}% of onsite — residual home energy use</p>
                       </div>
                     </div>
 
-                    {workMode !== "onsite" && (
+                    {workMode !== "onsite" ? (
                       <div className="mt-6 bg-green-500/10 border border-green-500/20 rounded-xl p-4 text-center">
-                        <p className="text-sm text-green-700 mb-1">You save approximately</p>
+                        <p className="text-sm text-green-700 mb-1">Compared to full onsite work, you save approximately</p>
                         <p className="text-3xl font-bold text-green-600" data-testid="text-co2-saved">{Math.round(savedCO2).toLocaleString()} kg CO₂/year</p>
                         <p className="text-sm text-green-600 mt-1" data-testid="text-trees-equivalent">
-                          That's like planting <strong>{treesEquivalent} trees</strong>!
+                          Equivalent to planting <strong>{treesEquivalent} trees</strong> (at ~21.7 kg CO₂/tree/yr)
                         </p>
+                      </div>
+                    ) : (
+                      <div className="mt-6 bg-red-500/5 border border-red-500/20 rounded-xl p-4 text-center">
+                        <p className="text-sm text-red-600 mb-1">Full onsite work — no carbon savings</p>
+                        <p className="text-3xl font-bold text-red-600" data-testid="text-co2-saved">0 kg CO₂</p>
+                        <p className="text-sm text-muted-foreground mt-1">Switch to remote or hybrid to reduce your footprint</p>
                       </div>
                     )}
                   </div>
@@ -246,32 +270,62 @@ export default function Sustainability() {
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-primary mb-3" data-testid="text-badges-heading">Green Badge System</h2>
               <p className="text-muted-foreground text-lg">Earn badges for your eco-conscious freelancing journey</p>
+              <div className="flex items-center justify-center gap-6 mt-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-green-500" /> Earned</div>
+                <div className="flex items-center gap-1.5"><Lock className="w-4 h-4 text-muted-foreground" /> In Progress</div>
+                <div className="flex items-center gap-1.5"><span className="w-4 h-4 flex items-center justify-center"><Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" /></span> Level (1–6)</div>
+              </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
               {greenBadges.map((badge, i) => (
                 <Card
                   key={i}
-                  className={`p-5 transition-all ${badge.earned ? "hover:shadow-lg border-green-200 dark:border-green-800" : "opacity-60"}`}
+                  className={`p-5 transition-all ${badge.earned ? "hover:shadow-lg border-green-200 dark:border-green-800" : "border-border"}`}
                   data-testid={`card-badge-${i}`}
                 >
                   <div className="flex items-start gap-4">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${badge.earned ? "bg-green-500/10" : "bg-muted"}`}>
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 relative ${badge.earned ? "bg-green-500/10" : "bg-muted"}`}>
                       <badge.icon className={`w-6 h-6 ${badge.earned ? badge.color : "text-muted-foreground"}`} />
+                      {!badge.earned && (
+                        <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-muted-foreground/20 flex items-center justify-center">
+                          <Lock className="w-2.5 h-2.5 text-muted-foreground" />
+                        </div>
+                      )}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="font-semibold text-foreground" data-testid={`text-badge-name-${i}`}>{badge.name}</h3>
-                        {badge.earned && <CheckCircle className="w-4 h-4 text-green-500" />}
+                        {badge.earned ? (
+                          <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
+                        ) : (
+                          <Badge variant="secondary" className="text-[10px] px-1.5 py-0">Level {badge.level}</Badge>
+                        )}
                       </div>
                       <p className="text-sm text-muted-foreground mb-2">{badge.description}</p>
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1 mb-2">
                         {[...Array(6)].map((_, j) => (
                           <Star
                             key={j}
                             className={`w-3.5 h-3.5 ${j < badge.level ? "fill-amber-400 text-amber-400" : "text-muted"}`}
                           />
                         ))}
+                        <span className="text-[10px] text-muted-foreground ml-1">Tier {badge.level}/6</span>
                       </div>
+                      {!badge.earned && (
+                        <div>
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-[10px] text-muted-foreground font-medium">Progress</span>
+                            <span className="text-[10px] font-bold text-muted-foreground">{badge.progress}%</span>
+                          </div>
+                          <Progress value={badge.progress} className="h-1.5" />
+                          <p className="text-[10px] text-muted-foreground mt-1">{badge.progressLabel}</p>
+                        </div>
+                      )}
+                      {badge.earned && (
+                        <div className="flex items-center gap-1 text-[10px] font-medium text-green-600">
+                          <CheckCircle className="w-3 h-3" /> {badge.progressLabel}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </Card>
@@ -359,21 +413,26 @@ export default function Sustainability() {
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-primary mb-3" data-testid="text-sdg-heading">SDG Alignment</h2>
               <p className="text-muted-foreground text-lg">How FreelanceSkills contributes to the UN Sustainable Development Goals</p>
+              <div className="flex items-center justify-center gap-1.5 mt-3 text-xs text-muted-foreground">
+                <Info className="w-3.5 h-3.5" />
+                <span>Progress scores reflect our platform's estimated contribution based on remote work adoption, freelancer income growth, and platform sustainability metrics.</span>
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
               {sdgGoals.map((goal, i) => (
                 <Card key={i} className="p-5 hover:shadow-md transition-shadow" data-testid={`card-sdg-${i}`}>
                   <div className="flex items-start gap-4">
                     <div className={`w-10 h-10 rounded-lg ${goal.color} flex items-center justify-center shrink-0`}>
-                      <span className="text-white font-bold text-sm">{goal.number}</span>
+                      <span className="text-white font-bold text-sm" data-testid={`text-sdg-number-${i}`}>{goal.number}</span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-foreground text-sm mb-1" data-testid={`text-sdg-title-${i}`}>{goal.title}</h3>
                       <p className="text-xs text-muted-foreground mb-3">{goal.description}</p>
                       <div className="flex items-center gap-2">
                         <Progress value={goal.progress} className="h-2 flex-1" />
-                        <span className="text-xs font-medium text-muted-foreground shrink-0">{goal.progress}%</span>
+                        <span className="text-xs font-medium text-muted-foreground shrink-0" data-testid={`text-sdg-progress-${i}`}>{goal.progress}%</span>
                       </div>
+                      <p className="text-[10px] text-muted-foreground mt-1">Platform contribution score</p>
                     </div>
                   </div>
                 </Card>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Mic, MicOff, Search, Globe, Sparkles, ArrowRight, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -64,14 +64,15 @@ export function VoiceSearch({ variant = "hero", onClose }: VoiceSearchProps) {
   const [isParsing, setIsParsing] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("en");
   const [showLanguages, setShowLanguages] = useState(false);
-  const [pulseScale, setPulseScale] = useState(1);
+  const [waveHeights, setWaveHeights] = useState<number[]>([16, 24, 12, 28, 18, 22, 14]);
   const [, navigate] = useLocation();
+  const languageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!isListening) return;
     const interval = setInterval(() => {
-      setPulseScale(1 + Math.random() * 0.3);
-    }, 200);
+      setWaveHeights(prev => prev.map(() => 8 + Math.random() * 28));
+    }, 180);
     return () => clearInterval(interval);
   }, [isListening]);
 
@@ -91,6 +92,17 @@ export function VoiceSearch({ variant = "hero", onClose }: VoiceSearchProps) {
     }, 60);
     return () => clearInterval(typeInterval);
   }, [isListening]);
+
+  useEffect(() => {
+    if (!showLanguages) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (languageRef.current && !languageRef.current.contains(e.target as Node)) {
+        setShowLanguages(false);
+      }
+    };
+    document.addEventListener("click", handleClickOutside, true);
+    return () => document.removeEventListener("click", handleClickOutside, true);
+  }, [showLanguages]);
 
   const simulateParse = useCallback((query: string) => {
     setIsParsing(true);
@@ -185,14 +197,13 @@ export function VoiceSearch({ variant = "hero", onClose }: VoiceSearchProps) {
             {isListening && (
               <div className="text-center py-6" data-testid="voice-listening-state">
                 <div className="flex items-center justify-center gap-1 mb-3">
-                  {[...Array(5)].map((_, i) => (
+                  {waveHeights.slice(0, 5).map((h, i) => (
                     <div
                       key={i}
-                      className="w-1 bg-primary rounded-full animate-pulse"
+                      className="w-1 bg-primary rounded-full"
                       style={{
-                        height: `${12 + Math.random() * 24}px`,
-                        animationDelay: `${i * 0.1}s`,
-                        animationDuration: "0.5s",
+                        height: `${h}px`,
+                        transition: "height 0.15s ease",
                       }}
                     />
                   ))}
@@ -245,51 +256,51 @@ export function VoiceSearch({ variant = "hero", onClose }: VoiceSearchProps) {
           {isListening ? "Listening..." : "Voice Search"}
         </button>
 
-        <button
-          onClick={() => setShowLanguages(!showLanguages)}
-          className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-sm bg-white/10 text-white/80 border border-white/20 hover:bg-white/20 transition-all"
-          data-testid="button-language-selector-hero"
-        >
-          <Globe className="h-4 w-4" />
-          <span>{SUPPORTED_LANGUAGES.find(l => l.code === selectedLanguage)?.flag}</span>
-        </button>
-      </div>
-
-      {showLanguages && (
-        <div className="mt-2 flex flex-wrap gap-2 animate-in slide-in-from-top-2 duration-200" data-testid="language-list-hero">
-          {SUPPORTED_LANGUAGES.map((lang) => (
-            <button
-              key={lang.code}
-              onClick={() => {
-                setSelectedLanguage(lang.code);
-                setShowLanguages(false);
-              }}
-              className={cn(
-                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all",
-                selectedLanguage === lang.code
-                  ? "bg-accent text-primary"
-                  : "bg-white/10 text-white/70 hover:bg-white/20"
-              )}
-              data-testid={`button-lang-${lang.code}`}
-            >
-              <span>{lang.flag}</span>
-              {lang.name}
-            </button>
-          ))}
+        <div ref={languageRef} className="relative">
+          <button
+            onClick={() => setShowLanguages(!showLanguages)}
+            className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-sm bg-white/10 text-white/80 border border-white/20 hover:bg-white/20 transition-all"
+            data-testid="button-language-selector-hero"
+          >
+            <Globe className="h-4 w-4" />
+            <span>{SUPPORTED_LANGUAGES.find(l => l.code === selectedLanguage)?.flag}</span>
+          </button>
+          {showLanguages && (
+            <div className="absolute top-full left-0 mt-1 z-50 flex flex-wrap gap-2 p-2 rounded-xl bg-primary/90 backdrop-blur-md border border-white/20 shadow-lg animate-in slide-in-from-top-2 duration-200 min-w-[200px]" data-testid="language-list-hero">
+              {SUPPORTED_LANGUAGES.map((lang) => (
+                <button
+                  key={lang.code}
+                  onClick={() => {
+                    setSelectedLanguage(lang.code);
+                    setShowLanguages(false);
+                  }}
+                  className={cn(
+                    "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all",
+                    selectedLanguage === lang.code
+                      ? "bg-accent text-primary"
+                      : "bg-white/10 text-white/70 hover:bg-white/20"
+                  )}
+                  data-testid={`button-lang-${lang.code}`}
+                >
+                  <span>{lang.flag}</span>
+                  {lang.name}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       {isListening && (
         <div className="mt-4 p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 animate-in fade-in duration-300" data-testid="voice-listening-hero">
           <div className="flex items-center justify-center gap-1 mb-3">
-            {[...Array(7)].map((_, i) => (
+            {waveHeights.map((h, i) => (
               <div
                 key={i}
                 className="w-1 bg-accent rounded-full"
                 style={{
-                  height: `${8 + Math.sin(Date.now() / 200 + i) * 16}px`,
-                  transition: "height 0.2s ease",
-                  animation: `pulse 0.5s ease-in-out ${i * 0.08}s infinite alternate`,
+                  height: `${h}px`,
+                  transition: "height 0.15s ease",
                 }}
               />
             ))}

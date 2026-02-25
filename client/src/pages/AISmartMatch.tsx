@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { useLocation } from "wouter";
@@ -20,10 +20,7 @@ import {
   Bot,
   Activity,
   Target,
-  TrendingUp,
   Shield,
-  Send,
-  RefreshCw,
   Eye,
   MessageSquare,
   Briefcase,
@@ -231,7 +228,7 @@ export default function AISmartMatch() {
   const [, navigate] = useLocation();
   const [query, setQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const [hasResults, setHasResults] = useState(true);
+  const [hasResults, setHasResults] = useState(false);
   const [autoHireToggles, setAutoHireToggles] = useState<Record<string, boolean>>(
     Object.fromEntries(autoHireSettings.map((s) => [s.id, s.enabled]))
   );
@@ -256,12 +253,13 @@ export default function AISmartMatch() {
       <Navbar />
 
       <main id="main-content" role="main">
-        <section className="bg-gradient-to-br from-primary via-primary/90 to-primary/80 text-white pt-32 pb-20 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent/10 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3" />
-          <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl -translate-x-1/3 translate-y-1/3" />
-          <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+        <section className="animated-gradient-bg text-white pt-32 pb-20 relative overflow-hidden">
+          <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-accent/8 rounded-full blur-[120px] translate-x-1/3 -translate-y-1/3" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] -translate-x-1/3 translate-y-1/3" />
+          <div className="absolute top-1/2 left-1/2 w-[500px] h-[500px] bg-purple-500/5 rounded-full blur-[80px] -translate-x-1/2 -translate-y-1/2" />
           <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
-            <Badge className="mb-6 bg-white/10 text-white border-white/20 hover:bg-white/20" data-testid="badge-ai-match-hero">
+            <Badge className="mb-6 bg-white/10 text-white border-white/20 hover:bg-white/20 backdrop-blur-sm shadow-lg" data-testid="badge-ai-match-hero">
               <Brain className="w-3 h-3 mr-1" /> Autonomous AI Agents • 2031 Vision
             </Badge>
             <h1 className="text-4xl md:text-6xl font-display font-bold mb-6 leading-tight" data-testid="text-ai-match-title">
@@ -270,19 +268,17 @@ export default function AISmartMatch() {
             <p className="text-xl md:text-2xl text-white/80 max-w-3xl mx-auto mb-8 leading-relaxed" data-testid="text-ai-match-subtitle">
               Describe what you need in plain language. Our autonomous AI agent finds, ranks, and can even hire the perfect freelancer — while you focus on your business.
             </p>
-            <div className="flex flex-wrap justify-center gap-8 text-white/70 text-sm">
-              <div className="flex items-center gap-2" data-testid="stat-matches">
-                <Target className="w-4 h-4" /> 97% Match Accuracy
-              </div>
-              <div className="flex items-center gap-2" data-testid="stat-time">
-                <Clock className="w-4 h-4" /> Results in Seconds
-              </div>
-              <div className="flex items-center gap-2" data-testid="stat-profiles">
-                <Users className="w-4 h-4" /> 50,000+ Profiles Analyzed
-              </div>
-              <div className="flex items-center gap-2" data-testid="stat-autonomous">
-                <Bot className="w-4 h-4" /> Fully Autonomous
-              </div>
+            <div className="flex flex-wrap justify-center gap-6 text-white/70 text-sm">
+              {[
+                { icon: Target, label: "97% Match Accuracy", testId: "stat-matches" },
+                { icon: Clock, label: "Results in Seconds", testId: "stat-time" },
+                { icon: Users, label: "50,000+ Profiles Analyzed", testId: "stat-profiles" },
+                { icon: Bot, label: "Fully Autonomous", testId: "stat-autonomous" },
+              ].map((stat, i) => (
+                <div key={i} className="flex items-center gap-2 glass-dark px-4 py-2 rounded-full border border-white/10" data-testid={stat.testId}>
+                  <stat.icon className="w-4 h-4 text-accent" /> {stat.label}
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -637,32 +633,36 @@ export default function AISmartMatch() {
                   title: "Describe Your Need",
                   description: "Tell the AI what you need in plain language — skills, budget, timeline, location preferences",
                   icon: MessageSquare,
+                  color: "bg-blue-500/10 text-blue-600",
                 },
                 {
                   step: 2,
                   title: "AI Analyzes & Searches",
                   description: "The agent scans thousands of profiles using NLP, skill graphs, and behavioral data",
                   icon: Brain,
+                  color: "bg-purple-500/10 text-purple-600",
                 },
                 {
                   step: 3,
                   title: "Multi-Factor Scoring",
                   description: "Each freelancer is scored on skill overlap, availability, price fit, and culture match",
                   icon: BarChart3,
+                  color: "bg-amber-500/10 text-amber-600",
                 },
                 {
                   step: 4,
                   title: "Hire or Auto-Hire",
                   description: "Review ranked matches and hire instantly, or enable auto-hire for recurring tasks",
                   icon: Zap,
+                  color: "bg-green-500/10 text-green-600",
                 },
               ].map((item) => (
-                <Card key={item.step} className="text-center border-border hover:shadow-lg transition-shadow" data-testid={`card-step-${item.step}`}>
+                <Card key={item.step} className="text-center border-border card-glow" data-testid={`card-step-${item.step}`}>
                   <CardContent className="p-6">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                      <item.icon className="w-6 h-6 text-primary" />
+                    <div className={`w-12 h-12 rounded-2xl ${item.color} flex items-center justify-center mx-auto mb-4`}>
+                      <item.icon className="w-6 h-6" />
                     </div>
-                    <div className="w-8 h-8 rounded-full bg-accent text-primary text-sm font-bold flex items-center justify-center mx-auto mb-3">
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-accent to-orange-400 text-primary text-xs font-bold flex items-center justify-center mx-auto mb-3 shadow-md">
                       {item.step}
                     </div>
                     <h3 className="text-base font-bold text-foreground mb-2">{item.title}</h3>
@@ -674,21 +674,24 @@ export default function AISmartMatch() {
           </div>
         </section>
 
-        <section className="py-16 md:py-20 bg-primary text-white relative overflow-hidden" data-testid="section-cta">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute bottom-0 right-0 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
+        <section className="py-20 animated-gradient-bg text-white relative overflow-hidden" data-testid="section-cta">
+          <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
+          <div className="absolute top-0 left-0 w-96 h-96 bg-accent/10 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute bottom-0 right-0 w-72 h-72 bg-blue-500/10 rounded-full blur-[80px] translate-x-1/3 translate-y-1/3" />
           <div className="container mx-auto px-4 md:px-6 text-center relative z-10">
-            <Bot className="w-12 h-12 mx-auto mb-6 text-accent" />
+            <div className="w-16 h-16 mx-auto mb-6 rounded-2xl glass-dark flex items-center justify-center border border-white/20 shadow-xl">
+              <Bot className="w-8 h-8 text-accent" />
+            </div>
             <h2 className="text-3xl md:text-5xl font-display font-bold mb-4" data-testid="text-cta-heading">
               Let AI Find Your Perfect Match
             </h2>
-            <p className="text-white/80 text-lg max-w-2xl mx-auto mb-8">
+            <p className="text-white/80 text-lg max-w-2xl mx-auto mb-10">
               Stop scrolling through profiles. Our autonomous AI agent works 24/7 to find, evaluate, and recommend the best talent for your needs.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
                 size="lg"
-                className="bg-accent text-primary hover:bg-accent/90 font-bold text-lg px-8 shadow-lg gap-2"
+                className="bg-accent text-primary hover:bg-accent/90 font-bold text-lg px-8 shadow-xl shadow-accent/20 gap-2 hover:scale-[1.02] active:scale-[0.98] transition-transform"
                 data-testid="button-cta-try-matching"
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               >
@@ -697,7 +700,7 @@ export default function AISmartMatch() {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-white/30 text-white hover:bg-white/10 font-semibold gap-2"
+                className="border-white/30 text-white hover:bg-white/10 font-semibold gap-2 backdrop-blur-sm"
                 data-testid="button-cta-post-job"
                 onClick={() => navigate("/post-job")}
               >

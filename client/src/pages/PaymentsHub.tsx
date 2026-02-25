@@ -4,7 +4,6 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useCurrency } from "@/lib/currency";
 import {
   Wallet,
   ArrowRight,
@@ -18,14 +17,17 @@ import {
   Lock,
   Clock,
   TrendingUp,
+  TrendingDown,
   CreditCard,
   Banknote,
   CircleDollarSign,
   Coins,
   ArrowRightLeft,
   Building2,
-  Users,
   Star,
+  Copy,
+  CheckCheck,
+  Minus,
 } from "lucide-react";
 
 const fiatCurrencies = [
@@ -33,18 +35,65 @@ const fiatCurrencies = [
   { code: "USD", name: "US Dollar", symbol: "$", flag: "🇺🇸", rate: 0.055 },
   { code: "EUR", name: "Euro", symbol: "€", flag: "🇪🇺", rate: 0.051 },
   { code: "GBP", name: "British Pound", symbol: "£", flag: "🇬🇧", rate: 0.044 },
-  { code: "NGN", name: "Nigerian Naira", symbol: "₦", flag: "🇳🇬", rate: 85.2 },
-  { code: "KES", name: "Kenyan Shilling", symbol: "KSh", flag: "🇰🇪", rate: 7.15 },
+  { code: "NGN", name: "Nigerian Naira", symbol: "₦", flag: "🇳🇬", rate: 90.5 },
+  { code: "KES", name: "Kenyan Shilling", symbol: "KSh", flag: "🇰🇪", rate: 7.1 },
+  { code: "GHS", name: "Ghanaian Cedi", symbol: "₵", flag: "🇬🇭", rate: 0.82 },
+  { code: "EGP", name: "Egyptian Pound", symbol: "£E", flag: "🇪🇬", rate: 2.65 },
+  { code: "TZS", name: "Tanzanian Shilling", symbol: "TSh", flag: "🇹🇿", rate: 141.0 },
   { code: "BWP", name: "Botswana Pula", symbol: "P", flag: "🇧🇼", rate: 0.74 },
   { code: "NAD", name: "Namibian Dollar", symbol: "N$", flag: "🇳🇦", rate: 1.0 },
-  { code: "MZN", name: "Mozambican Metical", symbol: "MT", flag: "🇲🇿", rate: 3.5 },
+  { code: "MZN", name: "Mozambican Metical", symbol: "MT", flag: "🇲🇿", rate: 3.52 },
 ];
 
 const cryptoCurrencies = [
-  { code: "BTC", name: "Bitcoin", icon: "₿", color: "text-orange-500", bgColor: "bg-orange-500/10", price: "$67,432.50", change: "+2.4%" },
-  { code: "ETH", name: "Ethereum", icon: "Ξ", color: "text-blue-500", bgColor: "bg-blue-500/10", price: "$3,521.80", change: "+1.8%" },
-  { code: "USDC", name: "USD Coin", icon: "$", color: "text-green-500", bgColor: "bg-green-500/10", price: "$1.00", change: "0.0%" },
-  { code: "cUSD", name: "Celo Dollar", icon: "c$", color: "text-emerald-500", bgColor: "bg-emerald-500/10", price: "$1.00", change: "0.0%" },
+  {
+    code: "BTC",
+    name: "Bitcoin",
+    icon: "₿",
+    color: "text-orange-500",
+    bgColor: "bg-orange-500/10",
+    price: "$67,432.50",
+    priceZar: "R1,226,046",
+    change: "+2.4%",
+    walletPrefix: "bc1q",
+    network: "Bitcoin",
+  },
+  {
+    code: "ETH",
+    name: "Ethereum",
+    icon: "Ξ",
+    color: "text-blue-500",
+    bgColor: "bg-blue-500/10",
+    price: "$3,521.80",
+    priceZar: "R64,033",
+    change: "+1.8%",
+    walletPrefix: "0x",
+    network: "Ethereum (ERC-20)",
+  },
+  {
+    code: "USDC",
+    name: "USD Coin",
+    icon: "$",
+    color: "text-green-500",
+    bgColor: "bg-green-500/10",
+    price: "$1.00",
+    priceZar: "R18.18",
+    change: "0.0%",
+    walletPrefix: "0x",
+    network: "Ethereum / Polygon",
+  },
+  {
+    code: "cUSD",
+    name: "Celo Dollar",
+    icon: "c$",
+    color: "text-emerald-500",
+    bgColor: "bg-emerald-500/10",
+    price: "$1.00",
+    priceZar: "R18.18",
+    change: "0.0%",
+    walletPrefix: "0x",
+    network: "Celo",
+  },
 ];
 
 const mobilePayments = [
@@ -70,8 +119,92 @@ const paymentMethods = [
   { name: "Cash Pickup", icon: Banknote, speed: "Same day", fee: "1.5%", popular: false },
 ];
 
+function CryptoChangeBadge({ change }: { change: string }) {
+  const value = parseFloat(change);
+  if (value > 0) {
+    return (
+      <Badge variant="outline" className="text-green-600 border-green-200" data-testid="badge-change-positive">
+        <TrendingUp className="w-3 h-3 mr-1" />
+        {change}
+      </Badge>
+    );
+  }
+  if (value < 0) {
+    return (
+      <Badge variant="outline" className="text-red-500 border-red-200" data-testid="badge-change-negative">
+        <TrendingDown className="w-3 h-3 mr-1" />
+        {change}
+      </Badge>
+    );
+  }
+  return (
+    <Badge variant="outline" className="text-emerald-600 border-emerald-200" data-testid="badge-change-stable">
+      <Minus className="w-3 h-3 mr-1" />
+      Stable
+    </Badge>
+  );
+}
+
+function CryptoWalletCard({ crypto }: { crypto: typeof cryptoCurrencies[0] }) {
+  const [connected, setConnected] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const mockAddress = `${crypto.walletPrefix}7f4a8c2b9d3e1f6a5b0c8d4e7f2a3b9c1d5e8f0a`;
+
+  const handleConnect = () => setConnected(true);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(mockAddress).catch(() => {});
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <Card className="hover:shadow-xl transition-shadow border-border" data-testid={`card-crypto-${crypto.code}`}>
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className={`w-12 h-12 rounded-xl ${crypto.bgColor} flex items-center justify-center`}>
+            <span className={`text-xl font-bold ${crypto.color}`}>{crypto.icon}</span>
+          </div>
+          <CryptoChangeBadge change={crypto.change} />
+        </div>
+        <h3 className="font-bold text-foreground text-lg">{crypto.name}</h3>
+        <p className="text-sm text-muted-foreground mb-1">{crypto.code} · {crypto.network}</p>
+        <div className="text-xl font-bold text-foreground" data-testid={`text-crypto-price-${crypto.code}`}>{crypto.price}</div>
+        <div className="text-xs text-muted-foreground mb-4">{crypto.priceZar}</div>
+        {connected ? (
+          <div className="space-y-2" data-testid={`wallet-connected-${crypto.code}`}>
+            <div className="flex items-center gap-1 text-xs text-green-600 font-medium mb-2">
+              <CheckCircle2 className="w-3.5 h-3.5" /> Wallet Connected
+            </div>
+            <div className="bg-muted rounded-lg p-2.5 flex items-center gap-2">
+              <span className="text-xs font-mono text-muted-foreground truncate flex-1" data-testid={`text-wallet-address-${crypto.code}`}>
+                {mockAddress.slice(0, 8)}...{mockAddress.slice(-6)}
+              </span>
+              <button
+                onClick={handleCopy}
+                className="shrink-0 text-muted-foreground hover:text-primary transition-colors"
+                data-testid={`button-copy-address-${crypto.code}`}
+              >
+                {copied ? <CheckCheck className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full gap-2"
+            onClick={handleConnect}
+            data-testid={`button-connect-${crypto.code}`}
+          >
+            <Wallet className="w-4 h-4" /> Connect Wallet
+          </Button>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function PaymentsHub() {
-  const { formatAmount } = useCurrency();
   const [selectedFrom, setSelectedFrom] = useState("ZAR");
   const [selectedTo, setSelectedTo] = useState("USD");
   const [amount, setAmount] = useState("10000");
@@ -80,14 +213,21 @@ export default function PaymentsHub() {
   const toCurrency = fiatCurrencies.find((c) => c.code === selectedTo)!;
   const convertedAmount = (parseFloat(amount || "0") * (toCurrency.rate / fromCurrency.rate)).toFixed(2);
 
+  const handleSwap = () => {
+    const prev = selectedFrom;
+    setSelectedFrom(selectedTo);
+    setSelectedTo(prev);
+  };
+
   return (
     <div className="min-h-screen bg-background font-sans flex flex-col">
       <Navbar />
 
       <main id="main-content" role="main">
-        <section className="bg-gradient-to-br from-primary via-primary/90 to-primary/80 text-white pt-32 pb-20 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-green-500/10 rounded-full blur-3xl -translate-x-1/3 translate-y-1/3" />
+        <section className="animated-gradient-bg text-white pt-32 pb-20 relative overflow-hidden">
+          <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent/8 rounded-full blur-[120px] translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-green-500/10 rounded-full blur-[100px] -translate-x-1/3 translate-y-1/3" />
           <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
             <Badge className="mb-6 bg-white/10 text-white border-white/20 hover:bg-white/20" data-testid="badge-payments-hero">
               <Wallet className="w-3 h-3 mr-1" /> Multi-Currency Payment Hub
@@ -96,22 +236,20 @@ export default function PaymentsHub() {
               Pay & Get Paid <span className="text-accent">Anywhere</span>
             </h1>
             <p className="text-xl md:text-2xl text-white/80 max-w-3xl mx-auto mb-8 leading-relaxed" data-testid="text-payments-subtitle">
-              9+ currencies, crypto wallets, mobile money, and instant settlement.
+              12+ currencies across Africa, crypto wallets, mobile money, and instant settlement.
               The most flexible payment system built for Africa's gig economy.
             </p>
-            <div className="flex flex-wrap justify-center gap-8 mt-8 text-white/70 text-sm">
-              <div className="flex items-center gap-2" data-testid="stat-currencies">
-                <Globe className="w-4 h-4" /> 9+ Currencies
-              </div>
-              <div className="flex items-center gap-2" data-testid="stat-crypto">
-                <Coins className="w-4 h-4" /> 4 Cryptocurrencies
-              </div>
-              <div className="flex items-center gap-2" data-testid="stat-settlement">
-                <Zap className="w-4 h-4" /> Instant Settlement
-              </div>
-              <div className="flex items-center gap-2" data-testid="stat-escrow">
-                <Shield className="w-4 h-4" /> Escrow Protected
-              </div>
+            <div className="flex flex-wrap justify-center gap-4 mt-8 text-white/70 text-sm">
+              {[
+                { icon: Globe, label: "12+ Currencies", testId: "stat-currencies" },
+                { icon: Coins, label: "4 Cryptocurrencies", testId: "stat-crypto" },
+                { icon: Zap, label: "Instant Settlement", testId: "stat-settlement" },
+                { icon: Shield, label: "Escrow Protected", testId: "stat-escrow" },
+              ].map((stat, i) => (
+                <div key={i} className="flex items-center gap-2 glass-dark px-4 py-2 rounded-full border border-white/10" data-testid={stat.testId}>
+                  <stat.icon className="w-4 h-4 text-accent" /> {stat.label}
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -153,9 +291,14 @@ export default function PaymentsHub() {
                     </div>
 
                     <div className="shrink-0">
-                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <button
+                        onClick={handleSwap}
+                        className="w-10 h-10 rounded-full bg-primary/10 hover:bg-primary/20 flex items-center justify-center transition-colors"
+                        title="Swap currencies"
+                        data-testid="button-swap-currencies"
+                      >
                         <ArrowRightLeft className="w-5 h-5 text-primary" />
-                      </div>
+                      </button>
                     </div>
 
                     <div className="flex-1 w-full">
@@ -186,7 +329,7 @@ export default function PaymentsHub() {
               </Card>
             </div>
 
-            <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-3 max-w-5xl mx-auto">
+            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3 max-w-5xl mx-auto">
               {fiatCurrencies.map((currency) => (
                 <Card
                   key={currency.code}
@@ -213,25 +356,7 @@ export default function PaymentsHub() {
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
               {cryptoCurrencies.map((crypto) => (
-                <Card key={crypto.code} className="hover:shadow-xl transition-shadow border-border" data-testid={`card-crypto-${crypto.code}`}>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className={`w-12 h-12 rounded-xl ${crypto.bgColor} flex items-center justify-center`}>
-                        <span className={`text-xl font-bold ${crypto.color}`}>{crypto.icon}</span>
-                      </div>
-                      <Badge variant="outline" className={parseFloat(crypto.change) > 0 ? "text-green-600 border-green-200" : "text-muted-foreground"}>
-                        {parseFloat(crypto.change) > 0 ? <TrendingUp className="w-3 h-3 mr-1" /> : null}
-                        {crypto.change}
-                      </Badge>
-                    </div>
-                    <h3 className="font-bold text-foreground text-lg">{crypto.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-3">{crypto.code}</p>
-                    <div className="text-xl font-bold text-foreground" data-testid={`text-crypto-price-${crypto.code}`}>{crypto.price}</div>
-                    <Button variant="outline" size="sm" className="w-full mt-4 gap-2" data-testid={`button-connect-${crypto.code}`}>
-                      <Wallet className="w-4 h-4" /> Connect Wallet
-                    </Button>
-                  </CardContent>
-                </Card>
+                <CryptoWalletCard key={crypto.code} crypto={crypto} />
               ))}
             </div>
 
@@ -346,9 +471,10 @@ export default function PaymentsHub() {
           </div>
         </section>
 
-        <section className="py-20 bg-primary text-white relative overflow-hidden" data-testid="section-escrow">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-green-500/10 rounded-full blur-3xl -translate-x-1/3 translate-y-1/3" />
+        <section className="py-20 animated-gradient-bg text-white relative overflow-hidden" data-testid="section-escrow">
+          <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent/8 rounded-full blur-[120px] translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-green-500/10 rounded-full blur-[100px] -translate-x-1/3 translate-y-1/3" />
           <div className="container mx-auto px-4 md:px-6 relative z-10">
             <div className="text-center max-w-2xl mx-auto mb-16">
               <Shield className="w-12 h-12 text-accent mx-auto mb-4" />
@@ -361,41 +487,60 @@ export default function PaymentsHub() {
             </div>
 
             <div className="max-w-4xl mx-auto">
-              <div className="grid md:grid-cols-4 gap-6">
-                {escrowSteps.map((step, i) => (
-                  <div key={i} className="relative" data-testid={`escrow-step-${step.step}`}>
-                    <div className={`text-center ${step.status === "active" ? "scale-105" : ""} transition-transform`}>
-                      <div className={`w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center ${
-                        step.status === "complete"
-                          ? "bg-green-500/20"
-                          : step.status === "active"
-                          ? "bg-accent/20 ring-2 ring-accent"
-                          : "bg-white/10"
-                      }`}>
-                        <step.icon className={`w-8 h-8 ${
+              <div className="relative">
+                <div className="hidden md:block absolute top-8 left-[12.5%] right-[12.5%] h-0.5 bg-white/15 z-0" />
+                <div className="hidden md:block absolute top-8 left-[12.5%] h-0.5 bg-green-400/60 z-0" style={{ width: "37.5%" }} />
+                <div className="grid md:grid-cols-4 gap-6 relative z-10">
+                  {escrowSteps.map((step, i) => (
+                    <div key={i} className="relative" data-testid={`escrow-step-${step.step}`}>
+                      <div className={`text-center ${step.status === "active" ? "scale-105" : ""} transition-transform`}>
+                        <div className={`w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center ${
                           step.status === "complete"
-                            ? "text-green-400"
+                            ? "bg-green-500/20 ring-2 ring-green-400/50"
                             : step.status === "active"
-                            ? "text-accent"
-                            : "text-white/50"
-                        }`} />
+                            ? "bg-accent/20 ring-2 ring-accent"
+                            : "bg-white/10"
+                        }`}>
+                          <step.icon className={`w-8 h-8 ${
+                            step.status === "complete"
+                              ? "text-green-400"
+                              : step.status === "active"
+                              ? "text-accent"
+                              : "text-white/50"
+                          }`} />
+                        </div>
+                        <div className={`text-xs font-semibold mb-1 ${
+                          step.status === "complete" ? "text-green-400" :
+                          step.status === "active" ? "text-accent" : "text-white/40"
+                        }`}>
+                          {step.status === "complete" ? "✓ Complete" : step.status === "active" ? "● In Progress" : `Step ${step.step}`}
+                        </div>
+                        <h3 className="font-bold text-sm mb-2">{step.title}</h3>
+                        <p className="text-xs text-white/60">{step.description}</p>
                       </div>
-                      <div className="text-xs font-semibold text-accent mb-1">Step {step.step}</div>
-                      <h3 className="font-bold text-sm mb-2">{step.title}</h3>
-                      <p className="text-xs text-white/60">{step.description}</p>
+                      {i < escrowSteps.length - 1 && (
+                        <div className="md:hidden flex justify-center my-3">
+                          <ArrowDown className="w-5 h-5 text-white/30" />
+                        </div>
+                      )}
                     </div>
-                    {i < escrowSteps.length - 1 && (
-                      <div className="hidden md:block absolute top-8 -right-3 w-6">
-                        <ArrowRight className="w-6 h-6 text-white/30" />
-                      </div>
-                    )}
-                    {i < escrowSteps.length - 1 && (
-                      <div className="md:hidden flex justify-center my-3">
-                        <ArrowDown className="w-5 h-5 text-white/30" />
-                      </div>
-                    )}
-                  </div>
-                ))}
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-8 flex justify-center gap-6 text-xs text-white/50" data-testid="escrow-legend">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-green-400" />
+                  <span>Complete</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-accent" />
+                  <span>In Progress</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-white/20" />
+                  <span>Pending</span>
+                </div>
               </div>
             </div>
 

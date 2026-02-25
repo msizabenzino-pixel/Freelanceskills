@@ -105,11 +105,12 @@ export default function Home() {
       <main id="main-content" role="main">
 
       {/* AI Task Assistant CTA */}
-      <section className="py-12 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 border-b border-primary/10">
-        <div className="container mx-auto px-4 md:px-6">
+      <section className="py-12 relative overflow-hidden bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 border-b border-primary/10">
+        <div className="absolute inset-0 bg-grid opacity-30 pointer-events-none" />
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 max-w-4xl mx-auto">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-primary/10">
+              <div className="p-3.5 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/10 shadow-sm">
                 <Sparkles className="h-8 w-8 text-primary" />
               </div>
               <div>
@@ -117,10 +118,10 @@ export default function Home() {
                 <p className="text-muted-foreground">Let our AI help you find the right service category and budget estimate</p>
               </div>
             </div>
-            <Button size="lg" className="gap-2 whitespace-nowrap" data-testid="button-homepage-ai-assistant" onClick={() => navigate("/task-assistant")}>
-                <Sparkles className="h-4 w-4" />
-                Try AI Task Assistant
-              </Button>
+            <Button size="lg" className="gap-2 whitespace-nowrap shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-transform" data-testid="button-homepage-ai-assistant" onClick={() => navigate("/task-assistant")}>
+              <Sparkles className="h-4 w-4" />
+              Try AI Task Assistant
+            </Button>
           </div>
         </div>
       </section>
@@ -286,69 +287,71 @@ export default function Home() {
             <p className="text-muted-foreground text-lg">We're building Africa's economic revolution — upskilling, connecting, and empowering.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-card rounded-2xl p-8 border border-border shadow-sm hover:shadow-md transition-shadow" data-testid="card-academy-cta">
-              <div className="p-3 rounded-xl bg-purple-100 dark:bg-purple-900/30 w-fit mb-4">
-                <GraduationCap className="h-8 w-8 text-purple-600" />
+            <div className="bg-card rounded-2xl p-8 border border-border card-glow transition-all" data-testid="card-academy-cta">
+              <div className="p-3 rounded-xl bg-purple-100 dark:bg-purple-900/30 w-fit mb-4 group-hover:scale-110 transition-transform">
+                <GraduationCap className="h-8 w-8 text-purple-600 dark:text-purple-400" />
               </div>
               <h3 className="text-xl font-bold text-foreground mb-2">AI Upskilling Academy</h3>
-              <p className="text-muted-foreground mb-4">Free AI-powered courses for African freelancers. From plumbing to programming — master AI tools that 10x your earnings.</p>
-              <Button variant="outline" className="gap-2" data-testid="button-academy-cta" onClick={() => navigate("/academy")}>
-                  Start Learning Free <ArrowRight className="w-4 h-4" />
-                </Button>
+              <p className="text-muted-foreground mb-6">Free AI-powered courses for African freelancers. From plumbing to programming — master AI tools that 10x your earnings.</p>
+              <Button variant="outline" className="gap-2 group hover:bg-primary hover:text-white hover:border-primary transition-all" data-testid="button-academy-cta" onClick={() => navigate("/academy")}>
+                Start Learning Free <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              </Button>
             </div>
-            <div className="bg-card rounded-2xl p-8 border border-border shadow-sm hover:shadow-md transition-shadow" data-testid="card-enterprise-cta">
+            <div className="bg-card rounded-2xl p-8 border border-border card-glow transition-all" data-testid="card-enterprise-cta">
               <div className="p-3 rounded-xl bg-blue-100 dark:bg-blue-900/30 w-fit mb-4">
-                <Building2 className="h-8 w-8 text-blue-600" />
+                <Building2 className="h-8 w-8 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="text-xl font-bold text-foreground mb-2">Enterprise Solutions</h3>
-              <p className="text-muted-foreground mb-4">Bulk hiring, tender integration, and youth employment programs for corporates and government partners.</p>
-              <Button variant="outline" className="gap-2" data-testid="button-enterprise-cta" onClick={() => navigate("/enterprise")}>
-                  Learn More <ArrowRight className="w-4 h-4" />
-                </Button>
+              <p className="text-muted-foreground mb-6">Bulk hiring, tender integration, and youth employment programs for corporates and government partners.</p>
+              <Button variant="outline" className="gap-2 group hover:bg-primary hover:text-white hover:border-primary transition-all" data-testid="button-enterprise-cta" onClick={() => navigate("/enterprise")}>
+                Learn More <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              </Button>
             </div>
-            <div className="bg-card rounded-2xl p-8 border border-border shadow-sm hover:shadow-md transition-shadow" data-testid="card-referral-cta">
+            <div className="bg-card rounded-2xl p-8 border border-border card-glow transition-all" data-testid="card-referral-cta">
               <div className="p-3 rounded-xl bg-amber-100 dark:bg-amber-900/30 w-fit mb-4">
-                <Gift className="h-8 w-8 text-amber-600" />
+                <Gift className="h-8 w-8 text-amber-600 dark:text-amber-400" />
               </div>
               <h3 className="text-xl font-bold text-foreground mb-2">Refer & Earn</h3>
-              <p className="text-muted-foreground mb-4">Share FreelanceSkills with friends and earn up to R250 per referral. Build a community, get rewarded.</p>
-              <Button variant="outline" className="gap-2" data-testid="button-referral-cta" onClick={() => navigate("/referral")}>
-                  Get Your Link <ArrowRight className="w-4 h-4" />
-                </Button>
+              <p className="text-muted-foreground mb-6">Share FreelanceSkills with friends and earn up to R250 per referral. Build a community, get rewarded.</p>
+              <Button variant="outline" className="gap-2 group hover:bg-primary hover:text-white hover:border-primary transition-all" data-testid="button-referral-cta" onClick={() => navigate("/referral")}>
+                Get Your Link <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              </Button>
             </div>
           </div>
         </div>
       </section>
 
       {/* Innovation Lab - 2031 Vision */}
-      <section className="py-20 bg-gradient-to-b from-background to-muted/30">
-        <div className="container mx-auto px-4 md:px-6">
+      <section className="py-24 relative overflow-hidden bg-gradient-to-b from-background via-muted/20 to-muted/40">
+        <div className="absolute inset-0 bg-grid opacity-40 pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/4 rounded-full blur-3xl pointer-events-none" />
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
           <div className="text-center max-w-2xl mx-auto mb-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-100 dark:bg-violet-900/30 text-violet-600 text-sm font-medium mb-4">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-violet-500/10 to-blue-500/10 border border-violet-500/20 text-violet-600 dark:text-violet-400 text-sm font-semibold mb-5 shadow-sm">
               <Brain className="w-4 h-4" /> 2031 Vision
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">Innovation Lab</h2>
             <p className="text-muted-foreground text-lg">Cutting-edge technology powering Africa's future of work.</p>
           </div>
-          <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4 mt-10">
+          <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4 mt-12">
             {[
-              { icon: Brain, title: "AI Smart Matching", desc: "Autonomous AI agents find your perfect hire", href: "/ai-match", color: "bg-blue-100 dark:bg-blue-900/30 text-blue-600" },
-              { icon: Link2, title: "Blockchain Credentials", desc: "Verified skills on-chain, tamper-proof", href: "/credentials", color: "bg-purple-100 dark:bg-purple-900/30 text-purple-600" },
-              { icon: Wallet, title: "Crypto Payments", desc: "Multi-currency & mobile money", href: "/payments-hub", color: "bg-amber-100 dark:bg-amber-900/30 text-amber-600" },
-              { icon: BarChart3, title: "Analytics", desc: "AI-powered earning insights", href: "/analytics", color: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600" },
-              { icon: Leaf, title: "Green Impact", desc: "Carbon tracking for remote work", href: "/sustainability", color: "bg-green-100 dark:bg-green-900/30 text-green-600" },
-              { icon: Globe, title: "14 Languages", desc: "Accessibility for all Africans", href: "/accessibility", color: "bg-rose-100 dark:bg-rose-900/30 text-rose-600" },
+              { icon: Brain, title: "AI Smart Matching", desc: "Autonomous AI agents find your perfect hire", href: "/ai-match", color: "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400", glow: "hover:shadow-blue-500/10" },
+              { icon: Link2, title: "Blockchain Credentials", desc: "Verified skills on-chain, tamper-proof", href: "/credentials", color: "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400", glow: "hover:shadow-purple-500/10" },
+              { icon: Wallet, title: "Crypto Payments", desc: "Multi-currency & mobile money", href: "/payments-hub", color: "bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400", glow: "hover:shadow-amber-500/10" },
+              { icon: BarChart3, title: "Analytics", desc: "AI-powered earning insights", href: "/analytics", color: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400", glow: "hover:shadow-emerald-500/10" },
+              { icon: Leaf, title: "Green Impact", desc: "Carbon tracking for remote work", href: "/sustainability", color: "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400", glow: "hover:shadow-green-500/10" },
+              { icon: Globe, title: "14 Languages", desc: "Accessibility for all Africans", href: "/accessibility", color: "bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400", glow: "hover:shadow-rose-500/10" },
             ].map((item, i) => (
               <button
                 key={i}
                 onClick={() => navigate(item.href)}
-                className="bg-card rounded-xl p-5 border border-border shadow-sm hover:shadow-md transition-all hover:-translate-y-1 text-left group"
+                className={`bg-card rounded-2xl p-5 border border-border shadow-sm hover:shadow-xl ${item.glow} transition-all duration-300 hover:-translate-y-1.5 text-left group card-glow`}
                 data-testid={`card-innovation-${i}`}
               >
-                <div className={`p-2.5 rounded-lg ${item.color} w-fit mb-3`}>
+                <div className={`p-2.5 rounded-xl ${item.color} w-fit mb-3 group-hover:scale-110 transition-transform duration-200`}>
                   <item.icon className="h-5 w-5" />
                 </div>
-                <h3 className="font-bold text-foreground text-sm mb-1">{item.title}</h3>
+                <h3 className="font-bold text-foreground text-sm mb-1.5 group-hover:text-primary transition-colors">{item.title}</h3>
                 <p className="text-muted-foreground text-xs leading-relaxed">{item.desc}</p>
               </button>
             ))}
