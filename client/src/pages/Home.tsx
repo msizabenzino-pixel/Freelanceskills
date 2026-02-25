@@ -4,7 +4,7 @@ import { JobCard } from "@/components/JobCard";
 import { FreelancerCard } from "@/components/FreelancerCard";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users, Gift, Building2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users, Gift, Building2, Brain, Link2, Wallet, BarChart3, Leaf, Globe } from "lucide-react";
 import { useLocation } from "wouter";
 import { useCurrency } from "@/lib/currency";
 
@@ -316,6 +316,42 @@ export default function Home() {
                   Get Your Link <ArrowRight className="w-4 h-4" />
                 </Button>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Innovation Lab - 2031 Vision */}
+      <section className="py-20 bg-gradient-to-b from-background to-muted/30">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center max-w-2xl mx-auto mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-100 dark:bg-violet-900/30 text-violet-600 text-sm font-medium mb-4">
+              <Brain className="w-4 h-4" /> 2031 Vision
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">Innovation Lab</h2>
+            <p className="text-muted-foreground text-lg">Cutting-edge technology powering Africa's future of work.</p>
+          </div>
+          <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4 mt-10">
+            {[
+              { icon: Brain, title: "AI Smart Matching", desc: "Autonomous AI agents find your perfect hire", href: "/ai-match", color: "bg-blue-100 dark:bg-blue-900/30 text-blue-600" },
+              { icon: Link2, title: "Blockchain Credentials", desc: "Verified skills on-chain, tamper-proof", href: "/credentials", color: "bg-purple-100 dark:bg-purple-900/30 text-purple-600" },
+              { icon: Wallet, title: "Crypto Payments", desc: "Multi-currency & mobile money", href: "/payments-hub", color: "bg-amber-100 dark:bg-amber-900/30 text-amber-600" },
+              { icon: BarChart3, title: "Analytics", desc: "AI-powered earning insights", href: "/analytics", color: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600" },
+              { icon: Leaf, title: "Green Impact", desc: "Carbon tracking for remote work", href: "/sustainability", color: "bg-green-100 dark:bg-green-900/30 text-green-600" },
+              { icon: Globe, title: "14 Languages", desc: "Accessibility for all Africans", href: "/accessibility", color: "bg-rose-100 dark:bg-rose-900/30 text-rose-600" },
+            ].map((item, i) => (
+              <button
+                key={i}
+                onClick={() => navigate(item.href)}
+                className="bg-card rounded-xl p-5 border border-border shadow-sm hover:shadow-md transition-all hover:-translate-y-1 text-left group"
+                data-testid={`card-innovation-${i}`}
+              >
+                <div className={`p-2.5 rounded-lg ${item.color} w-fit mb-3`}>
+                  <item.icon className="h-5 w-5" />
+                </div>
+                <h3 className="font-bold text-foreground text-sm mb-1">{item.title}</h3>
+                <p className="text-muted-foreground text-xs leading-relaxed">{item.desc}</p>
+              </button>
+            ))}
           </div>
         </div>
       </section>

@@ -1,11 +1,12 @@
 import { Shield, Phone, Mail, Facebook, Instagram, Youtube, Linkedin } from "lucide-react";
 import { Link } from "wouter";
+import { useCurrency } from "@/lib/currency";
 
 export function Footer() {
   return (
     <footer role="contentinfo" aria-label="Site footer" className="bg-secondary pt-16 pb-8 border-t border-border mt-auto">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-12 mb-12">
           <div className="space-y-4 md:col-span-2">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-primary text-white rounded-lg flex items-center justify-center font-bold">F</div>
@@ -108,6 +109,18 @@ export function Footer() {
               <li><Link href="/referral" className="hover:text-primary transition-colors" data-testid="link-referral">Referral Program</Link></li>
               <li><Link href="/resolution-center" className="hover:text-primary transition-colors" data-testid="link-resolution-center">Resolution Center</Link></li>
               <li><Link href="/support" className="hover:text-primary transition-colors">Help & Support</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-primary mb-4">Innovation</h4>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><Link href="/ai-match" className="hover:text-primary transition-colors" data-testid="link-ai-match">AI Smart Matching</Link></li>
+              <li><Link href="/credentials" className="hover:text-primary transition-colors" data-testid="link-credentials">Blockchain Credentials</Link></li>
+              <li><Link href="/payments-hub" className="hover:text-primary transition-colors" data-testid="link-payments-hub">Payments Hub</Link></li>
+              <li><Link href="/analytics" className="hover:text-primary transition-colors" data-testid="link-analytics">Freelancer Analytics</Link></li>
+              <li><Link href="/sustainability" className="hover:text-primary transition-colors" data-testid="link-sustainability">Green Impact</Link></li>
+              <li><Link href="/accessibility" className="hover:text-primary transition-colors" data-testid="link-accessibility">Accessibility</Link></li>
             </ul>
           </div>
         </div>

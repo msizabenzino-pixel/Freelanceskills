@@ -29,6 +29,12 @@ import Enterprise from "@/pages/Enterprise";
 import Referral from "@/pages/Referral";
 import Checkout from "@/pages/Checkout";
 import FreelancerOnboarding from "@/pages/FreelancerOnboarding";
+import Credentials from "@/pages/Credentials";
+import PaymentsHub from "@/pages/PaymentsHub";
+import Sustainability from "@/pages/Sustainability";
+import Accessibility from "@/pages/Accessibility";
+import Analytics from "@/pages/Analytics";
+import AISmartMatch from "@/pages/AISmartMatch";
 import { SupportChat } from "@/components/SupportChat";
 import NotFound from "@/pages/not-found";
 
@@ -59,6 +65,12 @@ function Router() {
       <Route path="/referral" component={Referral} />
       <Route path="/checkout" component={Checkout} />
       <Route path="/onboarding" component={FreelancerOnboarding} />
+      <Route path="/payments-hub" component={PaymentsHub} />
+      <Route path="/credentials" component={Credentials} />
+      <Route path="/sustainability" component={Sustainability} />
+      <Route path="/analytics" component={Analytics} />
+      <Route path="/accessibility" component={Accessibility} />
+      <Route path="/ai-match" component={AISmartMatch} />
       <Route component={NotFound} />
     </Switch>
   );

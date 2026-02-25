@@ -183,3 +183,59 @@ Preferred communication style: Simple, everyday language.
 - **Security Hardening**: CSP header (env-aware for dev WS), rate limiting (100 req/min/IP with TTL cleanup), HSTS with preload, right-click/source protection, text selection disabled on non-input elements
 - **Meta Tags**: twitter:site updated to @FreelanceSkills, copyright meta, robots meta
 - **Footer Consistency**: All public pages include Footer component
+
+### 2031 Vision — Future-Forward Features (Feb 2026)
+
+#### AI Smart Matching & Autonomous Agents (`/ai-match`)
+- Natural language task description with AI-powered freelancer ranking
+- Match score visualization (compatibility %, skill overlap, availability, price fit)
+- AI Agent Activity Feed showing real-time autonomous agent actions
+- Auto-Hire settings with toggles for recurring tasks, instant match, budget-aware matching, AI negotiation
+
+#### Blockchain Credentials (`/credentials`)
+- Credential wallet UI with 4 verification tiers: Self-Declared → Peer-Endorsed → Platform-Tested → Blockchain-Certified
+- Blockchain verification chain visualization with TX hash previews
+- Mint Credential flow with score, network, gas fee preview
+- Partnership integrations: Ethereum, Polygon, SAQA, Google AI, Microsoft
+
+#### Multi-Currency & Crypto Payments Hub (`/payments-hub`)
+- 9 currencies supported: ZAR, USD, EUR, GBP, NGN, KES, BWP, NAD, MZN
+- Crypto wallet integration: Bitcoin, Ethereum, USDC, cUSD (Celo)
+- Real-time exchange rate converter widget
+- Mobile money: M-Pesa, SnapScan, Capitec Pay, Airtel Money
+- Escrow visualization with 4-step funds flow
+- 6 payment methods with speed and fee comparison
+
+#### Voice & Natural Language Search
+- VoiceSearch component with hero and navbar variants
+- Animated listening state with audio waveform visualization
+- NLP query parsing display (text → structured filters)
+- Multilingual support: English, Afrikaans, Zulu, Xhosa, Sotho
+- Integrated into Hero section and Navbar (mic icon + fullscreen overlay)
+
+#### Freelancer Analytics Dashboard (`/analytics`)
+- 6 KPI performance metrics with trend indicators
+- Earnings trends chart with weekly/monthly/yearly toggle
+- Competitive positioning with percentile rank visualization
+- Client acquisition funnel (Views → Requests → Proposals → Interviews → Hired)
+- Skill demand heatmap for South African market (12 skills)
+- AI-powered insights: Income Forecast, High-Demand Alert, Optimal Pricing, Client Retention
+- Export reports (PDF/CSV)
+
+#### Green Sustainability Score (`/sustainability`)
+- Carbon footprint calculator (remote vs hybrid vs onsite)
+- 6-tier green badge system (Eco Starter → Net Zero Hero)
+- Sustainability leaderboard with top eco-conscious freelancers
+- Green project tags/filters
+- SDG (UN Sustainable Development Goals) alignment indicators
+
+#### Multi-Language & Accessibility Hub (`/accessibility`)
+- 14 languages: 11 official SA languages + Portuguese, French, Swahili
+- Real-time translation preview demo
+- 8 accessibility features: Screen Reader, High Contrast, Dyslexia-Friendly, Font Size, Keyboard Nav, TTS, Sign Language, Captioning
+- 6 interactive accessibility toggles with live preview
+
+#### Navigation & Homepage Updates
+- **Footer**: New "Innovation" column with links to all 6 innovation pages
+- **Homepage**: "Innovation Lab" section with 2031 Vision badge and 6 feature cards linking to new pages
+- **Navbar**: Voice search mic button in desktop nav, fullscreen voice search overlay

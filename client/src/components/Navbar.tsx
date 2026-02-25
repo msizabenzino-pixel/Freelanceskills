@@ -2,9 +2,10 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Menu, X, Zap, LogOut, HelpCircle, Users, Briefcase, ChevronDown, Sparkles, Moon, Sun } from "lucide-react";
+import { Menu, X, Zap, LogOut, HelpCircle, Users, Briefcase, ChevronDown, Sparkles, Moon, Sun, Mic } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useDarkMode } from "@/hooks/use-dark-mode";
+import { VoiceSearch } from "./VoiceSearch";
 import { CountrySelector } from "./CountrySelector";
 import {
   DropdownMenu,
@@ -16,6 +17,7 @@ import {
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showVoiceSearch, setShowVoiceSearch] = useState(false);
   const [location, navigate] = useLocation();
   const { user, isLoading, isAuthenticated } = useAuth();
   const { isDark, toggle: toggleDarkMode } = useDarkMode();
@@ -140,6 +142,19 @@ export function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
+          <button
+            onClick={() => setShowVoiceSearch(true)}
+            className={cn(
+              "p-2 rounded-lg transition-colors",
+              isScrolled || location !== "/"
+                ? "text-muted-foreground hover:bg-muted hover:text-primary"
+                : "text-white/90 hover:bg-white/10"
+            )}
+            aria-label="Voice Search"
+            data-testid="button-voice-search-navbar"
+          >
+            <Mic className="h-4 w-4" />
+          </button>
           <HelpMenu />
           <button
             onClick={toggleDarkMode}
@@ -244,6 +259,10 @@ export function Navbar() {
           )}
         </button>
       </div>
+
+      {showVoiceSearch && (
+        <VoiceSearch variant="navbar" onClose={() => setShowVoiceSearch(false)} />
+      )}
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (

@@ -3,6 +3,7 @@ import { Search, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useLocation } from "wouter";
+import { VoiceSearch } from "./VoiceSearch";
 
 export function Hero() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -90,7 +91,7 @@ export function Hero() {
              initial={{ opacity: 0 }}
              animate={{ opacity: 1 }}
              transition={{ duration: 0.6, delay: 0.4 }}
-             className="pt-8 flex flex-wrap justify-center gap-x-8 gap-y-4 text-white/60 text-sm font-medium"
+             className="pt-4 flex flex-wrap justify-center gap-x-8 gap-y-4 text-white/60 text-sm font-medium"
           >
             <span>Popular:</span>
             {["Plumbing", "Safety Officer", "Tender Consulting", "Web Dev"].map((term) => (
@@ -103,6 +104,15 @@ export function Hero() {
                 {term}
               </button>
             ))}
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            className="flex justify-center"
+          >
+            <VoiceSearch variant="hero" />
           </motion.div>
         </div>
       </div>
