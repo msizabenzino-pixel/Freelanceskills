@@ -6,6 +6,22 @@ import { createServer } from "http";
 const app = express();
 const httpServer = createServer(app);
 
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception:", err.message, err.stack);
+});
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled Rejection:", reason);
+});
+process.on("SIGTERM", () => {
+  console.error("Received SIGTERM");
+});
+process.on("SIGINT", () => {
+  console.error("Received SIGINT");
+});
+process.on("exit", (code) => {
+  console.error("Process exit with code:", code);
+});
+
 declare module "http" {
   interface IncomingMessage {
     rawBody: unknown;
@@ -24,7 +40,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use((_req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("X-Frame-Options", "SAMEORIGIN");
   res.setHeader("X-XSS-Protection", "1; mode=block");
   res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
   res.setHeader("Permissions-Policy", "camera=(self), microphone=(self), geolocation=(self)");
@@ -36,7 +52,7 @@ app.use((_req, res, next) => {
     "font-src 'self' https://fonts.gstatic.com; " +
     "img-src 'self' data: https: blob:; " +
     `connect-src 'self' https: ${isDev ? "ws: wss:" : "wss:"}; ` +
-    "frame-ancestors 'none';"
+    "frame-ancestors 'self' https://*.replit.dev https://*.replit.app;"
   );
   if (process.env.NODE_ENV === "production") {
     res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");

@@ -329,7 +329,7 @@ export default function PaymentsHub() {
               </Card>
             </div>
 
-            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3 max-w-5xl mx-auto">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 max-w-5xl mx-auto">
               {fiatCurrencies.map((currency) => (
                 <Card
                   key={currency.code}
