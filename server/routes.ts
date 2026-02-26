@@ -833,5 +833,15 @@ export async function registerRoutes(
     }
   });
 
+  app.get("/download-project", (_req, res) => {
+    const filePath = require("path").resolve("project_source.tar.gz");
+    const fs = require("fs");
+    if (fs.existsSync(filePath)) {
+      res.download(filePath, "freelanceskills-project.tar.gz");
+    } else {
+      res.status(404).send("File not found. Please ask the agent to recreate it.");
+    }
+  });
+
   return httpServer;
 }
