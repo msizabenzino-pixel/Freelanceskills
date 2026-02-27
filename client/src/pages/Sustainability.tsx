@@ -93,7 +93,7 @@ export default function Sustainability() {
   const remotePercent = onsiteCO2 > 0 ? Math.round((remoteCO2 / onsiteCO2) * 100) : 5;
 
   return (
-    <div className="min-h-screen bg-background font-sans flex flex-col">
+    <div className="min-h-screen bg-background font-sans flex flex-col overflow-x-hidden">
       <Navbar />
 
       <main id="main-content" role="main">

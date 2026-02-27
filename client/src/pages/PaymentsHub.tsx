@@ -220,7 +220,7 @@ export default function PaymentsHub() {
   };
 
   return (
-    <div className="min-h-screen bg-background font-sans flex flex-col">
+    <div className="min-h-screen bg-background font-sans flex flex-col overflow-x-hidden">
       <Navbar />
 
       <main id="main-content" role="main">
@@ -265,15 +265,15 @@ export default function PaymentsHub() {
 
             <div className="max-w-2xl mx-auto mb-12">
               <Card className="border-primary/20 shadow-xl" data-testid="card-converter">
-                <CardContent className="p-8">
-                  <div className="flex flex-col md:flex-row items-center gap-6">
-                    <div className="flex-1 w-full">
+                <CardContent className="p-4 md:p-8">
+                  <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
+                    <div className="flex-1 w-full min-w-0">
                       <label className="text-sm font-medium text-muted-foreground mb-2 block">From</label>
                       <div className="flex gap-2">
                         <select
                           value={selectedFrom}
                           onChange={(e) => setSelectedFrom(e.target.value)}
-                          className="bg-muted rounded-lg px-3 py-3 text-sm font-medium outline-none border border-border"
+                          className="bg-muted rounded-lg px-3 py-3 text-sm font-medium outline-none border border-border shrink-0"
                           data-testid="select-currency-from"
                         >
                           {fiatCurrencies.map((c) => (
@@ -301,7 +301,7 @@ export default function PaymentsHub() {
                       </button>
                     </div>
 
-                    <div className="flex-1 w-full">
+                    <div className="flex-1 w-full min-w-0">
                       <label className="text-sm font-medium text-muted-foreground mb-2 block">To</label>
                       <div className="flex gap-2">
                         <select
@@ -362,7 +362,7 @@ export default function PaymentsHub() {
 
             <div className="mt-12 max-w-3xl mx-auto">
               <Card className="bg-gradient-to-r from-primary/5 to-accent/5 border-primary/10" data-testid="card-crypto-benefits">
-                <CardContent className="p-8">
+                <CardContent className="p-4 md:p-8">
                   <h3 className="text-xl font-bold text-primary mb-6 text-center">Why Pay with Crypto?</h3>
                   <div className="grid sm:grid-cols-3 gap-6">
                     {[

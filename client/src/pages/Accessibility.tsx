@@ -123,7 +123,7 @@ export default function Accessibility() {
   const currentTranslation = sampleTranslations[selectedLang] || sampleTranslations["en"];
 
   return (
-    <div className="min-h-screen bg-background font-sans flex flex-col">
+    <div className="min-h-screen bg-background font-sans flex flex-col overflow-x-hidden">
       <Navbar />
 
       <main id="main-content" role="main">

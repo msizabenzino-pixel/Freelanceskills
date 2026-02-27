@@ -156,7 +156,7 @@ export default function Analytics() {
   const maxEarning = Math.max(...currentEarnings.map((d) => d.value));
 
   return (
-    <div className="min-h-screen bg-background font-sans flex flex-col">
+    <div className="min-h-screen bg-background font-sans flex flex-col overflow-x-hidden">
       <Navbar />
 
       <main id="main-content" role="main">
@@ -252,7 +252,7 @@ export default function Analytics() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="flex items-end gap-1.5 h-56 mt-4">
+                    <div className="flex items-end gap-1 md:gap-1.5 h-56 mt-4 overflow-x-auto">
                       {currentEarnings.map((d, i) => (
                         <div key={i} className="flex-1 flex flex-col items-center gap-1 group/bar">
                           <span className="text-[10px] text-muted-foreground font-medium opacity-0 group-hover/bar:opacity-100 transition-opacity">

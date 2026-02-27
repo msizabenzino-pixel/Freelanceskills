@@ -99,7 +99,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-background font-sans flex flex-col">
+    <div className="min-h-screen bg-background font-sans flex flex-col overflow-x-hidden">
       <Navbar />
       <Hero />
       <main id="main-content" role="main">

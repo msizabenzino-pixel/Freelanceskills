@@ -192,7 +192,7 @@ export default function Credentials() {
   const tierBgColors = ["bg-slate-500/10", "bg-blue-500/10", "bg-purple-500/10", "bg-green-500/10"];
 
   return (
-    <div className="min-h-screen bg-background font-sans flex flex-col">
+    <div className="min-h-screen bg-background font-sans flex flex-col overflow-x-hidden">
       <Navbar />
 
       <main id="main-content" role="main">
