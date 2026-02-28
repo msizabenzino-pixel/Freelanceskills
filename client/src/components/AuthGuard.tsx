@@ -43,7 +43,7 @@ export function AuthGuard({ children, message = "You need to sign in to access t
                 onClick={() => { window.location.href = "/api/login"; }}
                 data-testid="button-sign-in"
               >
-                <LogIn className="w-4 h-4" /> Sign In with Replit
+                <LogIn className="w-4 h-4" /> Sign In
               </Button>
             </CardContent>
           </Card>
