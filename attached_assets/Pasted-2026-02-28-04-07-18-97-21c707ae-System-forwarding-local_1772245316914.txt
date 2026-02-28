@@ -1,0 +1,156 @@
+2026-02-28 04:07:18.97
+21c707ae
+System
+forwarding local port 5000 to external port 80 (mapped as 1104)
+2026-02-28 04:07:18.97
+21c707ae
+System
+metasidecar: loaded enterprise status from environment is_enterprise=false
+2026-02-28 04:07:19.88
+21c707ae
+User
+10:07:19 PM [express] serving on port 5000
+2026-02-28 04:29:11.03
+21c707ae
+System
+system: received signal terminated
+2026-02-28 04:29:11.04
+21c707ae
+System
+command finished with error [node ./dist/index.cjs]: signal: terminated
+2026-02-28 04:29:11.05
+21c707ae
+System
+main done, exiting
+2026-02-28 04:44:14.58
+21c707ae
+System
+starting up user application
+2026-02-28 04:44:14.59
+21c707ae
+System
+metasidecar: loaded enterprise status from environment is_enterprise=false
+2026-02-28 04:44:14.59
+21c707ae
+System
+forwarding local port 5000 to external port 80 (mapped as 1104)
+2026-02-28 04:44:15.71
+21c707ae
+User
+10:44:15 PM [express] serving on port 5000
+2026-02-28 05:41:10.66
+21c707ae
+System
+system: received signal terminated
+2026-02-28 05:41:10.67
+21c707ae
+System
+command finished with error [node ./dist/index.cjs]: signal: terminated
+2026-02-28 05:41:10.72
+21c707ae
+System
+main done, exiting
+2026-02-28 05:57:58.39
+21c707ae
+System
+starting up user application
+2026-02-28 05:57:58.40
+21c707ae
+System
+metasidecar: loaded enterprise status from environment is_enterprise=false
+2026-02-28 05:57:58.40
+21c707ae
+System
+forwarding local port 5000 to external port 80 (mapped as 1104)
+2026-02-28 05:57:59.18
+21c707ae
+User
+11:57:59 PM [express] serving on port 5000
+2026-02-28 06:13:10.67
+21c707ae
+System
+system: received signal terminated
+2026-02-28 06:13:10.67
+21c707ae
+System
+command finished with error [node ./dist/index.cjs]: signal: terminated
+2026-02-28 06:13:10.72
+21c707ae
+System
+main done, exiting
+2026-02-28 06:15:52.61
+21c707ae
+System
+starting up user application
+2026-02-28 06:15:52.61
+21c707ae
+System
+metasidecar: loaded enterprise status from environment is_enterprise=false
+2026-02-28 06:15:52.62
+21c707ae
+System
+forwarding local port 5000 to external port 80 (mapped as 1104)
+2026-02-28 06:15:53.16
+21c707ae
+User
+12:15:53 AM [express] serving on port 5000
+2026-02-28 06:31:01.99
+21c707ae
+System
+system: received signal terminated
+2026-02-28 06:31:02.00
+21c707ae
+System
+command finished with error [node ./dist/index.cjs]: signal: terminated
+2026-02-28 06:31:02.04
+21c707ae
+System
+main done, exiting
+2026-02-28 07:00:14.09
+21c707ae
+System
+starting up user application
+2026-02-28 07:00:14.09
+21c707ae
+System
+metasidecar: loaded enterprise status from environment is_enterprise=false
+2026-02-28 07:00:14.09
+21c707ae
+System
+forwarding local port 5000 to external port 80 (mapped as 1104)
+2026-02-28 07:00:15.01
+21c707ae
+User
+1:00:14 AM [express] serving on port 5000
+2026-02-28 07:41:10.69
+21c707ae
+System
+system: received signal terminated
+2026-02-28 07:41:10.70
+21c707ae
+System
+command finished with error [node ./dist/index.cjs]: signal: terminated
+2026-02-28 07:41:10.79
+21c707ae
+System
+main done, exiting
+2026-02-28 07:55:40.63
+21c707ae
+System
+starting up user application
+2026-02-28 07:55:40.63
+21c707ae
+System
+metasidecar: loaded enterprise status from environment is_enterprise=false
+2026-02-28 07:55:40.63
+21c707ae
+System
+forwarding local port 5000 to external port 80 (mapped as 1104)
+2026-02-28 07:55:41.56
+21c707ae
+User
+1:55:41 AM [express] serving on port 5000
+2026-02-28 08:11:18.26
+21c707ae
+User
+2:11:18 AM [express] GET /api/auth/user 401 in 3ms :: {"message":"Unauthorized"}
