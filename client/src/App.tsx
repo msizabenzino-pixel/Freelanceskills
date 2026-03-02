@@ -33,12 +33,15 @@ const Enterprise = lazy(() => import("@/pages/Enterprise"));
 const Referral = lazy(() => import("@/pages/Referral"));
 const Checkout = lazy(() => import("@/pages/Checkout"));
 const FreelancerOnboarding = lazy(() => import("@/pages/FreelancerOnboarding"));
+const CVUpload = lazy(() => import("@/pages/CVUpload"));
 const Credentials = lazy(() => import("@/pages/Credentials"));
 const PaymentsHub = lazy(() => import("@/pages/PaymentsHub"));
 const Sustainability = lazy(() => import("@/pages/Sustainability"));
 const Accessibility = lazy(() => import("@/pages/Accessibility"));
 const Analytics = lazy(() => import("@/pages/Analytics"));
 const AISmartMatch = lazy(() => import("@/pages/AISmartMatch"));
+const JobBoard = lazy(() => import("@/pages/JobBoard"));
+const OpportunityFinder = lazy(() => import("@/pages/OpportunityFinder"));
 
 function PageLoader() {
   return (
@@ -76,12 +79,15 @@ function Router() {
         <Route path="/referral" component={Referral} />
         <Route path="/checkout" component={Checkout} />
         <Route path="/onboarding" component={FreelancerOnboarding} />
+        <Route path="/cv-upload" component={CVUpload} />
         <Route path="/payments-hub" component={PaymentsHub} />
         <Route path="/credentials" component={Credentials} />
         <Route path="/sustainability" component={Sustainability} />
         <Route path="/analytics" component={Analytics} />
         <Route path="/accessibility" component={Accessibility} />
         <Route path="/ai-match" component={AISmartMatch} />
+        <Route path="/job-board" component={JobBoard} />
+        <Route path="/opportunity-finder" component={OpportunityFinder} />
         <Route component={NotFound} />
       </Switch>
     </Suspense>

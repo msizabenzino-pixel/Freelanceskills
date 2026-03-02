@@ -34,6 +34,7 @@ export function Navbar() {
     { name: "Explore", href: "/explore", highlight: true },
     { name: "AI Assistant", href: "/task-assistant", icon: Sparkles },
     { name: "Book a Tasker", href: "/services" },
+    { name: "SA Job Board", href: "/job-board" },
     { name: "Find Work", href: "/jobs" },
     { name: "Pricing", href: "/pricing" },
     ...(isAuthenticated ? [

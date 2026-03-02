@@ -95,9 +95,11 @@ export function Footer() {
             <h4 className="font-bold text-primary mb-4">For Talent</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link href="/how-to-get-hired" className="hover:text-primary transition-colors">How to Get Hired</Link></li>
+              <li><Link href="/job-board" className="hover:text-primary transition-colors" data-testid="link-job-board">SA Job Board</Link></li>
+              <li><Link href="/cv-upload" className="hover:text-primary transition-colors" data-testid="link-cv-upload">Upload CV & Create Profile</Link></li>
+              <li><Link href="/opportunity-finder" className="hover:text-primary transition-colors" data-testid="link-opportunity-finder">AI Opportunity Finder</Link></li>
               <li><Link href="/jobs" className="hover:text-primary transition-colors">Browse Jobs</Link></li>
               <li><Link href="/pricing" className="hover:text-primary transition-colors">Fees & Earnings</Link></li>
-              <li><Link href="/support" className="hover:text-primary transition-colors">AI Profile Builder</Link></li>
             </ul>
           </div>
 

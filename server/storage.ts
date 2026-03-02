@@ -3,8 +3,9 @@ import {
   type ServicePackage, type InsertServicePackage, type Booking, type InsertBooking,
   type Review, type InsertReview, type Conversation, type Message, type InsertMessage,
   type InsertEnterpriseLead, type EnterpriseLead,
+  type AggregatedJob, type InsertAggregatedJob, type JobApplication, type InsertJobApplication,
   jobs, profiles, servicePackages, bookings, reviews, conversations, messages,
-  freelancerVerifications, privateFeedback, enterpriseLeads
+  freelancerVerifications, privateFeedback, enterpriseLeads, aggregatedJobs, jobApplications
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, sql, desc } from "drizzle-orm";
@@ -58,6 +59,17 @@ export interface IStorage {
 
   // Enterprise lead operations
   createEnterpriseLead(lead: InsertEnterpriseLead): Promise<EnterpriseLead>;
+
+  // Aggregated job operations
+  createAggregatedJob(job: InsertAggregatedJob): Promise<AggregatedJob>;
+  createManyAggregatedJobs(jobs: InsertAggregatedJob[]): Promise<AggregatedJob[]>;
+  getAggregatedJobs(filters?: { province?: string; category?: string; source?: string; jobType?: string }): Promise<AggregatedJob[]>;
+  getAggregatedJobCount(): Promise<number>;
+  clearOldAggregatedJobs(): Promise<void>;
+
+  // Job application operations
+  createJobApplication(application: InsertJobApplication): Promise<JobApplication>;
+  getUserApplications(userId: string): Promise<JobApplication[]>;
 }
 
 class DatabaseStorage implements IStorage {
@@ -295,6 +307,61 @@ class DatabaseStorage implements IStorage {
   async createEnterpriseLead(lead: InsertEnterpriseLead): Promise<EnterpriseLead> {
     const [created] = await db.insert(enterpriseLeads).values(lead).returning();
     return created;
+  }
+
+  // Aggregated job operations
+  async createAggregatedJob(job: InsertAggregatedJob): Promise<AggregatedJob> {
+    const [created] = await db.insert(aggregatedJobs).values(job).returning();
+    return created;
+  }
+
+  async createManyAggregatedJobs(jobsData: InsertAggregatedJob[]): Promise<AggregatedJob[]> {
+    if (jobsData.length === 0) return [];
+    return db.insert(aggregatedJobs).values(jobsData).returning();
+  }
+
+  async getAggregatedJobs(filters?: { province?: string; category?: string; source?: string; jobType?: string }): Promise<AggregatedJob[]> {
+    let conditions = [eq(aggregatedJobs.isActive, true)];
+    
+    if (filters?.province) {
+      conditions.push(sql`${aggregatedJobs.province} ILIKE ${'%' + filters.province + '%'}`);
+    }
+    if (filters?.category) {
+      conditions.push(sql`${aggregatedJobs.category} ILIKE ${'%' + filters.category + '%'}`);
+    }
+    if (filters?.source) {
+      conditions.push(eq(aggregatedJobs.source, filters.source));
+    }
+    if (filters?.jobType) {
+      conditions.push(eq(aggregatedJobs.jobType, filters.jobType));
+    }
+    
+    return db.select().from(aggregatedJobs)
+      .where(and(...conditions))
+      .orderBy(desc(aggregatedJobs.postedDate))
+      .limit(100);
+  }
+
+  async getAggregatedJobCount(): Promise<number> {
+    const result = await db.select({ count: sql<number>`count(*)` }).from(aggregatedJobs).where(eq(aggregatedJobs.isActive, true));
+    return Number(result[0]?.count || 0);
+  }
+
+  async clearOldAggregatedJobs(): Promise<void> {
+    const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
+    await db.delete(aggregatedJobs).where(sql`${aggregatedJobs.createdAt} < ${threeDaysAgo}`);
+  }
+
+  // Job application operations
+  async createJobApplication(application: InsertJobApplication): Promise<JobApplication> {
+    const [created] = await db.insert(jobApplications).values(application).returning();
+    return created;
+  }
+
+  async getUserApplications(userId: string): Promise<JobApplication[]> {
+    return db.select().from(jobApplications)
+      .where(eq(jobApplications.userId, userId))
+      .orderBy(desc(jobApplications.appliedAt));
   }
 }
 

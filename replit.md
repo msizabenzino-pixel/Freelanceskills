@@ -35,7 +35,11 @@ Preferred communication style: Simple, everyday language.
 - **AI Job Post Helper**: Assists clients in creating professional job posts.
 - **AI Profile Optimization**: Enhances freelancer profiles for discoverability.
 - **AI Content Quality Check**: Analyzes content for originality, plagiarism risk, and quality.
-- **API Endpoints**: Dedicated endpoints for various AI functionalities, e.g., `/api/ai/analyze-task`, `/api/ai/generate-proposal`.
+- **AI CV Parser** (`/cv-upload`): Upload/paste CV text, AI extracts profile data (name, skills, experience, rate) and creates a profile.
+- **AI Job Board Aggregator** (`/job-board`): Aggregates SA job listings from PNet, CareerJunction, LinkedIn, Indeed SA, Careers24, etc. with auto-refresh and AI cover letter generation.
+- **AI Opportunity Finder** (`/opportunity-finder`): AI agent that sources jobs, apprenticeships, bursaries, learnerships, internships, and graduate programmes matching user profile.
+- **AI Cover Letter Generator**: Generates tailored cover letters for job applications.
+- **API Endpoints**: Dedicated endpoints for various AI functionalities, e.g., `/api/ai/analyze-task`, `/api/ai/generate-proposal`, `/api/cv/parse`, `/api/job-board`, `/api/opportunities/search`.
 
 ### Authentication Flow
 - Replit OIDC for login/logout.

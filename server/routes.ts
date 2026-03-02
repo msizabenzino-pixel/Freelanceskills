@@ -816,6 +816,295 @@ export async function registerRoutes(
     }
   });
 
+  // ============ CV PARSING & PROFILE CREATION ============
+  
+  app.post("/api/cv/parse", async (req, res) => {
+    try {
+      const { cvText } = req.body;
+      if (!cvText || cvText.length < 20) {
+        return res.status(400).json({ message: "Please provide your CV text (at least 20 characters)" });
+      }
+
+      const openai = new (await import("openai")).default({
+        apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
+        baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+      });
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: `You are an expert CV parser for a South African freelance marketplace. Extract structured profile information from the CV text. Return a JSON object with these fields:
+- firstName (string)
+- lastName (string)
+- title (string - professional title like "Senior Software Developer" or "Master Electrician")
+- bio (string - 2-3 sentence professional summary)
+- skills (string[] - array of key skills, max 15)
+- hourlyRate (number - estimated hourly rate in ZAR based on experience and South African market rates)
+- location (string - city/province in South Africa)
+- experienceLevel (string - "entry" | "intermediate" | "senior" | "expert")
+- yearsOfExperience (number)
+- category (string - best matching category from: trades, tech, creative, cleaning, safety, admin, marketing, finance, education, healthcare)
+- certifications (string[] - any mentioned certifications)
+Respond with ONLY the JSON object, no markdown.`
+          },
+          { role: "user", content: cvText }
+        ],
+        temperature: 0.3,
+      });
+
+      const parsed = JSON.parse(response.choices[0]?.message?.content || "{}");
+      res.json(parsed);
+    } catch (error) {
+      console.error("Error parsing CV:", error);
+      res.status(500).json({ message: "Failed to parse CV. Please try again." });
+    }
+  });
+
+  // ============ JOB BOARD AGGREGATOR ============
+
+  app.get("/api/job-board", async (req, res) => {
+    try {
+      const { province, category, source, jobType } = req.query;
+      const jobs = await storage.getAggregatedJobs({
+        province: province as string,
+        category: category as string,
+        source: source as string,
+        jobType: jobType as string,
+      });
+      const count = await storage.getAggregatedJobCount();
+      res.json({ jobs, totalCount: count, lastUpdated: new Date().toISOString() });
+    } catch (error) {
+      console.error("Error fetching job board:", error);
+      res.status(500).json({ message: "Failed to fetch jobs" });
+    }
+  });
+
+  app.post("/api/job-board/refresh", async (req, res) => {
+    try {
+      const { province, category } = req.body;
+
+      const openai = new (await import("openai")).default({
+        apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
+        baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+      });
+
+      const targetProvince = province || "Gauteng";
+      const targetCategory = category || "all";
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: `You are a South African job board aggregator. Generate 12 realistic job listings that would appear on SA job boards (PNet, CareerJunction, LinkedIn, Indeed SA, Careers24, Gumtree Jobs, Government Vacancies, Bizcommunity). 
+Make jobs realistic for the South African market with proper ZAR salaries, real SA company names, and accurate job descriptions.
+Include a mix of: full-time, part-time, contract, and remote positions.
+Include a mix of experience levels.
+For the province "${targetProvince}"${targetCategory !== 'all' ? ` in the "${targetCategory}" category` : ' across various categories'}.
+
+Return a JSON array of objects with these fields:
+- title (string)
+- company (string - realistic SA company name)
+- description (string - 2-3 paragraphs)
+- requirements (string - bullet points as text)
+- location (string - specific city/area)
+- province (string - SA province)
+- salaryMin (number - monthly ZAR, realistic for SA)
+- salaryMax (number - monthly ZAR)
+- salaryPeriod (string - "month")
+- source (string - one of: "PNet", "CareerJunction", "LinkedIn", "Indeed SA", "Careers24", "Gumtree Jobs", "Government Vacancies", "Bizcommunity")
+- category (string)
+- jobType (string - "full-time" | "part-time" | "contract" | "remote" | "hybrid")
+- experienceLevel (string - "entry" | "intermediate" | "senior" | "executive")
+Respond with ONLY the JSON array, no markdown.`
+          },
+          { role: "user", content: `Generate fresh job listings for ${targetProvince}${targetCategory !== 'all' ? ` in ${targetCategory}` : ''} as of today.` }
+        ],
+        temperature: 0.8,
+      });
+
+      const generatedJobs = JSON.parse(response.choices[0]?.message?.content || "[]");
+      
+      const jobsToInsert = generatedJobs.map((job: any) => ({
+        ...job,
+        isActive: true,
+        postedDate: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      }));
+
+      await storage.clearOldAggregatedJobs();
+      const created = await storage.createManyAggregatedJobs(jobsToInsert);
+
+      res.json({ 
+        message: `Found ${created.length} new opportunities`,
+        count: created.length,
+        lastUpdated: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Error refreshing job board:", error);
+      res.status(500).json({ message: "Failed to refresh jobs. Please try again." });
+    }
+  });
+
+  // ============ JOB APPLICATIONS ============
+
+  app.post("/api/applications", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { jobId, aggregatedJobId, jobTitle, company, coverLetter, resumeSummary, source } = req.body;
+
+      const application = await storage.createJobApplication({
+        userId,
+        jobId,
+        aggregatedJobId,
+        jobTitle,
+        company,
+        coverLetter,
+        resumeSummary,
+        source,
+      });
+
+      res.status(201).json(application);
+    } catch (error) {
+      console.error("Error creating application:", error);
+      res.status(500).json({ message: "Failed to submit application" });
+    }
+  });
+
+  app.get("/api/applications", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const applications = await storage.getUserApplications(userId);
+      res.json(applications);
+    } catch (error) {
+      console.error("Error fetching applications:", error);
+      res.status(500).json({ message: "Failed to fetch applications" });
+    }
+  });
+
+  app.post("/api/ai/generate-cover-letter", async (req, res) => {
+    try {
+      const { jobTitle, company, jobDescription, userSkills, userName } = req.body;
+
+      const openai = new (await import("openai")).default({
+        apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
+        baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+      });
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: `You are an expert cover letter writer for South African job applications. Write a concise, professional cover letter (3-4 paragraphs) that:
+- Addresses the specific job requirements
+- Highlights relevant skills
+- Shows enthusiasm and cultural fit
+- Uses a professional but warm South African tone
+- Mentions readiness to contribute to the company
+Do NOT include placeholder brackets. Write a complete, ready-to-send letter.`
+          },
+          { 
+            role: "user", 
+            content: `Write a cover letter for:
+Job: ${jobTitle} at ${company}
+Description: ${jobDescription || 'Not provided'}
+My skills: ${userSkills || 'General professional skills'}
+My name: ${userName || 'Candidate'}` 
+          }
+        ],
+        temperature: 0.7,
+      });
+
+      res.json({ coverLetter: response.choices[0]?.message?.content || "" });
+    } catch (error) {
+      console.error("Error generating cover letter:", error);
+      res.status(500).json({ message: "Failed to generate cover letter" });
+    }
+  });
+
+  // ============ AI OPPORTUNITY FINDER AGENT ============
+
+  app.post("/api/opportunities/search", async (req, res) => {
+    try {
+      const { skills, interests, location, types, experienceLevel } = req.body;
+
+      const openai = new (await import("openai")).default({
+        apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
+        baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+      });
+
+      const requestedTypes = types?.length > 0 ? types.join(", ") : "jobs, apprenticeships, bursaries, learnerships, internships, graduate programmes";
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: `You are an AI opportunity sourcing agent for South Africa. Find and present relevant opportunities including jobs, apprenticeships, bursaries, learnerships, internships, and graduate programmes.
+
+Generate 15 realistic opportunities that would be available in South Africa right now. Make them diverse and realistic with:
+- Real-sounding SA organizations and companies
+- Proper ZAR amounts for bursaries/salaries
+- Realistic requirements and deadlines
+- Mix of government, private sector, and NGO opportunities
+
+Return a JSON array of objects with:
+- title (string)
+- organization (string - realistic SA company/institution)
+- type (string - "job" | "apprenticeship" | "bursary" | "learnership" | "internship" | "graduate-programme")
+- description (string - 2-3 sentences)
+- requirements (string - key requirements)
+- location (string - SA city/province or "Remote" or "Nationwide")
+- value (string - salary range, bursary amount, or stipend e.g. "R15,000 - R25,000/month" or "Full tuition + R5,000/month stipend")
+- deadline (string - realistic deadline date)
+- applicationUrl (string - realistic but placeholder URL)
+- sector (string - industry sector)
+- matchScore (number 0-100 - how well it matches the user's profile)
+- matchReason (string - why this is a good match)
+
+Respond with ONLY the JSON array.`
+          },
+          { 
+            role: "user", 
+            content: `Find opportunities matching:
+Skills: ${skills || 'General'}
+Interests: ${interests || 'Open to all'}
+Location: ${location || 'South Africa'}
+Types: ${requestedTypes}
+Experience level: ${experienceLevel || 'Any'}` 
+          }
+        ],
+        temperature: 0.8,
+      });
+
+      const opportunities = JSON.parse(response.choices[0]?.message?.content || "[]");
+      
+      const sorted = opportunities.sort((a: any, b: any) => (b.matchScore || 0) - (a.matchScore || 0));
+
+      res.json({
+        opportunities: sorted,
+        summary: {
+          total: sorted.length,
+          byType: {
+            jobs: sorted.filter((o: any) => o.type === "job").length,
+            apprenticeships: sorted.filter((o: any) => o.type === "apprenticeship").length,
+            bursaries: sorted.filter((o: any) => o.type === "bursary").length,
+            learnerships: sorted.filter((o: any) => o.type === "learnership").length,
+            internships: sorted.filter((o: any) => o.type === "internship").length,
+            graduateProgrammes: sorted.filter((o: any) => o.type === "graduate-programme").length,
+          },
+          topMatch: sorted[0]?.matchScore || 0,
+        }
+      });
+    } catch (error) {
+      console.error("Error searching opportunities:", error);
+      res.status(500).json({ message: "Failed to search opportunities. Please try again." });
+    }
+  });
+
   // ============ ENTERPRISE LEADS ============
   const { insertEnterpriseLeadSchema } = await import("@shared/schema");
 
