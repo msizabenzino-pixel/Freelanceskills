@@ -172,11 +172,19 @@ export default function PostJob() {
               <div className="space-y-2">
                 <Label>Location Type</Label>
                 <div className="grid grid-cols-2 gap-2">
-                  <button type="button" className="border-2 border-primary bg-primary/5 p-4 rounded-xl text-left transition-all">
+                  <button 
+                    type="button" 
+                    className="border-2 border-primary bg-primary/5 p-4 rounded-xl text-left transition-all"
+                    data-testid="button-location-type-onsite"
+                  >
                     <div className="font-bold text-primary">On-site</div>
                     <div className="text-xs text-muted-foreground">Work at a specific location</div>
                   </button>
-                  <button type="button" className="border border-border p-4 rounded-xl text-left hover:border-primary/50 transition-all">
+                  <button 
+                    type="button" 
+                    className="border border-border p-4 rounded-xl text-left hover:border-primary/50 transition-all"
+                    data-testid="button-location-type-remote"
+                  >
                     <div className="font-bold text-foreground">Remote</div>
                     <div className="text-xs text-muted-foreground">Work from anywhere</div>
                   </button>

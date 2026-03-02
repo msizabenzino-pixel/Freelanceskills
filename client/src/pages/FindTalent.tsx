@@ -73,11 +73,11 @@ export default function FindTalent() {
           <div className="flex flex-col md:flex-row gap-4 items-center">
             <div className="relative flex-1 w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input placeholder="Search electricians, plumbers, developers..." className="pl-10 h-10" />
+              <Input placeholder="Search electricians, plumbers, developers..." className="pl-10 h-10" data-testid="input-search-talent" />
             </div>
             <div className="relative w-full md:w-64">
               <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input placeholder="Sandton, Johannesburg" className="pl-10 h-10" />
+              <Input placeholder="Sandton, Johannesburg" className="pl-10 h-10" data-testid="input-location-talent" />
             </div>
             <div className="flex bg-muted p-1 rounded-lg shrink-0">
               <button 
@@ -86,6 +86,7 @@ export default function FindTalent() {
                   "px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2",
                   view === 'list' ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-primary"
                 )}
+                data-testid="button-view-list"
               >
                 <List className="w-4 h-4" /> List
               </button>
@@ -95,6 +96,7 @@ export default function FindTalent() {
                   "px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2",
                   view === 'map' ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-primary"
                 )}
+                data-testid="button-view-map"
               >
                 <MapIcon className="w-4 h-4" /> Map
               </button>
@@ -103,7 +105,7 @@ export default function FindTalent() {
           
           <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
             {['Verified Only', 'Available Now', `Under ${formatRate(500, "hr")}`, '5 Star Rating'].map((filter) => (
-              <Badge key={filter} variant="outline" className="cursor-pointer hover:bg-secondary transition-colors whitespace-nowrap">
+              <Badge key={filter} variant="outline" className="cursor-pointer hover:bg-secondary transition-colors whitespace-nowrap" data-testid={`badge-filter-${filter.toLowerCase().replace(/\s/g, '-')}`}>
                 {filter}
               </Badge>
             ))}

@@ -86,13 +86,30 @@ export type InsertJobApplication = z.infer<typeof insertJobApplicationSchema>;
 export type JobApplication = typeof jobApplications.$inferSelect;
 
 export const SA_PROVINCES = [
-  "Gauteng", "Western Cape", "KwaZulu-Natal", "Eastern Cape",
-  "Free State", "Limpopo", "Mpumalanga", "North West", "Northern Cape"
+  "Eastern Cape",
+  "Free State",
+  "Gauteng",
+  "KwaZulu-Natal",
+  "Limpopo",
+  "Mpumalanga",
+  "North West",
+  "Northern Cape",
+  "Western Cape"
 ] as const;
 
 export const JOB_SOURCES = [
-  "PNet", "CareerJunction", "LinkedIn", "Indeed SA", "Careers24", "Gumtree Jobs",
-  "Mr Price Jobs", "Government Vacancies", "Bizcommunity"
+  "PNet", 
+  "CareerJunction", 
+  "LinkedIn", 
+  "Indeed SA", 
+  "Careers24", 
+  "Gumtree Jobs",
+  "Mr Price Jobs", 
+  "Government Vacancies", 
+  "Bizcommunity",
+  "OfferZen",
+  "BestJobs",
+  "JobMail"
 ] as const;
 
 export const OPPORTUNITY_TYPES = [

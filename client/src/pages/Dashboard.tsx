@@ -55,21 +55,24 @@ export default function Dashboard() {
   const { formatAmount } = useCurrency();
   const queryClient = useQueryClient();
 
-  const { data: userRes } = useQuery<{ id: string } | null>({
+  const { data: userRes, isLoading: userLoading, isError: userError } = useQuery<{ id: string } | null>({
     queryKey: ["/api/auth/user"],
     queryFn: async () => {
       const res = await fetch("/api/auth/user");
-      if (!res.ok) return null;
+      if (!res.ok) {
+        if (res.status === 401) return null;
+        throw new Error("Failed to fetch user");
+      }
       return res.json();
     },
   });
 
-  const { data: myPackages = [], isLoading: packagesLoading } = useQuery<any[]>({
+  const { data: myPackages = [], isLoading: packagesLoading, isError: packagesError } = useQuery<any[]>({
     queryKey: ["/api/packages", "my"],
     queryFn: async () => {
       if (!userRes?.id) return [];
       const res = await fetch(`/api/freelancers/${userRes.id}/packages`);
-      if (!res.ok) return [];
+      if (!res.ok) throw new Error("Failed to fetch packages");
       return res.json();
     },
     enabled: !!userRes?.id,
@@ -208,7 +211,7 @@ export default function Dashboard() {
                       <item.icon className="w-4 h-4" />
                       {item.label}
                     </div>
-                    {item.count && <span className="bg-accent text-primary px-1.5 py-0.5 rounded-full text-[10px] font-bold">{item.count}</span>}
+                    {item.count && <span data-testid={`nav-count-${item.label.toLowerCase()}`} className="bg-accent text-primary px-1.5 py-0.5 rounded-full text-[10px] font-bold">{item.count}</span>}
                   </button>
                 ))}
               </nav>
@@ -216,18 +219,28 @@ export default function Dashboard() {
           </div>
 
           <div className="lg:col-span-3">
-            {activeNav === "Overview" && (
+            {userLoading ? (
+              <div className="flex justify-center py-12">
+                <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+              </div>
+            ) : userError ? (
+              <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6 text-center">
+                <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-3" />
+                <h3 className="text-lg font-bold text-destructive mb-1">Error Loading Dashboard</h3>
+                <p className="text-sm text-destructive">Could not load user information. Please refresh the page.</p>
+              </div>
+            ) : activeNav === "Overview" && (
               <Tabs defaultValue="active" className="w-full">
                 <TabsList className="bg-muted/50 p-1 rounded-xl mb-6">
-                  <TabsTrigger value="active" className="rounded-lg font-bold px-6">Active Jobs</TabsTrigger>
-                  <TabsTrigger value="completed" className="rounded-lg font-bold px-6">History</TabsTrigger>
-                  <TabsTrigger value="disputed" className="rounded-lg font-bold px-6 text-red-500">Disputes</TabsTrigger>
+                  <TabsTrigger value="active" className="rounded-lg font-bold px-6" data-testid="tab-active-jobs">Active Jobs</TabsTrigger>
+                  <TabsTrigger value="completed" className="rounded-lg font-bold px-6" data-testid="tab-history">History</TabsTrigger>
+                  <TabsTrigger value="disputed" className="rounded-lg font-bold px-6 text-red-500" data-testid="tab-disputes">Disputes</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="active" className="space-y-6">
                   <div className="grid gap-6">
                     {activeContracts.map((job, i) => (
-                      <JobLifecycleCard key={i} {...job} />
+                      <JobLifecycleCard key={i} {...job} data-testid={`job-card-active-${i}`} />
                     ))}
                   </div>
                 </TabsContent>
@@ -235,7 +248,7 @@ export default function Dashboard() {
                 <TabsContent value="completed" className="space-y-6">
                   <div className="grid gap-6">
                     {recentlyCompleted.map((job, i) => (
-                      <JobLifecycleCard key={i} {...job} />
+                      <JobLifecycleCard key={i} {...job} data-testid={`job-card-completed-${i}`} />
                     ))}
                   </div>
                 </TabsContent>
@@ -244,7 +257,7 @@ export default function Dashboard() {
                    <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
                      <AlertCircle className="w-8 h-8 text-muted-foreground" />
                    </div>
-                   <h3 className="font-bold text-lg text-primary">No active disputes</h3>
+                   <h3 className="font-bold text-lg text-primary" data-testid="text-no-disputes">No active disputes</h3>
                    <p className="text-muted-foreground text-sm max-w-xs mx-auto">Disputes are rare and handled by our admin team within 48 hours.</p>
                 </TabsContent>
               </Tabs>
@@ -434,6 +447,12 @@ export default function Dashboard() {
                 {packagesLoading ? (
                   <div className="flex justify-center py-12">
                     <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+                  </div>
+                ) : packagesError ? (
+                  <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6 text-center">
+                    <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-3" />
+                    <h3 className="text-lg font-bold text-destructive mb-1">Error Loading Packages</h3>
+                    <p className="text-sm text-destructive">Could not load your service packages. Please try again later.</p>
                   </div>
                 ) : myPackages.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

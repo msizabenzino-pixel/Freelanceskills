@@ -34,13 +34,11 @@ import {
 
 export default function CVUpload() {
   const [, setLocation] = useLocation();
-  const { user } = useAuth();
+  const { user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
-  
   const [cvText, setCvText] = useState("");
   const [isParsed, setIsParsed] = useState(false);
   
-  // Form State
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -91,10 +89,20 @@ export default function CVUpload() {
 
   const profileMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
+      // Validate data before submitting
+      if (!data.firstName || !data.lastName || !data.title || !data.category) {
+        throw new Error("Please fill in all required fields (Name, Title, and Category)");
+      }
+
       const res = await apiRequest("POST", "/api/profile", {
-        ...data,
+        userId: user.id,
         userType: "freelancer",
+        bio: data.bio,
+        title: data.title,
+        skills: data.skills,
         hourlyRate: data.hourlyRate ? parseInt(data.hourlyRate) * 100 : 0, // Convert to cents
+        location: data.location,
+        isPro: false,
       });
       return res.json();
     },
@@ -140,6 +148,19 @@ export default function CVUpload() {
     { icon: ClipboardList, text: "Review & Edit" },
     { icon: Check, text: "Create Profile" }
   ];
+
+  if (isAuthLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    setLocation("/");
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -291,7 +312,7 @@ export default function CVUpload() {
                           value={formData.category} 
                           onValueChange={(val) => setFormData({ ...formData, category: val })}
                         >
-                          <SelectTrigger data-testid="select-category">
+                        <SelectTrigger data-testid="select-category" id="category">
                             <SelectValue placeholder="Select Category" />
                           </SelectTrigger>
                           <SelectContent>
@@ -307,7 +328,7 @@ export default function CVUpload() {
                           value={formData.experienceLevel} 
                           onValueChange={(val) => setFormData({ ...formData, experienceLevel: val })}
                         >
-                          <SelectTrigger data-testid="select-experience-level">
+                          <SelectTrigger data-testid="select-experience-level" id="experienceLevel">
                             <SelectValue placeholder="Select Level" />
                           </SelectTrigger>
                           <SelectContent>

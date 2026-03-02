@@ -149,7 +149,7 @@ export default function Home() {
               <h2 className="text-3xl md:text-4xl font-bold text-primary mb-3">Latest Opportunities</h2>
               <p className="text-muted-foreground text-lg">Find high-paying projects from verified local businesses.</p>
             </div>
-            <Button variant="outline" className="gap-2 group" onClick={() => navigate("/jobs")}>
+            <Button variant="outline" className="gap-2 group" onClick={() => navigate("/jobs")} data-testid="button-view-all-jobs">
                 View All Jobs <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Button>
           </div>
@@ -243,7 +243,7 @@ export default function Home() {
           </div>
 
           <div className="text-center mt-12">
-            <Button size="lg" className="bg-primary text-white hover:bg-primary/90 px-8" onClick={() => navigate("/freelancers")}>
+            <Button size="lg" className="bg-primary text-white hover:bg-primary/90 px-8" onClick={() => navigate("/freelancers")} data-testid="button-view-all-talent">
                 View All Talent
               </Button>
           </div>

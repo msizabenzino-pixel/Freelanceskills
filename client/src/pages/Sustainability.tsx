@@ -392,6 +392,7 @@ export default function Sustainability() {
                 <Button
                   key={i}
                   variant="outline"
+                  size="sm"
                   className="gap-2 border-green-200 hover:bg-green-50 hover:border-green-400 dark:border-green-800 dark:hover:bg-green-900/30"
                   data-testid={`button-tag-${i}`}
                 >

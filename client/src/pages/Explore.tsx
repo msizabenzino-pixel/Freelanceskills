@@ -357,7 +357,7 @@ export default function Explore() {
                     {/* Verified Only */}
                     <div className="flex items-center gap-2">
                       <Checkbox id="verified" data-testid="checkbox-verified" />
-                      <Label htmlFor="verified" className="text-sm cursor-pointer">
+                      <Label htmlFor="verified" className="text-sm cursor-pointer" data-testid="label-verified">
                         Verified freelancers only
                       </Label>
                     </div>
@@ -373,7 +373,7 @@ export default function Explore() {
                       <Filter className="h-4 w-4" />
                       Filters
                       {activeFilters.length > 0 && (
-                        <span className="bg-primary text-white text-xs px-2 py-0.5 rounded-full">
+                        <span className="bg-primary text-white text-xs px-2 py-0.5 rounded-full" data-testid="badge-filter-count">
                           {activeFilters.length}
                         </span>
                       )}
@@ -381,19 +381,19 @@ export default function Explore() {
                   </SheetTrigger>
                   <SheetContent side="left" className="w-80">
                     <SheetHeader>
-                      <SheetTitle>Filters</SheetTitle>
+                      <SheetTitle data-testid="text-mobile-filters-title">Filters</SheetTitle>
                     </SheetHeader>
                     <div className="mt-6 space-y-6">
                       {/* Same filters as desktop */}
                       <div>
-                        <Label className="text-sm font-medium mb-2 block">Category</Label>
+                        <Label className="text-sm font-medium mb-2 block" data-testid="label-mobile-category">Category</Label>
                         <Select value={selectedCategory || ""} onValueChange={setSelectedCategory}>
-                          <SelectTrigger>
+                          <SelectTrigger data-testid="select-mobile-category">
                             <SelectValue placeholder="All categories" />
                           </SelectTrigger>
                           <SelectContent>
                             {SERVICE_CATEGORIES.map((cat) => (
-                              <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+                              <SelectItem key={cat.id} value={cat.id} data-testid={`select-item-mobile-category-${cat.id}`}>{cat.name}</SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
@@ -407,12 +407,12 @@ export default function Explore() {
               <div className="flex-1">
                 {/* Active Filters */}
                 {activeFilters.length > 0 && (
-                  <div className="flex flex-wrap items-center gap-2 mb-6">
-                    <span className="text-sm text-muted-foreground">Active filters:</span>
+                  <div className="flex flex-wrap items-center gap-2 mb-6" data-testid="container-active-filters">
+                    <span className="text-sm text-muted-foreground" data-testid="text-active-filters">Active filters:</span>
                     {activeFilters.map((filter, i) => (
-                      <span key={i} className="inline-flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                      <span key={i} className="inline-flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm" data-testid={`badge-active-filter-${i}`}>
                         {filter}
-                        <button onClick={() => removeFilter(filter)}>
+                        <button onClick={() => removeFilter(filter)} data-testid={`button-remove-filter-${i}`}>
                           <X className="h-3 w-3" />
                         </button>
                       </span>
@@ -424,39 +424,40 @@ export default function Explore() {
                 <div className="mb-8">
                   <div className="flex items-center gap-2 mb-4">
                     <Sparkles className="h-5 w-5 text-amber-500" />
-                    <h3 className="font-bold text-lg">Recommended for You</h3>
+                    <h3 className="font-bold text-lg" data-testid="text-recommendations-title">Recommended for You</h3>
                   </div>
                   <div className="grid md:grid-cols-2 gap-4">
                     {FEATURED_FREELANCERS.map((freelancer) => (
-                      <Link key={freelancer.id} href={`/profile/${freelancer.id}`}>
+                      <Link key={freelancer.id} href={`/profile/${freelancer.id}`} data-testid={`link-freelancer-${freelancer.id}`}>
                         <div className="bg-card rounded-xl border p-4 hover:shadow-lg transition-shadow cursor-pointer" data-testid={`card-freelancer-${freelancer.id}`}>
                           <div className="flex gap-4">
                             <img 
                               src={freelancer.avatar} 
                               alt={freelancer.name}
                               className="w-16 h-16 rounded-full object-cover"
+                              data-testid={`img-freelancer-avatar-${freelancer.id}`}
                             />
                             <div className="flex-1">
                               <div className="flex items-center gap-2">
-                                <h4 className="font-semibold">{freelancer.name}</h4>
+                                <h4 className="font-semibold" data-testid={`text-freelancer-name-${freelancer.id}`}>{freelancer.name}</h4>
                                 {freelancer.verified && (
-                                  <BadgeCheck className="h-4 w-4 text-blue-500" />
+                                  <BadgeCheck className="h-4 w-4 text-blue-500" data-testid={`icon-verified-${freelancer.id}`} />
                                 )}
                               </div>
-                              <p className="text-sm text-muted-foreground">{freelancer.title}</p>
+                              <p className="text-sm text-muted-foreground" data-testid={`text-freelancer-title-${freelancer.id}`}>{freelancer.title}</p>
                               <div className="flex items-center gap-3 mt-2 text-sm">
-                                <span className="flex items-center gap-1 text-amber-500">
+                                <span className="flex items-center gap-1 text-amber-500" data-testid={`text-freelancer-rating-${freelancer.id}`}>
                                   <Star className="h-4 w-4 fill-current" />
                                   {freelancer.rating} ({freelancer.reviews})
                                 </span>
-                                <span className="flex items-center gap-1 text-muted-foreground">
+                                <span className="flex items-center gap-1 text-muted-foreground" data-testid={`text-freelancer-location-${freelancer.id}`}>
                                   <MapPin className="h-3 w-3" />
                                   {freelancer.location}
                                 </span>
                               </div>
                             </div>
                             <div className="text-right">
-                              <p className="font-bold text-primary">{formatAmount(freelancer.hourlyRate)}</p>
+                              <p className="font-bold text-primary" data-testid={`text-freelancer-rate-${freelancer.id}`}>{formatAmount(freelancer.hourlyRate)}</p>
                               <p className="text-xs text-muted-foreground">/hour</p>
                             </div>
                           </div>
@@ -470,18 +471,18 @@ export default function Explore() {
                 <div>
                   <div className="flex items-center gap-2 mb-4">
                     <TrendingUp className="h-5 w-5 text-green-500" />
-                    <h3 className="font-bold text-lg">Trending Projects</h3>
+                    <h3 className="font-bold text-lg" data-testid="text-trending-projects-title">Trending Projects</h3>
                   </div>
                   <div className="space-y-3">
                     {TRENDING_PROJECTS.map((project, i) => (
                       <div key={i} className="bg-card rounded-xl border p-4 hover:shadow-md transition-shadow cursor-pointer" data-testid={`card-project-${i}`}>
                         <div className="flex items-center justify-between">
                           <div>
-                            <h4 className="font-semibold">{project.title}</h4>
+                            <h4 className="font-semibold" data-testid={`text-project-title-${i}`}>{project.title}</h4>
                             <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
-                              <span>{project.category}</span>
-                              <span>{project.budget}</span>
-                              <span className="flex items-center gap-1">
+                              <span data-testid={`text-project-category-${i}`}>{project.category}</span>
+                              <span data-testid={`text-project-budget-${i}`}>{project.budget}</span>
+                              <span className="flex items-center gap-1" data-testid={`text-project-bids-${i}`}>
                                 <Users className="h-3 w-3" />
                                 {project.bids} proposals
                               </span>

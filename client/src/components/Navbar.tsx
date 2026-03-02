@@ -267,6 +267,7 @@ export function Navbar() {
         <button
           className="md:hidden"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          data-testid="button-mobile-menu-toggle"
         >
           {isMobileMenuOpen ? (
             <X className={cn("w-6 h-6", isScrolled || location !== "/" ? "text-primary" : "text-white")} />
@@ -283,16 +284,19 @@ export function Navbar() {
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="absolute top-full left-0 right-0 bg-background border-b border-border p-4 flex flex-col gap-4 shadow-xl md:hidden animate-in slide-in-from-top-2">
-          {navLinks.map((link) => (
-            <Link key={link.name} href={link.href} className={cn(
-              "text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md flex items-center gap-2",
-              link.icon && "text-primary"
-            )}>
-                {link.icon && <link.icon className="h-4 w-4" />}
-                {link.name}
-            </Link>
-          ))}
-          <Link href="/post-job" className="text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md">
+          {navLinks.map((link) => {
+            const isActive = location === link.href;
+            return (
+              <Link key={link.name} href={link.href} className={cn(
+                "text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md flex items-center gap-2",
+                link.icon && "text-primary"
+              )} data-testid={`link-mobile-nav-${link.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                  {link.icon && <link.icon className="h-4 w-4" />}
+                  {link.name}
+              </Link>
+            );
+          })}
+          <Link href="/post-job" className="text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md" data-testid="link-mobile-post-job">
               Post a Job
           </Link>
           <div className="h-px bg-border my-2" />
@@ -311,17 +315,17 @@ export function Navbar() {
           <div className="h-px bg-border my-2" />
           {isAuthenticated ? (
             <a href="/api/logout">
-              <Button variant="outline" className="w-full justify-center text-red-500 border-red-200 hover:bg-red-50">
+              <Button variant="outline" className="w-full justify-center text-red-500 border-red-200 hover:bg-red-50" data-testid="button-mobile-logout">
                 <LogOut className="w-4 h-4 mr-2" /> Log Out
               </Button>
             </a>
           ) : (
             <>
               <a href="/api/login">
-                <Button variant="outline" className="w-full justify-center">Log In</Button>
+                <Button variant="outline" className="w-full justify-center" data-testid="button-mobile-login">Log In</Button>
               </a>
               <a href="/api/login">
-                <Button className="w-full justify-center bg-primary text-white">Sign Up</Button>
+                <Button className="w-full justify-center bg-primary text-white" data-testid="button-mobile-signup">Sign Up</Button>
               </a>
             </>
           )}

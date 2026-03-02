@@ -144,11 +144,11 @@ export default function Academy() {
               Free AI-powered training for every African. From plumbers to developers — master AI tools that 10x your earning potential.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-accent text-primary hover:bg-accent/90 font-bold text-lg px-8 shadow-lg" data-testid="button-hero-start-learning">
+              <Button size="lg" className="bg-accent text-primary hover:bg-accent/90 font-bold text-lg px-8 shadow-lg" data-testid="button-hero-start-learning" onClick={() => navigate("/auth")}>
                 <Sparkles className="w-5 h-5 mr-2" />
                 Start Learning Free
               </Button>
-              <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 font-semibold" data-testid="button-hero-explore-courses">
+              <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 font-semibold" data-testid="button-hero-explore-courses" onClick={() => navigate("/explore")}>
                 Explore Courses
               </Button>
             </div>
@@ -201,7 +201,7 @@ export default function Academy() {
                         </li>
                       ))}
                     </ul>
-                    <Button className="w-full mt-6 gap-2" variant={tier.level === 1 ? "default" : "outline"} data-testid={`button-tier-${tier.level}-start`}>
+                    <Button className="w-full mt-6 gap-2" variant={tier.level === 1 ? "default" : "outline"} data-testid={`button-tier-${tier.level}-start`} onClick={() => navigate("/auth")}>
                       {tier.level === 1 ? "Start Here" : "Learn More"}
                       <ArrowRight className="w-4 h-4" />
                     </Button>
@@ -457,7 +457,7 @@ export default function Academy() {
                 Join thousands of Africans who are already using AI to transform their careers. No credit card required. No hidden fees. Just opportunity.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="bg-primary text-white hover:bg-primary/90 font-bold text-lg px-10 shadow-lg gap-2" data-testid="button-cta-start-learning">
+                <Button size="lg" className="bg-primary text-white hover:bg-primary/90 font-bold text-lg px-10 shadow-lg gap-2" data-testid="button-cta-start-learning" onClick={() => navigate("/auth")}>
                   <Rocket className="w-5 h-5" />
                   Start Learning Free Today
                 </Button>

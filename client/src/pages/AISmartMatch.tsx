@@ -435,10 +435,10 @@ export default function AISmartMatch() {
                                 )}
                               </div>
                               <p className="text-sm text-muted-foreground" data-testid={`text-match-title-${freelancer.id}`}>{freelancer.title}</p>
-                              <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                              <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1" data-testid={`text-match-location-${freelancer.id}`}>
                                 <MapPin className="w-3 h-3" /> {freelancer.location}
                               </p>
-                              <div className="flex flex-wrap gap-1.5 mt-3">
+                              <div className="flex flex-wrap gap-1.5 mt-3" data-testid={`container-match-skills-${freelancer.id}`}>
                                 {freelancer.skills.map((skill) => (
                                   <span
                                     key={skill}
@@ -450,16 +450,16 @@ export default function AISmartMatch() {
                                 ))}
                               </div>
                               <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
-                                <span className="flex items-center gap-1">
+                                <span className="flex items-center gap-1" data-testid={`text-match-rating-${freelancer.id}`}>
                                   <Star className="w-3 h-3 text-amber-400 fill-amber-400" /> {freelancer.rating}
                                 </span>
-                                <span className="flex items-center gap-1">
+                                <span className="flex items-center gap-1" data-testid={`text-match-jobs-${freelancer.id}`}>
                                   <Briefcase className="w-3 h-3" /> {freelancer.completedJobs} jobs
                                 </span>
-                                <span className="flex items-center gap-1">
+                                <span className="flex items-center gap-1" data-testid={`text-match-response-${freelancer.id}`}>
                                   <Clock className="w-3 h-3" /> {freelancer.responseTime}
                                 </span>
-                                <span className="font-semibold text-foreground">{freelancer.hourlyRate}</span>
+                                <span className="font-semibold text-foreground" data-testid={`text-match-rate-${freelancer.id}`}>{freelancer.hourlyRate}</span>
                               </div>
                             </div>
                           </div>

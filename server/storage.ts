@@ -321,7 +321,7 @@ class DatabaseStorage implements IStorage {
   }
 
   async getAggregatedJobs(filters?: { province?: string; category?: string; source?: string; jobType?: string }): Promise<AggregatedJob[]> {
-    let conditions = [eq(aggregatedJobs.isActive, true)];
+    const conditions = [eq(aggregatedJobs.isActive, true)];
     
     if (filters?.province) {
       conditions.push(sql`${aggregatedJobs.province} ILIKE ${'%' + filters.province + '%'}`);
@@ -343,8 +343,8 @@ class DatabaseStorage implements IStorage {
   }
 
   async getAggregatedJobCount(): Promise<number> {
-    const result = await db.select({ count: sql<number>`count(*)` }).from(aggregatedJobs).where(eq(aggregatedJobs.isActive, true));
-    return Number(result[0]?.count || 0);
+    const result = await db.select({ count: sql<number>`cast(count(*) as integer)` }).from(aggregatedJobs).where(eq(aggregatedJobs.isActive, true));
+    return result[0]?.count || 0;
   }
 
   async clearOldAggregatedJobs(): Promise<void> {

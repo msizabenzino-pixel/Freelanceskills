@@ -39,33 +39,33 @@ export default function FreelancerProfile() {
                 </div>
               </div>
               
-              <h1 className="text-2xl font-bold text-primary">Thabo M.</h1>
-              <p className="text-muted-foreground font-medium mb-4">Senior Software Engineer</p>
+              <h1 className="text-2xl font-bold text-primary" data-testid="text-freelancer-name">Thabo M.</h1>
+              <p className="text-muted-foreground font-medium mb-4" data-testid="text-freelancer-role">Senior Software Engineer</p>
               
               <div className="flex justify-center gap-4 text-sm text-muted-foreground mb-6">
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1" data-testid="text-freelancer-location">
                   <MapPin className="w-4 h-4" /> Johannesburg
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1" data-testid="text-freelancer-timezone">
                   <Clock className="w-4 h-4" /> 2:00 PM Local
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4 mb-6 border-t border-b border-border py-4">
-                <div>
+                <div data-testid="stat-job-success">
                   <div className="font-bold text-lg text-primary">100%</div>
                   <div className="text-xs text-muted-foreground">Job Success</div>
                 </div>
-                <div>
+                <div data-testid="stat-jobs-done">
                   <div className="font-bold text-lg text-primary">42</div>
                   <div className="text-xs text-muted-foreground">Jobs Done</div>
                 </div>
               </div>
 
-              <Button className="w-full bg-primary text-white hover:bg-primary/90 font-bold shadow-lg mb-3">
+              <Button className="w-full bg-primary text-white hover:bg-primary/90 font-bold shadow-lg mb-3" data-testid="button-hire-freelancer">
                 Hire Thabo
               </Button>
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full" data-testid="button-message-freelancer">
                 <MessageSquare className="w-4 h-4 mr-2" /> Message
               </Button>
             </div>
@@ -74,7 +74,7 @@ export default function FreelancerProfile() {
               <h3 className="font-bold text-lg mb-4">Skills</h3>
               <div className="flex flex-wrap gap-2">
                 {["Python", "Django", "React", "AWS", "PostgreSQL", "Docker", "TypeScript", "Redis"].map(skill => (
-                  <Badge key={skill} variant="secondary" className="px-3 py-1 bg-secondary/50 hover:bg-secondary">
+                  <Badge key={skill} variant="secondary" className="px-3 py-1 bg-secondary/50 hover:bg-secondary" data-testid={`badge-skill-${skill.toLowerCase()}`}>
                     {skill}
                   </Badge>
                 ))}
@@ -137,10 +137,10 @@ export default function FreelancerProfile() {
               <Tabs defaultValue="portfolio" className="w-full">
                 <div className="px-6 pt-6 border-b border-border">
                   <TabsList className="bg-transparent p-0 h-auto gap-6">
-                    <TabsTrigger value="portfolio" className="bg-transparent border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:shadow-none rounded-none px-0 pb-3 font-bold text-muted-foreground data-[state=active]:text-primary text-base">
+                    <TabsTrigger value="portfolio" className="bg-transparent border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:shadow-none rounded-none px-0 pb-3 font-bold text-muted-foreground data-[state=active]:text-primary text-base" data-testid="tab-portfolio">
                       Portfolio (6)
                     </TabsTrigger>
-                    <TabsTrigger value="reviews" className="bg-transparent border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:shadow-none rounded-none px-0 pb-3 font-bold text-muted-foreground data-[state=active]:text-primary text-base">
+                    <TabsTrigger value="reviews" className="bg-transparent border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:shadow-none rounded-none px-0 pb-3 font-bold text-muted-foreground data-[state=active]:text-primary text-base" data-testid="tab-reviews">
                       Reviews (42)
                     </TabsTrigger>
                   </TabsList>
@@ -149,7 +149,7 @@ export default function FreelancerProfile() {
                 <TabsContent value="portfolio" className="p-6">
                   <div className="grid md:grid-cols-2 gap-6">
                     {[1, 2, 3, 4].map((item) => (
-                      <div key={item} className="group cursor-pointer">
+                      <div key={item} className="group cursor-pointer" data-testid={`portfolio-item-${item}`}>
                         <div className="aspect-video bg-muted rounded-xl mb-3 overflow-hidden relative">
                           <img 
                             src={`https://images.unsplash.com/photo-155${item}00000-xxxxx?auto=format&fit=crop&w=600&h=400`} 

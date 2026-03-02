@@ -7,6 +7,7 @@ import { CountryProvider, CountrySelectorDialog } from "@/components/CountrySele
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { lazy, Suspense } from "react";
 import { SupportChat } from "@/components/SupportChat";
+import { AuthGuard } from "@/components/AuthGuard";
 import NotFound from "@/pages/not-found";
 
 const Home = lazy(() => import("@/pages/Home"));
@@ -57,11 +58,19 @@ function Router() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/jobs" component={Jobs} />
-        <Route path="/dashboard" component={Dashboard} />
+        <Route path="/dashboard">
+          <AuthGuard>
+            <Dashboard />
+          </AuthGuard>
+        </Route>
         <Route path="/pricing" component={Pricing} />
         <Route path="/freelancers" component={FindTalent} />
         <Route path="/profile/:id" component={FreelancerProfile} />
-        <Route path="/messages" component={Messages} />
+        <Route path="/messages">
+          <AuthGuard>
+            <Messages />
+          </AuthGuard>
+        </Route>
         <Route path="/post-job" component={PostJob} />
         <Route path="/services" component={Services} />
         <Route path="/how-it-works" component={HowItWorks} />

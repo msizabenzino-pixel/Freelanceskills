@@ -239,7 +239,7 @@ export default function JobBoard() {
           {isLoading ? (
             <div className="grid gap-4">
               {[1, 2, 3].map(i => (
-                <Card key={i} className="animate-pulse h-40 bg-white" />
+                <Card key={i} className="animate-pulse h-40 bg-white" data-testid="skeleton-job-card" />
               ))}
             </div>
           ) : data?.jobs.length === 0 ? (
@@ -280,11 +280,11 @@ export default function JobBoard() {
                             {job.jobType.replace('-', ' ')}
                           </Badge>
                         </div>
-                        <h3 className="text-xl font-bold text-slate-900 mb-1">{job.title}</h3>
+                        <h3 className="text-xl font-bold text-slate-900 mb-1" data-testid={`text-job-title-${job.id}`}>{job.title}</h3>
                         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-500">
-                          <span className="flex items-center gap-1"><Building2 className="h-3.5 w-3.5" /> {job.company}</span>
-                          <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {job.location}, {job.province}</span>
-                          <span className="flex items-center gap-1 font-medium text-emerald-600">
+                          <span className="flex items-center gap-1"><Building2 className="h-3.5 w-3.5 text-slate-400" /> <span data-testid={`text-company-${job.id}`}>{job.company}</span></span>
+                          <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5 text-slate-400" /> <span data-testid={`text-location-${job.id}`}>{job.location}, {job.province}</span></span>
+                          <span className="flex items-center gap-1 font-medium text-emerald-600" data-testid={`text-salary-${job.id}`}>
                             {formatSalary(job.salaryMin, job.salaryMax, job.salaryPeriod)}
                           </span>
                         </div>
@@ -310,8 +310,9 @@ export default function JobBoard() {
                   <CardContent className="p-6 pt-2">
                     <div 
                       className={cn("text-slate-600 text-sm line-clamp-2", expandedJobId === job.id && "line-clamp-none")}
-                      dangerouslySetInnerHTML={{ __html: job.description }}
-                    />
+                    >
+                      {job.description.replace(/<[^>]*>?/gm, '')}
+                    </div>
                     
                     {expandedJobId === job.id && job.requirements && (
                       <div className="mt-4 pt-4 border-t border-slate-100">
@@ -413,7 +414,9 @@ function QuickApplyModal({ job, isOpen, onClose, user }: { job: AggregatedJob | 
         <div className="space-y-6 py-4">
           <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
             <h4 className="font-bold text-slate-900 text-sm mb-2">Job Context:</h4>
-            <div className="text-slate-600 text-xs line-clamp-3" dangerouslySetInnerHTML={{ __html: job?.description || '' }} />
+            <div className="text-slate-600 text-xs line-clamp-3">
+              {job?.description.replace(/<[^>]*>?/gm, '') || ''}
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -435,6 +438,11 @@ function QuickApplyModal({ job, isOpen, onClose, user }: { job: AggregatedJob | 
                 Generate with AI
               </Button>
             </div>
+            {generateMutation.isError && (
+              <p className="text-xs text-red-500 mt-1" data-testid="text-ai-error">
+                Failed to generate cover letter. Please try again or write manually.
+              </p>
+            )}
             <Textarea 
               placeholder="Why are you a great fit for this role?"
               className="min-h-[250px] resize-none"

@@ -513,7 +513,7 @@ export async function registerRoutes(
 
   // ============ AI-POWERED MATCHING ============
   
-  app.post("/api/ai/match-taskers", async (req, res) => {
+  app.post("/api/ai/match-taskers", isAuthenticated, async (req, res) => {
     try {
       const { taskDescription, category, location, budget, urgency } = req.body;
       
@@ -599,7 +599,7 @@ export async function registerRoutes(
   });
 
   // AI-powered job description generator
-  app.post("/api/ai/generate-description", async (req, res) => {
+  app.post("/api/ai/generate-description", isAuthenticated, async (req, res) => {
     try {
       const { title, category, locationType } = req.body;
       
@@ -623,7 +623,7 @@ export async function registerRoutes(
   });
 
   // AI budget estimation
-  app.post("/api/ai/estimate-budget", async (req, res) => {
+  app.post("/api/ai/estimate-budget", isAuthenticated, async (req, res) => {
     try {
       const { title, category, duration, location } = req.body;
       
@@ -665,7 +665,7 @@ export async function registerRoutes(
   // AI Recommendation routes
   const { analyzeTaskAndRecommend, suggestServicePackages, analyzeTaskInputSchema, matchPackagesInputSchema } = await import("./replit_integrations/recommendations");
   
-  app.post("/api/ai/analyze-task", async (req, res) => {
+  app.post("/api/ai/analyze-task", isAuthenticated, async (req, res) => {
     try {
       const validatedInput = analyzeTaskInputSchema.parse(req.body);
       const recommendations = await analyzeTaskAndRecommend(validatedInput.taskDescription, validatedInput.location);
@@ -682,7 +682,7 @@ export async function registerRoutes(
     }
   });
   
-  app.post("/api/ai/match-packages", async (req, res) => {
+  app.post("/api/ai/match-packages", isAuthenticated, async (req, res) => {
     try {
       const validatedInput = matchPackagesInputSchema.parse(req.body);
       
@@ -818,10 +818,10 @@ export async function registerRoutes(
 
   // ============ CV PARSING & PROFILE CREATION ============
   
-  app.post("/api/cv/parse", async (req, res) => {
+  app.post("/api/cv/parse", isAuthenticated, async (req, res) => {
     try {
       const { cvText } = req.body;
-      if (!cvText || cvText.length < 20) {
+      if (!cvText || cvText.trim().length < 20) {
         return res.status(400).json({ message: "Please provide your CV text (at least 20 characters)" });
       }
 
@@ -852,10 +852,17 @@ Respond with ONLY the JSON object, no markdown.`
           { role: "user", content: cvText }
         ],
         temperature: 0.3,
+        response_format: { type: "json_object" },
       });
 
-      const parsed = JSON.parse(response.choices[0]?.message?.content || "{}");
-      res.json(parsed);
+      const content = response.choices[0]?.message?.content || "{}";
+      try {
+        const parsed = JSON.parse(content);
+        res.json(parsed);
+      } catch (parseError) {
+        console.error("Error parsing CV AI response:", content);
+        res.status(500).json({ message: "AI returned invalid data format. Please try again or fill manually." });
+      }
     } catch (error) {
       console.error("Error parsing CV:", error);
       res.status(500).json({ message: "Failed to parse CV. Please try again." });
@@ -868,10 +875,10 @@ Respond with ONLY the JSON object, no markdown.`
     try {
       const { province, category, source, jobType } = req.query;
       const jobs = await storage.getAggregatedJobs({
-        province: province as string,
-        category: category as string,
-        source: source as string,
-        jobType: jobType as string,
+        province: province ? String(province) : undefined,
+        category: category ? String(category) : undefined,
+        source: source ? String(source) : undefined,
+        jobType: jobType ? String(jobType) : undefined,
       });
       const count = await storage.getAggregatedJobCount();
       res.json({ jobs, totalCount: count, lastUpdated: new Date().toISOString() });
@@ -881,7 +888,7 @@ Respond with ONLY the JSON object, no markdown.`
     }
   });
 
-  app.post("/api/job-board/refresh", async (req, res) => {
+  app.post("/api/job-board/refresh", isAuthenticated, async (req: any, res) => {
     try {
       const { province, category } = req.body;
 
@@ -923,9 +930,18 @@ Respond with ONLY the JSON array, no markdown.`
           { role: "user", content: `Generate fresh job listings for ${targetProvince}${targetCategory !== 'all' ? ` in ${targetCategory}` : ''} as of today.` }
         ],
         temperature: 0.8,
+        response_format: { type: "json_object" },
       });
 
-      const generatedJobs = JSON.parse(response.choices[0]?.message?.content || "[]");
+      const content = response.choices[0]?.message?.content || "[]";
+      let generatedJobs = [];
+      try {
+        const parsed = JSON.parse(content);
+        generatedJobs = Array.isArray(parsed) ? parsed : (parsed.jobs || []);
+      } catch (parseError) {
+        console.error("Error parsing job refresh AI response:", content);
+        return res.status(500).json({ message: "Failed to parse generated jobs" });
+      }
       
       const jobsToInsert = generatedJobs.map((job: any) => ({
         ...job,
@@ -954,6 +970,10 @@ Respond with ONLY the JSON array, no markdown.`
     try {
       const userId = req.user.claims.sub;
       const { jobId, aggregatedJobId, jobTitle, company, coverLetter, resumeSummary, source } = req.body;
+
+      if (!jobTitle) {
+        return res.status(400).json({ message: "Job title is required" });
+      }
 
       const application = await storage.createJobApplication({
         userId,
@@ -984,9 +1004,13 @@ Respond with ONLY the JSON array, no markdown.`
     }
   });
 
-  app.post("/api/ai/generate-cover-letter", async (req, res) => {
+  app.post("/api/ai/generate-cover-letter", isAuthenticated, async (req: any, res) => {
     try {
       const { jobTitle, company, jobDescription, userSkills, userName } = req.body;
+
+      if (!jobTitle || !company) {
+        return res.status(400).json({ message: "Job title and company are required" });
+      }
 
       const openai = new (await import("openai")).default({
         apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
@@ -1027,7 +1051,7 @@ My name: ${userName || 'Candidate'}`
 
   // ============ AI OPPORTUNITY FINDER AGENT ============
 
-  app.post("/api/opportunities/search", async (req, res) => {
+  app.post("/api/opportunities/search", isAuthenticated, async (req: any, res) => {
     try {
       const { skills, interests, location, types, experienceLevel } = req.body;
 
@@ -1078,9 +1102,18 @@ Experience level: ${experienceLevel || 'Any'}`
           }
         ],
         temperature: 0.8,
+        response_format: { type: "json_object" },
       });
 
-      const opportunities = JSON.parse(response.choices[0]?.message?.content || "[]");
+      const content = response.choices[0]?.message?.content || "[]";
+      let opportunities = [];
+      try {
+        const parsed = JSON.parse(content);
+        opportunities = Array.isArray(parsed) ? parsed : (parsed.opportunities || []);
+      } catch (parseError) {
+        console.error("Error parsing opportunity search AI response:", content);
+        return res.status(500).json({ message: "Failed to parse opportunities" });
+      }
       
       const sorted = opportunities.sort((a: any, b: any) => (b.matchScore || 0) - (a.matchScore || 0));
 

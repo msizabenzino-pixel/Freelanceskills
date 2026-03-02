@@ -206,10 +206,10 @@ export default function Services() {
                   <Input 
                     placeholder="Location" 
                     className="pl-12 h-14 bg-white text-foreground border-0 shadow-lg"
-                    data-testid="input-location"
+                    data-testid="input-location-services"
                   />
                 </div>
-                <Button size="lg" className="h-14 px-8 bg-accent hover:bg-accent/90 text-white shadow-lg" data-testid="button-search">
+                <Button size="lg" className="h-14 px-8 bg-accent hover:bg-accent/90 text-white shadow-lg" data-testid="button-search-services">
                   <Search className="w-5 h-5 mr-2" />
                   Search
                 </Button>
@@ -230,7 +230,7 @@ export default function Services() {
                     ? 'border-primary bg-primary/5' 
                     : 'border-border hover:border-primary/50'
                 }`}
-                data-testid={`category-${category.id}`}
+                data-testid={`button-category-${category.id}`}
               >
                 <div className={`w-12 h-12 rounded-xl ${category.color} flex items-center justify-center mb-3`}>
                   <category.icon className="w-6 h-6" />
@@ -249,24 +249,24 @@ export default function Services() {
             <button
               onClick={() => navigate("/explore")}
               className="text-primary hover:text-accent flex items-center gap-1 font-medium transition-colors"
-              data-testid="link-view-all-services"
+              data-testid="button-view-all-services"
             >
               View All <ArrowRight className="w-4 h-4" />
             </button>
           </div>
           
           {isLoading && (
-            <div className="flex items-center justify-center py-12">
+            <div className="flex items-center justify-center py-12" data-testid="loading-services">
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
           )}
 
           {!isLoading && filteredPackages.length === 0 && (
-            <div className="text-center py-16">
+            <div className="text-center py-16" data-testid="empty-services">
               <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-foreground mb-2">No services found</h3>
               <p className="text-muted-foreground mb-4">Try different search terms or browse categories above</p>
-              <Button variant="outline" onClick={() => { setSearchQuery(""); setSelectedCategory(null); }} data-testid="button-clear-search">
+              <Button variant="outline" onClick={() => { setSearchQuery(""); setSelectedCategory(null); }} data-testid="button-clear-search-services">
                 Clear Search
               </Button>
             </div>

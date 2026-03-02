@@ -295,7 +295,7 @@ export default function Jobs() {
                           id={`type-${type}`}
                           checked={selectedTypes.includes(type)}
                           onCheckedChange={() => toggleType(type)}
-                          data-testid={`filter-type-${type.toLowerCase().replace(/\s/g, '-')}`}
+                          data-testid={`checkbox-filter-type-${type.toLowerCase().replace(/\s/g, '-')}`}
                         />
                         <label htmlFor={`type-${type}`} className="text-sm font-medium leading-none cursor-pointer">
                           {type}
@@ -315,7 +315,7 @@ export default function Jobs() {
                     max={100}
                     step={1}
                     className="my-4"
-                    data-testid="slider-budget"
+                    data-testid="slider-budget-jobs"
                   />
                   <div className="flex justify-between text-xs text-muted-foreground">
                     <span>{formatAmount(100)}</span>
@@ -328,7 +328,7 @@ export default function Jobs() {
 
           <div className="lg:col-span-3 space-y-6">
             <div className="bg-card rounded-xl p-3 flex items-center justify-between border border-border shadow-sm">
-               <span className="text-sm font-medium px-2 text-muted-foreground">
+               <span className="text-sm font-medium px-2 text-muted-foreground" data-testid="text-job-count">
                  {isLoading ? (
                    <>
                      <Loader2 className="inline w-4 h-4 mr-2 animate-spin" />
@@ -349,7 +349,7 @@ export default function Jobs() {
                    className="text-sm font-medium bg-transparent border border-border rounded-md px-2 py-1 cursor-pointer focus:ring-1 focus:ring-primary"
                    value={sortBy}
                    onChange={(e) => setSortBy(e.target.value)}
-                   data-testid="select-sort"
+                   data-testid="select-sort-jobs"
                  >
                    <option value="newest">Newest First</option>
                    <option value="budget">Highest Budget</option>
@@ -358,22 +358,22 @@ export default function Jobs() {
             </div>
 
             {isLoading ? (
-              <div className="flex items-center justify-center py-12">
+              <div className="flex items-center justify-center py-12" data-testid="loading-jobs">
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
               </div>
             ) : filteredJobs.length === 0 ? (
-              <div className="text-center py-16">
+              <div className="text-center py-16" data-testid="empty-jobs">
                 <Briefcase className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-foreground mb-2">No jobs found</h3>
                 <p className="text-muted-foreground mb-4">Try adjusting your search or filters</p>
-                <Button variant="outline" onClick={clearFilters} data-testid="button-clear-search">
+                <Button variant="outline" onClick={clearFilters} data-testid="button-clear-search-jobs">
                   Clear Filters
                 </Button>
               </div>
             ) : (
               <div className="grid gap-4">
                 {visibleJobs.map((job, i) => (
-                  <div key={`${job.source}-${i}`} onClick={() => { setSelectedJob(job); setShowProposalHelper(true); }} className="cursor-pointer" data-testid={`job-card-${i}`}>
+                  <div key={`${job.source}-${i}`} onClick={() => { setSelectedJob(job); setShowProposalHelper(true); }} className="cursor-pointer" data-testid={`job-card-wrapper-${i}`}>
                     <JobCard {...job} />
                   </div>
                 ))}

@@ -70,11 +70,11 @@ export function Footer() {
               </a>
             </div>
             <div className="flex gap-4 text-sm text-muted-foreground mt-4">
-              <a href="https://wa.me/27601234567" className="flex items-center gap-1 hover:text-primary">
+              <a href="https://wa.me/27601234567" className="flex items-center gap-1 hover:text-primary" data-testid="link-whatsapp">
                 <Phone className="w-4 h-4" />
                 WhatsApp
               </a>
-              <a href="mailto:support@freelanceskills.co.za" className="flex items-center gap-1 hover:text-primary">
+              <a href="mailto:support@freelanceskills.co.za" className="flex items-center gap-1 hover:text-primary" data-testid="link-email">
                 <Mail className="w-4 h-4" />
                 Email
               </a>
@@ -85,21 +85,21 @@ export function Footer() {
             <h4 className="font-bold text-primary mb-4">For Clients</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link href="/how-to-hire" className="hover:text-primary transition-colors" data-testid="link-how-to-hire">How to Hire</Link></li>
-              <li><Link href="/services" className="hover:text-primary transition-colors">Find Talent</Link></li>
-              <li><Link href="/post-job" className="hover:text-primary transition-colors">Post a Job</Link></li>
-              <li><Link href="/pricing" className="hover:text-primary transition-colors">Pricing</Link></li>
+              <li><Link href="/services" className="hover:text-primary transition-colors" data-testid="link-find-talent">Find Talent</Link></li>
+              <li><Link href="/post-job" className="hover:text-primary transition-colors" data-testid="link-post-job">Post a Job</Link></li>
+              <li><Link href="/pricing" className="hover:text-primary transition-colors" data-testid="link-pricing">Pricing</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-bold text-primary mb-4">For Talent</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/how-to-get-hired" className="hover:text-primary transition-colors">How to Get Hired</Link></li>
+              <li><Link href="/how-to-get-hired" className="hover:text-primary transition-colors" data-testid="link-how-to-get-hired">How to Get Hired</Link></li>
               <li><Link href="/job-board" className="hover:text-primary transition-colors" data-testid="link-job-board">SA Job Board</Link></li>
               <li><Link href="/cv-upload" className="hover:text-primary transition-colors" data-testid="link-cv-upload">Upload CV & Create Profile</Link></li>
               <li><Link href="/opportunity-finder" className="hover:text-primary transition-colors" data-testid="link-opportunity-finder">AI Opportunity Finder</Link></li>
-              <li><Link href="/jobs" className="hover:text-primary transition-colors">Browse Jobs</Link></li>
-              <li><Link href="/pricing" className="hover:text-primary transition-colors">Fees & Earnings</Link></li>
+              <li><Link href="/jobs" className="hover:text-primary transition-colors" data-testid="link-browse-jobs">Browse Jobs</Link></li>
+              <li><Link href="/pricing" className="hover:text-primary transition-colors" data-testid="link-fees-earnings">Fees & Earnings</Link></li>
             </ul>
           </div>
 
@@ -111,7 +111,7 @@ export function Footer() {
               <li><Link href="/enterprise" className="hover:text-primary transition-colors" data-testid="link-enterprise">Enterprise</Link></li>
               <li><Link href="/referral" className="hover:text-primary transition-colors" data-testid="link-referral">Referral Program</Link></li>
               <li><Link href="/resolution-center" className="hover:text-primary transition-colors" data-testid="link-resolution-center">Resolution Center</Link></li>
-              <li><Link href="/support" className="hover:text-primary transition-colors">Help & Support</Link></li>
+              <li><Link href="/support" className="hover:text-primary transition-colors" data-testid="link-support">Help & Support</Link></li>
             </ul>
           </div>
 
@@ -136,7 +136,7 @@ export function Footer() {
           <div className="flex gap-6">
             <Link href="/terms" className="hover:text-primary" data-testid="link-terms">Terms of Service</Link>
             <Link href="/privacy" className="hover:text-primary" data-testid="link-privacy">Privacy Policy</Link>
-            <Link href="/accessibility" className="hover:text-primary">Accessibility</Link>
+            <Link href="/accessibility" className="hover:text-primary" data-testid="link-footer-accessibility">Accessibility</Link>
           </div>
         </div>
       </div>

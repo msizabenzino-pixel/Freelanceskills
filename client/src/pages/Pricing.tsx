@@ -144,7 +144,7 @@ export default function Pricing() {
                   "Basic profile",
                   "Standard support"
                 ].map((feature, i) => (
-                  <li key={i} className="flex items-start gap-3 text-sm">
+                  <li key={i} className="flex items-start gap-3 text-sm" data-testid={`item-feature-free-${i}`}>
                     <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
                     <span>{feature}</span>
                   </li>
@@ -158,7 +158,7 @@ export default function Pricing() {
 
           {/* Pro Tier */}
           <div className="bg-primary text-white rounded-2xl shadow-2xl border-2 border-accent relative overflow-hidden flex flex-col transform md:-translate-y-4">
-            <div className="absolute top-0 right-0 bg-accent text-primary text-xs font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider flex items-center gap-1">
+            <div className="absolute top-0 right-0 bg-accent text-primary text-xs font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider flex items-center gap-1" data-testid="badge-most-popular">
               <Crown className="h-3 w-3" />
               Most Popular
             </div>
@@ -166,14 +166,14 @@ export default function Pricing() {
             <div className="p-8 flex-1">
               <h3 className="text-xl font-bold text-white mb-2">Pro Talent</h3>
               <div className="flex items-baseline gap-1 mb-4">
-                <span className="text-4xl font-display font-bold">{formatPrice(proMonthlyPrice)}</span>
+                <span className="text-4xl font-display font-bold" data-testid="text-pro-price">{formatPrice(proMonthlyPrice)}</span>
                 <span className="text-white/60">/ month</span>
               </div>
               <p className="text-white/80 mb-6">For serious professionals.</p>
               
               <div className="bg-green-500/20 rounded-lg p-3 mb-6">
                 <div className="text-center">
-                  <span className="text-2xl font-bold text-green-300">5%</span>
+                  <span className="text-2xl font-bold text-green-300" data-testid="text-pro-commission">5%</span>
                   <p className="text-xs text-green-200">commission - save 50%!</p>
                 </div>
               </div>
@@ -188,7 +188,7 @@ export default function Pricing() {
                   "Advanced analytics",
                   "Priority support"
                 ].map((feature, i) => (
-                  <li key={i} className="flex items-start gap-3 text-sm">
+                  <li key={i} className="flex items-start gap-3 text-sm" data-testid={`item-feature-pro-${i}`}>
                     <Zap className="w-5 h-5 text-accent shrink-0" />
                     <span>{feature}</span>
                   </li>
@@ -206,7 +206,7 @@ export default function Pricing() {
           <div className="bg-card rounded-2xl shadow-xl border border-border overflow-hidden flex flex-col">
             <div className="p-8 flex-1">
               <h3 className="text-xl font-bold text-primary mb-2">Enterprise</h3>
-              <div className="text-4xl font-display font-bold mb-4">Custom</div>
+              <div className="text-4xl font-display font-bold mb-4" data-testid="text-enterprise-price">Custom</div>
               <p className="text-muted-foreground mb-6">For companies hiring at scale.</p>
               
               <ul className="space-y-3">
@@ -218,7 +218,7 @@ export default function Pricing() {
                   "API Access",
                   "Custom integrations"
                 ].map((feature, i) => (
-                  <li key={i} className="flex items-start gap-3 text-sm">
+                  <li key={i} className="flex items-start gap-3 text-sm" data-testid={`item-feature-enterprise-${i}`}>
                     <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
                     <span>{feature}</span>
                   </li>
@@ -387,8 +387,9 @@ export default function Pricing() {
                   <button
                     onClick={() => setExpandedFaq(expandedFaq === i ? null : i)}
                     className="w-full p-4 text-left flex items-center justify-between hover:bg-muted"
+                    data-testid={`button-faq-toggle-${i}`}
                   >
-                    <span className="font-medium">{faq.q}</span>
+                    <span className="font-medium" data-testid={`text-faq-question-${i}`}>{faq.q}</span>
                     {expandedFaq === i ? (
                       <ChevronUp className="h-5 w-5 text-muted-foreground" />
                     ) : (
@@ -396,7 +397,7 @@ export default function Pricing() {
                     )}
                   </button>
                   {expandedFaq === i && (
-                    <div className="px-4 pb-4 text-muted-foreground">{faq.a}</div>
+                    <div className="px-4 pb-4 text-muted-foreground" data-testid={`text-faq-answer-${i}`}>{faq.a}</div>
                   )}
                 </div>
               ))}

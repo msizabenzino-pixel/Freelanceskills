@@ -113,6 +113,8 @@ export type FreelancerVerification = typeof freelancerVerifications.$inferSelect
 export type InsertFreelancerVerification = z.infer<typeof insertVerificationSchema>;
 export type PrivateFeedback = typeof privateFeedback.$inferSelect;
 export type InsertPrivateFeedback = z.infer<typeof insertPrivateFeedbackSchema>;
+export type SkillTest = typeof skillTests.$inferSelect;
+export type TestResult = typeof testResults.$inferSelect;
 
 // Schemas
 export const insertVerificationSchema = createInsertSchema(freelancerVerifications).omit({

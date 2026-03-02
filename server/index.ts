@@ -30,13 +30,14 @@ declare module "http" {
 
 app.use(
   express.json({
+    limit: "10mb",
     verify: (req, _res, buf) => {
       req.rawBody = buf;
     },
   }),
 );
 
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false, limit: "10mb" }));
 
 app.use((_req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
@@ -63,10 +64,55 @@ app.use((_req, res, next) => {
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 setInterval(() => {
   const now = Date.now();
-  for (const [key, entry] of rateLimitMap) {
-    if (now > entry.resetTime) rateLimitMap.delete(key);
-  }
+  Array.from(rateLimitMap.keys()).forEach(key => {
+    const entry = rateLimitMap.get(key);
+    if (entry && now > entry.resetTime) rateLimitMap.delete(key);
+  });
 }, 60000);
+
+// Specific rate limit for AI endpoints to prevent abuse and manage costs
+const aiRateLimitMap = new Map<string, { count: number; resetTime: number }>();
+app.use("/api/ai", (req, res, next) => {
+  const ip = req.ip || req.connection.remoteAddress || "unknown";
+  const now = Date.now();
+  const windowMs = 3600000; // 1 hour window
+  const maxRequests = 10; // 10 AI requests per hour per IP
+
+  const entry = aiRateLimitMap.get(ip);
+  if (!entry || now > entry.resetTime) {
+    aiRateLimitMap.set(ip, { count: 1, resetTime: now + windowMs });
+    return next();
+  }
+
+  entry.count++;
+  if (entry.count > maxRequests) {
+    res.setHeader("Retry-After", Math.ceil((entry.resetTime - now) / 1000).toString());
+    return res.status(429).json({ message: "AI rate limit exceeded. Please try again in an hour." });
+  }
+
+  next();
+});
+
+// Specific rate limit for other expensive endpoints
+app.use(["/api/cv/parse", "/api/opportunities/search"], (req, res, next) => {
+  const ip = req.ip || req.connection.remoteAddress || "unknown";
+  const now = Date.now();
+  const windowMs = 3600000;
+  const maxRequests = 5;
+
+  const entry = aiRateLimitMap.get(`${ip}:expensive`);
+  if (!entry || now > entry.resetTime) {
+    aiRateLimitMap.set(`${ip}:expensive`, { count: 1, resetTime: now + windowMs });
+    return next();
+  }
+
+  entry.count++;
+  if (entry.count > maxRequests) {
+    return res.status(429).json({ message: "Request limit exceeded for this feature. Please try again later." });
+  }
+
+  next();
+});
 
 app.use("/api/", (req, res, next) => {
   const ip = req.ip || req.connection.remoteAddress || "unknown";

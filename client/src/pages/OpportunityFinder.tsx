@@ -33,6 +33,7 @@ import {
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import {
   Sparkles,
@@ -122,6 +123,7 @@ function ScoreRing({ score, size = 64, strokeWidth = 5 }: { score: number; size?
 }
 
 export default function OpportunityFinder() {
+  const { toast } = useToast();
   const { user } = useAuth();
   const [skills, setSkills] = useState("");
   const [interests, setInterests] = useState("");
@@ -145,8 +147,13 @@ export default function OpportunityFinder() {
       setResults(data);
       setIsSearching(false);
     },
-    onError: () => {
+    onError: (error: Error) => {
         setIsSearching(false);
+        toast({
+          title: "Search Failed",
+          description: error.message || "Failed to find opportunities. Please try again.",
+          variant: "destructive"
+        });
     }
   });
 
@@ -157,7 +164,18 @@ export default function OpportunityFinder() {
     },
     onSuccess: (data) => {
       setCoverLetter(data.coverLetter);
+      toast({
+        title: "Cover Letter Generated",
+        description: "AI has generated a tailored cover letter for you.",
+      });
     },
+    onError: (error: Error) => {
+      toast({
+        title: "Generation Failed",
+        description: error.message || "Failed to generate cover letter.",
+        variant: "destructive"
+      });
+    }
   });
 
   const applicationMutation = useMutation({
@@ -168,7 +186,18 @@ export default function OpportunityFinder() {
     onSuccess: () => {
       setApplyingJob(null);
       setCoverLetter("");
+      toast({
+        title: "Application Submitted",
+        description: "Your application has been sent successfully!",
+      });
     },
+    onError: (error: Error) => {
+      toast({
+        title: "Application Failed",
+        description: error.message || "Failed to submit application.",
+        variant: "destructive"
+      });
+    }
   });
 
   const handleSearch = (e: React.FormEvent) => {

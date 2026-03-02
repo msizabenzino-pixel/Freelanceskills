@@ -80,10 +80,10 @@ export default function Messages() {
         {/* Sidebar */}
         <div className="w-full md:w-80 lg:w-96 border-r border-border bg-card flex flex-col">
           <div className="p-4 border-b border-border">
-            <h1 className="text-xl font-bold font-display text-primary mb-4">Messages</h1>
+            <h1 className="text-xl font-bold font-display text-primary mb-4" data-testid="text-messages-title">Messages</h1>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input placeholder="Search messages..." className="pl-9 bg-muted/30" />
+              <Input placeholder="Search messages..." className="pl-9 bg-muted/30" data-testid="input-search-messages" />
             </div>
           </div>
           
@@ -92,6 +92,7 @@ export default function Messages() {
               {conversations.map((chat) => (
                 <button
                   key={chat.id}
+                  data-testid={`button-chat-item-${chat.id}`}
                   onClick={() => setSelectedChat(chat)}
                   className={cn(
                     "flex items-start gap-3 p-4 hover:bg-muted/50 transition-colors text-left border-b border-border/50",
@@ -148,7 +149,7 @@ export default function Messages() {
               <Button variant="ghost" size="icon" data-testid="button-phone-call"><Phone className="w-5 h-5" /></Button>
               <Button variant="ghost" size="icon" onClick={() => setShowVideoCall(true)} data-testid="button-video-call-message"><Video className="w-5 h-5" /></Button>
               <Button variant="ghost" size="icon" onClick={() => setShowContract(true)} data-testid="button-create-contract"><FileText className="w-5 h-5" /></Button>
-              <Button variant="ghost" size="icon"><MoreVertical className="w-5 h-5" /></Button>
+              <Button variant="ghost" size="icon" data-testid="button-more-options"><MoreVertical className="w-5 h-5" /></Button>
             </div>
           </div>
 
@@ -160,7 +161,7 @@ export default function Messages() {
               </div>
 
               {/* Safety System Message */}
-              <div className="flex justify-center">
+              <div className="flex justify-center" data-testid="safety-message">
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 max-w-md text-center">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <Shield className="w-5 h-5 text-amber-600" />
@@ -174,7 +175,9 @@ export default function Messages() {
               </div>
               
               {messages.map((msg) => (
-                <div key={msg.id} className={cn(
+                <div key={msg.id} 
+                  data-testid={`message-item-${msg.id}`}
+                  className={cn(
                   "flex gap-3 max-w-[80%]",
                   msg.sender === 'me' ? "ml-auto flex-row-reverse" : ""
                 )}>
@@ -208,7 +211,7 @@ export default function Messages() {
           {/* Input Area */}
           <div className="p-4 bg-card border-t border-border">
             <div className="bg-muted/30 border border-border rounded-xl flex items-end p-2 gap-2">
-              <Button variant="ghost" size="icon" className="text-muted-foreground h-10 w-10 shrink-0">
+              <Button variant="ghost" size="icon" className="text-muted-foreground h-10 w-10 shrink-0" data-testid="button-attach-file">
                 <Paperclip className="w-5 h-5" />
               </Button>
               <textarea 
@@ -217,8 +220,9 @@ export default function Messages() {
                 rows={1}
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
+                data-testid="textarea-message-input"
               />
-              <Button className="h-10 w-10 shrink-0 bg-primary text-white rounded-lg hover:bg-primary/90">
+              <Button className="h-10 w-10 shrink-0 bg-primary text-white rounded-lg hover:bg-primary/90" data-testid="button-send-message">
                 <Send className="w-4 h-4" />
               </Button>
             </div>
