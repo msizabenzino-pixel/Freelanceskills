@@ -157,47 +157,47 @@ export default function Pricing() {
           </div>
 
           {/* Pro Tier */}
-          <div className="bg-primary text-white rounded-2xl shadow-2xl border-2 border-accent relative overflow-hidden flex flex-col transform md:-translate-y-4">
-            <div className="absolute top-0 right-0 bg-accent text-primary text-xs font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider flex items-center gap-1" data-testid="badge-most-popular">
+          <div className="bg-white text-foreground rounded-2xl shadow-2xl border border-border relative overflow-hidden flex flex-col transform md:-translate-y-4">
+            <div className="absolute top-0 right-0 bg-primary text-white text-xs font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider flex items-center gap-1" data-testid="badge-most-popular">
               <Crown className="h-3 w-3" />
-              Most Popular
+              Premium
             </div>
             
             <div className="p-8 flex-1">
-              <h3 className="text-xl font-bold text-white mb-2">Pro Talent</h3>
+              <h3 className="text-xl font-bold text-primary mb-2">Premium Talent</h3>
               <div className="flex items-baseline gap-1 mb-4">
                 <span className="text-4xl font-display font-bold" data-testid="text-pro-price">{formatPrice(proMonthlyPrice)}</span>
-                <span className="text-white/60">/ month</span>
+                <span className="text-muted-foreground">/ month</span>
               </div>
-              <p className="text-white/80 mb-6">For serious professionals.</p>
+              <p className="text-muted-foreground mb-6">Unlock exclusive global opportunities and premium tools.</p>
               
-              <div className="bg-green-500/20 rounded-lg p-3 mb-6">
+              <div className="bg-primary/5 rounded-lg p-3 mb-6">
                 <div className="text-center">
-                  <span className="text-2xl font-bold text-green-300" data-testid="text-pro-commission">5%</span>
-                  <p className="text-xs text-green-200">commission - save 50%!</p>
+                  <span className="text-2xl font-bold text-primary" data-testid="text-pro-commission">5%</span>
+                  <p className="text-xs text-primary/80">commission - maximize your earnings</p>
                 </div>
               </div>
               
               <ul className="space-y-3">
                 {[
-                  "Everything in Free, plus:",
-                  "Pro badge on profile",
-                  "Priority in search results",
-                  "Featured on homepage",
-                  "Video calls with clients",
-                  "Advanced analytics",
-                  "Priority support"
+                  "Early access to Global Jobs",
+                  "Verified Premium Badge",
+                  "Top placement in Search",
+                  "Featured on Global Homepage",
+                  "Direct Client Video Chat",
+                  "Market-leading AI Analytics",
+                  "24/7 Dedicated Support"
                 ].map((feature, i) => (
                   <li key={i} className="flex items-start gap-3 text-sm" data-testid={`item-feature-pro-${i}`}>
-                    <Zap className="w-5 h-5 text-accent shrink-0" />
+                    <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
                     <span>{feature}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="p-8 bg-white/10 border-t border-white/10">
-              <Button className="w-full bg-accent text-primary hover:bg-accent/90 font-bold h-12 shadow-lg" data-testid="button-upgrade-pro" onClick={() => navigate("/auth")}>
-                  Upgrade to Pro
+            <div className="p-8 bg-muted/30 border-t border-border">
+              <Button className="w-full bg-primary text-white hover:bg-primary/90 font-bold h-12 shadow-md rounded-full" data-testid="button-upgrade-pro" onClick={() => navigate("/api/login")}>
+                  Start Free Trial
                 </Button>
             </div>
           </div>

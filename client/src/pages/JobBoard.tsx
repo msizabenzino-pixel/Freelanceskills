@@ -44,18 +44,18 @@ interface JobBoardResponse {
 }
 
 const SOURCES = [
-  "FreelanceSkills Direct"
+  "FreelanceSkills Global"
 ];
 
 const PROVINCES = [
   "Gauteng", "Western Cape", "KwaZulu-Natal", "Eastern Cape", 
-  "Free State", "Limpopo", "Mpumalanga", "North West", "Northern Cape"
+  "Free State", "Limpopo", "Mpumalanga", "North West", "Northern Cape", "International"
 ];
 
 const JOB_TYPES = ["full-time", "part-time", "contract", "remote", "hybrid"];
 
 const SOURCE_COLORS: Record<string, string> = {
-  "FreelanceSkills Direct": "bg-primary/10 text-primary border-primary/20",
+  "FreelanceSkills Global": "bg-primary/10 text-primary border-primary/20",
 };
 
 export default function JobBoard() {
@@ -93,7 +93,7 @@ export default function JobBoard() {
       });
     },
     onSuccess: () => {
-      toast({ title: "Updating Jobs...", description: "Fetching the latest opportunities across South Africa." });
+      toast({ title: "Global Intelligence Active", description: "Sourcing the latest verified opportunities worldwide." });
       refetch();
     }
   });
@@ -135,17 +135,17 @@ export default function JobBoard() {
                 data-testid="button-refresh-jobs"
               >
                 <RefreshCw className={cn("h-4 w-4", (refreshMutation.isPending || isFetching) && "animate-spin")} />
-                Update Jobs
+                Update Job Intelligence
               </Button>
             </div>
             
             <div className="max-w-3xl">
-              <h1 className="text-4xl font-bold text-slate-900 mb-2" data-testid="text-page-title">South African Job Board</h1>
-              <p className="text-lg text-slate-600 mb-6">Current opportunities verified and updated daily across South Africa.</p>
+              <h1 className="text-4xl font-bold text-slate-900 mb-2" data-testid="text-page-title">Global Job Board</h1>
+              <p className="text-lg text-slate-600 mb-6">World-class opportunities sourced by our AI agents. Verified and updated daily.</p>
               
               <div className="flex flex-wrap gap-2 mb-6">
                 <Badge variant="secondary" className="px-3 py-1 text-xs font-medium border bg-primary/10 text-primary border-primary/20">
-                  Verified Local Sources
+                  Global Intelligence Agent Active
                 </Badge>
               </div>
 
@@ -158,7 +158,7 @@ export default function JobBoard() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4" />
-                  Last checked: <span className="font-medium" data-testid="text-last-updated">{data?.lastUpdated ? new Date(data.lastUpdated).toLocaleTimeString() : 'Just now'}</span>
+                  Last check: <span className="font-medium" data-testid="text-last-updated">{data?.lastUpdated ? new Date(data.lastUpdated).toLocaleTimeString() : 'Just now'}</span>
                 </div>
               </div>
             </div>

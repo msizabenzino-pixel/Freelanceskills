@@ -897,42 +897,43 @@ Respond with ONLY the JSON object, no markdown.`
         baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
       });
 
-      const targetProvince = province || "Gauteng";
-      const targetCategory = category || "all";
+      const targetProvince = province || "International";
+      const targetCategory = category || "Software Development";
+
+      const systemPrompt = `You are the FreelanceSkills Global Job Intelligence Agent. 
+      Your task is to source current, high-quality job opportunities from across the entire world, with a strong focus on South Africa and remote-first international roles.
+      Only include jobs that are currently active and verified.
+      For the province "${targetProvince}" or global remote if applicable.
+      Source must be "FreelanceSkills Global".
+      Make jobs highly realistic with accurate salaries (converted to ZAR for SA roles, or USD/EUR for global), real company names, and professional descriptions.
+      Include a mix of: full-time, part-time, contract, and remote positions.
+      Include a mix of experience levels.
+      
+      Return a JSON object with a "jobs" array containing objects with these fields:
+      - title (string)
+      - company (string)
+      - description (string - professional, detailed)
+      - requirements (string - bullet points)
+      - location (string - city, country or "Remote")
+      - province (string - SA province or "International")
+      - salaryMin (number - monthly value)
+      - salaryMax (number - monthly value)
+      - salaryPeriod (string - "month")
+      - source (string - "FreelanceSkills Global")
+      - category (string)
+      - jobType (string - "full-time" | "part-time" | "contract" | "remote" | "hybrid")
+      - experienceLevel (string - "entry" | "intermediate" | "senior" | "executive")`;
 
       const response = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
           {
             role: "system",
-            content: `You are the FreelanceSkills Job Aggregator Agent. 
-      Your task is to find and format current job opportunities in South Africa.
-      Only include jobs that are currently active.
-      Province must be one of: Gauteng, Western Cape, KwaZulu-Natal, Eastern Cape, Free State, Limpopo, Mpumalanga, North West, Northern Cape.
-      Source must be "FreelanceSkills Direct".
-      Make jobs realistic for the South African market with proper ZAR salaries, real SA company names, and accurate job descriptions.
-      Include a mix of: full-time, part-time, contract, and remote positions.
-      Include a mix of experience levels.
-      For the province "${targetProvince}"${targetCategory !== 'all' ? ` in the "${targetCategory}" category` : ' across various categories'}.
-      
-      Return a JSON object with a "jobs" array containing objects with these fields:
-      - title (string)
-      - company (string - realistic SA company name)
-      - description (string - 2-3 paragraphs)
-      - requirements (string - bullet points as text)
-      - location (string - specific city/area)
-      - province (string - SA province)
-      - salaryMin (number - monthly ZAR, realistic for SA)
-      - salaryMax (number - monthly ZAR)
-      - salaryPeriod (string - "month")
-      - source (string - "FreelanceSkills Direct")
-      - category (string)
-      - jobType (string - "full-time" | "part-time" | "contract" | "remote" | "hybrid")
-      - experienceLevel (string - "entry" | "intermediate" | "senior" | "executive")`
+            content: systemPrompt
           },
-          { role: "user", content: `Generate 12 fresh job listings for ${targetProvince}${targetCategory !== 'all' ? ` in ${targetCategory}` : ''} as of today.` }
+          { role: "user", content: `Source 15-20 fresh global and local job listings for ${targetProvince}${targetCategory !== 'all' ? ` in ${targetCategory}` : ''} as of today.` }
         ],
-        temperature: 0.8,
+        temperature: 0.7,
         response_format: { type: "json_object" },
       });
 
@@ -948,7 +949,7 @@ Respond with ONLY the JSON object, no markdown.`
       
       const jobsToInsert = generatedJobs.map((job: any) => ({
         ...job,
-        source: "FreelanceSkills Direct",
+        source: "FreelanceSkills Global",
         isActive: true,
         postedDate: new Date(),
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),

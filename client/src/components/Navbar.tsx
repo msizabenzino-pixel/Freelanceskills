@@ -34,9 +34,11 @@ export function Navbar() {
     { name: "Explore", href: "/explore", highlight: true },
     { name: "AI Assistant", href: "/task-assistant", icon: Sparkles },
     { name: "Book a Tasker", href: "/services" },
-    { name: "SA Job Board", href: "/job-board" },
+    { name: "Global Job Board", href: "/job-board" },
     { name: "Find Work", href: "/jobs" },
     { name: "Pricing", href: "/pricing" },
+    { name: "Upload CV", href: "/cv-upload" },
+    { name: "AI Finder", href: "/opportunity-finder" },
     ...(isAuthenticated ? [
       { name: "Messages", href: "/messages" },
       { name: "Dashboard", href: "/dashboard" },

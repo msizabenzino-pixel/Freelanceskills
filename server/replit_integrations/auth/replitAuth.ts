@@ -116,9 +116,18 @@ export async function setupAuth(app: Express) {
   app.get("/api/login", (req, res, next) => {
     ensureStrategy(req.hostname);
     passport.authenticate(`replitauth:${req.hostname}`, {
-      prompt: isReplitDomain(req.hostname) ? "login consent" : "login",
+      prompt: "none", // Attempt silent login first
       scope: ["openid", "email", "profile", "offline_access"],
-    })(req, res, next);
+    })(req, res, (err: any) => {
+      if (err) {
+        console.error("Silent login error:", err);
+      }
+      // If silent login fails or error occurs, fall back to explicit login
+      passport.authenticate(`replitauth:${req.hostname}`, {
+        prompt: isReplitDomain(req.hostname) ? "login consent" : "login",
+        scope: ["openid", "email", "profile", "offline_access"],
+      })(req, res, next);
+    });
   });
 
   app.get("/api/callback", (req, res, next) => {
