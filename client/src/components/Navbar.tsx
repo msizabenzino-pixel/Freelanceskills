@@ -220,8 +220,7 @@ export function Navbar() {
                   {user?.firstName || "User"}
                 </span>
               </div>
-              <a href="/api/logout">
-                <Button 
+              <Button 
                   variant="ghost" 
                   size="sm"
                   className={cn(
@@ -229,14 +228,18 @@ export function Navbar() {
                     isScrolled || location !== "/" ? "text-muted-foreground" : "text-white/80"
                   )}
                   data-testid="button-logout"
+                  onClick={() => {
+                    fetch("/api/auth/logout", { method: "POST", credentials: "include" }).then(() => {
+                      window.location.href = "/";
+                    });
+                  }}
                 >
                   <LogOut className="w-4 h-4" />
                 </Button>
-              </a>
             </div>
           ) : (
             <>
-              <a href="/api/login">
+              <Link href="/auth">
                 <Button 
                   variant="ghost"
                   className={cn(
@@ -247,8 +250,8 @@ export function Navbar() {
                 >
                   Log In
                 </Button>
-              </a>
-              <a href="/api/login">
+              </Link>
+              <Link href="/auth">
                 <Button 
                   className={cn(
                     "font-semibold shadow-lg transition-all hover:scale-105 active:scale-95",
@@ -260,7 +263,7 @@ export function Navbar() {
                 >
                   Sign Up
                 </Button>
-              </a>
+              </Link>
             </>
           )}
         </div>
@@ -316,19 +319,23 @@ export function Navbar() {
           </button>
           <div className="h-px bg-border my-2" />
           {isAuthenticated ? (
-            <a href="/api/logout">
-              <Button variant="outline" className="w-full justify-center text-red-500 border-red-200 hover:bg-red-50" data-testid="button-mobile-logout">
+              <Button variant="outline" className="w-full justify-center text-red-500 border-red-200 hover:bg-red-50" data-testid="button-mobile-logout"
+                onClick={() => {
+                  fetch("/api/auth/logout", { method: "POST", credentials: "include" }).then(() => {
+                    window.location.href = "/";
+                  });
+                }}
+              >
                 <LogOut className="w-4 h-4 mr-2" /> Log Out
               </Button>
-            </a>
           ) : (
             <>
-              <a href="/api/login">
+              <Link href="/auth">
                 <Button variant="outline" className="w-full justify-center" data-testid="button-mobile-login">Log In</Button>
-              </a>
-              <a href="/api/login">
+              </Link>
+              <Link href="/auth">
                 <Button className="w-full justify-center bg-primary text-white" data-testid="button-mobile-signup">Sign Up</Button>
-              </a>
+              </Link>
             </>
           )}
         </div>

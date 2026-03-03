@@ -332,7 +332,7 @@ export default function HowToGetHired() {
               <div className="text-center pt-8 border-t">
                 <h3 className="text-xl font-bold mb-4">Ready to Start Earning?</h3>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <a href="/api/login">
+                  <a href="/auth">
                     <Button size="lg" className="gap-2 bg-amber-500 hover:bg-amber-600">
                       <User className="h-5 w-5" />
                       Create Your Profile

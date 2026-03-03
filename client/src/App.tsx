@@ -43,6 +43,7 @@ const Analytics = lazy(() => import("@/pages/Analytics"));
 const AISmartMatch = lazy(() => import("@/pages/AISmartMatch"));
 const JobBoard = lazy(() => import("@/pages/JobBoard"));
 const OpportunityFinder = lazy(() => import("@/pages/OpportunityFinder"));
+const Auth = lazy(() => import("@/pages/Auth"));
 
 function PageLoader() {
   return (
@@ -57,6 +58,7 @@ function Router() {
     <Suspense fallback={<PageLoader />}>
       <Switch>
         <Route path="/" component={Home} />
+        <Route path="/auth" component={Auth} />
         <Route path="/jobs" component={Jobs} />
         <Route path="/dashboard">
           <AuthGuard>

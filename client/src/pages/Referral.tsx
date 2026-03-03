@@ -116,7 +116,7 @@ export default function Referral() {
             <p className="text-xl text-white/80 max-w-2xl mx-auto mb-8">
               Refer friends to FreelanceSkills, and you both earn rewards. The more you share, the more you earn.
             </p>
-            <a href="/api/login">
+            <a href="/auth">
               <Button size="lg" className="bg-accent text-primary hover:bg-accent/90 font-bold gap-2" data-testid="button-get-referral-link-hero">
                 <Gift className="h-4 w-4" /> Get Your Referral Link
               </Button>
@@ -320,7 +320,7 @@ export default function Referral() {
             <p className="text-white/80 text-lg max-w-xl mx-auto mb-8">
               Sign up today and get your unique referral link. Share it with your network and watch the rewards roll in.
             </p>
-            <a href="/api/login">
+            <a href="/auth">
               <Button size="lg" className="bg-accent text-primary hover:bg-accent/90 font-bold gap-2 px-8" data-testid="button-get-referral-link-cta">
                 <Gift className="h-4 w-4" /> Get Your Referral Link
               </Button>

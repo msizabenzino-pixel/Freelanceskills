@@ -58,7 +58,7 @@ export default function Dashboard() {
   const { data: userRes, isLoading: userLoading, isError: userError } = useQuery<{ id: string } | null>({
     queryKey: ["/api/auth/user"],
     queryFn: async () => {
-      const res = await fetch("/api/auth/user");
+      const res = await fetch("/api/auth/user", { credentials: "include" });
       if (!res.ok) {
         if (res.status === 401) return null;
         throw new Error("Failed to fetch user");

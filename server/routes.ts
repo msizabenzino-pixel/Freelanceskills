@@ -874,21 +874,77 @@ Respond with ONLY the JSON object, no markdown.`
   app.get("/api/job-board", async (req, res) => {
     try {
       const { province, category, source, jobType } = req.query;
+      
+      const count = await storage.getAggregatedJobCount();
+      
+      if (count === 0) {
+        try {
+          const openai = new (await import("openai")).default({
+            apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
+            baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+          });
+
+          const seedPrompt = `You are the FreelanceSkills Global Job Intelligence Agent. Source 20 high-quality job opportunities: 12 from South Africa across major cities (Johannesburg, Cape Town, Durban, Pretoria) and 8 international remote-first roles. Include a mix of: Software Development, Marketing, Finance, Design, Engineering, Sales, Data Science, and Customer Service. Source must be "FreelanceSkills Global". Make all jobs highly realistic with accurate salaries, real company names, and professional descriptions.
+          
+          Return a JSON object with a "jobs" array containing objects with these fields:
+          - title (string)
+          - company (string)
+          - description (string - professional, 2-3 sentences)
+          - requirements (string - bullet points)
+          - location (string - city, country or "Remote")
+          - province (string - SA province or "International")
+          - salaryMin (number - monthly value in ZAR)
+          - salaryMax (number - monthly value in ZAR)
+          - salaryPeriod (string - "month")
+          - source (string - "FreelanceSkills Global")
+          - category (string)
+          - jobType (string - "full-time" | "part-time" | "contract" | "remote" | "hybrid")
+          - experienceLevel (string - "entry" | "intermediate" | "senior" | "executive")`;
+
+          const response = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [
+              { role: "system", content: seedPrompt },
+              { role: "user", content: "Source 20 fresh global job listings across multiple categories and locations as of today." }
+            ],
+            temperature: 0.7,
+            response_format: { type: "json_object" },
+          });
+
+          const content = response.choices[0]?.message?.content || '{"jobs": []}';
+          const parsed = JSON.parse(content);
+          const generatedJobs = parsed.jobs || [];
+          
+          const jobsToInsert = generatedJobs.map((job: any) => ({
+            ...job,
+            source: "FreelanceSkills Global",
+            isActive: true,
+            postedDate: new Date(),
+            expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+          }));
+
+          await storage.createManyAggregatedJobs(jobsToInsert);
+          console.log(`Auto-seeded ${jobsToInsert.length} jobs on first load`);
+        } catch (seedError) {
+          console.error("Error auto-seeding jobs:", seedError);
+        }
+      }
+      
       const jobs = await storage.getAggregatedJobs({
         province: province ? String(province) : undefined,
         category: category ? String(category) : undefined,
         source: source ? String(source) : undefined,
         jobType: jobType ? String(jobType) : undefined,
       });
-      const count = await storage.getAggregatedJobCount();
-      res.json({ jobs, totalCount: count, lastUpdated: new Date().toISOString() });
+      const totalCount = await storage.getAggregatedJobCount();
+      res.json({ jobs, totalCount, lastUpdated: new Date().toISOString() });
     } catch (error) {
       console.error("Error fetching job board:", error);
       res.status(500).json({ message: "Failed to fetch jobs" });
     }
   });
 
-  app.post("/api/job-board/refresh", isAuthenticated, async (req: any, res) => {
+  app.post("/api/job-board/refresh", async (req: any, res) => {
     try {
       const { province, category } = req.body;
 

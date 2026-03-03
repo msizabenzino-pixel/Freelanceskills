@@ -4,6 +4,7 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LogIn, Loader2, Shield } from "lucide-react";
+import { useLocation } from "wouter";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -12,6 +13,7 @@ interface AuthGuardProps {
 
 export function AuthGuard({ children, message = "You need to sign in to access this page." }: AuthGuardProps) {
   const { isAuthenticated, isLoading } = useAuth();
+  const [, navigate] = useLocation();
 
   if (isLoading) {
     return (
@@ -40,9 +42,10 @@ export function AuthGuard({ children, message = "You need to sign in to access t
               <Button
                 size="lg"
                 className="gap-2 font-bold"
-                onClick={() => { window.location.href = "/api/login"; }}
+                onClick={() => navigate("/auth")}
                 data-testid="button-sign-in"
               >
+                <LogIn className="w-4 h-4" />
                 Sign In
               </Button>
             </CardContent>

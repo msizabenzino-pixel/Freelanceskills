@@ -196,7 +196,7 @@ export default function Pricing() {
               </ul>
             </div>
             <div className="p-8 bg-muted/30 border-t border-border">
-              <Button className="w-full bg-primary text-white hover:bg-primary/90 font-bold h-12 shadow-md rounded-full" data-testid="button-upgrade-pro" onClick={() => navigate("/api/login")}>
+              <Button className="w-full bg-primary text-white hover:bg-primary/90 font-bold h-12 shadow-md rounded-full" data-testid="button-upgrade-pro" onClick={() => navigate("/auth")}>
                   Start Free Trial
                 </Button>
             </div>
