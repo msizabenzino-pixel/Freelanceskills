@@ -38,7 +38,8 @@ Preferred communication style: Simple, everyday language.
 - **Global Job Board** (`/job-board`): AI-powered global job intelligence agent sources 15-20 worldwide + SA jobs per refresh, auto-seeds on first load if DB is empty.
 - **AI Opportunity Finder** (`/opportunity-finder`): AI agent that sources jobs, apprenticeships, bursaries, learnerships, internships, and graduate programmes matching user profile.
 - **AI Cover Letter Generator**: Generates tailored cover letters for job applications.
-- **API Endpoints**: `/api/ai/analyze-task`, `/api/ai/generate-proposal`, `/api/cv/parse`, `/api/job-board`, `/api/opportunities/search`, etc.
+- **AI Support Chat Bot** (`SupportChat.tsx`): Floating chat widget (bottom-right) powered by OpenAI gpt-4o-mini. Answers platform questions intelligently. Hands off to WhatsApp (wa.me/27601234567) after 3 messages or on request.
+- **API Endpoints**: `/api/ai/analyze-task`, `/api/ai/generate-proposal`, `/api/ai/support-chat`, `/api/cv/parse`, `/api/job-board`, `/api/opportunities/search`, etc.
 
 ### Authentication Flow
 - Custom email/password auth (POST `/api/auth/register`, POST `/api/auth/login`, POST `/api/auth/logout`, GET `/api/auth/user`)
@@ -72,3 +73,11 @@ Preferred communication style: Simple, everyday language.
 - Lucide React for icons.
 - Framer Motion for animations.
 - Embla Carousel.
+
+### Key Pages & Navigation
+- **Navbar**: 5 main items — Find Work (dropdown: Job Board, Browse Jobs, AI Finder, Upload CV), Services, Explore, AI Assistant, Pricing
+- **Home** (`/`): Hero, categories grid linking to Explore, featured freelancers, trending projects
+- **Explore** (`/explore`): Category filtering with icon grid, filters freelancers/projects, "View Services" links to /services?category=X
+- **Pricing** (`/pricing`): Free (R0, 10% commission) / Premium Talent (R79/mo, 5% commission, visually prominent) / Enterprise (custom)
+- **Services** (`/services`): TaskRabbit-style service packages with booking
+- **Auth** (`/auth`): Custom login/signup with email+password, no third-party branding

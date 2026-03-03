@@ -373,6 +373,75 @@ export async function registerRoutes(
     res.json(result);
   });
 
+  // AI Support Chat endpoint
+  app.post("/api/ai/support-chat", async (req, res) => {
+    try {
+      const { message, history = [] } = req.body;
+      const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
+      const baseUrl = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL || "https://api.openai.com/v1";
+
+      if (!apiKey) {
+        return res.status(500).json({ message: "AI API key not configured" });
+      }
+
+      const systemPrompt = `You are the FreelanceSkills AI Support Bot. You help users with questions about the FreelanceSkills platform.
+FreelanceSkills is a South African freelance marketplace (similar to Upwork/TaskRabbit).
+
+Pricing & Commission:
+- Free Plan: R0/month, 10% commission on completed jobs.
+- Premium Talent: R79/month, 5% commission, priority in search, Pro badge.
+- Enterprise: Custom pricing for large teams and high-volume hiring.
+
+Key Features & How-To:
+- Posting Jobs: Click "Post a Job" in the navbar. AI can help generate descriptions.
+- Finding Work: Browse the "Job Board" or use the "AI Opportunity Finder".
+- Subscriptions: Users can upgrade to Premium for lower commissions and better visibility.
+- Escrow & Payments: We use a secure escrow system. Client pays upfront, funds are held by FreelanceSkills, and released when work is approved.
+- CV Upload: Users can upload a CV (PDF/Word) to automatically generate their profile using AI.
+- Verification: Basic (email/phone) and Full (ID, qualifications, professional body check). Verified profiles get more work.
+
+Guidelines:
+- Be professional, helpful, and concise.
+- Use South African English/terminology where appropriate (e.g., R for Rand).
+- If the user asks for a human, agent, or support, or if you have exchanged 3 or more messages in this conversation, you MUST provide the WhatsApp handoff.
+- WhatsApp Handoff: "Chat with our team on WhatsApp for instant help: https://wa.me/27601234567"
+
+Current Conversation History:
+${history.map((m: any) => `${m.role}: ${m.content}`).join("\n")}
+User: ${message}`;
+
+      const response = await fetch(`${baseUrl}/chat/completions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: message }
+          ],
+          temperature: 0.7,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("OpenAI API error:", errorData);
+        throw new Error("Failed to get AI response");
+      }
+
+      const data = await response.json();
+      const aiResponse = data.choices[0].message.content;
+
+      res.json({ message: aiResponse });
+    } catch (error) {
+      console.error("Error in support-chat:", error);
+      res.status(500).json({ message: "I'm having trouble connecting to my brain right now. Please try again or contact support via WhatsApp: https://wa.me/27601234567" });
+    }
+  });
+
   // ============ VERIFICATION & VETTING SYSTEM ============
   
   const { VERIFICATION_LEVELS, SA_PROFESSIONAL_BODIES, CONCERN_CATEGORIES } = await import("@shared/schema");

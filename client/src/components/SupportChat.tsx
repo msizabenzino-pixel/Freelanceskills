@@ -112,17 +112,16 @@ export function SupportChat() {
     scrollToBottom();
   }, [messages]);
 
+  const [messageCount, setMessageCount] = useState(0);
+
   const addBotMessage = (content: string, options?: Message["options"]) => {
-    setIsTyping(true);
-    setTimeout(() => {
-      setMessages(prev => [...prev, {
-        id: Date.now().toString(),
-        type: "bot",
-        content,
-        options
-      }]);
-      setIsTyping(false);
-    }, 500 + Math.random() * 500);
+    setMessages(prev => [...prev, {
+      id: Date.now().toString(),
+      type: "bot",
+      content,
+      options
+    }]);
+    setIsTyping(false);
   };
 
   const handleCategorySelect = (categoryId: string) => {
@@ -130,63 +129,85 @@ export function SupportChat() {
     setShowCategories(false);
     
     const category = SUPPORT_CATEGORIES.find(c => c.id === categoryId);
-    setMessages([{
-      id: "1",
+    const userMsg: Message = {
+      id: Date.now().toString(),
       type: "user",
       content: category?.label || categoryId
-    }]);
+    };
+    setMessages([userMsg]);
+    setMessageCount(1);
+    
+    // Call AI for the category selection too
+    handleAISupport(userMsg.content, []);
+  };
 
-    const response = AI_RESPONSES[categoryId];
-    if (response) {
-      addBotMessage(response.message, response.followUp?.map(q => ({ label: q, value: q })));
+  const handleAISupport = async (text: string, currentMessages: Message[]) => {
+    setIsTyping(true);
+    try {
+      const history = currentMessages.map(m => ({
+        role: m.type === "user" ? "user" : "assistant",
+        content: m.content
+      }));
+
+      const response = await fetch("/api/ai/support-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text, history }),
+      });
+
+      if (!response.ok) throw new Error("Failed to get AI response");
+
+      const data = await response.json();
+      
+      // Check for human handoff trigger
+      const needsHandoff = messageCount >= 2 || 
+        text.toLowerCase().includes("human") || 
+        text.toLowerCase().includes("agent") || 
+        text.toLowerCase().includes("support");
+
+      let content = data.message;
+      if (needsHandoff && !content.includes("https://wa.me/27601234567")) {
+        content += "\n\nChat with our team on WhatsApp for instant help: https://wa.me/27601234567";
+      }
+
+      addBotMessage(content);
+    } catch (error) {
+      console.error("Support chat error:", error);
+      addBotMessage("I'm sorry, I'm having trouble connecting. Please try again or chat with our team on WhatsApp: https://wa.me/27601234567");
+    } finally {
+      setIsTyping(false);
     }
   };
 
   const handleOptionClick = (value: string) => {
-    if (value.toLowerCase().includes("human") || value.toLowerCase().includes("support team") || value.toLowerCase().includes("speak to")) {
-      setMessages(prev => [...prev, { id: Date.now().toString(), type: "user", content: value }]);
-      addBotMessage("I'll connect you with our support team right away! You can:\n\n📱 **WhatsApp:** +27 60 123 4567\n📧 **Email:** support@freelanceskill.co.za\n📞 **Call:** 0800 123 456 (Free)\n\nOur team is available:\n🕐 Mon-Fri: 8am - 8pm\n🕐 Sat-Sun: 9am - 5pm\n\nAverage response time: **< 5 minutes** on WhatsApp!");
-      return;
-    }
-
-    setMessages(prev => [...prev, { id: Date.now().toString(), type: "user", content: value }]);
-    
-    const response = AI_RESPONSES[value];
-    if (response) {
-      addBotMessage(response.message);
-    } else {
-      addBotMessage("Let me find that information for you... \n\nIf you'd prefer to speak with a human, our team is ready to help on WhatsApp: +27 60 123 4567");
-    }
+    const userMsg: Message = { id: Date.now().toString(), type: "user", content: value };
+    setMessages(prev => [...prev, userMsg]);
+    setMessageCount(prev => prev + 1);
+    handleAISupport(value, [...messages, userMsg]);
   };
 
   const handleSend = () => {
     if (!inputValue.trim()) return;
     
-    setMessages(prev => [...prev, {
+    const userMsg: Message = {
       id: Date.now().toString(),
       type: "user",
       content: inputValue
-    }]);
+    };
     
-    const query = inputValue.toLowerCase();
+    const newMessages = [...messages, userMsg];
+    setMessages(newMessages);
+    setMessageCount(prev => prev + 1);
     setInputValue("");
 
-    // Simple AI matching
-    if (query.includes("profile") || query.includes("cv") || query.includes("account")) {
-      addBotMessage("For profile help, I can assist with:\n\n• Creating a new profile\n• Uploading your CV for AI profile generation\n• Getting verified\n• Updating your information\n\nWhat would you like help with specifically?");
-    } else if (query.includes("pay") || query.includes("money") || query.includes("fee") || query.includes("commission")) {
-      addBotMessage(AI_RESPONSES["How does payment work?"].message);
-    } else if (query.includes("human") || query.includes("person") || query.includes("agent") || query.includes("support")) {
-      addBotMessage("I'll connect you with our support team! 🙋\n\n📱 **WhatsApp (Fastest):** +27 60 123 4567\n📧 **Email:** support@freelanceskill.co.za\n📞 **Call:** 0800 123 456\n\nOur team typically responds within 5 minutes on WhatsApp!");
-    } else {
-      addBotMessage("Thanks for your question! Let me help you with that.\n\nIf I can't fully answer your question, our support team is available on WhatsApp: **+27 60 123 4567**\n\nThey're friendly and quick to respond! 😊");
-    }
+    handleAISupport(inputValue, newMessages);
   };
 
   const resetChat = () => {
     setMessages([]);
     setShowCategories(true);
     setSelectedCategory(null);
+    setMessageCount(0);
   };
 
   return (

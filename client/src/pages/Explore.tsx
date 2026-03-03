@@ -48,12 +48,13 @@ import {
   GraduationCap,
   Zap,
   Users,
-  BadgeCheck
+  BadgeCheck,
+  Bot
 } from "lucide-react";
 
 const ICON_MAP: Record<string, any> = {
   Code, Wrench, Heart, Hammer, Home, Waves, Car, Shield, Palette, PenTool, 
-  Briefcase, PartyPopper, GraduationCap, TrendingUp, Sparkles
+  Briefcase, PartyPopper, GraduationCap, TrendingUp, Sparkles, Bot
 };
 
 const TRENDING_SEARCHES = [
@@ -154,7 +155,25 @@ export default function Explore() {
     setRating("");
     setAvailability("");
     setExperience("");
+    setSearchQuery("");
   };
+
+  const filteredFreelancers = FEATURED_FREELANCERS.filter(freelancer => {
+    if (selectedCategory && freelancer.category !== selectedCategory) return false;
+    if (searchQuery && !freelancer.name.toLowerCase().includes(searchQuery.toLowerCase()) && !freelancer.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    if (location && !freelancer.location.toLowerCase().includes(location.toLowerCase())) return false;
+    // Note: other filters like budget/rating can be added here if we had more mock data
+    return true;
+  });
+
+  const filteredProjects = TRENDING_PROJECTS.filter(project => {
+    if (selectedCategory) {
+      const catName = SERVICE_CATEGORIES.find(c => c.id === selectedCategory)?.name;
+      if (catName && project.category.toLowerCase() !== catName.toLowerCase()) return false;
+    }
+    if (searchQuery && !project.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    return true;
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -251,7 +270,13 @@ export default function Explore() {
                       <IconComponent className="h-6 w-6" />
                     </div>
                     <h3 className="font-semibold text-sm mb-1">{category.name}</h3>
-                    <p className="text-xs text-muted-foreground line-clamp-2">{category.description}</p>
+                    <p className="text-xs text-muted-foreground line-clamp-2 mb-3">{category.description}</p>
+                    <Link href={`/services?category=${category.id}`}>
+                      <Button variant="ghost" size="sm" className="w-full text-xs h-8 opacity-0 group-hover:opacity-100 transition-opacity" data-testid={`button-view-services-${category.id}`}>
+                        View Services
+                        <ChevronRight className="ml-1 h-3 w-3" />
+                      </Button>
+                    </Link>
                   </button>
                 );
               })}
@@ -427,43 +452,50 @@ export default function Explore() {
                     <h3 className="font-bold text-lg" data-testid="text-recommendations-title">Recommended for You</h3>
                   </div>
                   <div className="grid md:grid-cols-2 gap-4">
-                    {FEATURED_FREELANCERS.map((freelancer) => (
-                      <Link key={freelancer.id} href={`/profile/${freelancer.id}`} data-testid={`link-freelancer-${freelancer.id}`}>
-                        <div className="bg-card rounded-xl border p-4 hover:shadow-lg transition-shadow cursor-pointer" data-testid={`card-freelancer-${freelancer.id}`}>
-                          <div className="flex gap-4">
-                            <img 
-                              src={freelancer.avatar} 
-                              alt={freelancer.name}
-                              className="w-16 h-16 rounded-full object-cover"
-                              data-testid={`img-freelancer-avatar-${freelancer.id}`}
-                            />
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2">
-                                <h4 className="font-semibold" data-testid={`text-freelancer-name-${freelancer.id}`}>{freelancer.name}</h4>
-                                {freelancer.verified && (
-                                  <BadgeCheck className="h-4 w-4 text-blue-500" data-testid={`icon-verified-${freelancer.id}`} />
-                                )}
+                    {filteredFreelancers.length > 0 ? (
+                      filteredFreelancers.map((freelancer) => (
+                        <Link key={freelancer.id} href={`/profile/${freelancer.id}`} data-testid={`link-freelancer-${freelancer.id}`}>
+                          <div className="bg-card rounded-xl border p-4 hover:shadow-lg transition-shadow cursor-pointer h-full" data-testid={`card-freelancer-${freelancer.id}`}>
+                            <div className="flex gap-4">
+                              <img 
+                                src={freelancer.avatar} 
+                                alt={freelancer.name}
+                                className="w-16 h-16 rounded-full object-cover"
+                                data-testid={`img-freelancer-avatar-${freelancer.id}`}
+                              />
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                  <h4 className="font-semibold" data-testid={`text-freelancer-name-${freelancer.id}`}>{freelancer.name}</h4>
+                                  {freelancer.verified && (
+                                    <BadgeCheck className="h-4 w-4 text-blue-500" data-testid={`icon-verified-${freelancer.id}`} />
+                                  )}
+                                </div>
+                                <p className="text-sm text-muted-foreground" data-testid={`text-freelancer-title-${freelancer.id}`}>{freelancer.title}</p>
+                                <div className="flex items-center gap-3 mt-2 text-sm">
+                                  <span className="flex items-center gap-1 text-amber-500" data-testid={`text-freelancer-rating-${freelancer.id}`}>
+                                    <Star className="h-4 w-4 fill-current" />
+                                    {freelancer.rating} ({freelancer.reviews})
+                                  </span>
+                                  <span className="flex items-center gap-1 text-muted-foreground" data-testid={`text-freelancer-location-${freelancer.id}`}>
+                                    <MapPin className="h-3 w-3" />
+                                    {freelancer.location}
+                                  </span>
+                                </div>
                               </div>
-                              <p className="text-sm text-muted-foreground" data-testid={`text-freelancer-title-${freelancer.id}`}>{freelancer.title}</p>
-                              <div className="flex items-center gap-3 mt-2 text-sm">
-                                <span className="flex items-center gap-1 text-amber-500" data-testid={`text-freelancer-rating-${freelancer.id}`}>
-                                  <Star className="h-4 w-4 fill-current" />
-                                  {freelancer.rating} ({freelancer.reviews})
-                                </span>
-                                <span className="flex items-center gap-1 text-muted-foreground" data-testid={`text-freelancer-location-${freelancer.id}`}>
-                                  <MapPin className="h-3 w-3" />
-                                  {freelancer.location}
-                                </span>
+                              <div className="text-right">
+                                <p className="font-bold text-primary" data-testid={`text-freelancer-rate-${freelancer.id}`}>{formatAmount(freelancer.hourlyRate)}</p>
+                                <p className="text-xs text-muted-foreground">/hour</p>
                               </div>
-                            </div>
-                            <div className="text-right">
-                              <p className="font-bold text-primary" data-testid={`text-freelancer-rate-${freelancer.id}`}>{formatAmount(freelancer.hourlyRate)}</p>
-                              <p className="text-xs text-muted-foreground">/hour</p>
                             </div>
                           </div>
-                        </div>
-                      </Link>
-                    ))}
+                        </Link>
+                      ))
+                    ) : (
+                      <div className="col-span-full py-12 text-center bg-card rounded-xl border border-dashed">
+                        <p className="text-muted-foreground">No freelancers found matching your criteria.</p>
+                        <Button variant="link" onClick={clearAllFilters} className="mt-2">Clear all filters</Button>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -474,24 +506,30 @@ export default function Explore() {
                     <h3 className="font-bold text-lg" data-testid="text-trending-projects-title">Trending Projects</h3>
                   </div>
                   <div className="space-y-3">
-                    {TRENDING_PROJECTS.map((project, i) => (
-                      <div key={i} className="bg-card rounded-xl border p-4 hover:shadow-md transition-shadow cursor-pointer" data-testid={`card-project-${i}`}>
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="font-semibold" data-testid={`text-project-title-${i}`}>{project.title}</h4>
-                            <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
-                              <span data-testid={`text-project-category-${i}`}>{project.category}</span>
-                              <span data-testid={`text-project-budget-${i}`}>{project.budget}</span>
-                              <span className="flex items-center gap-1" data-testid={`text-project-bids-${i}`}>
-                                <Users className="h-3 w-3" />
-                                {project.bids} proposals
-                              </span>
+                    {filteredProjects.length > 0 ? (
+                      filteredProjects.map((project, i) => (
+                        <div key={i} className="bg-card rounded-xl border p-4 hover:shadow-md transition-shadow cursor-pointer" data-testid={`card-project-${i}`}>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h4 className="font-semibold" data-testid={`text-project-title-${i}`}>{project.title}</h4>
+                              <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
+                                <span data-testid={`text-project-category-${i}`}>{project.category}</span>
+                                <span data-testid={`text-project-budget-${i}`}>{project.budget}</span>
+                                <span className="flex items-center gap-1" data-testid={`text-project-bids-${i}`}>
+                                  <Users className="h-3 w-3" />
+                                  {project.bids} proposals
+                                </span>
+                              </div>
                             </div>
+                            <ChevronRight className="h-5 w-5 text-muted-foreground" />
                           </div>
-                          <ChevronRight className="h-5 w-5 text-muted-foreground" />
                         </div>
+                      ))
+                    ) : (
+                      <div className="py-8 text-center bg-card rounded-xl border border-dashed">
+                        <p className="text-muted-foreground">No trending projects in this category.</p>
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
               </div>

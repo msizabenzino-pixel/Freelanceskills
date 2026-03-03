@@ -4,9 +4,16 @@ import { JobCard } from "@/components/JobCard";
 import { FreelancerCard } from "@/components/FreelancerCard";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users, Gift, Building2, Brain, Link2, Wallet, BarChart3, Leaf, Globe } from "lucide-react";
-import { useLocation } from "wouter";
+import { ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users, Gift, Building2, Brain, Link2, Wallet, BarChart3, Leaf, Globe, ChevronRight } from "lucide-react";
+import { useLocation, Link } from "wouter";
 import { useCurrency } from "@/lib/currency";
+import { SERVICE_CATEGORIES } from "@shared/categories";
+import { Code, Wrench, Heart, Hammer, Home as HomeIcon, Waves, Car, Shield as ShieldIcon, Palette, PenTool, Briefcase, PartyPopper, Sparkles as SparklesIcon, Bot } from "lucide-react";
+
+const ICON_MAP: Record<string, any> = {
+  Code, Wrench, Heart, Hammer, Home: HomeIcon, Waves, Car, Shield: ShieldIcon, Palette, PenTool, 
+  Briefcase, PartyPopper, GraduationCap, TrendingUp, Sparkles: SparklesIcon, Bot
+};
 
 export default function Home() {
   const { formatAmount, formatRange, formatRate, formatRateRange } = useCurrency();
@@ -243,9 +250,43 @@ export default function Home() {
           </div>
 
           <div className="text-center mt-12">
-            <Button size="lg" className="bg-primary text-white hover:bg-primary/90 px-8" onClick={() => navigate("/freelancers")} data-testid="button-view-all-talent">
+            <Button size="lg" className="bg-primary text-white hover:bg-primary/90 px-8" onClick={() => navigate("/explore")} data-testid="button-view-all-talent">
                 View All Talent
               </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Categories Grid */}
+      <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">Explore by Category</h2>
+            <p className="text-muted-foreground text-lg">Find the right expert for your specific needs</p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+            {SERVICE_CATEGORIES.slice(0, 8).map((category) => {
+              const IconComponent = ICON_MAP[category.icon] || Briefcase;
+              return (
+                <Link key={category.id} href={`/explore?category=${category.id}`}>
+                  <button
+                    className="w-full p-4 bg-card rounded-xl border border-border hover:border-primary hover:shadow-lg transition-all text-center group"
+                    data-testid={`button-home-category-${category.id}`}
+                  >
+                    <div className={`w-12 h-12 ${category.color} rounded-xl flex items-center justify-center text-white mb-3 group-hover:scale-110 transition-transform mx-auto`}>
+                      <IconComponent className="h-6 w-6" />
+                    </div>
+                    <h3 className="font-semibold text-xs mb-1 line-clamp-1">{category.name}</h3>
+                  </button>
+                </Link>
+              );
+            })}
+          </div>
+          <div className="text-center mt-10">
+            <Button variant="outline" onClick={() => navigate("/explore")} data-testid="button-home-view-all-categories">
+              View All Categories <ChevronRight className="ml-2 h-4 w-4" />
+            </Button>
           </div>
         </div>
       </section>

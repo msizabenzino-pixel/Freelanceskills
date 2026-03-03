@@ -33,17 +33,87 @@ export function Navbar() {
   const navLinks = [
     { name: "Explore", href: "/explore", highlight: true },
     { name: "AI Assistant", href: "/task-assistant", icon: Sparkles },
-    { name: "Book a Tasker", href: "/services" },
-    { name: "Global Job Board", href: "/job-board" },
-    { name: "Find Work", href: "/jobs" },
+    { name: "Services", href: "/services" },
     { name: "Pricing", href: "/pricing" },
-    { name: "Upload CV", href: "/cv-upload" },
-    { name: "AI Finder", href: "/opportunity-finder" },
     ...(isAuthenticated ? [
       { name: "Messages", href: "/messages" },
       { name: "Dashboard", href: "/dashboard" },
     ] : []),
   ];
+
+  const FindWorkMenu = () => {
+    const findWorkPaths = ["/job-board", "/jobs", "/opportunity-finder", "/cv-upload"];
+    const isFindWorkActive = findWorkPaths.includes(location);
+
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            className={cn(
+              "flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+              isScrolled || location !== "/"
+                ? isFindWorkActive
+                  ? "text-primary bg-primary/8 font-semibold"
+                  : "text-muted-foreground hover:text-primary hover:bg-muted"
+                : isFindWorkActive
+                  ? "text-white font-semibold bg-white/15"
+                  : "text-white/90 hover:text-white hover:bg-white/10"
+            )}
+            data-testid="button-find-work-menu"
+          >
+            <span>Find Work</span>
+            <ChevronDown className="h-3 w-3" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="w-64">
+          <Link href="/job-board">
+            <DropdownMenuItem className="cursor-pointer py-3" data-testid="link-job-board">
+              <div className="flex items-start gap-3">
+                <Briefcase className="h-5 w-5 text-primary mt-0.5" />
+                <div>
+                  <div className="font-medium">Global Job Board</div>
+                  <div className="text-xs text-muted-foreground">Browse all international jobs</div>
+                </div>
+              </div>
+            </DropdownMenuItem>
+          </Link>
+          <Link href="/jobs">
+            <DropdownMenuItem className="cursor-pointer py-3" data-testid="link-browse-jobs">
+              <div className="flex items-start gap-3">
+                <Users className="h-5 w-5 text-blue-500 mt-0.5" />
+                <div>
+                  <div className="font-medium">Browse Jobs</div>
+                  <div className="text-xs text-muted-foreground">Find local and remote tasks</div>
+                </div>
+              </div>
+            </DropdownMenuItem>
+          </Link>
+          <Link href="/opportunity-finder">
+            <DropdownMenuItem className="cursor-pointer py-3" data-testid="link-ai-finder">
+              <div className="flex items-start gap-3">
+                <Sparkles className="h-5 w-5 text-accent mt-0.5" />
+                <div>
+                  <div className="font-medium">AI Opportunity Finder</div>
+                  <div className="text-xs text-muted-foreground">Smart matching for your skills</div>
+                </div>
+              </div>
+            </DropdownMenuItem>
+          </Link>
+          <Link href="/cv-upload">
+            <DropdownMenuItem className="cursor-pointer py-3" data-testid="link-upload-cv">
+              <div className="flex items-start gap-3">
+                <HelpCircle className="h-5 w-5 text-green-500 mt-0.5" />
+                <div>
+                  <div className="font-medium">Upload CV</div>
+                  <div className="text-xs text-muted-foreground">Get noticed by employers</div>
+                </div>
+              </div>
+            </DropdownMenuItem>
+          </Link>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  };
 
   const HelpMenu = () => (
     <DropdownMenu>
@@ -131,6 +201,7 @@ export function Navbar() {
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-1">
+            <FindWorkMenu />
             {navLinks.map((link) => {
               const isActive = location === link.href;
               return (
@@ -198,7 +269,7 @@ export function Navbar() {
                 "hover:text-accent hover:bg-transparent font-medium",
                 isScrolled || location !== "/" ? "text-primary" : "text-white"
               )}
-              data-testid="button-post-job"
+              data-testid="button-post-job-navbar"
               onClick={() => navigate("/post-job")}
             >
               Post a Job
@@ -288,23 +359,45 @@ export function Navbar() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="absolute top-full left-0 right-0 bg-background border-b border-border p-4 flex flex-col gap-4 shadow-xl md:hidden animate-in slide-in-from-top-2">
-          {navLinks.map((link) => {
-            const isActive = location === link.href;
-            return (
-              <Link key={link.name} href={link.href} className={cn(
-                "text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md flex items-center gap-2",
-                link.icon && "text-primary"
-              )} data-testid={`link-mobile-nav-${link.name.toLowerCase().replace(/\s+/g, '-')}`}>
-                  {link.icon && <link.icon className="h-4 w-4" />}
-                  {link.name}
-              </Link>
-            );
-          })}
+        <div className="absolute top-full left-0 right-0 bg-background border-b border-border p-4 flex flex-col gap-4 shadow-xl md:hidden animate-in slide-in-from-top-2 overflow-y-auto max-h-[80vh]">
+          <div className="flex flex-col gap-2">
+            <h3 className="text-xs font-semibold text-muted-foreground px-2 uppercase tracking-wider">Find Work</h3>
+            <Link href="/job-board" className="text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md flex items-center gap-2" data-testid="link-mobile-job-board">
+              <Briefcase className="h-4 w-4 text-primary" /> Global Job Board
+            </Link>
+            <Link href="/jobs" className="text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md flex items-center gap-2" data-testid="link-mobile-browse-jobs">
+              <Users className="h-4 w-4 text-blue-500" /> Browse Jobs
+            </Link>
+            <Link href="/opportunity-finder" className="text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md flex items-center gap-2" data-testid="link-mobile-ai-finder">
+              <Sparkles className="h-4 w-4 text-accent" /> AI Opportunity Finder
+            </Link>
+            <Link href="/cv-upload" className="text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md flex items-center gap-2" data-testid="link-mobile-cv-upload">
+              <HelpCircle className="h-4 w-4 text-green-500" /> Upload CV
+            </Link>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <h3 className="text-xs font-semibold text-muted-foreground px-2 uppercase tracking-wider">Navigation</h3>
+            {navLinks.map((link) => {
+              const isActive = location === link.href;
+              return (
+                <Link key={link.name} href={link.href} className={cn(
+                  "text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md flex items-center gap-2",
+                  isActive && "text-primary bg-primary/5",
+                  link.icon && "text-primary"
+                )} data-testid={`link-mobile-nav-${link.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                    {link.icon && <link.icon className="h-4 w-4" />}
+                    {link.name}
+                </Link>
+              );
+            })}
+          </div>
+
+          <div className="h-px bg-border my-1" />
           <Link href="/post-job" className="text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md" data-testid="link-mobile-post-job">
               Post a Job
           </Link>
-          <div className="h-px bg-border my-2" />
+          <div className="h-px bg-border my-1" />
           <div className="flex items-center justify-between p-2 bg-muted/30 rounded-md">
             <span className="text-sm text-muted-foreground">Region & Currency</span>
             <CountrySelector />

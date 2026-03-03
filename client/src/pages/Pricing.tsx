@@ -157,7 +157,7 @@ export default function Pricing() {
           </div>
 
           {/* Pro Tier */}
-          <div className="bg-white text-foreground rounded-2xl shadow-2xl border border-border relative overflow-hidden flex flex-col transform md:-translate-y-4">
+          <div className="bg-white text-foreground rounded-2xl shadow-2xl border-2 border-primary relative overflow-hidden flex flex-col transform md:-translate-y-4 ring-4 ring-primary/10">
             <div className="absolute top-0 right-0 bg-primary text-white text-xs font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider flex items-center gap-1" data-testid="badge-most-popular">
               <Crown className="h-3 w-3" />
               Premium
@@ -165,16 +165,23 @@ export default function Pricing() {
             
             <div className="p-8 flex-1">
               <h3 className="text-xl font-bold text-primary mb-2">Premium Talent</h3>
-              <div className="flex items-baseline gap-1 mb-4">
-                <span className="text-4xl font-display font-bold" data-testid="text-pro-price">{formatPrice(proMonthlyPrice)}</span>
-                <span className="text-muted-foreground">/ month</span>
+              <div className="flex flex-col mb-4">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-5xl font-display font-bold text-primary" data-testid="text-pro-price">{formatPrice(proMonthlyPrice)}</span>
+                  <span className="text-muted-foreground font-medium">/ month</span>
+                </div>
+                <div className="mt-2">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800 border border-green-200 uppercase tracking-wide">
+                    SAVE 50% on commission
+                  </span>
+                </div>
               </div>
               <p className="text-muted-foreground mb-6">Unlock exclusive global opportunities and premium tools.</p>
               
-              <div className="bg-primary/5 rounded-lg p-3 mb-6">
+              <div className="bg-primary/5 rounded-lg p-3 mb-6 border border-primary/10">
                 <div className="text-center">
-                  <span className="text-2xl font-bold text-primary" data-testid="text-pro-commission">5%</span>
-                  <p className="text-xs text-primary/80">commission - maximize your earnings</p>
+                  <span className="text-3xl font-bold text-primary" data-testid="text-pro-commission">5%</span>
+                  <p className="text-xs text-primary/80 font-semibold uppercase tracking-tight">commission - maximize your earnings</p>
                 </div>
               </div>
               
@@ -190,13 +197,13 @@ export default function Pricing() {
                 ].map((feature, i) => (
                   <li key={i} className="flex items-start gap-3 text-sm" data-testid={`item-feature-pro-${i}`}>
                     <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
-                    <span>{feature}</span>
+                    <span className="font-medium">{feature}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="p-8 bg-muted/30 border-t border-border">
-              <Button className="w-full bg-primary text-white hover:bg-primary/90 font-bold h-12 shadow-md rounded-full" data-testid="button-upgrade-pro" onClick={() => navigate("/auth")}>
+            <div className="p-8 bg-primary/5 border-t border-primary/10">
+              <Button className="w-full bg-primary text-white hover:bg-primary/90 font-bold h-12 shadow-lg rounded-full animate-pulse" data-testid="button-upgrade-pro" onClick={() => navigate("/auth")}>
                   Start Free Trial
                 </Button>
             </div>
