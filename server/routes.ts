@@ -905,39 +905,42 @@ Respond with ONLY the JSON object, no markdown.`
         messages: [
           {
             role: "system",
-            content: `You are a South African job board aggregator. Generate 12 realistic job listings that would appear on SA job boards (PNet, CareerJunction, LinkedIn, Indeed SA, Careers24, Gumtree Jobs, Government Vacancies, Bizcommunity). 
-Make jobs realistic for the South African market with proper ZAR salaries, real SA company names, and accurate job descriptions.
-Include a mix of: full-time, part-time, contract, and remote positions.
-Include a mix of experience levels.
-For the province "${targetProvince}"${targetCategory !== 'all' ? ` in the "${targetCategory}" category` : ' across various categories'}.
-
-Return a JSON array of objects with these fields:
-- title (string)
-- company (string - realistic SA company name)
-- description (string - 2-3 paragraphs)
-- requirements (string - bullet points as text)
-- location (string - specific city/area)
-- province (string - SA province)
-- salaryMin (number - monthly ZAR, realistic for SA)
-- salaryMax (number - monthly ZAR)
-- salaryPeriod (string - "month")
-- source (string - one of: "PNet", "CareerJunction", "LinkedIn", "Indeed SA", "Careers24", "Gumtree Jobs", "Government Vacancies", "Bizcommunity")
-- category (string)
-- jobType (string - "full-time" | "part-time" | "contract" | "remote" | "hybrid")
-- experienceLevel (string - "entry" | "intermediate" | "senior" | "executive")
-Respond with ONLY the JSON array, no markdown.`
+            content: `You are the FreelanceSkills Job Aggregator Agent. 
+      Your task is to find and format current job opportunities in South Africa.
+      Only include jobs that are currently active.
+      Province must be one of: Gauteng, Western Cape, KwaZulu-Natal, Eastern Cape, Free State, Limpopo, Mpumalanga, North West, Northern Cape.
+      Source must be "FreelanceSkills Direct".
+      Make jobs realistic for the South African market with proper ZAR salaries, real SA company names, and accurate job descriptions.
+      Include a mix of: full-time, part-time, contract, and remote positions.
+      Include a mix of experience levels.
+      For the province "${targetProvince}"${targetCategory !== 'all' ? ` in the "${targetCategory}" category` : ' across various categories'}.
+      
+      Return a JSON object with a "jobs" array containing objects with these fields:
+      - title (string)
+      - company (string - realistic SA company name)
+      - description (string - 2-3 paragraphs)
+      - requirements (string - bullet points as text)
+      - location (string - specific city/area)
+      - province (string - SA province)
+      - salaryMin (number - monthly ZAR, realistic for SA)
+      - salaryMax (number - monthly ZAR)
+      - salaryPeriod (string - "month")
+      - source (string - "FreelanceSkills Direct")
+      - category (string)
+      - jobType (string - "full-time" | "part-time" | "contract" | "remote" | "hybrid")
+      - experienceLevel (string - "entry" | "intermediate" | "senior" | "executive")`
           },
-          { role: "user", content: `Generate fresh job listings for ${targetProvince}${targetCategory !== 'all' ? ` in ${targetCategory}` : ''} as of today.` }
+          { role: "user", content: `Generate 12 fresh job listings for ${targetProvince}${targetCategory !== 'all' ? ` in ${targetCategory}` : ''} as of today.` }
         ],
         temperature: 0.8,
         response_format: { type: "json_object" },
       });
 
-      const content = response.choices[0]?.message?.content || "[]";
+      const content = response.choices[0]?.message?.content || "{\"jobs\": []}";
       let generatedJobs = [];
       try {
         const parsed = JSON.parse(content);
-        generatedJobs = Array.isArray(parsed) ? parsed : (parsed.jobs || []);
+        generatedJobs = parsed.jobs || (Array.isArray(parsed) ? parsed : []);
       } catch (parseError) {
         console.error("Error parsing job refresh AI response:", content);
         return res.status(500).json({ message: "Failed to parse generated jobs" });
@@ -945,8 +948,9 @@ Respond with ONLY the JSON array, no markdown.`
       
       const jobsToInsert = generatedJobs.map((job: any) => ({
         ...job,
+        source: "FreelanceSkills Direct",
         isActive: true,
-        postedDate: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
+        postedDate: new Date(),
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       }));
 

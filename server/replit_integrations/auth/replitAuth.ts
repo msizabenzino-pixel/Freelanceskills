@@ -18,6 +18,16 @@ const getOidcConfig = memoize(
   { maxAge: 3600 * 1000 }
 );
 
+const REPLIT_DOMAINS = [
+  "replit.com",
+  "replit.dev",
+  "replit.app"
+];
+
+function isReplitDomain(hostname: string) {
+  return REPLIT_DOMAINS.some(domain => hostname.endsWith(domain));
+}
+
 export function getSession() {
   const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week
   const pgStore = connectPg(session);
@@ -106,7 +116,7 @@ export async function setupAuth(app: Express) {
   app.get("/api/login", (req, res, next) => {
     ensureStrategy(req.hostname);
     passport.authenticate(`replitauth:${req.hostname}`, {
-      prompt: "login consent",
+      prompt: isReplitDomain(req.hostname) ? "login consent" : "login",
       scope: ["openid", "email", "profile", "offline_access"],
     })(req, res, next);
   });

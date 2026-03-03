@@ -44,8 +44,7 @@ interface JobBoardResponse {
 }
 
 const SOURCES = [
-  "PNet", "CareerJunction", "LinkedIn", "Indeed SA", 
-  "Careers24", "Gumtree Jobs", "Government Vacancies", "Bizcommunity"
+  "FreelanceSkills Direct"
 ];
 
 const PROVINCES = [
@@ -56,14 +55,7 @@ const PROVINCES = [
 const JOB_TYPES = ["full-time", "part-time", "contract", "remote", "hybrid"];
 
 const SOURCE_COLORS: Record<string, string> = {
-  "PNet": "bg-blue-100 text-blue-800 border-blue-200",
-  "CareerJunction": "bg-indigo-100 text-indigo-800 border-indigo-200",
-  "LinkedIn": "bg-sky-100 text-sky-800 border-sky-200",
-  "Indeed SA": "bg-blue-50 text-blue-700 border-blue-100",
-  "Careers24": "bg-orange-100 text-orange-800 border-orange-200",
-  "Gumtree Jobs": "bg-green-100 text-green-800 border-green-200",
-  "Government Vacancies": "bg-red-100 text-red-800 border-red-200",
-  "Bizcommunity": "bg-purple-100 text-purple-800 border-purple-200",
+  "FreelanceSkills Direct": "bg-primary/10 text-primary border-primary/20",
 };
 
 export default function JobBoard() {
@@ -101,7 +93,7 @@ export default function JobBoard() {
       });
     },
     onSuccess: () => {
-      toast({ title: "Scanning...", description: "Looking for new South African opportunities." });
+      toast({ title: "Updating Jobs...", description: "Fetching the latest opportunities across South Africa." });
       refetch();
     }
   });
@@ -143,20 +135,18 @@ export default function JobBoard() {
                 data-testid="button-refresh-jobs"
               >
                 <RefreshCw className={cn("h-4 w-4", (refreshMutation.isPending || isFetching) && "animate-spin")} />
-                Refresh
+                Update Jobs
               </Button>
             </div>
             
             <div className="max-w-3xl">
-              <h1 className="text-4xl font-bold text-slate-900 mb-2" data-testid="text-page-title">SA Job Board</h1>
-              <p className="text-lg text-slate-600 mb-6">All South African opportunities in one place. Aggregated from top boards and government portals.</p>
+              <h1 className="text-4xl font-bold text-slate-900 mb-2" data-testid="text-page-title">South African Job Board</h1>
+              <p className="text-lg text-slate-600 mb-6">Current opportunities verified and updated daily across South Africa.</p>
               
               <div className="flex flex-wrap gap-2 mb-6">
-                {SOURCES.map(s => (
-                  <Badge key={s} variant="secondary" className={cn("px-3 py-1 text-xs font-medium border", SOURCE_COLORS[s] || "bg-slate-100 text-slate-700")}>
-                    {s}
-                  </Badge>
-                ))}
+                <Badge variant="secondary" className="px-3 py-1 text-xs font-medium border bg-primary/10 text-primary border-primary/20">
+                  Verified Local Sources
+                </Badge>
               </div>
 
               <div className="flex items-center gap-6 text-sm text-slate-500">
@@ -164,11 +154,11 @@ export default function JobBoard() {
                   <Zap className="h-4 w-4 text-amber-500" />
                   <span className="font-semibold text-slate-900" data-testid="text-total-jobs">
                     {data?.totalCount || 0}
-                  </span> live jobs
+                  </span> active jobs
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4" />
-                  Last updated: <span className="font-medium" data-testid="text-last-updated">{data?.lastUpdated ? new Date(data.lastUpdated).toLocaleTimeString() : 'Just now'}</span>
+                  Last checked: <span className="font-medium" data-testid="text-last-updated">{data?.lastUpdated ? new Date(data.lastUpdated).toLocaleTimeString() : 'Just now'}</span>
                 </div>
               </div>
             </div>
