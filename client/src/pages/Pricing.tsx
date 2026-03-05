@@ -203,7 +203,7 @@ export default function Pricing() {
               </ul>
             </div>
             <div className="p-8 bg-primary/5 border-t border-primary/10">
-              <Button className="w-full bg-primary text-white hover:bg-primary/90 font-bold h-12 shadow-lg rounded-full animate-pulse" data-testid="button-upgrade-pro" onClick={() => navigate("/auth")}>
+              <Button className="w-full bg-primary text-white hover:bg-primary/90 font-bold h-12 shadow-lg rounded-full animate-pulse" data-testid="button-upgrade-pro" onClick={() => navigate("/checkout?title=Premium+Talent+Subscription&freelancer=FreelanceSkills&price=7900&duration=Monthly&location=Global&rating=5&reviews=0")}>
                   Start Free Trial
                 </Button>
             </div>

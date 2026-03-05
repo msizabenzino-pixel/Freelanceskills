@@ -1285,5 +1285,25 @@ Experience level: ${experienceLevel || 'Any'}`
     }
   });
 
+  if (process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_CLIENT_SECRET) {
+    const { createPaypalOrder, capturePaypalOrder, loadPaypalDefault } = await import("./paypal");
+
+    app.get("/paypal/setup", async (req, res) => {
+      await loadPaypalDefault(req, res);
+    });
+
+    app.post("/paypal/order", async (req, res) => {
+      await createPaypalOrder(req, res);
+    });
+
+    app.post("/paypal/order/:orderID/capture", async (req, res) => {
+      await capturePaypalOrder(req, res);
+    });
+
+    console.log("PayPal payment routes registered");
+  } else {
+    console.log("PayPal credentials not configured - payment routes disabled");
+  }
+
   return httpServer;
 }

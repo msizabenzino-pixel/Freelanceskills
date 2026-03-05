@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { useLocation } from "wouter";
 import { useCurrency } from "@/lib/currency";
 import { cn } from "@/lib/utils";
+import PayPalButton from "@/components/PayPalButton";
 import {
   ShieldCheck,
   Lock,
@@ -26,6 +27,7 @@ import {
   AlertCircle,
   Smartphone,
   Mail,
+  Wallet,
 } from "lucide-react";
 
 const OZOW_BANKS = [
@@ -42,7 +44,7 @@ const OZOW_BANKS = [
   { id: "bidvest", name: "Bidvest Bank", color: "bg-[#1B3A5C]", textColor: "text-white", logo: "BV" },
 ];
 
-type Step = "review" | "payment" | "bank" | "authenticate" | "processing" | "success";
+type Step = "review" | "payment" | "bank" | "authenticate" | "processing" | "success" | "paypal";
 
 export default function Checkout() {
   const [, navigate] = useLocation();
@@ -83,6 +85,8 @@ export default function Checkout() {
     setSelectedMethod(method);
     if (method === "ozow") {
       setStep("bank");
+    } else if (method === "paypal") {
+      setStep("paypal");
     }
   };
 
@@ -135,6 +139,7 @@ export default function Checkout() {
                 if (step === "review") navigate("/services");
                 else if (step === "payment") setStep("review");
                 else if (step === "bank") { setStep("payment"); setSelectedMethod(null); }
+                else if (step === "paypal") { setStep("payment"); setSelectedMethod(null); }
                 else if (step === "authenticate") { setStep("bank"); setSelectedBank(null); }
               }}
               className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors"
@@ -242,6 +247,27 @@ export default function Checkout() {
                     <div
                       className={cn(
                         "border-2 rounded-xl p-4 cursor-pointer transition-all hover:border-primary flex items-center justify-between",
+                        selectedMethod === "paypal" ? "border-primary bg-primary/5 ring-1 ring-primary" : "border-border"
+                      )}
+                      onClick={() => handlePaymentMethodSelect("paypal")}
+                      data-testid="payment-method-paypal"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="w-14 h-10 bg-[#003087] rounded-lg flex items-center justify-center text-white font-bold text-xs">
+                          PayPal
+                        </div>
+                        <div>
+                          <div className="font-bold text-foreground">PayPal</div>
+                          <div className="text-xs text-muted-foreground">Pay securely with PayPal — cards, bank, or PayPal balance</div>
+                          <Badge variant="secondary" className="mt-1 text-xs bg-blue-100 text-blue-700 border-blue-200">Recommended</Badge>
+                        </div>
+                      </div>
+                      <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                    </div>
+
+                    <div
+                      className={cn(
+                        "border-2 rounded-xl p-4 cursor-pointer transition-all hover:border-primary flex items-center justify-between",
                         selectedMethod === "ozow" ? "border-primary bg-primary/5 ring-1 ring-primary" : "border-border"
                       )}
                       onClick={() => handlePaymentMethodSelect("ozow")}
@@ -254,7 +280,7 @@ export default function Checkout() {
                         <div>
                           <div className="font-bold text-foreground">Ozow Instant EFT</div>
                           <div className="text-xs text-muted-foreground">Pay directly from your bank — FNB, Capitec, ABSA, Standard Bank, Nedbank & more</div>
-                          <Badge variant="secondary" className="mt-1 text-xs">Most Popular</Badge>
+                          <Badge variant="secondary" className="mt-1 text-xs">Popular in SA</Badge>
                         </div>
                       </div>
                       <ChevronRight className="w-5 h-5 text-muted-foreground" />
@@ -437,6 +463,49 @@ export default function Checkout() {
                   <p className="text-xs text-center text-muted-foreground mt-3">
                     By confirming, you agree to FreelanceSkills' <a href="/terms" className="text-primary underline">Terms of Service</a>
                   </p>
+                </Card>
+              )}
+
+              {step === "paypal" && (
+                <Card className="p-6" data-testid="step-paypal">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-14 h-10 bg-[#003087] rounded-lg flex items-center justify-center text-white font-bold text-xs">
+                      PayPal
+                    </div>
+                    <h2 className="text-xl font-bold text-foreground">Pay with PayPal</h2>
+                  </div>
+                  <p className="text-muted-foreground text-sm mb-6">
+                    Complete your payment of {formatAmount(total)} securely through PayPal
+                  </p>
+
+                  <div className="bg-card border border-border rounded-xl p-6 mb-6">
+                    <div className="space-y-3 mb-6">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Service</span>
+                        <span className="font-medium text-foreground">{service.title}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Amount</span>
+                        <span className="font-bold text-primary" data-testid="text-paypal-amount">{formatAmount(total)}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-center">
+                      <PayPalButton
+                        amount={(total / 100).toFixed(2)}
+                        currency="ZAR"
+                        intent="CAPTURE"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4 flex gap-3">
+                    <ShieldCheck className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+                    <div className="text-sm text-blue-800 dark:text-blue-300">
+                      <p className="font-bold mb-1">PayPal Buyer Protection</p>
+                      <p>Your payment is protected by both PayPal's buyer protection and FreelanceSkills' escrow system.</p>
+                    </div>
+                  </div>
                 </Card>
               )}
 
