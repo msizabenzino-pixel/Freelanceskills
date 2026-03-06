@@ -48,11 +48,12 @@ app.use((_req, res, next) => {
   const isDev = process.env.NODE_ENV !== "production";
   res.setHeader("Content-Security-Policy",
     "default-src 'self'; " +
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com; " +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://js.stripe.com; " +
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
     "font-src 'self' https://fonts.gstatic.com; " +
     "img-src 'self' data: https: blob:; " +
     `connect-src 'self' https: ${isDev ? "ws: wss:" : "wss:"}; ` +
+    "frame-src 'self' https://js.stripe.com https://hooks.stripe.com; " +
     "frame-ancestors 'self' https://*.replit.dev https://*.replit.app;"
   );
   if (process.env.NODE_ENV === "production") {

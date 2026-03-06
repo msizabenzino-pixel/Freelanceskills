@@ -68,6 +68,15 @@ Preferred communication style: Simple, everyday language.
 - OpenAI API via `AI_INTEGRATIONS_OPENAI_API_KEY` and `AI_INTEGRATIONS_OPENAI_BASE_URL`
 - Model: gpt-4o-mini
 
+### Payments
+- **Stripe** is the ONLY payment system (card payments only)
+- Server: `server/stripe.ts` with Payment Intents API
+- Client: `@stripe/stripe-js` for Stripe Elements card input
+- Routes: `GET /api/stripe/config`, `POST /api/stripe/create-payment-intent`, `GET /api/stripe/payment/:id`
+- Environment: `STRIPE_SECRET_KEY` (server) + `STRIPE_PUBLISHABLE_KEY` (exposed to client)
+- CSP updated to allow `js.stripe.com` and `hooks.stripe.com`
+- No PayPal, Ozow, PayFast, or other payment methods
+
 ### UI Components
 - shadcn/ui with Radix UI.
 - Lucide React for icons.

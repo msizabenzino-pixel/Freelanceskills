@@ -1,16 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useLocation } from "wouter";
 import { useCurrency } from "@/lib/currency";
 import { cn } from "@/lib/utils";
-import PayPalButton from "@/components/PayPalButton";
+import { loadStripe, type Stripe, type StripeElements, type StripeCardElement } from "@stripe/stripe-js";
 import {
   ShieldCheck,
   Lock,
@@ -20,40 +18,43 @@ import {
   MapPin,
   Star,
   CreditCard,
-  Banknote,
   Building2,
   ChevronRight,
   Loader2,
   AlertCircle,
-  Smartphone,
-  Mail,
-  Wallet,
 } from "lucide-react";
 
-const OZOW_BANKS = [
-  { id: "fnb", name: "FNB (First National Bank)", color: "bg-[#009639]", textColor: "text-white", logo: "FNB" },
-  { id: "capitec", name: "Capitec Bank", color: "bg-[#ED1C24]", textColor: "text-white", logo: "Capitec" },
-  { id: "standard", name: "Standard Bank", color: "bg-[#0033A0]", textColor: "text-white", logo: "SB" },
-  { id: "absa", name: "ABSA", color: "bg-[#AF0C2C]", textColor: "text-white", logo: "ABSA" },
-  { id: "nedbank", name: "Nedbank", color: "bg-[#009639]", textColor: "text-white", logo: "NB" },
-  { id: "investec", name: "Investec", color: "bg-[#003865]", textColor: "text-white", logo: "INV" },
-  { id: "tymebank", name: "TymeBank", color: "bg-[#FFD100]", textColor: "text-black", logo: "Tyme" },
-  { id: "discovery", name: "Discovery Bank", color: "bg-[#0B3D2E]", textColor: "text-white", logo: "DB" },
-  { id: "african", name: "African Bank", color: "bg-[#E85D04]", textColor: "text-white", logo: "AB" },
-  { id: "rmb", name: "RMB (Rand Merchant Bank)", color: "bg-[#003865]", textColor: "text-white", logo: "RMB" },
-  { id: "bidvest", name: "Bidvest Bank", color: "bg-[#1B3A5C]", textColor: "text-white", logo: "BV" },
-];
+type Step = "review" | "payment" | "processing" | "success" | "error";
 
-type Step = "review" | "payment" | "bank" | "authenticate" | "processing" | "success" | "paypal";
+let stripePromise: Promise<Stripe | null> | null = null;
+
+function getStripe() {
+  if (!stripePromise) {
+    stripePromise = fetch("/api/stripe/config")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.publishableKey) {
+          return loadStripe(data.publishableKey);
+        }
+        return null;
+      })
+      .catch(() => null);
+  }
+  return stripePromise;
+}
 
 export default function Checkout() {
   const [, navigate] = useLocation();
   const { formatAmount } = useCurrency();
   const [step, setStep] = useState<Step>("review");
-  const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
-  const [selectedBank, setSelectedBank] = useState<string | null>(null);
-  const [otp, setOtp] = useState(["", "", "", ""]);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [transactionId, setTransactionId] = useState<string>("");
+  const [stripe, setStripe] = useState<Stripe | null>(null);
+  const [elements, setElements] = useState<StripeElements | null>(null);
+  const [cardElement, setCardElement] = useState<StripeCardElement | null>(null);
+  const [cardReady, setCardReady] = useState(false);
+  const [cardError, setCardError] = useState<string | null>(null);
 
   const params = new URLSearchParams(window.location.search);
   const service = {
@@ -69,44 +70,95 @@ export default function Checkout() {
   const serviceFee = Math.round(service.price * 0.1);
   const total = service.price + serviceFee;
 
-  const handleOtpChange = (index: number, value: string) => {
-    if (value.length <= 1) {
-      const newOtp = [...otp];
-      newOtp[index] = value;
-      setOtp(newOtp);
-      if (value && index < 3) {
-        const nextInput = document.querySelector<HTMLInputElement>(`[data-testid="input-otp-${index + 1}"]`);
-        nextInput?.focus();
+  useEffect(() => {
+    getStripe().then((s) => {
+      if (s) {
+        setStripe(s);
       }
-    }
-  };
+    });
+  }, []);
 
-  const handlePaymentMethodSelect = (method: string) => {
-    setSelectedMethod(method);
-    if (method === "ozow") {
-      setStep("bank");
-    } else if (method === "paypal") {
-      setStep("paypal");
-    }
-  };
+  const mountCardElement = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (node && stripe && !cardElement) {
+        const elms = stripe.elements();
+        const card = elms.create("card", {
+          style: {
+            base: {
+              fontSize: "16px",
+              color: "#1a1a2e",
+              fontFamily: '"Inter", system-ui, sans-serif',
+              "::placeholder": { color: "#94a3b8" },
+              iconColor: "#6366f1",
+            },
+            invalid: { color: "#ef4444", iconColor: "#ef4444" },
+          },
+          hidePostalCode: false,
+        });
+        card.mount(node);
+        card.on("ready", () => setCardReady(true));
+        card.on("change", (event) => {
+          setCardError(event.error ? event.error.message : null);
+          setCardReady(event.complete);
+        });
+        setElements(elms);
+        setCardElement(card);
+      }
+    },
+    [stripe, cardElement]
+  );
 
-  const handleBankSelect = (bankId: string) => {
-    setSelectedBank(bankId);
-    setStep("authenticate");
-  };
+  const handlePayment = async () => {
+    if (!stripe || !cardElement) return;
 
-  const handleAuthenticate = () => {
-    if (otp.join("").length === 4) {
-      setIsProcessing(true);
-      setStep("processing");
-      setTimeout(() => {
-        setIsProcessing(false);
+    setIsProcessing(true);
+    setErrorMessage(null);
+    setStep("processing");
+
+    try {
+      const response = await fetch("/api/stripe/create-payment-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: total,
+          currency: "zar",
+          description: `FreelanceSkills: ${service.title} by ${service.freelancer}`,
+          metadata: {
+            serviceTitle: service.title,
+            freelancer: service.freelancer,
+            type: "service_booking",
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || "Payment failed");
+      }
+
+      const { clientSecret, paymentIntentId } = await response.json();
+
+      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: { card: cardElement },
+      });
+
+      if (error) {
+        throw new Error(error.message || "Payment was declined");
+      }
+
+      if (paymentIntent?.status === "succeeded") {
+        setTransactionId(paymentIntentId);
         setStep("success");
-      }, 3000);
+      } else {
+        throw new Error("Payment was not completed. Please try again.");
+      }
+    } catch (err: any) {
+      setErrorMessage(err.message || "An unexpected error occurred");
+      setStep("error");
+    } finally {
+      setIsProcessing(false);
     }
   };
-
-  const selectedBankInfo = OZOW_BANKS.find(b => b.id === selectedBank);
 
   if (service.price === 0) {
     return (
@@ -138,9 +190,7 @@ export default function Checkout() {
               onClick={() => {
                 if (step === "review") navigate("/services");
                 else if (step === "payment") setStep("review");
-                else if (step === "bank") { setStep("payment"); setSelectedMethod(null); }
-                else if (step === "paypal") { setStep("payment"); setSelectedMethod(null); }
-                else if (step === "authenticate") { setStep("bank"); setSelectedBank(null); }
+                else if (step === "error") setStep("payment");
               }}
               className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors"
               data-testid="button-back"
@@ -149,10 +199,9 @@ export default function Checkout() {
             </button>
           )}
 
-          {/* Progress Steps */}
           <div className="flex items-center justify-center gap-2 mb-8">
-            {["Review", "Payment", "Bank", "Confirm"].map((label, i) => {
-              const stepIndex = { review: 0, payment: 1, bank: 2, authenticate: 3, processing: 3, success: 4 }[step];
+            {["Review", "Payment", "Confirm"].map((label, i) => {
+              const stepIndex = { review: 0, payment: 1, processing: 2, success: 3, error: 1 }[step];
               return (
                 <div key={label} className="flex items-center gap-2">
                   <div className={cn(
@@ -165,17 +214,15 @@ export default function Checkout() {
                     "text-sm font-medium hidden sm:inline",
                     i <= (stepIndex ?? 0) ? "text-primary" : "text-muted-foreground"
                   )}>{label}</span>
-                  {i < 3 && <ChevronRight className="w-4 h-4 text-muted-foreground" />}
+                  {i < 2 && <ChevronRight className="w-4 h-4 text-muted-foreground" />}
                 </div>
               );
             })}
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {/* Main Content */}
             <div className="md:col-span-2">
 
-              {/* Step 1: Review Order */}
               {step === "review" && (
                 <Card className="p-6" data-testid="step-review">
                   <h2 className="text-xl font-bold text-foreground mb-4">Review Your Order</h2>
@@ -194,8 +241,8 @@ export default function Checkout() {
                         <span className="text-xs text-muted-foreground">({service.reviews} reviews)</span>
                       </div>
                       <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                        <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {service.duration}</span>
-                        <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {service.location}</span>
+                        {service.duration && <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {service.duration}</span>}
+                        {service.location && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {service.location}</span>}
                       </div>
                     </div>
                   </div>
@@ -237,289 +284,105 @@ export default function Checkout() {
                 </Card>
               )}
 
-              {/* Step 2: Select Payment Method */}
               {step === "payment" && (
                 <Card className="p-6" data-testid="step-payment">
-                  <h2 className="text-xl font-bold text-foreground mb-2">Select Payment Method</h2>
-                  <p className="text-muted-foreground text-sm mb-6">Choose how you'd like to pay {formatAmount(total)}</p>
-
-                  <div className="space-y-3">
-                    <div
-                      className={cn(
-                        "border-2 rounded-xl p-4 cursor-pointer transition-all hover:border-primary flex items-center justify-between",
-                        selectedMethod === "paypal" ? "border-primary bg-primary/5 ring-1 ring-primary" : "border-border"
-                      )}
-                      onClick={() => handlePaymentMethodSelect("paypal")}
-                      data-testid="payment-method-paypal"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-14 h-10 bg-[#003087] rounded-lg flex items-center justify-center text-white font-bold text-xs">
-                          PayPal
-                        </div>
-                        <div>
-                          <div className="font-bold text-foreground">PayPal</div>
-                          <div className="text-xs text-muted-foreground">Pay securely with PayPal — cards, bank, or PayPal balance</div>
-                          <Badge variant="secondary" className="mt-1 text-xs bg-blue-100 text-blue-700 border-blue-200">Recommended</Badge>
-                        </div>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground" />
-                    </div>
-
-                    <div
-                      className={cn(
-                        "border-2 rounded-xl p-4 cursor-pointer transition-all hover:border-primary flex items-center justify-between",
-                        selectedMethod === "ozow" ? "border-primary bg-primary/5 ring-1 ring-primary" : "border-border"
-                      )}
-                      onClick={() => handlePaymentMethodSelect("ozow")}
-                      data-testid="payment-method-ozow"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-14 h-10 bg-black rounded-lg flex items-center justify-center text-white font-bold text-sm">
-                          Ozow
-                        </div>
-                        <div>
-                          <div className="font-bold text-foreground">Ozow Instant EFT</div>
-                          <div className="text-xs text-muted-foreground">Pay directly from your bank — FNB, Capitec, ABSA, Standard Bank, Nedbank & more</div>
-                          <Badge variant="secondary" className="mt-1 text-xs">Popular in SA</Badge>
-                        </div>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground" />
-                    </div>
-
-                    <div
-                      className={cn(
-                        "border-2 rounded-xl p-4 cursor-pointer transition-all hover:border-primary flex items-center justify-between",
-                        selectedMethod === "card" ? "border-primary bg-primary/5 ring-1 ring-primary" : "border-border"
-                      )}
-                      onClick={() => handlePaymentMethodSelect("card")}
-                      data-testid="payment-method-card"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-14 h-10 bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
-                          <CreditCard className="w-6 h-6 text-white" />
-                        </div>
-                        <div>
-                          <div className="font-bold text-foreground">Credit / Debit Card</div>
-                          <div className="text-xs text-muted-foreground">Visa, Mastercard, American Express</div>
-                        </div>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground" />
-                    </div>
-
-                    <div
-                      className={cn(
-                        "border-2 rounded-xl p-4 cursor-pointer transition-all hover:border-primary flex items-center justify-between",
-                        selectedMethod === "payfast" ? "border-primary bg-primary/5 ring-1 ring-primary" : "border-border"
-                      )}
-                      onClick={() => handlePaymentMethodSelect("payfast")}
-                      data-testid="payment-method-payfast"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-14 h-10 bg-red-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">
-                          PayFast
-                        </div>
-                        <div>
-                          <div className="font-bold text-foreground">PayFast</div>
-                          <div className="text-xs text-muted-foreground">Credit Card, Instant EFT, QR Code, SnapScan</div>
-                        </div>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground" />
-                    </div>
-
-                    <div
-                      className={cn(
-                        "border-2 rounded-xl p-4 cursor-pointer transition-all hover:border-primary flex items-center justify-between",
-                        selectedMethod === "eft" ? "border-primary bg-primary/5 ring-1 ring-primary" : "border-border"
-                      )}
-                      onClick={() => handlePaymentMethodSelect("eft")}
-                      data-testid="payment-method-eft"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-14 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
-                          <Banknote className="w-6 h-6 text-white" />
-                        </div>
-                        <div>
-                          <div className="font-bold text-foreground">Manual EFT / Bank Transfer</div>
-                          <div className="text-xs text-muted-foreground">Transfer directly to our escrow account (1-3 business days)</div>
-                        </div>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground" />
-                    </div>
-                  </div>
-
-                  <div className="bg-muted rounded-lg p-3 mt-4 flex gap-2 text-xs text-muted-foreground">
-                    <Lock className="w-4 h-4 shrink-0 mt-0.5" />
-                    <span>All payments are encrypted with 256-bit SSL. Funds are held in escrow until you confirm the work is done.</span>
-                  </div>
-                </Card>
-              )}
-
-              {/* Step 3: Ozow Bank Selection */}
-              {step === "bank" && (
-                <Card className="p-6" data-testid="step-bank-selection">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-10 h-7 bg-black rounded flex items-center justify-center text-white font-bold text-xs">Ozow</div>
-                    <h2 className="text-xl font-bold text-foreground">Select Your Bank</h2>
+                    <div className="w-10 h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center">
+                      <CreditCard className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold text-foreground">Pay by Card</h2>
+                      <p className="text-muted-foreground text-sm">Secure payment powered by Stripe</p>
+                    </div>
                   </div>
-                  <p className="text-muted-foreground text-sm mb-6">Choose your bank to make an instant payment of {formatAmount(total)}</p>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {OZOW_BANKS.map((bank) => (
+                  <div className="flex items-center gap-2 mt-4 mb-6">
+                    <img src="https://img.icons8.com/color/32/visa.png" alt="Visa" className="h-6" />
+                    <img src="https://img.icons8.com/color/32/mastercard.png" alt="Mastercard" className="h-6" />
+                    <img src="https://img.icons8.com/color/32/amex.png" alt="Amex" className="h-6" />
+                    <span className="text-xs text-muted-foreground ml-1">& more</span>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-sm font-medium text-foreground mb-2 block">Card Details</label>
                       <div
-                        key={bank.id}
-                        className={cn(
-                          "border-2 rounded-xl p-4 cursor-pointer transition-all hover:border-primary hover:shadow-md flex items-center gap-3",
-                          selectedBank === bank.id ? "border-primary bg-primary/5 ring-1 ring-primary" : "border-border"
-                        )}
-                        onClick={() => handleBankSelect(bank.id)}
-                        data-testid={`bank-${bank.id}`}
-                      >
-                        <div className={cn("w-12 h-8 rounded-lg flex items-center justify-center font-bold text-xs", bank.color, bank.textColor)}>
-                          {bank.logo}
-                        </div>
-                        <span className="font-medium text-foreground text-sm">{bank.name}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mt-6 flex gap-3">
-                    <AlertCircle className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-                    <div className="text-sm text-blue-800 dark:text-blue-300">
-                      <p className="font-bold mb-1">How Ozow works</p>
-                      <p>After selecting your bank, you'll be redirected to your bank's secure login page to authorize the payment. No card details needed — it's a direct bank transfer.</p>
-                    </div>
-                  </div>
-                </Card>
-              )}
-
-              {/* Step 4: Bank Authentication */}
-              {step === "authenticate" && selectedBankInfo && (
-                <Card className="p-6" data-testid="step-authenticate">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className={cn("w-12 h-8 rounded-lg flex items-center justify-center font-bold text-xs", selectedBankInfo.color, selectedBankInfo.textColor)}>
-                      {selectedBankInfo.logo}
-                    </div>
-                    <h2 className="text-xl font-bold text-foreground">{selectedBankInfo.name}</h2>
-                  </div>
-                  <p className="text-muted-foreground text-sm mb-6">Authorize your payment of {formatAmount(total)}</p>
-
-                  <div className="bg-muted/50 border border-border rounded-xl p-6 mb-6">
-                    <div className="text-center mb-6">
-                      <div className={cn("w-16 h-12 rounded-xl flex items-center justify-center font-bold text-sm mx-auto mb-3", selectedBankInfo.color, selectedBankInfo.textColor)}>
-                        {selectedBankInfo.logo}
-                      </div>
-                      <p className="text-sm text-muted-foreground">Secure banking authentication</p>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div className="bg-card rounded-lg p-4 border border-border">
-                        <div className="flex justify-between text-sm mb-1">
-                          <span className="text-muted-foreground">Paying to</span>
-                          <span className="font-bold text-foreground">FreelanceSkills Escrow</span>
-                        </div>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span className="text-muted-foreground">Amount</span>
-                          <span className="font-bold text-primary" data-testid="text-auth-amount">{formatAmount(total)}</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Reference</span>
-                          <span className="font-mono text-foreground text-xs">FS-2026-{Math.floor(Math.random() * 90000 + 10000)}</span>
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label className="text-sm font-medium">Enter your banking app approval code</Label>
-                        <p className="text-xs text-muted-foreground">
-                          A notification has been sent to your {selectedBankInfo.name} app. Enter the 4-digit code to confirm.
+                        ref={mountCardElement}
+                        className="border-2 border-border rounded-lg p-4 bg-white dark:bg-card focus-within:border-primary transition-colors"
+                        data-testid="stripe-card-element"
+                      />
+                      {cardError && (
+                        <p className="text-sm text-red-500 mt-2 flex items-center gap-1" data-testid="text-card-error">
+                          <AlertCircle className="w-3 h-3" /> {cardError}
                         </p>
-                        <div className="flex justify-center gap-3 py-2">
-                          {otp.map((digit, i) => (
-                            <Input
-                              key={i}
-                              type="text"
-                              inputMode="numeric"
-                              maxLength={1}
-                              className="w-14 h-14 text-center text-2xl font-bold border-2"
-                              value={digit}
-                              onChange={(e) => handleOtpChange(i, e.target.value)}
-                              data-testid={`input-otp-${i}`}
-                            />
-                          ))}
-                        </div>
+                      )}
+                    </div>
+
+                    <div className="bg-muted/50 rounded-lg p-4 space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Service</span>
+                        <span className="font-medium text-foreground">{service.title}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Amount</span>
+                        <span className="font-bold text-primary" data-testid="text-payment-amount">{formatAmount(total)}</span>
                       </div>
                     </div>
                   </div>
 
                   <Button
-                    className="w-full"
+                    className="w-full mt-6 h-12"
                     size="lg"
-                    onClick={handleAuthenticate}
-                    disabled={otp.join("").length < 4}
-                    data-testid="button-confirm-payment"
+                    onClick={handlePayment}
+                    disabled={!cardReady || isProcessing || !stripe}
+                    data-testid="button-pay-now"
                   >
-                    <Lock className="w-4 h-4 mr-2" /> Confirm Payment
+                    {isProcessing ? (
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Processing...</>
+                    ) : (
+                      <><Lock className="w-4 h-4 mr-2" /> Pay {formatAmount(total)} Securely</>
+                    )}
                   </Button>
 
-                  <p className="text-xs text-center text-muted-foreground mt-3">
-                    By confirming, you agree to FreelanceSkills' <a href="/terms" className="text-primary underline">Terms of Service</a>
-                  </p>
-                </Card>
-              )}
-
-              {step === "paypal" && (
-                <Card className="p-6" data-testid="step-paypal">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-14 h-10 bg-[#003087] rounded-lg flex items-center justify-center text-white font-bold text-xs">
-                      PayPal
+                  <div className="flex items-center justify-center gap-4 mt-4">
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <Lock className="w-3 h-3" />
+                      <span>256-bit SSL</span>
                     </div>
-                    <h2 className="text-xl font-bold text-foreground">Pay with PayPal</h2>
-                  </div>
-                  <p className="text-muted-foreground text-sm mb-6">
-                    Complete your payment of {formatAmount(total)} securely through PayPal
-                  </p>
-
-                  <div className="bg-card border border-border rounded-xl p-6 mb-6">
-                    <div className="space-y-3 mb-6">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Service</span>
-                        <span className="font-medium text-foreground">{service.title}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Amount</span>
-                        <span className="font-bold text-primary" data-testid="text-paypal-amount">{formatAmount(total)}</span>
-                      </div>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <ShieldCheck className="w-3 h-3" />
+                      <span>PCI DSS Compliant</span>
                     </div>
-
-                    <div className="flex justify-center">
-                      <PayPalButton
-                        amount={(total / 100).toFixed(2)}
-                        currency="ZAR"
-                        intent="CAPTURE"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4 flex gap-3">
-                    <ShieldCheck className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-                    <div className="text-sm text-blue-800 dark:text-blue-300">
-                      <p className="font-bold mb-1">PayPal Buyer Protection</p>
-                      <p>Your payment is protected by both PayPal's buyer protection and FreelanceSkills' escrow system.</p>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <Building2 className="w-3 h-3" />
+                      <span>Escrow Protected</span>
                     </div>
                   </div>
                 </Card>
               )}
 
-              {/* Processing */}
               {step === "processing" && (
                 <Card className="p-12 text-center" data-testid="step-processing">
                   <Loader2 className="w-16 h-16 text-primary animate-spin mx-auto mb-6" />
                   <h2 className="text-xl font-bold text-foreground mb-2">Processing Your Payment</h2>
-                  <p className="text-muted-foreground">Securely transferring funds to escrow via {selectedBankInfo?.name}...</p>
+                  <p className="text-muted-foreground">Securely processing your card payment via Stripe...</p>
                   <p className="text-xs text-muted-foreground mt-4">This usually takes a few seconds. Please don't close this page.</p>
                 </Card>
               )}
 
-              {/* Success */}
+              {step === "error" && (
+                <Card className="p-8 text-center" data-testid="step-error">
+                  <div className="w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <AlertCircle className="w-10 h-10 text-red-600" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-foreground mb-2">Payment Failed</h2>
+                  <p className="text-muted-foreground mb-6">{errorMessage || "Something went wrong with your payment."}</p>
+                  <Button onClick={() => { setStep("payment"); setErrorMessage(null); }} data-testid="button-try-again">
+                    Try Again
+                  </Button>
+                </Card>
+              )}
+
               {step === "success" && (
                 <Card className="p-8 text-center" data-testid="step-success">
                   <div className="w-20 h-20 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -527,14 +390,14 @@ export default function Checkout() {
                   </div>
                   <h2 className="text-2xl font-bold text-foreground mb-2">Payment Successful!</h2>
                   <p className="text-muted-foreground mb-6">
-                    {formatAmount(total)} has been securely deposited into escrow via {selectedBankInfo?.name}.
+                    {formatAmount(total)} has been securely deposited into escrow.
                   </p>
 
                   <div className="bg-muted rounded-xl p-4 text-left mb-6 max-w-sm mx-auto">
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Transaction ID</span>
-                        <span className="font-mono font-bold text-foreground">FS-{Math.floor(Math.random() * 900000 + 100000)}</span>
+                        <span className="font-mono font-bold text-foreground text-xs" data-testid="text-transaction-id">{transactionId.substring(0, 20)}...</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Amount</span>
@@ -542,7 +405,7 @@ export default function Checkout() {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Method</span>
-                        <span className="font-medium text-foreground">Ozow — {selectedBankInfo?.name}</span>
+                        <span className="font-medium text-foreground">Card via Stripe</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Status</span>
@@ -568,8 +431,7 @@ export default function Checkout() {
               )}
             </div>
 
-            {/* Order Summary Sidebar */}
-            {step !== "success" && step !== "processing" && (
+            {step !== "success" && step !== "processing" && step !== "error" && (
               <div className="md:col-span-1">
                 <Card className="p-5 sticky top-28" data-testid="order-summary">
                   <h3 className="font-bold text-foreground mb-4">Order Summary</h3>
@@ -607,7 +469,7 @@ export default function Checkout() {
                     </div>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Lock className="w-4 h-4 text-blue-500" />
-                      <span>256-bit SSL encryption</span>
+                      <span>Stripe secure payments</span>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Building2 className="w-4 h-4 text-purple-500" />

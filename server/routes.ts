@@ -1285,24 +1285,22 @@ Experience level: ${experienceLevel || 'Any'}`
     }
   });
 
-  if (process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_CLIENT_SECRET) {
-    const { createPaypalOrder, capturePaypalOrder, loadPaypalDefault } = await import("./paypal");
+  const { createPaymentIntent, getPaymentStatus, getStripePublishableKey, isStripeConfigured } = await import("./stripe");
 
-    app.get("/paypal/setup", async (req, res) => {
-      await loadPaypalDefault(req, res);
-    });
+  app.get("/api/stripe/config", getStripePublishableKey);
 
-    app.post("/paypal/order", async (req, res) => {
-      await createPaypalOrder(req, res);
-    });
+  app.post("/api/stripe/create-payment-intent", async (req, res) => {
+    await createPaymentIntent(req, res);
+  });
 
-    app.post("/paypal/order/:orderID/capture", async (req, res) => {
-      await capturePaypalOrder(req, res);
-    });
+  app.get("/api/stripe/payment/:paymentIntentId", async (req, res) => {
+    await getPaymentStatus(req, res);
+  });
 
-    console.log("PayPal payment routes registered");
+  if (isStripeConfigured()) {
+    console.log("Stripe payment routes registered");
   } else {
-    console.log("PayPal credentials not configured - payment routes disabled");
+    console.log("Stripe credentials not configured - payments will be unavailable");
   }
 
   return httpServer;
