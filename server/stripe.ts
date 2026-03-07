@@ -75,3 +75,80 @@ export async function getStripePublishableKey(_req: Request, res: Response) {
   }
   res.json({ publishableKey });
 }
+
+export async function handleWebhook(req: Request, res: Response) {
+  if (!stripe) {
+    return res.status(503).json({ error: "Stripe not configured" });
+  }
+
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  const sig = req.headers["stripe-signature"];
+
+  if (!sig) {
+    return res.status(400).json({ error: "Missing stripe-signature header" });
+  }
+
+  let event: Stripe.Event;
+
+  const rawBody = (req as any).rawBody;
+
+  try {
+    if (webhookSecret) {
+      event = stripe.webhooks.constructEvent(rawBody || req.body, sig, webhookSecret);
+    } else {
+      console.warn("STRIPE_WEBHOOK_SECRET not set — skipping signature verification (unsafe for production)");
+      event = typeof req.body === "string" ? JSON.parse(req.body) : req.body as Stripe.Event;
+    }
+  } catch (err: any) {
+    console.error("Webhook signature verification failed:", err.message);
+    return res.status(400).json({ error: "Webhook signature verification failed" });
+  }
+
+  try {
+    switch (event.type) {
+      case "payment_intent.succeeded": {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        console.log(`Payment succeeded: ${paymentIntent.id} — ${paymentIntent.amount} ${paymentIntent.currency}`);
+        const { storage } = await import("./storage");
+        const bookingId = paymentIntent.metadata?.bookingId;
+        if (bookingId) {
+          await storage.updateBookingStatus(bookingId, "confirmed");
+          console.log(`Booking ${bookingId} confirmed via webhook`);
+        }
+        break;
+      }
+
+      case "payment_intent.payment_failed": {
+        const failedIntent = event.data.object as Stripe.PaymentIntent;
+        console.log(`Payment failed: ${failedIntent.id} — ${failedIntent.last_payment_error?.message || "unknown error"}`);
+        const { storage: failedStorage } = await import("./storage");
+        const failedBookingId = failedIntent.metadata?.bookingId;
+        if (failedBookingId) {
+          await failedStorage.updateBookingStatus(failedBookingId, "cancelled");
+          console.log(`Booking ${failedBookingId} cancelled due to payment failure`);
+        }
+        break;
+      }
+
+      case "charge.refunded": {
+        const charge = event.data.object as Stripe.Charge;
+        console.log(`Refund processed: ${charge.id} — ${charge.amount_refunded} ${charge.currency}`);
+        break;
+      }
+
+      case "charge.dispute.created": {
+        const dispute = event.data.object as Stripe.Dispute;
+        console.log(`Dispute created: ${dispute.id} — amount: ${dispute.amount} ${dispute.currency}`);
+        break;
+      }
+
+      default:
+        console.log(`Unhandled Stripe event: ${event.type}`);
+    }
+
+    res.json({ received: true });
+  } catch (error: any) {
+    console.error("Error processing webhook event:", error.message);
+    res.status(500).json({ error: "Webhook handler failed" });
+  }
+}

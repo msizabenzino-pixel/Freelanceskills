@@ -70,11 +70,13 @@ Preferred communication style: Simple, everyday language.
 
 ### Payments
 - **Stripe** is the ONLY payment system (card payments only)
-- Server: `server/stripe.ts` with Payment Intents API
+- Server: `server/stripe.ts` with Payment Intents API + webhook handler
 - Client: `@stripe/stripe-js` for Stripe Elements card input
-- Routes: `GET /api/stripe/config`, `POST /api/stripe/create-payment-intent`, `GET /api/stripe/payment/:id`
-- Environment: `STRIPE_SECRET_KEY` (server) + `STRIPE_PUBLISHABLE_KEY` (exposed to client)
+- Routes: `GET /api/stripe/config`, `POST /api/stripe/create-payment-intent`, `GET /api/stripe/payment/:id`, `POST /api/stripe/webhook`
+- Webhook handles: `payment_intent.succeeded`, `payment_intent.payment_failed`, `charge.refunded`, `charge.dispute.created`
+- Environment: `STRIPE_SECRET_KEY` (server) + `STRIPE_PUBLISHABLE_KEY` (exposed to client) + `STRIPE_WEBHOOK_SECRET` (webhook signature verification)
 - CSP updated to allow `js.stripe.com` and `hooks.stripe.com`
+- Raw body preserved via `req.rawBody` for webhook signature verification
 - No PayPal, Ozow, PayFast, or other payment methods
 
 ### UI Components

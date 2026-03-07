@@ -1285,7 +1285,7 @@ Experience level: ${experienceLevel || 'Any'}`
     }
   });
 
-  const { createPaymentIntent, getPaymentStatus, getStripePublishableKey, isStripeConfigured } = await import("./stripe");
+  const { createPaymentIntent, getPaymentStatus, getStripePublishableKey, handleWebhook, isStripeConfigured } = await import("./stripe");
 
   app.get("/api/stripe/config", getStripePublishableKey);
 
@@ -1297,8 +1297,12 @@ Experience level: ${experienceLevel || 'Any'}`
     await getPaymentStatus(req, res);
   });
 
+  app.post("/api/stripe/webhook", async (req, res) => {
+    await handleWebhook(req, res);
+  });
+
   if (isStripeConfigured()) {
-    console.log("Stripe payment routes registered");
+    console.log("Stripe payment routes registered (including webhook)");
   } else {
     console.log("Stripe credentials not configured - payments will be unavailable");
   }
