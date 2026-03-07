@@ -121,9 +121,15 @@ export default function Checkout() {
   const handlePayment = async () => {
     if (!stripe || !cardElementRef.current) return;
 
+    if (!cardElementRef.current) {
+      setErrorMessage("Card input not ready. Please wait a moment and try again.");
+      setStep("error");
+      return;
+    }
+
+    const cardEl = cardElementRef.current;
     setIsProcessing(true);
     setErrorMessage(null);
-    setStep("processing");
 
     try {
       const response = await fetch("/api/stripe/create-payment-intent", {
@@ -149,7 +155,7 @@ export default function Checkout() {
       const { clientSecret, paymentIntentId } = await response.json();
 
       const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: { card: cardElementRef.current },
+        payment_method: { card: cardEl },
       });
 
       if (error) {
