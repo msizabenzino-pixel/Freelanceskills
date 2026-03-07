@@ -54,7 +54,7 @@ export async function getPaymentStatus(req: Request, res: Response) {
   }
 
   try {
-    const { paymentIntentId } = req.params;
+    const paymentIntentId = req.params.paymentIntentId as string;
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
 
     res.json({
