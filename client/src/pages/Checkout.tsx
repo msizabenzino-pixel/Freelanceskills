@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -52,7 +52,8 @@ export default function Checkout() {
   const [transactionId, setTransactionId] = useState<string>("");
   const [stripe, setStripe] = useState<Stripe | null>(null);
   const [elements, setElements] = useState<StripeElements | null>(null);
-  const [cardElement, setCardElement] = useState<StripeCardElement | null>(null);
+  const cardElementRef = useRef<StripeCardElement | null>(null);
+  const cardContainerRef = useRef<HTMLDivElement | null>(null);
   const [cardReady, setCardReady] = useState(false);
   const [cardError, setCardError] = useState<string | null>(null);
 
@@ -78,38 +79,47 @@ export default function Checkout() {
     });
   }, []);
 
-  const mountCardElement = useCallback(
-    (node: HTMLDivElement | null) => {
-      if (node && stripe && !cardElement) {
-        const elms = stripe.elements();
-        const card = elms.create("card", {
-          style: {
-            base: {
-              fontSize: "16px",
-              color: "#e2e8f0",
-              fontFamily: '"Inter", system-ui, sans-serif',
-              "::placeholder": { color: "#94a3b8" },
-              iconColor: "#f59e0b",
-            },
-            invalid: { color: "#ef4444", iconColor: "#ef4444" },
-          },
-          hidePostalCode: false,
-        });
-        card.mount(node);
-        card.on("ready", () => setCardReady(true));
-        card.on("change", (event) => {
-          setCardError(event.error ? event.error.message : null);
-          setCardReady(event.complete);
-        });
-        setElements(elms);
-        setCardElement(card);
+  useEffect(() => {
+    if (step === "payment" && stripe && cardContainerRef.current) {
+      if (cardElementRef.current) {
+        try { cardElementRef.current.destroy(); } catch (_) {}
+        cardElementRef.current = null;
       }
-    },
-    [stripe, cardElement]
-  );
+      setCardReady(false);
+      setCardError(null);
+
+      const elms = stripe.elements();
+      const card = elms.create("card", {
+        style: {
+          base: {
+            fontSize: "16px",
+            color: "#e2e8f0",
+            fontFamily: '"Inter", system-ui, sans-serif',
+            "::placeholder": { color: "#94a3b8" },
+            iconColor: "#f59e0b",
+          },
+          invalid: { color: "#ef4444", iconColor: "#ef4444" },
+        },
+        hidePostalCode: false,
+      });
+      card.mount(cardContainerRef.current);
+      card.on("ready", () => setCardReady(true));
+      card.on("change", (event) => {
+        setCardError(event.error ? event.error.message : null);
+        setCardReady(event.complete);
+      });
+      setElements(elms);
+      cardElementRef.current = card;
+
+      return () => {
+        try { card.destroy(); } catch (_) {}
+        cardElementRef.current = null;
+      };
+    }
+  }, [step, stripe]);
 
   const handlePayment = async () => {
-    if (!stripe || !cardElement) return;
+    if (!stripe || !cardElementRef.current) return;
 
     setIsProcessing(true);
     setErrorMessage(null);
@@ -139,7 +149,7 @@ export default function Checkout() {
       const { clientSecret, paymentIntentId } = await response.json();
 
       const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: { card: cardElement },
+        payment_method: { card: cardElementRef.current },
       });
 
       if (error) {
@@ -307,7 +317,7 @@ export default function Checkout() {
                     <div>
                       <label className="text-sm font-medium text-foreground mb-2 block">Card Details</label>
                       <div
-                        ref={mountCardElement}
+                        ref={cardContainerRef}
                         className="border-2 border-border rounded-lg p-4 bg-white dark:bg-card focus-within:border-primary transition-colors"
                         data-testid="stripe-card-element"
                       />
