@@ -176,7 +176,7 @@ export default function Pricing() {
                   </span>
                 </div>
               </div>
-              <p className="text-muted-foreground mb-6">Unlock exclusive global opportunities and premium tools.</p>
+              <p className="text-gray-600 mb-6">Unlock exclusive global opportunities and premium tools.</p>
               
               <div className="bg-primary/5 rounded-lg p-3 mb-6 border border-primary/10">
                 <div className="text-center">
@@ -197,7 +197,7 @@ export default function Pricing() {
                 ].map((feature, i) => (
                   <li key={i} className="flex items-start gap-3 text-sm" data-testid={`item-feature-pro-${i}`}>
                     <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
-                    <span className="font-medium">{feature}</span>
+                    <span className="font-medium text-gray-800">{feature}</span>
                   </li>
                 ))}
               </ul>

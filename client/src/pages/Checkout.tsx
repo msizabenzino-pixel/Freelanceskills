@@ -86,10 +86,10 @@ export default function Checkout() {
           style: {
             base: {
               fontSize: "16px",
-              color: "#1a1a2e",
+              color: "#e2e8f0",
               fontFamily: '"Inter", system-ui, sans-serif',
               "::placeholder": { color: "#94a3b8" },
-              iconColor: "#6366f1",
+              iconColor: "#f59e0b",
             },
             invalid: { color: "#ef4444", iconColor: "#ef4444" },
           },
