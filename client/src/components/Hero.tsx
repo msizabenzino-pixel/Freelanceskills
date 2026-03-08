@@ -116,7 +116,7 @@ export function Hero() {
               I'm Hiring
             </Button>
             <Button
-              onClick={() => navigate("/freelancer-onboarding")}
+              onClick={() => navigate("/onboarding")}
               className="flex-1 h-12 rounded-xl bg-accent/80 hover:bg-accent text-white font-bold px-6 shadow-lg shadow-accent/30 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
               data-testid="button-im-freelancer"
             >

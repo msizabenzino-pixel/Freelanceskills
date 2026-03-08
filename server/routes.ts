@@ -53,7 +53,7 @@ export async function registerRoutes(
 
   app.post("/api/jobs", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req.session as any).userId;
       const validatedData = insertJobSchema.parse(req.body);
       
       const job = await storage.createJob({
@@ -87,7 +87,7 @@ export async function registerRoutes(
   // Profile routes
   app.get("/api/profile", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req.session as any).userId;
       const profile = await storage.getProfile(userId);
       res.json(profile);
     } catch (error) {
@@ -98,7 +98,7 @@ export async function registerRoutes(
 
   app.post("/api/profile", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req.session as any).userId;
       const validatedData = insertProfileSchema.parse(req.body);
       
       const profile = await storage.createProfile({
@@ -115,8 +115,9 @@ export async function registerRoutes(
 
   app.patch("/api/profile", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const profile = await storage.updateProfile(userId, req.body);
+      const userId = (req.session as any).userId;
+      const { userId: _u, id: _i, isPro: _p, ...safeData } = req.body;
+      const profile = await storage.updateProfile(userId, safeData);
       
       if (!profile) {
         return res.status(404).json({ message: "Profile not found" });
@@ -169,7 +170,7 @@ export async function registerRoutes(
 
   app.post("/api/packages", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req.session as any).userId;
       const validatedData = insertServicePackageSchema.parse(req.body);
       
       const pkg = await storage.createServicePackage({
@@ -197,7 +198,7 @@ export async function registerRoutes(
   // Booking routes
   app.get("/api/bookings", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req.session as any).userId;
       const bookings = await storage.getUserBookings(userId);
       res.json(bookings);
     } catch (error) {
@@ -208,7 +209,7 @@ export async function registerRoutes(
 
   app.post("/api/bookings", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req.session as any).userId;
       const validatedData = insertBookingSchema.parse(req.body);
       
       const booking = await storage.createBooking({
@@ -225,7 +226,7 @@ export async function registerRoutes(
 
   app.patch("/api/bookings/:id/status", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req.session as any).userId;
       const { status } = req.body;
       
       // Get the booking first to check ownership
@@ -260,7 +261,7 @@ export async function registerRoutes(
 
   app.post("/api/reviews", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req.session as any).userId;
       const validatedData = insertReviewSchema.parse(req.body);
       
       const review = await storage.createReview({
@@ -278,7 +279,7 @@ export async function registerRoutes(
   // Messaging routes (secure in-app chat)
   app.get("/api/conversations", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req.session as any).userId;
       const conversations = await storage.getUserConversations(userId);
       res.json(conversations);
     } catch (error) {
@@ -289,7 +290,7 @@ export async function registerRoutes(
 
   app.post("/api/conversations", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req.session as any).userId;
       const { recipientId, jobId } = req.body;
       
       const conversation = await storage.getOrCreateConversation(userId, recipientId, jobId);
@@ -302,7 +303,7 @@ export async function registerRoutes(
 
   app.get("/api/conversations/:id/messages", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req.session as any).userId;
       const conversation = await storage.getConversation(req.params.id);
       
       if (!conversation) {
@@ -324,7 +325,7 @@ export async function registerRoutes(
 
   app.post("/api/conversations/:id/messages", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req.session as any).userId;
       
       // Safety check on message content
       const safetyResult = checkMessageSafety(req.body.content || "");
@@ -468,7 +469,7 @@ User: ${message}`;
   // Submit verification documents (freelancer submits for review)
   app.post("/api/verification/submit", isAuthenticated, async (req: any, res) => {
     try {
-      const freelancerId = req.user.claims.sub;
+      const freelancerId = (req.session as any).userId;
       const { 
         verificationType, // 'identity', 'qualifications', 'experience', 'professional_body'
         documentUrls,
@@ -514,7 +515,7 @@ User: ${message}`;
   // Submit private feedback after order completion
   app.post("/api/bookings/:id/private-feedback", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req.session as any).userId;
       const bookingId = req.params.id;
       
       // Verify user was part of this booking
@@ -558,7 +559,7 @@ User: ${message}`;
   // Check if private feedback is pending for a booking
   app.get("/api/bookings/:id/feedback-status", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req.session as any).userId;
       const bookingId = req.params.id;
       
       const hasPublicReview = await storage.hasPublicReview(bookingId, userId);
@@ -1098,7 +1099,7 @@ Respond with ONLY the JSON object, no markdown.`
 
   app.post("/api/applications", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req.session as any).userId;
       const { jobId, aggregatedJobId, jobTitle, company, coverLetter, resumeSummary, source } = req.body;
 
       if (!jobTitle) {
@@ -1125,7 +1126,7 @@ Respond with ONLY the JSON object, no markdown.`
 
   app.get("/api/applications", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req.session as any).userId;
       const applications = await storage.getUserApplications(userId);
       res.json(applications);
     } catch (error) {
