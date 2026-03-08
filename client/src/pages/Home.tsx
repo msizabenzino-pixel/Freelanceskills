@@ -4,7 +4,7 @@ import { JobCard } from "@/components/JobCard";
 import { FreelancerCard } from "@/components/FreelancerCard";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users, Gift, Building2, Brain, Link2, Wallet, BarChart3, Leaf, Globe, ChevronRight, ShieldCheck, Lock, FileText, Headphones, Star, Quote } from "lucide-react";
+import { ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users, Gift, Building2, Brain, Link2, Wallet, BarChart3, Leaf, Globe, ChevronRight, ShieldCheck, Lock, FileText, Headphones, Star, Quote, Send } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { useCurrency } from "@/lib/currency";
 import { SERVICE_CATEGORIES } from "@shared/categories";
@@ -283,6 +283,177 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Escrow Payment Explainer */}
+      <section className="py-20 bg-background border-b border-border" data-testid="section-escrow-explainer">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">How Secure Escrow Works</h2>
+            <p className="text-muted-foreground text-lg">Your money is safe with us. We ensure freelancers get paid and clients get the work they expect.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+            {/* Connecting lines for desktop */}
+            <div className="hidden md:block absolute top-1/4 left-[15%] right-[15%] h-0.5 bg-border -z-10" />
+            
+            {[
+              { 
+                icon: Wallet, 
+                title: "1. Deposit Funds", 
+                desc: "Client posts a job and deposits project funds into our secure escrow account.",
+                testid: "escrow-step-1"
+              },
+              { 
+                icon: Lock, 
+                title: "2. Held Securely", 
+                desc: "Funds are held safely in escrow. The freelancer starts working with peace of mind.",
+                testid: "escrow-step-2"
+              },
+              { 
+                icon: CheckCircle2, 
+                title: "3. Work Completed", 
+                desc: "The freelancer submits the completed work for the client's review and approval.",
+                testid: "escrow-step-3"
+              },
+              { 
+                icon: Send, 
+                title: "4. Payment Released", 
+                desc: "Once the client is satisfied, funds are released instantly to the freelancer.",
+                testid: "escrow-step-4"
+              }
+            ].map((step, i) => (
+              <div key={i} className="flex flex-col items-center text-center group" data-testid={step.testid}>
+                <div className="w-16 h-16 rounded-full bg-primary/5 border-2 border-primary/20 flex items-center justify-center mb-6 group-hover:border-primary group-hover:bg-primary/10 transition-all duration-300">
+                  <step.icon className="w-8 h-8 text-primary" />
+                </div>
+                <h3 className="font-bold text-xl mb-3 text-foreground">{step.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{step.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-20 p-8 rounded-2xl bg-muted/30 border border-border flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-emerald-600 font-bold">
+                <ShieldCheck className="w-5 h-5" />
+                <span>Instant ZAR payouts to freelancers</span>
+              </div>
+              <p className="text-muted-foreground">We support all major SA banks for fast, reliable local transfers.</p>
+            </div>
+            <div className="flex items-center gap-6 grayscale opacity-70">
+              <div className="flex flex-col items-center gap-1">
+                <span className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Powered by</span>
+                <div className="flex items-center gap-1 font-bold text-xl text-[#635BFF]">
+                  <svg viewBox="0 0 40 40" className="w-8 h-8 fill-current">
+                    <path d="M20 0C8.954 0 0 8.954 0 20s8.954 20 20 20 20-8.954 20-20S31.046 0 20 0zm8.932 24.312c-.52 2.373-3.132 3.864-5.834 3.864-3.21 0-5.59-1.637-5.59-4.48 0-3.376 2.825-4.404 5.875-4.404.93 0 1.637.074 2.158.186v-.372c0-1.04-.744-1.637-2.12-1.637-1.154 0-2.308.372-3.385.93l-.707-1.934c1.376-.818 2.94-1.302 4.65-1.302 2.903 0 4.168 1.488 4.168 3.865v5.284zm-3.46-3.163c-.41-.074-.93-.112-1.525-.112-1.786 0-3.126.558-3.126 1.897 0 .967.856 1.488 2.046 1.488 1.376 0 2.308-.707 2.606-1.786v-1.487z"/>
+                  </svg>
+                  Stripe
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works & Pricing Transparency */}
+      <section className="py-20 bg-background border-y border-border" data-testid="section-how-it-works-pricing">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">How FreelanceSkills Works</h2>
+            <p className="text-muted-foreground text-lg">A simple, secure process designed for the South African market.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+            {[
+              {
+                step: "1",
+                title: "Post a Job or Browse Talent",
+                desc: "Tell us what you need or explore our directory of verified experts across 100+ categories.",
+                icon: FileText
+              },
+              {
+                step: "2",
+                title: "AI Matches & Secure Escrow",
+                desc: "Our AI finds the best fit. Once you hire, funds are held securely in our protected escrow system.",
+                icon: Sparkles
+              },
+              {
+                step: "3",
+                title: "Get Results, Release Payment",
+                desc: "Review the work. Once you're 100% satisfied, release the payment to the freelancer instantly.",
+                icon: CheckCircle2
+              }
+            ].map((item, i) => (
+              <div key={i} className="relative p-8 rounded-2xl bg-card border border-border hover:shadow-md transition-all text-center group" data-testid={`step-how-it-works-${i}`}>
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm shadow-lg">
+                  {item.step}
+                </div>
+                <div className="mb-6 inline-flex p-4 rounded-xl bg-primary/5 text-primary group-hover:scale-110 transition-transform">
+                  <item.icon className="w-8 h-8" />
+                </div>
+                <h3 className="text-xl font-bold mb-3">{item.title}</h3>
+                <p className="text-muted-foreground">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-primary/5 rounded-3xl p-8 md:p-12 border border-primary/10">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div>
+                <h3 className="text-2xl md:text-3xl font-bold text-primary mb-4">Transparent Pricing</h3>
+                <p className="text-lg text-muted-foreground mb-6">
+                  No hidden fees. We believe in fair pricing that empowers both businesses and freelancers in South Africa.
+                </p>
+                <div className="space-y-4 mb-8">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-500 mt-1 flex-shrink-0" />
+                    <div>
+                      <span className="font-bold text-foreground">Clients: 10% platform fee</span>
+                      <p className="text-sm text-muted-foreground">Significantly lower than the global 20% average.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-500 mt-1 flex-shrink-0" />
+                    <div>
+                      <span className="font-bold text-foreground">Freelancers: Free to join</span>
+                      <p className="text-sm text-muted-foreground">Create your profile and start bidding at zero cost.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-500 mt-1 flex-shrink-0" />
+                    <div>
+                      <span className="font-bold text-foreground">Premium: R79/mo</span>
+                      <p className="text-sm text-muted-foreground">Optional priority placement and enhanced visibility.</p>
+                    </div>
+                  </div>
+                </div>
+                <Button size="lg" className="bg-primary hover:bg-primary/90" onClick={() => navigate("/pricing")} data-testid="button-see-full-pricing">
+                  See Full Pricing
+                </Button>
+              </div>
+              <div className="relative">
+                <div className="bg-white dark:bg-zinc-900 rounded-2xl p-6 shadow-xl border border-border">
+                  <div className="text-center mb-6">
+                    <div className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-1">Estimated Savings</div>
+                    <div className="text-4xl font-bold text-primary">Save up to 50%</div>
+                    <div className="text-sm text-muted-foreground">on platform fees vs. international sites</div>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center p-3 rounded-lg bg-muted/50">
+                      <span className="text-sm font-medium">FreelanceSkills</span>
+                      <span className="font-bold text-emerald-600">10%</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 rounded-lg border border-dashed border-border opacity-60">
+                      <span className="text-sm font-medium">Typical Platform</span>
+                      <span className="font-bold">20%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Top Freelancers */}
       <section className="py-20 md:py-24">
         <div className="container mx-auto px-4 md:px-6">
@@ -364,6 +535,96 @@ export default function Home() {
             <Button variant="outline" className="border-white text-white hover:bg-white hover:text-emerald-700 gap-2" data-testid="button-view-impact" onClick={() => navigate("/impact")}>
                 View Full Impact Dashboard <ArrowRight className="w-4 h-4" />
               </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Success Stories Section */}
+      <section className="py-20 bg-background" data-testid="section-success-stories">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">Success Stories</h2>
+            <p className="text-muted-foreground text-lg">Real impact from the FreelanceSkills community across South Africa.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                name: "Sipho M.",
+                location: "Soweto, Gauteng",
+                title: "From township plumber to R50k/mo",
+                before: "Struggling to find consistent local work through word-of-mouth.",
+                after: "Running a registered maintenance business with 3 employees.",
+                growth: "500% revenue increase",
+                quote: "FreelanceSkills gave me the professional platform I needed to reach high-value clients in Sandton and beyond.",
+                image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200&h=200"
+              },
+              {
+                name: "Elena R.",
+                location: "Cape Town, WC",
+                title: "Global clients from Cape Town",
+                before: "Local junior developer with limited exposure to international projects.",
+                after: "Senior full-stack contractor for European fintech firms.",
+                growth: "R850/hr average rate",
+                quote: "The identity verification and secure escrow gave international clients the confidence to hire me remotely.",
+                image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=200&h=200"
+              },
+              {
+                name: "Zanele K.",
+                location: "Durban, KZN",
+                title: "First-time entrepreneur",
+                before: "Unemployed graduate looking for a way to start a cleaning service.",
+                after: "Top-rated service provider with 45+ verified 5-star reviews.",
+                growth: "100+ projects completed",
+                quote: "I started with one vacuum cleaner and the FreelanceSkills app. Today, I'm my own boss and financially independent.",
+                image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=200&h=200"
+              }
+            ].map((story, i) => (
+              <Card key={i} className="border-border/50 overflow-hidden hover:shadow-xl transition-shadow flex flex-col" data-testid={`card-success-story-${i}`}>
+                <CardContent className="p-0 flex flex-col h-full">
+                  <div className="p-8 flex-1">
+                    <div className="flex items-center gap-4 mb-6">
+                      <Avatar className="h-16 w-16 border-2 border-primary/10">
+                        <AvatarImage src={story.image} alt={story.name} />
+                        <AvatarFallback>{story.name[0]}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <h3 className="font-bold text-lg leading-tight">{story.name}</h3>
+                        <p className="text-sm text-muted-foreground">{story.location}</p>
+                      </div>
+                    </div>
+                    
+                    <h4 className="font-bold text-primary text-xl mb-4 italic leading-tight">"{story.title}"</h4>
+                    
+                    <div className="space-y-4 mb-6">
+                      <div className="flex gap-3">
+                        <div className="mt-1"><div className="w-2 h-2 rounded-full bg-red-400" /></div>
+                        <div>
+                          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1">Before</p>
+                          <p className="text-sm leading-relaxed">{story.before}</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-3">
+                        <div className="mt-1"><div className="w-2 h-2 rounded-full bg-emerald-400" /></div>
+                        <div>
+                          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1">After</p>
+                          <p className="text-sm leading-relaxed">{story.after}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-sm font-bold mb-6">
+                      <TrendingUp className="w-4 h-4" /> {story.growth}
+                    </div>
+
+                    <div className="relative">
+                      <Quote className="absolute -top-2 -left-2 w-8 h-8 text-primary/10 -z-10" />
+                      <p className="text-muted-foreground italic relative z-10">"{story.quote}"</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>

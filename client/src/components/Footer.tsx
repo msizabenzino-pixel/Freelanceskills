@@ -106,12 +106,14 @@ export function Footer() {
           <div>
             <h4 className="font-bold text-primary mb-4">Company</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><Link href="/impact" className="hover:text-primary transition-colors" data-testid="link-about-us">About Us</Link></li>
               <li><Link href="/impact" className="hover:text-primary transition-colors" data-testid="link-impact">Social Impact</Link></li>
               <li><Link href="/academy" className="hover:text-primary transition-colors" data-testid="link-academy">AI Academy</Link></li>
               <li><Link href="/enterprise" className="hover:text-primary transition-colors" data-testid="link-enterprise">Enterprise</Link></li>
               <li><Link href="/referral" className="hover:text-primary transition-colors" data-testid="link-referral">Referral Program</Link></li>
               <li><Link href="/resolution-center" className="hover:text-primary transition-colors" data-testid="link-resolution-center">Resolution Center</Link></li>
-              <li><Link href="/support" className="hover:text-primary transition-colors" data-testid="link-support">Help & Support</Link></li>
+              <li><Link href="/support" className="hover:text-primary transition-colors" data-testid="link-faq">FAQ</Link></li>
+              <li><Link href="/support" className="hover:text-primary transition-colors" data-testid="link-contact">Contact</Link></li>
             </ul>
           </div>
 
@@ -133,10 +135,15 @@ export function Footer() {
             <Shield className="h-4 w-4 text-green-500" />
             <p>© 2026 FreelanceSkills (Pty) Ltd. All rights reserved. Payments protected by escrow.</p>
           </div>
-          <div className="flex gap-6">
+          <div className="flex flex-col md:flex-row gap-6 items-center">
             <Link href="/terms" className="hover:text-primary" data-testid="link-terms">Terms of Service</Link>
             <Link href="/privacy" className="hover:text-primary" data-testid="link-privacy">Privacy Policy</Link>
             <Link href="/accessibility" className="hover:text-primary" data-testid="link-footer-accessibility">Accessibility</Link>
+            <a href="mailto:feedback@freelanceskills.co.za" className="hover:text-primary" data-testid="link-feedback">Suggest a Feature / Report Issue</a>
+            <div className="flex items-center gap-1">
+              <span>🇿🇦</span>
+              <span>Made in Cape Town</span>
+            </div>
           </div>
         </div>
       </div>
