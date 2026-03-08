@@ -73,6 +73,29 @@ export const insertReviewSchema = createInsertSchema(reviews).omit({
   isVerified: true,
 });
 
+export const businessInvitations = pgTable("business_invitations", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  businessName: text("business_name").notNull(),
+  category: text("category").notNull(),
+  province: text("province").notNull(),
+  city: text("city").notNull(),
+  contactPhone: text("contact_phone"),
+  contactEmail: text("contact_email"),
+  websiteUrl: text("website_url"),
+  inviteCode: varchar("invite_code").notNull().unique(),
+  status: text("status").notNull().default("pending"),
+  claimedByUserId: varchar("claimed_by_user_id").references(() => users.id),
+  sentVia: text("sent_via"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertBusinessInvitationSchema = createInsertSchema(businessInvitations).omit({
+  id: true,
+  createdAt: true,
+  status: true,
+  claimedByUserId: true,
+});
+
 export type ServicePackage = typeof servicePackages.$inferSelect;
 export type InsertServicePackage = z.infer<typeof insertServicePackageSchema>;
 export type Booking = typeof bookings.$inferSelect;
@@ -80,3 +103,5 @@ export type InsertBooking = z.infer<typeof insertBookingSchema>;
 export type Review = typeof reviews.$inferSelect;
 export type InsertReview = z.infer<typeof insertReviewSchema>;
 export type AvailabilitySlot = typeof availabilitySlots.$inferSelect;
+export type BusinessInvitation = typeof businessInvitations.$inferSelect;
+export type InsertBusinessInvitation = z.infer<typeof insertBusinessInvitationSchema>;

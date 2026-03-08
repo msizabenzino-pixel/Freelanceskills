@@ -4,8 +4,10 @@ import {
   type Review, type InsertReview, type Conversation, type Message, type InsertMessage,
   type InsertEnterpriseLead, type EnterpriseLead,
   type AggregatedJob, type InsertAggregatedJob, type JobApplication, type InsertJobApplication,
+  type BusinessInvitation, type InsertBusinessInvitation,
   jobs, profiles, servicePackages, bookings, reviews, conversations, messages,
-  freelancerVerifications, privateFeedback, enterpriseLeads, aggregatedJobs, jobApplications
+  freelancerVerifications, privateFeedback, enterpriseLeads, aggregatedJobs, jobApplications,
+  businessInvitations
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, sql, desc } from "drizzle-orm";
@@ -70,6 +72,16 @@ export interface IStorage {
   // Job application operations
   createJobApplication(application: InsertJobApplication): Promise<JobApplication>;
   getUserApplications(userId: string): Promise<JobApplication[]>;
+
+  // Business invitation operations
+  createBusinessInvitation(invitation: InsertBusinessInvitation): Promise<BusinessInvitation>;
+  createManyBusinessInvitations(invitations: InsertBusinessInvitation[]): Promise<BusinessInvitation[]>;
+  getBusinessInvitation(id: string): Promise<BusinessInvitation | undefined>;
+  getBusinessInvitationByCode(code: string): Promise<BusinessInvitation | undefined>;
+  claimBusinessInvitation(code: string, userId: string): Promise<BusinessInvitation | undefined>;
+  getAllBusinessInvitations(filters?: { province?: string; category?: string; status?: string }): Promise<BusinessInvitation[]>;
+  getBusinessInvitationStats(): Promise<{ total: number; pending: number; claimed: number }>;
+  searchBusinessInvitations(query: string): Promise<BusinessInvitation[]>;
 }
 
 class DatabaseStorage implements IStorage {
@@ -362,6 +374,72 @@ class DatabaseStorage implements IStorage {
     return db.select().from(jobApplications)
       .where(eq(jobApplications.userId, userId))
       .orderBy(desc(jobApplications.appliedAt));
+  }
+
+  async createBusinessInvitation(invitation: InsertBusinessInvitation): Promise<BusinessInvitation> {
+    const [created] = await db.insert(businessInvitations).values(invitation).returning();
+    return created;
+  }
+
+  async createManyBusinessInvitations(invitations: InsertBusinessInvitation[]): Promise<BusinessInvitation[]> {
+    if (invitations.length === 0) return [];
+    return db.insert(businessInvitations).values(invitations).returning();
+  }
+
+  async getBusinessInvitation(id: string): Promise<BusinessInvitation | undefined> {
+    const [inv] = await db.select().from(businessInvitations).where(eq(businessInvitations.id, id));
+    return inv;
+  }
+
+  async getBusinessInvitationByCode(code: string): Promise<BusinessInvitation | undefined> {
+    const [inv] = await db.select().from(businessInvitations).where(eq(businessInvitations.inviteCode, code));
+    return inv;
+  }
+
+  async claimBusinessInvitation(code: string, userId: string): Promise<BusinessInvitation | undefined> {
+    const [updated] = await db.update(businessInvitations)
+      .set({ status: "claimed", claimedByUserId: userId })
+      .where(and(eq(businessInvitations.inviteCode, code), eq(businessInvitations.status, "pending")))
+      .returning();
+    return updated;
+  }
+
+  async getAllBusinessInvitations(filters?: { province?: string; category?: string; status?: string }): Promise<BusinessInvitation[]> {
+    const conditions: any[] = [];
+    if (filters?.province) conditions.push(eq(businessInvitations.province, filters.province));
+    if (filters?.category) conditions.push(eq(businessInvitations.category, filters.category));
+    if (filters?.status) conditions.push(eq(businessInvitations.status, filters.status));
+
+    if (conditions.length === 0) {
+      return db.select().from(businessInvitations).orderBy(desc(businessInvitations.createdAt)).limit(200);
+    }
+    return db.select().from(businessInvitations)
+      .where(and(...conditions))
+      .orderBy(desc(businessInvitations.createdAt))
+      .limit(200);
+  }
+
+  async getBusinessInvitationStats(): Promise<{ total: number; pending: number; claimed: number }> {
+    const totalResult = await db.select({ count: sql<number>`cast(count(*) as integer)` }).from(businessInvitations);
+    const pendingResult = await db.select({ count: sql<number>`cast(count(*) as integer)` }).from(businessInvitations).where(eq(businessInvitations.status, "pending"));
+    const claimedResult = await db.select({ count: sql<number>`cast(count(*) as integer)` }).from(businessInvitations).where(eq(businessInvitations.status, "claimed"));
+    return {
+      total: totalResult[0]?.count || 0,
+      pending: pendingResult[0]?.count || 0,
+      claimed: claimedResult[0]?.count || 0,
+    };
+  }
+
+  async searchBusinessInvitations(query: string): Promise<BusinessInvitation[]> {
+    const searchTerm = `%${query.toLowerCase()}%`;
+    return db.select().from(businessInvitations)
+      .where(or(
+        sql`lower(${businessInvitations.businessName}) like ${searchTerm}`,
+        sql`lower(${businessInvitations.contactEmail}) like ${searchTerm}`,
+        sql`lower(${businessInvitations.city}) like ${searchTerm}`
+      ))
+      .orderBy(desc(businessInvitations.createdAt))
+      .limit(50);
   }
 }
 

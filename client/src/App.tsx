@@ -43,6 +43,8 @@ const Analytics = lazy(() => import("@/pages/Analytics"));
 const AISmartMatch = lazy(() => import("@/pages/AISmartMatch"));
 const JobBoard = lazy(() => import("@/pages/JobBoard"));
 const OpportunityFinder = lazy(() => import("@/pages/OpportunityFinder"));
+const ClaimBusiness = lazy(() => import("@/pages/ClaimBusiness"));
+const InviteBusinesses = lazy(() => import("@/pages/InviteBusinesses"));
 const Auth = lazy(() => import("@/pages/Auth"));
 
 function PageLoader() {
@@ -99,6 +101,8 @@ function Router() {
         <Route path="/ai-match" component={AISmartMatch} />
         <Route path="/job-board" component={JobBoard} />
         <Route path="/opportunity-finder" component={OpportunityFinder} />
+        <Route path="/claim-business" component={ClaimBusiness} />
+        <Route path="/invite-businesses" component={InviteBusinesses} />
         <Route component={NotFound} />
       </Switch>
     </Suspense>

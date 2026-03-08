@@ -1285,6 +1285,129 @@ Experience level: ${experienceLevel || 'Any'}`
     }
   });
 
+  app.post("/api/business-invitations", async (req, res) => {
+    try {
+      const { businessName, category, province, city, contactPhone, contactEmail, websiteUrl, sentVia } = req.body;
+      if (!businessName || !category || !province || !city) {
+        return res.status(400).json({ message: "Business name, category, province, and city are required" });
+      }
+      const inviteCode = `FS-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+      const invitation = await storage.createBusinessInvitation({
+        businessName, category, province, city,
+        contactPhone: contactPhone || null,
+        contactEmail: contactEmail || null,
+        websiteUrl: websiteUrl || null,
+        inviteCode,
+        sentVia: sentVia || null,
+      });
+      res.json(invitation);
+    } catch (error) {
+      console.error("Error creating business invitation:", error);
+      res.status(500).json({ message: "Failed to create invitation" });
+    }
+  });
+
+  app.post("/api/business-invitations/bulk", async (req, res) => {
+    try {
+      const { businesses } = req.body;
+      if (!Array.isArray(businesses) || businesses.length === 0) {
+        return res.status(400).json({ message: "businesses array is required" });
+      }
+      const invitations = businesses.map((b: any) => ({
+        businessName: b.businessName || b.name,
+        category: b.category || "trades",
+        province: b.province || "Western Cape",
+        city: b.city || "Cape Town",
+        contactPhone: b.contactPhone || b.phone || null,
+        contactEmail: b.contactEmail || b.email || null,
+        websiteUrl: b.websiteUrl || b.website || null,
+        inviteCode: `FS-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+        sentVia: b.sentVia || null,
+      }));
+      const created = await storage.createManyBusinessInvitations(invitations);
+      res.json({ created: created.length, invitations: created });
+    } catch (error) {
+      console.error("Error bulk creating invitations:", error);
+      res.status(500).json({ message: "Failed to create invitations" });
+    }
+  });
+
+  app.get("/api/business-invitations", async (req, res) => {
+    try {
+      const { province, category, status } = req.query;
+      const invitations = await storage.getAllBusinessInvitations({
+        province: province as string | undefined,
+        category: category as string | undefined,
+        status: status as string | undefined,
+      });
+      res.json(invitations);
+    } catch (error) {
+      console.error("Error fetching invitations:", error);
+      res.status(500).json({ message: "Failed to fetch invitations" });
+    }
+  });
+
+  app.get("/api/business-invitations/stats", async (req, res) => {
+    try {
+      const stats = await storage.getBusinessInvitationStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching invitation stats:", error);
+      res.status(500).json({ message: "Failed to fetch stats" });
+    }
+  });
+
+  app.get("/api/business-invitations/search", async (req, res) => {
+    try {
+      const { q } = req.query;
+      if (!q) return res.json([]);
+      const results = await storage.searchBusinessInvitations(q as string);
+      res.json(results);
+    } catch (error) {
+      console.error("Error searching invitations:", error);
+      res.status(500).json({ message: "Search failed" });
+    }
+  });
+
+  app.get("/api/business-invitations/:code", async (req, res) => {
+    try {
+      const code = req.params.code as string;
+      const invitation = await storage.getBusinessInvitationByCode(code);
+      if (!invitation) {
+        return res.status(404).json({ message: "Invitation not found" });
+      }
+      res.json(invitation);
+    } catch (error) {
+      console.error("Error fetching invitation:", error);
+      res.status(500).json({ message: "Failed to fetch invitation" });
+    }
+  });
+
+  app.post("/api/business-invitations/:code/claim", async (req, res) => {
+    try {
+      const code = req.params.code as string;
+      const userId = (req.session as any)?.userId;
+      if (!userId) {
+        return res.status(401).json({ message: "Please log in to claim this business" });
+      }
+      const invitation = await storage.getBusinessInvitationByCode(code);
+      if (!invitation) {
+        return res.status(404).json({ message: "Invitation not found" });
+      }
+      if (invitation.status === "claimed") {
+        return res.status(409).json({ message: "This business has already been claimed" });
+      }
+      const claimed = await storage.claimBusinessInvitation(code, userId);
+      if (!claimed) {
+        return res.status(400).json({ message: "Unable to claim this invitation" });
+      }
+      res.json(claimed);
+    } catch (error) {
+      console.error("Error claiming invitation:", error);
+      res.status(500).json({ message: "Failed to claim business" });
+    }
+  });
+
   const { createPaymentIntent, getPaymentStatus, getStripePublishableKey, handleWebhook, isStripeConfigured } = await import("./stripe");
 
   app.get("/api/stripe/config", getStripePublishableKey);

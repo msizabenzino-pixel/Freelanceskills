@@ -27,7 +27,15 @@ Preferred communication style: Simple, everyday language.
 ### Data Storage
 - **Database**: PostgreSQL
 - **ORM**: Drizzle ORM with drizzle-zod
-- **Key Models**: Users (with password field), Profiles, Jobs, Aggregated Jobs, Service Packages, Bookings, Reviews, Messages, AI Conversations.
+- **Key Models**: Users (with password field), Profiles, Jobs, Aggregated Jobs, Service Packages, Bookings, Reviews, Messages, AI Conversations, Business Invitations.
+
+### Growth System
+- **Business Invite System**: `/invite-businesses` page for adding businesses and generating unique invite codes
+- **Claim Business Flow**: `/claim-business?code=XXX` page for businesses to claim their listing
+- **Database**: `business_invitations` table with invite codes, status (pending/claimed), province/city/category
+- **API Routes**: POST/GET `/api/business-invitations`, POST `/api/business-invitations/bulk`, GET `/api/business-invitations/stats`, POST `/api/business-invitations/:code/claim`
+- **Share channels**: WhatsApp (pre-filled message), Email (mailto), Copy link
+- **Referral Program**: `/referral` page with tiered rewards (Bronze/Silver/Gold/Diamond)
 
 ### AI Features
 - **AI Task Recommendation Engine**: Recommends categories, budget estimates, skills, and task breakdowns.
