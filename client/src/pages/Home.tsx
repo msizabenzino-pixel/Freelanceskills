@@ -4,16 +4,47 @@ import { JobCard } from "@/components/JobCard";
 import { FreelancerCard } from "@/components/FreelancerCard";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users, Gift, Building2, Brain, Link2, Wallet, BarChart3, Leaf, Globe, ChevronRight } from "lucide-react";
+import { ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users, Gift, Building2, Brain, Link2, Wallet, BarChart3, Leaf, Globe, ChevronRight, ShieldCheck, Lock, FileText, Headphones, Star, Quote } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { useCurrency } from "@/lib/currency";
 import { SERVICE_CATEGORIES } from "@shared/categories";
 import { Code, Wrench, Heart, Hammer, Home as HomeIcon, Waves, Car, Shield as ShieldIcon, Palette, PenTool, Briefcase, PartyPopper, Sparkles as SparklesIcon, Bot } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 const ICON_MAP: Record<string, any> = {
   Code, Wrench, Heart, Hammer, Home: HomeIcon, Waves, Car, Shield: ShieldIcon, Palette, PenTool, 
   Briefcase, PartyPopper, GraduationCap, TrendingUp, Sparkles: SparklesIcon, Bot
 };
+
+function AnimatedCounter({ value, duration = 2000 }: { value: number; duration?: number }) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let start = 0;
+    const end = value;
+    if (start === end) return;
+
+    let totalMiliseconds = duration;
+    let incrementTime = (totalMiliseconds / end) > 10 ? (totalMiliseconds / end) : 10;
+
+    let timer = setInterval(() => {
+      start += Math.ceil(end / (duration / incrementTime));
+      if (start >= end) {
+        setCount(end);
+        clearInterval(timer);
+      } else {
+        setCount(start);
+      }
+    }, incrementTime);
+
+    return () => clearInterval(timer);
+  }, [value, duration]);
+
+  return <span>{count.toLocaleString()}</span>;
+}
 
 export default function Home() {
   const { formatAmount, formatRange, formatRate, formatRateRange } = useCurrency();
@@ -188,19 +219,27 @@ export default function Home() {
                 We've built a platform specifically for the South African market, addressing the unique challenges of trust, payment security, and quality verification.
               </p>
               
-              <ul className="space-y-4 pt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
                 {[
-                  "Verified Identity & Skills Vetting",
-                  "Secure Escrow Payments (No more non-payment)",
-                  "Compliant Tax Invoicing Generation",
-                  "Dedicated Local Support Team"
+                  { icon: ShieldCheck, title: "Verified Identity", desc: "Every freelancer is ID-verified and skills-vetted." },
+                  { icon: Lock, title: "Escrow Payments", desc: "Funds held securely until the project is complete." },
+                  { icon: FileText, title: "Tax Invoicing", desc: "Automated SARS-compliant invoicing for every job." },
+                  { icon: Headphones, title: "24/7 Local Support", desc: "Human support from our teams in SA." }
                 ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-3 text-white/90">
-                    <CheckCircle2 className="w-6 h-6 text-accent shrink-0" />
-                    <span className="font-medium">{item}</span>
-                  </li>
+                  <div key={i} className="p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors" data-testid={`trust-badge-${i}`}>
+                    <item.icon className="w-8 h-8 text-accent mb-3" />
+                    <h3 className="font-bold text-lg mb-1">{item.title}</h3>
+                    <p className="text-sm text-white/70">{item.desc}</p>
+                  </div>
                 ))}
-              </ul>
+              </div>
+
+              <div className="flex items-center gap-3 pt-4">
+                <div className="flex px-3 py-1.5 rounded-full bg-white/10 border border-white/20 items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-accent" />
+                  <span className="text-xs font-bold uppercase tracking-wider">POPIA Compliant</span>
+                </div>
+              </div>
 
               <Button size="lg" className="bg-white text-primary hover:bg-white/90 font-bold mt-4" onClick={() => navigate("/services")} data-testid="button-hire-talent">
                 Hire Talent Now
@@ -210,25 +249,34 @@ export default function Home() {
             <div className="relative">
               <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/10 shadow-2xl">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center font-bold text-primary text-xl">4.9</div>
+                  <div className="w-16 h-16 rounded-full bg-accent flex items-center justify-center font-bold text-primary text-2xl shadow-inner">
+                    <span className="flex items-center">4.9<Star className="w-4 h-4 fill-primary ml-0.5" /></span>
+                  </div>
                   <div>
-                    <div className="font-bold text-lg">Average Client Rating</div>
-                    <div className="text-white/60 text-sm">Based on 10,000+ completed projects</div>
+                    <div className="font-bold text-xl mb-1">Excellent Rating</div>
+                    <div className="text-white/70 text-sm">
+                      <div className="flex items-center gap-1 text-accent mb-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className="w-4 h-4 fill-accent" />
+                        ))}
+                      </div>
+                      Based on <span className="font-bold text-white"><AnimatedCounter value={10000} />+</span> completed projects
+                    </div>
                   </div>
                 </div>
                 <div className="space-y-4">
                   <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-                    <div className="h-full bg-accent w-[95%]" />
+                    <div className="h-full bg-accent w-[98%]" />
                   </div>
                   <div className="flex justify-between text-sm font-medium">
-                    <span>Project Satisfaction</span>
+                    <span>Client Satisfaction</span>
                     <span className="text-accent">98%</span>
                   </div>
                 </div>
               </div>
               {/* Floating Element */}
-              <div className="absolute -bottom-6 -right-6 bg-accent text-primary p-6 rounded-xl shadow-xl font-bold max-w-[200px]">
-                "The best platform for finding reliable local devs."
+              <div className="absolute -bottom-6 -right-6 bg-accent text-primary p-6 rounded-xl shadow-xl font-bold max-w-[220px] transform rotate-3 hover:rotate-0 transition-transform cursor-default">
+                "The most reliable platform for verified SA talent."
               </div>
             </div>
           </div>
@@ -397,6 +445,117 @@ export default function Home() {
               </button>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-20 bg-background overflow-hidden">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">Trusted by Thousands across SA</h2>
+            <p className="text-muted-foreground text-lg">Hear from the freelancers and businesses growing with us.</p>
+          </div>
+          
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full max-w-5xl mx-auto"
+            data-testid="carousel-testimonials"
+          >
+            <CarouselContent>
+              {[
+                {
+                  name: "Sipho Khumalo",
+                  role: "General Contractor",
+                  location: "Soweto, GP",
+                  rating: 5,
+                  quote: "FreelanceSkills changed my business. I used to struggle with payments, now everything is secure through escrow.",
+                },
+                {
+                  name: "Lerato Mokoena",
+                  role: "Graphic Designer",
+                  location: "Sandton, GP",
+                  rating: 5,
+                  quote: "The AI profile builder helped me showcase my skills perfectly. I landed my first big corporate client within a week.",
+                },
+                {
+                  name: "Johan van der Merwe",
+                  role: "SME Owner",
+                  location: "Stellenbosch, WC",
+                  rating: 4,
+                  quote: "Finding reliable developers in South Africa was a challenge until I found this platform. Highly recommended for businesses.",
+                },
+                {
+                  name: "Fatima Patel",
+                  role: "Digital Marketer",
+                  location: "Durban, KZN",
+                  rating: 5,
+                  quote: "I love the local support team. They actually understand the SA market and help whenever I have questions about tax invoicing.",
+                },
+                {
+                  name: "Thandiwe Dlamini",
+                  role: "Content Writer",
+                  location: "Mbombela, MP",
+                  rating: 5,
+                  quote: "As a remote freelancer, having a platform that handles South African bank transfers easily is a lifesaver.",
+                },
+                {
+                  name: "Kevin Naidoo",
+                  role: "IT Consultant",
+                  location: "Umhlanga, KZN",
+                  rating: 5,
+                  quote: "The verification process adds so much trust. Clients know they're hiring a professional, not just anyone.",
+                },
+                {
+                  name: "Zanele Mbeki",
+                  role: "Event Planner",
+                  location: "Port Elizabeth, EC",
+                  rating: 4,
+                  quote: "The variety of talent here is amazing. From photographers to security, I find everything I need for my events.",
+                },
+                {
+                  name: "Pieter Botha",
+                  role: "Software Architect",
+                  location: "Pretoria, GP",
+                  rating: 5,
+                  quote: "Technical projects require specialized talent. This platform consistently delivers high-quality candidates.",
+                }
+              ].map((testimonial, i) => (
+                <CarouselItem key={i} className="md:basis-1/2 lg:basis-1/3 pl-4">
+                  <Card className="h-full border-border/50 shadow-sm" data-testid={`card-testimonial-${i}`}>
+                    <CardContent className="p-6 flex flex-col h-full">
+                      <div className="flex gap-1 mb-4">
+                        {[...Array(5)].map((_, index) => (
+                          <Star
+                            key={index}
+                            className={`w-4 h-4 ${index < testimonial.rating ? "fill-accent text-accent" : "text-muted"}`}
+                          />
+                        ))}
+                      </div>
+                      <Quote className="w-8 h-8 text-primary/10 mb-4 shrink-0" />
+                      <p className="text-muted-foreground italic mb-6 flex-grow">"{testimonial.quote}"</p>
+                      <div className="flex items-center gap-4 mt-auto">
+                        <Avatar className="h-12 w-12 border border-border">
+                          <AvatarImage src={`https://ui-avatars.com/api/?name=${encodeURIComponent(testimonial.name)}&background=random&color=fff`} />
+                          <AvatarFallback>{testimonial.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="font-bold text-foreground text-sm" data-testid={`text-testimonial-name-${i}`}>{testimonial.name}</div>
+                          <div className="text-xs text-muted-foreground">{testimonial.role} • {testimonial.location}</div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="hidden md:block">
+              <CarouselPrevious className="-left-12" />
+              <CarouselNext className="-right-12" />
+            </div>
+          </Carousel>
         </div>
       </section>
 

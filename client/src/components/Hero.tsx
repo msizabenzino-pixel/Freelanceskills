@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Search, ArrowRight, Sparkles, Shield, Users } from "lucide-react";
+import { Search, ArrowRight, Sparkles, Shield, Users, Briefcase, User } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useLocation } from "wouter";
@@ -99,6 +99,31 @@ export function Hero() {
               Search Now
             </Button>
           </motion.form>
+
+          {/* Role-based CTAs */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center w-full max-w-xl mx-auto pt-2"
+          >
+            <Button
+              onClick={() => navigate("/post-job")}
+              className="flex-1 h-12 rounded-xl bg-white/90 hover:bg-white text-primary font-bold px-6 shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
+              data-testid="button-im-hiring"
+            >
+              <Briefcase className="w-5 h-5" />
+              I'm Hiring
+            </Button>
+            <Button
+              onClick={() => navigate("/freelancer-onboarding")}
+              className="flex-1 h-12 rounded-xl bg-accent/80 hover:bg-accent text-white font-bold px-6 shadow-lg shadow-accent/30 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
+              data-testid="button-im-freelancer"
+            >
+              <User className="w-5 h-5" />
+              I'm a Freelancer
+            </Button>
+          </motion.div>
 
           <motion.div
             initial={{ opacity: 0 }}

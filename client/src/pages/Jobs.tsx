@@ -77,7 +77,7 @@ const SAMPLE_JOBS = (formatAmount: (amount: number) => string, formatRateRange: 
   {
     title: "Senior React Developer",
     company: "Capitec Bank",
-    type: "Remote",
+    type: "Urgent",
     budget: formatRateRange(650, 850, "hr"),
     budgetNumeric: 850,
     location: "Cape Town",
@@ -101,7 +101,7 @@ const SAMPLE_JOBS = (formatAmount: (amount: number) => string, formatRateRange: 
   {
     title: "SEO Copywriter",
     company: "Discovery",
-    type: "Part-time",
+    type: "Urgent",
     budget: formatRate(350, "hr"),
     budgetNumeric: 350,
     location: "Sandton",
