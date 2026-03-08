@@ -23,6 +23,10 @@ export default function Auth() {
     lastName: "",
   });
 
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetLink, setResetLink] = useState("");
+
   const loginMutation = useMutation({
     mutationFn: async (data: { email: string; password: string }) => {
       const res = await fetch("/api/auth/login", {
@@ -71,16 +75,43 @@ export default function Auth() {
     },
   });
 
+  const forgotPasswordMutation = useMutation({
+    mutationFn: async (email: string) => {
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "Request failed");
+      }
+      return res.json();
+    },
+    onSuccess: (data) => {
+      setResetLink(data.resetLink);
+      toast({ 
+        title: "Reset link generated", 
+        description: "Your password reset link is ready. (In production, this would be emailed)." 
+      });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (isLogin) {
+    if (isForgotPassword) {
+      forgotPasswordMutation.mutate(resetEmail);
+    } else if (isLogin) {
       loginMutation.mutate({ email: formData.email, password: formData.password });
     } else {
       registerMutation.mutate(formData);
     }
   };
 
-  const isLoading = loginMutation.isPending || registerMutation.isPending;
+  const isLoading = loginMutation.isPending || registerMutation.isPending || forgotPasswordMutation.isPending;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex flex-col">
@@ -137,116 +168,196 @@ export default function Auth() {
                   F
                 </div>
                 <h2 className="text-2xl font-bold text-slate-900" data-testid="text-auth-title">
-                  {isLogin ? "Sign In" : "Create Account"}
+                  {isForgotPassword ? "Reset Password" : (isLogin ? "Sign In" : "Create Account")}
                 </h2>
                 <p className="text-sm text-slate-500 mt-1">
-                  {isLogin ? "Enter your credentials to continue" : "Fill in your details to get started"}
+                  {isForgotPassword 
+                    ? "Enter your email to receive a reset link" 
+                    : (isLogin ? "Enter your credentials to continue" : "Fill in your details to get started")}
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {!isLogin && (
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <Label htmlFor="firstName" className="text-sm font-medium text-slate-700">First Name</Label>
-                      <div className="relative mt-1">
-                        <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                        <Input
-                          id="firstName"
-                          placeholder="John"
-                          value={formData.firstName}
-                          onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                          className="pl-10"
-                          data-testid="input-first-name"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label htmlFor="lastName" className="text-sm font-medium text-slate-700">Last Name</Label>
-                      <div className="relative mt-1">
-                        <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                        <Input
-                          id="lastName"
-                          placeholder="Doe"
-                          value={formData.lastName}
-                          onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                          className="pl-10"
-                          data-testid="input-last-name"
-                        />
-                      </div>
+              {isForgotPassword ? (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <Label htmlFor="resetEmail" className="text-sm font-medium text-slate-700">Email Address</Label>
+                    <div className="relative mt-1">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                      <Input
+                        id="resetEmail"
+                        type="email"
+                        placeholder="you@example.com"
+                        value={resetEmail}
+                        onChange={(e) => setResetEmail(e.target.value)}
+                        className="pl-10"
+                        required
+                        data-testid="input-reset-email"
+                      />
                     </div>
                   </div>
-                )}
 
-                <div>
-                  <Label htmlFor="email" className="text-sm font-medium text-slate-700">Email Address</Label>
-                  <div className="relative mt-1">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="you@example.com"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="pl-10"
-                      required
-                      data-testid="input-email"
-                    />
-                  </div>
-                </div>
+                  {resetLink && (
+                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg space-y-2">
+                      <p className="text-sm text-blue-800 font-medium">Your reset link:</p>
+                      <a 
+                        href={resetLink} 
+                        className="text-sm text-blue-600 break-all hover:underline"
+                        data-testid="link-reset-password"
+                      >
+                        {resetLink}
+                      </a>
+                    </div>
+                  )}
 
-                <div>
-                  <Label htmlFor="password" className="text-sm font-medium text-slate-700">Password</Label>
-                  <div className="relative mt-1">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder={isLogin ? "Enter your password" : "Min 6 characters"}
-                      value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="pl-10 pr-10"
-                      required
-                      minLength={6}
-                      data-testid="input-password"
-                    />
+                  <Button
+                    type="submit"
+                    className="w-full h-12 font-semibold text-base gap-2 rounded-xl"
+                    disabled={isLoading}
+                    data-testid="button-forgot-password-submit"
+                  >
+                    {isLoading ? (
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                    ) : (
+                      <>
+                        Get Reset Link
+                        <ArrowRight className="h-4 w-4" />
+                      </>
+                    )}
+                  </Button>
+
+                  <div className="text-center mt-4">
                     <button
                       type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                      data-testid="button-toggle-password"
+                      onClick={() => {
+                        setIsForgotPassword(false);
+                        setResetLink("");
+                      }}
+                      className="text-sm text-primary hover:underline font-medium"
+                      data-testid="button-back-to-login"
                     >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      Back to Sign In
                     </button>
                   </div>
-                </div>
-
-                <Button
-                  type="submit"
-                  className="w-full h-12 font-semibold text-base gap-2 rounded-xl"
-                  disabled={isLoading}
-                  data-testid="button-auth-submit"
-                >
-                  {isLoading ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                  ) : (
-                    <>
-                      {isLogin ? "Sign In" : "Create Account"}
-                      <ArrowRight className="h-4 w-4" />
-                    </>
+                </form>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  {!isLogin && (
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label htmlFor="firstName" className="text-sm font-medium text-slate-700">First Name</Label>
+                        <div className="relative mt-1">
+                          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                          <Input
+                            id="firstName"
+                            placeholder="John"
+                            value={formData.firstName}
+                            onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                            className="pl-10"
+                            data-testid="input-first-name"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label htmlFor="lastName" className="text-sm font-medium text-slate-700">Last Name</Label>
+                        <div className="relative mt-1">
+                          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                          <Input
+                            id="lastName"
+                            placeholder="Doe"
+                            value={formData.lastName}
+                            onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                            className="pl-10"
+                            data-testid="input-last-name"
+                          />
+                        </div>
+                      </div>
+                    </div>
                   )}
-                </Button>
-              </form>
 
-              <div className="mt-6 text-center">
-                <button
-                  onClick={() => setIsLogin(!isLogin)}
-                  className="text-sm text-primary hover:underline font-medium"
-                  data-testid="button-toggle-auth-mode"
-                >
-                  {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
-                </button>
-              </div>
+                  <div>
+                    <Label htmlFor="email" className="text-sm font-medium text-slate-700">Email Address</Label>
+                    <div className="relative mt-1">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="you@example.com"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="pl-10"
+                        required
+                        data-testid="input-email"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="password" className="text-sm font-medium text-slate-700">Password</Label>
+                      {isLogin && (
+                        <button
+                          type="button"
+                          onClick={() => setIsForgotPassword(true)}
+                          className="text-xs text-primary hover:underline font-medium"
+                          data-testid="button-forgot-password"
+                        >
+                          Forgot Password?
+                        </button>
+                      )}
+                    </div>
+                    <div className="relative mt-1">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder={isLogin ? "Enter your password" : "Min 6 characters"}
+                        value={formData.password}
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                        className="pl-10 pr-10"
+                        required
+                        minLength={6}
+                        data-testid="input-password"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        data-testid="button-toggle-password"
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full h-12 font-semibold text-base gap-2 rounded-xl"
+                    disabled={isLoading}
+                    data-testid="button-auth-submit"
+                  >
+                    {isLoading ? (
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                    ) : (
+                      <>
+                        {isLogin ? "Sign In" : "Create Account"}
+                        <ArrowRight className="h-4 w-4" />
+                      </>
+                    )}
+                  </Button>
+                </form>
+              )}
+
+              {!isForgotPassword && (
+                <div className="mt-6 text-center">
+                  <button
+                    onClick={() => setIsLogin(!isLogin)}
+                    className="text-sm text-primary hover:underline font-medium"
+                    data-testid="button-toggle-auth-mode"
+                  >
+                    {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
+                  </button>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

@@ -96,6 +96,19 @@ export async function registerRoutes(
     }
   });
 
+  app.get("/api/profile/:id", async (req, res) => {
+    try {
+      const profile = await storage.getProfileById(req.params.id);
+      if (!profile) {
+        return res.status(404).json({ message: "Profile not found" });
+      }
+      res.json(profile);
+    } catch (error) {
+      console.error("Error fetching profile by id:", error);
+      res.status(500).json({ message: "Failed to fetch profile" });
+    }
+  });
+
   app.post("/api/profile", isAuthenticated, async (req: any, res) => {
     try {
       const userId = (req.session as any).userId;
@@ -281,7 +294,30 @@ export async function registerRoutes(
     try {
       const userId = (req.session as any).userId;
       const conversations = await storage.getUserConversations(userId);
-      res.json(conversations);
+      
+      const conversationsWithProfiles = await Promise.all(
+        conversations.map(async (conv) => {
+          const otherUserId = conv.participant1Id === userId ? conv.participant2Id : conv.participant1Id;
+          const otherProfile = await storage.getProfile(otherUserId);
+          const messages = await storage.getConversationMessages(conv.id);
+          const lastMessage = messages[messages.length - 1];
+          const unreadCount = messages.filter(m => m.senderId !== userId && !m.isRead).length;
+
+          return {
+            ...conv,
+            otherUser: {
+              id: otherUserId,
+              name: otherProfile?.title || "Freelancer",
+              avatar: otherProfile?.avatarUrl,
+              role: otherProfile?.category || "Professional",
+            },
+            lastMessage: lastMessage?.content || "",
+            unreadCount,
+          };
+        })
+      );
+
+      res.json(conversationsWithProfiles);
     } catch (error) {
       console.error("Error fetching conversations:", error);
       res.status(500).json({ message: "Failed to fetch conversations" });

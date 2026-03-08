@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/use-auth";
+import { Booking } from "@shared/models/services";
 import {
   Wallet,
   ArrowRight,
@@ -28,7 +31,13 @@ import {
   Copy,
   CheckCheck,
   Minus,
+  AlertCircle,
+  Receipt,
+  Download,
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { format } from "date-fns";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const fiatCurrencies = [
   { code: "ZAR", name: "South African Rand", symbol: "R", flag: "🇿🇦", rate: 1.0 },
@@ -205,9 +214,37 @@ function CryptoWalletCard({ crypto }: { crypto: typeof cryptoCurrencies[0] }) {
 }
 
 export default function PaymentsHub() {
+  const { user } = useAuth();
   const [selectedFrom, setSelectedFrom] = useState("ZAR");
   const [selectedTo, setSelectedTo] = useState("USD");
   const [amount, setAmount] = useState("10000");
+
+  const { data: bookings, isLoading, error } = useQuery<Booking[]>({
+    queryKey: ["/api/bookings"],
+  });
+
+  const totals = useMemo(() => {
+    if (!bookings || !user) return { totalEarned: 0, pending: 0, inEscrow: 0 };
+
+    return bookings.reduce((acc, booking) => {
+      const isFreelancer = booking.freelancerId === user.id;
+      const amount = booking.totalAmount;
+
+      if (isFreelancer) {
+        if (booking.status === "completed") {
+          acc.totalEarned += amount;
+        } else if (booking.status === "pending" || booking.status === "confirmed") {
+          acc.pending += amount;
+        }
+      }
+
+      if (booking.status === "confirmed" || booking.status === "pending") {
+        acc.inEscrow += amount;
+      }
+
+      return acc;
+    }, { totalEarned: 0, pending: 0, inEscrow: 0 });
+  }, [bookings, user]);
 
   const fromCurrency = fiatCurrencies.find((c) => c.code === selectedFrom)!;
   const toCurrency = fiatCurrencies.find((c) => c.code === selectedTo)!;
@@ -239,6 +276,40 @@ export default function PaymentsHub() {
               12+ currencies across Africa, crypto wallets, mobile money, and instant settlement.
               The most flexible payment system built for Africa's gig economy.
             </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-12 mb-12">
+              <Card className="bg-white/10 border-white/20 text-white backdrop-blur-md">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-white/70">Total Earned</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold" data-testid="text-total-earned">
+                    {isLoading ? <Skeleton className="h-9 w-24 bg-white/20" /> : `R${totals.totalEarned}`}
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="bg-white/10 border-white/20 text-white backdrop-blur-md">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-white/70">Pending Payouts</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold" data-testid="text-pending-payouts">
+                    {isLoading ? <Skeleton className="h-9 w-24 bg-white/20" /> : `R${totals.pending}`}
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="bg-white/10 border-white/20 text-white backdrop-blur-md">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-white/70">Held in Escrow</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold" data-testid="text-in-escrow">
+                    {isLoading ? <Skeleton className="h-9 w-24 bg-white/20" /> : `R${totals.inEscrow}`}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
             <div className="flex flex-wrap justify-center gap-4 mt-8 text-white/70 text-sm">
               {[
                 { icon: Globe, label: "12+ Currencies", testId: "stat-currencies" },
@@ -254,7 +325,98 @@ export default function PaymentsHub() {
           </div>
         </section>
 
-        <section className="py-20 md:py-24 bg-muted/30" data-testid="section-exchange-rates">
+        <section className="py-20 md:py-24 bg-muted/30" data-testid="section-transaction-history">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
+              <div>
+                <h2 className="text-3xl font-bold text-primary mb-2">Transaction History</h2>
+                <p className="text-muted-foreground">Monitor your payments, payouts, and escrow status.</p>
+              </div>
+              <Button variant="outline" size="sm" className="gap-2" data-testid="button-download-csv">
+                <Download className="w-4 h-4" /> Download CSV
+              </Button>
+            </div>
+
+            <Card className="border-border">
+              <CardContent className="p-0">
+                {isLoading ? (
+                  <div className="p-8 space-y-4">
+                    <Skeleton className="h-8 w-full" />
+                    <Skeleton className="h-8 w-full" />
+                    <Skeleton className="h-8 w-full" />
+                  </div>
+                ) : error ? (
+                  <div className="p-12 text-center text-muted-foreground">
+                    <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
+                    <p>Failed to load transactions. Please try again later.</p>
+                  </div>
+                ) : !bookings || bookings.length === 0 ? (
+                  <div className="p-12 text-center text-muted-foreground" data-testid="empty-transactions">
+                    <Receipt className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
+                    <p className="text-lg font-medium">No transactions yet.</p>
+                    <p className="text-sm">Complete your first job to see payment activity here.</p>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Transaction ID</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Amount</TableHead>
+                        <TableHead>Status</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {bookings.map((booking) => {
+                        const isFreelancer = booking.freelancerId === user?.id;
+                        return (
+                          <TableRow key={booking.id} data-testid={`row-transaction-${booking.id}`}>
+                            <TableCell className="font-mono text-xs text-muted-foreground">
+                              {booking.id.substring(0, 8)}...
+                            </TableCell>
+                            <TableCell className="text-sm">
+                              {booking.createdAt ? format(new Date(booking.createdAt), "MMM d, yyyy") : "-"}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                {isFreelancer ? (
+                                  <Badge variant="outline" className="text-green-600 bg-green-50 border-green-200">
+                                    <TrendingUp className="w-3 h-3 mr-1" /> Payment In
+                                  </Badge>
+                                ) : (
+                                  <Badge variant="outline" className="text-blue-600 bg-blue-50 border-blue-200">
+                                    <TrendingDown className="w-3 h-3 mr-1" /> Payment Out
+                                  </Badge>
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell className="font-bold">
+                              R{booking.totalAmount}
+                            </TableCell>
+                            <TableCell>
+                              <Badge 
+                                className={
+                                  booking.status === "completed" ? "bg-green-500/10 text-green-600" :
+                                  booking.status === "confirmed" ? "bg-blue-500/10 text-blue-600" :
+                                  "bg-yellow-500/10 text-yellow-600"
+                                }
+                              >
+                                {booking.status}
+                              </Badge>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
+        <section className="py-20 md:py-24" data-testid="section-exchange-rates">
           <div className="container mx-auto px-4 md:px-6">
             <div className="text-center max-w-2xl mx-auto mb-16">
               <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">Real-Time Exchange Rates</h2>

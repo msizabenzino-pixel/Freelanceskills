@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { VideoCallDialog } from "@/components/VideoCall";
 import { ContractBuilder } from "@/components/ContractMilestones";
-import { Search, MoreVertical, Phone, Video, Send, Paperclip, CheckCheck, ShieldCheck, FileText, Shield, X, AlertTriangle } from "lucide-react";
+import { Search, MoreVertical, Phone, Video, Send, Paperclip, CheckCheck, ShieldCheck, FileText, Shield, X, AlertTriangle, MessageSquare } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -14,57 +14,55 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
-
-const conversations = [
-  {
-    id: 1,
-    name: "Thabo M.",
-    role: "Senior Electrician",
-    avatar: "https://images.unsplash.com/photo-1531384441138-2736e62e0919?auto=format&fit=crop&q=80&w=200&h=200",
-    lastMessage: "I can be there by 2 PM tomorrow.",
-    time: "10:30 AM",
-    unread: 2,
-    online: true
-  },
-  {
-    id: 2,
-    name: "Sarah L.",
-    role: "Safety Officer",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200&h=200",
-    lastMessage: "Here is the revised safety file.",
-    time: "Yesterday",
-    unread: 0,
-    online: false
-  },
-  {
-    id: 3,
-    name: "Capitec Support",
-    role: "Enterprise Client",
-    avatar: "C",
-    lastMessage: "Payment for Milestone 1 released.",
-    time: "2 days ago",
-    unread: 0,
-    online: false
-  }
-];
-
-const messages = [
-  { id: 1, sender: "them", text: "Hi! I saw your job posting for the electrical rewiring.", time: "10:00 AM" },
-  { id: 2, sender: "me", text: "Hi Thabo. Yes, we need someone for our Sandton office.", time: "10:05 AM" },
-  { id: 3, sender: "them", text: "I have experience with commercial installations. Are the materials already on site?", time: "10:10 AM" },
-  { id: 4, sender: "me", text: "Not yet. We need you to assess first.", time: "10:12 AM" },
-  { id: 5, sender: "them", text: "Understood. I can be there by 2 PM tomorrow for a quote.", time: "10:30 AM" }
-];
+import { useState, useEffect } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/use-auth";
+import { format } from "date-fns";
 
 export default function Messages() {
-  const [selectedChat, setSelectedChat] = useState(conversations[0]);
+  const { user } = useAuth();
+  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [inputText, setInputText] = useState("");
   const [showVideoCall, setShowVideoCall] = useState(false);
   const [showContract, setShowContract] = useState(false);
   const [showSafetyPopup, setShowSafetyPopup] = useState(() => {
     return localStorage.getItem("messageSafetyShown") !== "true";
   });
+
+  const { data: conversations = [], isLoading: isLoadingConversations } = useQuery<any[]>({
+    queryKey: ["/api/conversations"],
+  });
+
+  const selectedConversation = conversations.find((c: any) => c.id === selectedConversationId);
+
+  const { data: messages = [], isLoading: isLoadingMessages } = useQuery<any[]>({
+    queryKey: ["/api/conversations", selectedConversationId, "messages"],
+    enabled: !!selectedConversationId,
+  });
+
+  useEffect(() => {
+    if (conversations.length > 0 && !selectedConversationId) {
+      setSelectedConversationId(conversations[0].id);
+    }
+  }, [conversations, selectedConversationId]);
+
+  const sendMessageMutation = useMutation({
+    mutationFn: async (content: string) => {
+      const res = await apiRequest("POST", `/api/conversations/${selectedConversationId}/messages`, { content });
+      return res.json();
+    },
+    onSuccess: () => {
+      setInputText("");
+      queryClient.invalidateQueries({ queryKey: ["/api/conversations", selectedConversationId, "messages"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/conversations"] });
+    },
+  });
+
+  const handleSendMessage = () => {
+    if (!inputText.trim() || sendMessageMutation.isPending) return;
+    sendMessageMutation.mutate(inputText);
+  };
 
   const dismissSafetyPopup = () => {
     setShowSafetyPopup(false);
@@ -89,154 +87,202 @@ export default function Messages() {
           
           <ScrollArea className="flex-1">
             <div className="flex flex-col">
-              {conversations.map((chat) => (
-                <button
-                  key={chat.id}
-                  data-testid={`button-chat-item-${chat.id}`}
-                  onClick={() => setSelectedChat(chat)}
-                  className={cn(
-                    "flex items-start gap-3 p-4 hover:bg-muted/50 transition-colors text-left border-b border-border/50",
-                    selectedChat.id === chat.id && "bg-accent/5 border-l-4 border-l-accent"
-                  )}
-                >
-                  <div className="relative">
-                    <Avatar>
-                      <AvatarImage src={chat.avatar} />
-                      <AvatarFallback>{chat.name[0]}</AvatarFallback>
-                    </Avatar>
-                    {chat.online && <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-baseline mb-1">
-                      <span className="font-semibold text-sm truncate">{chat.name}</span>
-                      <span className="text-[10px] text-muted-foreground whitespace-nowrap">{chat.time}</span>
+              {isLoadingConversations ? (
+                Array(3).fill(0).map((_, i) => (
+                  <div key={i} className="p-4 border-b border-border animate-pulse">
+                    <div className="flex gap-3">
+                      <div className="w-10 h-10 bg-muted rounded-full" />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-muted rounded w-1/2" />
+                        <div className="h-3 bg-muted rounded w-3/4" />
+                      </div>
                     </div>
-                    <p className={cn(
-                      "text-xs truncate",
-                      chat.unread > 0 ? "text-primary font-bold" : "text-muted-foreground"
-                    )}>
-                      {chat.lastMessage}
-                    </p>
                   </div>
-                  {chat.unread > 0 && (
-                    <div className="w-5 h-5 bg-accent text-primary text-[10px] font-bold rounded-full flex items-center justify-center">
-                      {chat.unread}
+                ))
+              ) : conversations.length === 0 ? (
+                <div className="p-8 text-center" data-testid="empty-conversations">
+                  <MessageSquare className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-20" />
+                  <p className="text-sm text-muted-foreground">No messages yet. Start a conversation from a freelancer's profile.</p>
+                </div>
+              ) : (
+                conversations.map((chat: any) => (
+                  <button
+                    key={chat.id}
+                    data-testid={`button-chat-item-${chat.id}`}
+                    onClick={() => setSelectedConversationId(chat.id)}
+                    className={cn(
+                      "flex items-start gap-3 p-4 hover:bg-muted/50 transition-colors text-left border-b border-border/50",
+                      selectedConversationId === chat.id && "bg-accent/5 border-l-4 border-l-accent"
+                    )}
+                  >
+                    <div className="relative">
+                      <Avatar>
+                        <AvatarImage src={chat.otherUser.avatar} />
+                        <AvatarFallback>{chat.otherUser.name[0]}</AvatarFallback>
+                      </Avatar>
                     </div>
-                  )}
-                </button>
-              ))}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-baseline mb-1">
+                        <span className="font-semibold text-sm truncate">{chat.otherUser.name}</span>
+                        <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                          {chat.lastMessageAt ? format(new Date(chat.lastMessageAt), "p") : ""}
+                        </span>
+                      </div>
+                      <p className={cn(
+                        "text-xs truncate",
+                        chat.unreadCount > 0 ? "text-primary font-bold" : "text-muted-foreground"
+                      )}>
+                        {chat.lastMessage}
+                      </p>
+                    </div>
+                    {chat.unreadCount > 0 && (
+                      <div className="w-5 h-5 bg-accent text-primary text-[10px] font-bold rounded-full flex items-center justify-center">
+                        {chat.unreadCount}
+                      </div>
+                    )}
+                  </button>
+                ))
+              )}
             </div>
           </ScrollArea>
         </div>
 
         {/* Chat Area */}
         <div className="flex-1 flex flex-col bg-muted relative hidden md:flex">
-          {/* Chat Header */}
-          <div className="h-16 border-b border-border bg-card flex items-center justify-between px-6 shadow-sm z-10">
-            <div className="flex items-center gap-3">
-              <Avatar>
-                <AvatarImage src={selectedChat.avatar} />
-                <AvatarFallback>{selectedChat.name[0]}</AvatarFallback>
-              </Avatar>
-              <div>
-                <h3 className="font-bold text-sm">{selectedChat.name}</h3>
-                <span className="text-xs text-muted-foreground flex items-center gap-1">
-                  {selectedChat.role} • <span className="text-green-600">Online</span>
-                </span>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Button variant="ghost" size="icon" data-testid="button-phone-call"><Phone className="w-5 h-5" /></Button>
-              <Button variant="ghost" size="icon" onClick={() => setShowVideoCall(true)} data-testid="button-video-call-message"><Video className="w-5 h-5" /></Button>
-              <Button variant="ghost" size="icon" onClick={() => setShowContract(true)} data-testid="button-create-contract"><FileText className="w-5 h-5" /></Button>
-              <Button variant="ghost" size="icon" data-testid="button-more-options"><MoreVertical className="w-5 h-5" /></Button>
-            </div>
-          </div>
-
-          {/* Messages */}
-          <ScrollArea className="flex-1 p-6">
-            <div className="space-y-6">
-              <div className="flex justify-center">
-                <span className="text-xs bg-muted text-muted-foreground px-3 py-1 rounded-full">Today</span>
-              </div>
-
-              {/* Safety System Message */}
-              <div className="flex justify-center" data-testid="safety-message">
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 max-w-md text-center">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <Shield className="w-5 h-5 text-amber-600" />
-                    <span className="font-semibold text-amber-800 text-sm">Stay Protected</span>
+          {selectedConversation ? (
+            <>
+              {/* Chat Header */}
+              <div className="h-16 border-b border-border bg-card flex items-center justify-between px-6 shadow-sm z-10">
+                <div className="flex items-center gap-3">
+                  <Avatar>
+                    <AvatarImage src={selectedConversation.otherUser.avatar} />
+                    <AvatarFallback>{selectedConversation.otherUser.name[0]}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h3 className="font-bold text-sm">{selectedConversation.otherUser.name}</h3>
+                    <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      {selectedConversation.otherUser.role} • <span className="text-green-600">Online</span>
+                    </span>
                   </div>
-                  <p className="text-xs text-amber-700 leading-relaxed">
-                    Keep all communication on FreelanceSkills. Never share bank details or pay outside the platform. 
-                    Your payments are protected by escrow.
-                  </p>
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Button variant="ghost" size="icon" data-testid="button-phone-call"><Phone className="w-5 h-5" /></Button>
+                  <Button variant="ghost" size="icon" onClick={() => setShowVideoCall(true)} data-testid="button-video-call-message"><Video className="w-5 h-5" /></Button>
+                  <Button variant="ghost" size="icon" onClick={() => setShowContract(true)} data-testid="button-create-contract"><FileText className="w-5 h-5" /></Button>
+                  <Button variant="ghost" size="icon" data-testid="button-more-options"><MoreVertical className="w-5 h-5" /></Button>
                 </div>
               </div>
-              
-              {messages.map((msg) => (
-                <div key={msg.id} 
-                  data-testid={`message-item-${msg.id}`}
-                  className={cn(
-                  "flex gap-3 max-w-[80%]",
-                  msg.sender === 'me' ? "ml-auto flex-row-reverse" : ""
-                )}>
-                  {msg.sender === 'them' && (
-                    <Avatar className="w-8 h-8 mt-1">
-                      <AvatarImage src={selectedChat.avatar} />
-                      <AvatarFallback>{selectedChat.name[0]}</AvatarFallback>
-                    </Avatar>
-                  )}
-                  
-                  <div className={cn(
-                    "p-3 rounded-2xl text-sm shadow-sm",
-                    msg.sender === 'me' 
-                      ? "bg-primary text-white rounded-tr-none" 
-                      : "bg-card text-foreground rounded-tl-none border border-border"
-                  )}>
-                    <p>{msg.text}</p>
-                    <div className={cn(
-                      "text-[10px] mt-1 flex justify-end items-center gap-1",
-                      msg.sender === 'me' ? "text-white/70" : "text-muted-foreground"
-                    )}>
-                      {msg.time}
-                      {msg.sender === 'me' && <CheckCheck className="w-3 h-3" />}
+
+              {/* Messages */}
+              <ScrollArea className="flex-1 p-6">
+                <div className="space-y-6">
+                  <div className="flex justify-center">
+                    <span className="text-xs bg-muted text-muted-foreground px-3 py-1 rounded-full">Today</span>
+                  </div>
+
+                  {/* Safety System Message */}
+                  <div className="flex justify-center" data-testid="safety-message">
+                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 max-w-md text-center">
+                      <div className="flex items-center justify-center gap-2 mb-2">
+                        <Shield className="w-5 h-5 text-amber-600" />
+                        <span className="font-semibold text-amber-800 text-sm">Stay Protected</span>
+                      </div>
+                      <p className="text-xs text-amber-700 leading-relaxed">
+                        Keep all communication on FreelanceSkills. Never share bank details or pay outside the platform. 
+                        Your payments are protected by escrow.
+                      </p>
                     </div>
                   </div>
+                  
+                  {isLoadingMessages ? (
+                    <div className="flex justify-center p-4">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+                    </div>
+                  ) : (
+                    messages.map((msg: any) => (
+                      <div key={msg.id} 
+                        data-testid={`message-item-${msg.id}`}
+                        className={cn(
+                        "flex gap-3 max-w-[80%]",
+                        msg.senderId === user?.id ? "ml-auto flex-row-reverse" : ""
+                      )}>
+                        {msg.senderId !== user?.id && (
+                          <Avatar className="w-8 h-8 mt-1">
+                            <AvatarImage src={selectedConversation.otherUser.avatar} />
+                            <AvatarFallback>{selectedConversation.otherUser.name[0]}</AvatarFallback>
+                          </Avatar>
+                        )}
+                        
+                        <div className={cn(
+                          "p-3 rounded-2xl text-sm shadow-sm",
+                          msg.senderId === user?.id 
+                            ? "bg-primary text-white rounded-tr-none" 
+                            : "bg-card text-foreground rounded-tl-none border border-border"
+                        )}>
+                          <p>{msg.content}</p>
+                          <div className={cn(
+                            "text-[10px] mt-1 flex justify-end items-center gap-1",
+                            msg.senderId === user?.id ? "text-white/70" : "text-muted-foreground"
+                          )}>
+                            {msg.createdAt ? format(new Date(msg.createdAt), "p") : ""}
+                            {msg.senderId === user?.id && <CheckCheck className="w-3 h-3" />}
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
-              ))}
-            </div>
-          </ScrollArea>
+              </ScrollArea>
 
-          {/* Input Area */}
-          <div className="p-4 bg-card border-t border-border">
-            <div className="bg-muted/30 border border-border rounded-xl flex items-end p-2 gap-2">
-              <Button variant="ghost" size="icon" className="text-muted-foreground h-10 w-10 shrink-0" data-testid="button-attach-file">
-                <Paperclip className="w-5 h-5" />
-              </Button>
-              <textarea 
-                className="flex-1 bg-transparent border-0 focus:ring-0 resize-none max-h-32 py-2 text-sm"
-                placeholder="Type a message..."
-                rows={1}
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                data-testid="textarea-message-input"
-              />
-              <Button className="h-10 w-10 shrink-0 bg-primary text-white rounded-lg hover:bg-primary/90" data-testid="button-send-message">
-                <Send className="w-4 h-4" />
-              </Button>
+              {/* Input Area */}
+              <div className="p-4 bg-card border-t border-border">
+                <div className="bg-muted/30 border border-border rounded-xl flex items-end p-2 gap-2">
+                  <Button variant="ghost" size="icon" className="text-muted-foreground h-10 w-10 shrink-0" data-testid="button-attach-file">
+                    <Paperclip className="w-5 h-5" />
+                  </Button>
+                  <textarea 
+                    className="flex-1 bg-transparent border-0 focus:ring-0 resize-none max-h-32 py-2 text-sm"
+                    placeholder="Type a message..."
+                    rows={1}
+                    value={inputText}
+                    onChange={(e) => setInputText(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSendMessage();
+                      }
+                    }}
+                    data-testid="textarea-message-input"
+                  />
+                  <Button 
+                    className="h-10 w-10 shrink-0 bg-primary text-white rounded-lg hover:bg-primary/90" 
+                    data-testid="button-send-message"
+                    onClick={handleSendMessage}
+                    disabled={sendMessageMutation.isPending}
+                  >
+                    <Send className="w-4 h-4" />
+                  </Button>
+                </div>
+                <p className="text-[10px] text-muted-foreground text-center mt-2 flex items-center justify-center gap-1">
+                  <ShieldCheck className="w-3 h-3" /> Keep conversations on FreelanceSkills for your protection.
+                </p>
+              </div>
+            </>
+          ) : (
+            <div className="flex-1 flex items-center justify-center text-muted-foreground">
+              <div className="text-center">
+                <MessageSquare className="w-16 h-16 mx-auto mb-4 opacity-10" />
+                <p>Select a conversation to start chatting</p>
+              </div>
             </div>
-            <p className="text-[10px] text-muted-foreground text-center mt-2 flex items-center justify-center gap-1">
-              <ShieldCheck className="w-3 h-3" /> Keep conversations on FreelanceSkills for your protection.
-            </p>
-          </div>
+          )}
         </div>
       </main>
       
       <VideoCallDialog 
         open={showVideoCall} 
         onClose={() => setShowVideoCall(false)}
-        recipientName={selectedChat.name}
+        recipientName={selectedConversation?.otherUser.name || ""}
       />
       
       <ContractBuilder

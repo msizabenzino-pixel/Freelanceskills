@@ -55,6 +55,19 @@ Preferred communication style: Simple, everyday language.
 - PostgreSQL-backed session store
 - Frontend auth page at `/auth` with login/signup toggle
 - No Replit OIDC — completely custom auth with zero third-party branding
+- **Password Reset Flow**: POST `/api/auth/forgot-password` (generates token), POST `/api/auth/reset-password` (validates token, updates password)
+- `password_reset_tokens` table with expiry (1 hour)
+- Reset page at `/reset-password/:token`
+
+### Privacy & Compliance
+- **Cookie Consent Banner**: POPIA/GDPR compliant, `CookieConsent.tsx` component, persists choice in localStorage
+- Privacy policy at `/privacy`, Terms at `/terms`
+
+### Security
+- Rate limiting: custom middleware in `server/index.ts` (100 req/min general, 10 req/hr AI, 5 req/hr expensive ops)
+- Profile PATCH strips `userId`, `id`, `isPro` fields to prevent mass assignment
+- Session-based auth: all protected routes use `(req.session as any).userId`
+- SESSION_SECRET env var for session signing (no hardcoded fallback in production)
 
 ### Build & Deployment
 - **Development**: Vite dev server with HMR.

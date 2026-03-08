@@ -7,6 +7,7 @@ import { CountryProvider, CountrySelectorDialog } from "@/components/CountrySele
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { lazy, Suspense } from "react";
 import { SupportChat } from "@/components/SupportChat";
+import { CookieConsent } from "@/components/CookieConsent";
 import { AuthGuard } from "@/components/AuthGuard";
 import NotFound from "@/pages/not-found";
 
@@ -46,6 +47,7 @@ const OpportunityFinder = lazy(() => import("@/pages/OpportunityFinder"));
 const ClaimBusiness = lazy(() => import("@/pages/ClaimBusiness"));
 const InviteBusinesses = lazy(() => import("@/pages/InviteBusinesses"));
 const Auth = lazy(() => import("@/pages/Auth"));
+const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 
 function PageLoader() {
   return (
@@ -61,6 +63,7 @@ function Router() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/auth" component={Auth} />
+        <Route path="/reset-password/:token" component={ResetPassword} />
         <Route path="/jobs" component={Jobs} />
         <Route path="/dashboard">
           <AuthGuard>
@@ -119,6 +122,7 @@ function App() {
             <CountrySelectorDialog />
             <Router />
             <SupportChat />
+            <CookieConsent />
           </TooltipProvider>
         </CountryProvider>
       </QueryClientProvider>
