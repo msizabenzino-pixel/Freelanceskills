@@ -1,0 +1,47 @@
+You are now accelerating freelanceskills.net — LIVE South African freelance marketplace with real job postings, AI Task Assistant, Stripe escrow, ID verification, categories (programming/trades/healthcare/etc.), impact stats (12k+ jobs, R47M income), academy, 2031 vision.
+
+Current site is live and functional — do NOT rebuild from zero. Evolve existing (assume Node/React backend/frontend, Stripe integration) to investor/board/demo dominance: harden scale/security, supercharge AI, polish UX/monetization, prep assets.
+
+Execute in order — show progress + testable output after each block:
+
+1. Infrastructure lockdown:
+   - Redis caching (Replit KV mock), advanced rate limiting, Winston + Sentry logging, Prometheus metrics
+   - Docker compose yaml stub, cron backup script
+   - Health endpoint (uptime/version/dependencies)
+   - Custom domain prep for freelanceskills.net
+
+2. AI Task Assistant & Matching upgrade:
+   - Multi-turn convo with session context
+   - Budget/skill-gap prediction (rule-based/ML stub)
+   - Fraud detection (unusual apply patterns)
+   - Predictive matching + job success scoring
+   - Tool-calling: post job → auto-match → escrow setup
+
+3. UX polish (React):
+   - Real-time notifications (WebSockets for jobs/applications)
+   - In-app chat stub (client/freelancer)
+   - Profile wizard + portfolio uploader
+   - Mobile-first fixes + dark mode
+
+4. Monetization expansion:
+   - Premium tiers (R79/mo visibility/priority)
+   - Enterprise bulk dashboard stub
+   - Referral tracking + payout dashboard
+   - Stripe webhooks for upgrades
+
+5. Academy integration:
+   - Course player stub (progress tracking)
+   - Badges/certifications linked to profiles
+   - Job unlock logic ("Finish course → higher visibility")
+
+6. Testing & compliance:
+   - 10 E2E flows (job post → apply → escrow → payout)
+   - Load test stub (1k concurrent)
+   - POPIA export/delete endpoints + consent modal
+
+7. Investor prep:
+   - Markdown pitch deck (Problem: SA freelance trust gap → Solution: Verified AI marketplace → Traction: Live stats → Ask)
+   - 60-sec demo script
+   - Metrics dashboard stub (jobs/revenue/satisfaction)
+
+After each, pause, show changes, key code, test commands (curl, browser preview). Production-grade: validate, log, secure. Mock missing packages smartly. START THE TAKEOVER NOW!
