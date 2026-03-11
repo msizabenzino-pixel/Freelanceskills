@@ -215,7 +215,7 @@ export function SupportChat() {
       {/* Chat Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-br from-primary to-primary/80 text-white rounded-full shadow-xl hover:scale-110 hover:shadow-2xl transition-all duration-300 flex items-center justify-center z-50 border border-white/10"
+        className="fixed bottom-24 right-6 w-14 h-14 bg-gradient-to-br from-primary to-primary/80 text-white rounded-full shadow-xl hover:scale-110 hover:shadow-2xl transition-all duration-300 flex items-center justify-center z-50 border border-white/10"
         data-testid="button-support-chat"
       >
         <MessageCircle className="h-6 w-6" />
@@ -223,7 +223,7 @@ export function SupportChat() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-96 h-[32rem] bg-background rounded-2xl shadow-2xl flex flex-col z-50 overflow-hidden border border-border/50">
+        <div className="fixed bottom-24 right-6 w-[calc(100vw-3rem)] max-w-96 h-[32rem] bg-background rounded-2xl shadow-2xl flex flex-col z-[55] overflow-hidden border border-border/50 md:w-96">
           {/* Header */}
           <div className="bg-gradient-to-r from-primary to-primary/90 text-white p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">

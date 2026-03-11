@@ -165,10 +165,38 @@ Preferred communication style: Simple, everyday language.
 - Framer Motion for animations.
 - Embla Carousel.
 
+### Mobile & PWA
+- **PWA Manifest**: `client/public/manifest.json` with standalone display, emerald theme, app icons
+- **Offline Screen**: `OfflineScreen.tsx` with retry button, shown when `navigator.onLine` is false
+- **Onboarding Carousel**: `OnboardingCarousel.tsx` — 4-slide first-visit overlay (Welcome, Verify, Post/Profile, Escrow), skip/next, stored in localStorage
+- **Floating Action Button**: `FloatingActionButton.tsx` — emerald FAB at bottom-right, appears on scroll, expands to Post a Job / Find Work
+- **Support Chat**: `SupportChat.tsx` — positioned above FAB (bottom-24), AI-powered support widget
+- **Cookie Consent**: Mobile-optimized with 44px min-height buttons
+- **Footer**: Touch-optimized links with py-2 block styling for adequate tap targets
+- **Viewport**: `viewport-fit=cover` for notched devices, theme-color meta tag
+
+### Dashboard
+- **Client View**: Active jobs, escrow status cards, freelancer ratings, quick stats (Total Spent, Active Projects, Avg Rating)
+- **Freelancer View**: Earnings overview (Total/Pending/Monthly), referral stats, active gigs, 6-month earnings chart
+- **Role Toggle**: Client/Freelancer tabs on dashboard
+
+### Portfolio
+- **PortfolioUploader.tsx**: Drag-and-drop file upload with react-dropzone
+- **Validation**: Max 10 files, 5MB each, image/* and .pdf only
+- **Gallery**: Grid preview with lightbox, remove per item, progress bars
+
 ### Key Pages & Navigation
 - **Navbar**: 5 main items — Find Work (dropdown: Job Board, Browse Jobs, AI Finder, Upload CV), Services, Explore, AI Assistant, Pricing
 - **Home** (`/`): Hero, categories grid linking to Explore, featured freelancers, trending projects
-- **Explore** (`/explore`): Category filtering with icon grid, filters freelancers/projects, "View Services" links to /services?category=X
+- **Explore** (`/explore`): Category filtering with icon grid, filter chips (rate/urgency/location), infinite scroll with IntersectionObserver
 - **Pricing** (`/pricing`): Free (R0, 10% commission) / Premium Talent (R79/mo, 5% commission, visually prominent) / Enterprise (custom)
 - **Services** (`/services`): TaskRabbit-style service packages with booking
 - **Auth** (`/auth`): Custom login/signup with email+password, no third-party branding
+- **Jobs** (`/jobs`): Mobile-first job cards with swipe gestures (right=apply, left=save)
+
+### Accessibility
+- Skip-to-content link, ARIA labels on all interactive elements
+- Keyboard navigation for dropdowns (arrow keys, Escape)
+- High-contrast mode toggle (localStorage persisted)
+- Focus ring styles, aria-live regions for dynamic content
+- Lazy-loaded images, React.memo on list components, React.lazy for heavy pages

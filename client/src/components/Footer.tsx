@@ -83,54 +83,54 @@ export function Footer() {
 
           <div>
             <h4 className="font-bold text-primary mb-4">For Clients</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/how-to-hire" className="hover:text-primary transition-colors" data-testid="link-how-to-hire">How to Hire</Link></li>
-              <li><Link href="/services" className="hover:text-primary transition-colors" data-testid="link-find-talent">Find Talent</Link></li>
-              <li><Link href="/post-job" className="hover:text-primary transition-colors" data-testid="link-post-job">Post a Job</Link></li>
-              <li><Link href="/pricing" className="hover:text-primary transition-colors" data-testid="link-pricing">Pricing</Link></li>
+            <ul className="space-y-1 text-sm text-muted-foreground">
+              <li><Link href="/how-to-hire" className="hover:text-primary transition-colors py-2 block" data-testid="link-how-to-hire">How to Hire</Link></li>
+              <li><Link href="/services" className="hover:text-primary transition-colors py-2 block" data-testid="link-find-talent">Find Talent</Link></li>
+              <li><Link href="/post-job" className="hover:text-primary transition-colors py-2 block" data-testid="link-post-job">Post a Job</Link></li>
+              <li><Link href="/pricing" className="hover:text-primary transition-colors py-2 block" data-testid="link-pricing">Pricing</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-bold text-primary mb-4">For Talent</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/how-to-get-hired" className="hover:text-primary transition-colors" data-testid="link-how-to-get-hired">How to Get Hired</Link></li>
-              <li><Link href="/job-board" className="hover:text-primary transition-colors" data-testid="link-job-board">Global Job Board</Link></li>
-              <li><Link href="/cv-upload" className="hover:text-primary transition-colors" data-testid="link-cv-upload">Upload CV & Create Profile</Link></li>
-              <li><Link href="/opportunity-finder" className="hover:text-primary transition-colors" data-testid="link-opportunity-finder">AI Opportunity Finder</Link></li>
-              <li><Link href="/jobs" className="hover:text-primary transition-colors" data-testid="link-browse-jobs">Browse Jobs</Link></li>
-              <li><Link href="/pricing" className="hover:text-primary transition-colors" data-testid="link-fees-earnings">Fees & Earnings</Link></li>
+            <ul className="space-y-1 text-sm text-muted-foreground">
+              <li><Link href="/how-to-get-hired" className="hover:text-primary transition-colors py-2 block" data-testid="link-how-to-get-hired">How to Get Hired</Link></li>
+              <li><Link href="/job-board" className="hover:text-primary transition-colors py-2 block" data-testid="link-job-board">Global Job Board</Link></li>
+              <li><Link href="/cv-upload" className="hover:text-primary transition-colors py-2 block" data-testid="link-cv-upload">Upload CV & Create Profile</Link></li>
+              <li><Link href="/opportunity-finder" className="hover:text-primary transition-colors py-2 block" data-testid="link-opportunity-finder">AI Opportunity Finder</Link></li>
+              <li><Link href="/jobs" className="hover:text-primary transition-colors py-2 block" data-testid="link-browse-jobs">Browse Jobs</Link></li>
+              <li><Link href="/pricing" className="hover:text-primary transition-colors py-2 block" data-testid="link-fees-earnings">Fees & Earnings</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-bold text-primary mb-4">Company</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/impact" className="hover:text-primary transition-colors" data-testid="link-about-us">About Us</Link></li>
-              <li><Link href="/impact" className="hover:text-primary transition-colors" data-testid="link-impact">Social Impact</Link></li>
-              <li><Link href="/academy" className="hover:text-primary transition-colors" data-testid="link-academy">AI Academy</Link></li>
-              <li><Link href="/enterprise" className="hover:text-primary transition-colors" data-testid="link-enterprise">Enterprise</Link></li>
-              <li><Link href="/referral" className="hover:text-primary transition-colors" data-testid="link-referral">Referral Program</Link></li>
-              <li><Link href="/resolution-center" className="hover:text-primary transition-colors" data-testid="link-resolution-center">Resolution Center</Link></li>
-              <li><Link href="/support" className="hover:text-primary transition-colors" data-testid="link-faq">FAQ</Link></li>
-              <li><Link href="/support" className="hover:text-primary transition-colors" data-testid="link-contact">Contact</Link></li>
+            <ul className="space-y-1 text-sm text-muted-foreground">
+              <li><Link href="/impact" className="hover:text-primary transition-colors py-2 block" data-testid="link-about-us">About Us</Link></li>
+              <li><Link href="/impact" className="hover:text-primary transition-colors py-2 block" data-testid="link-impact">Social Impact</Link></li>
+              <li><Link href="/academy" className="hover:text-primary transition-colors py-2 block" data-testid="link-academy">AI Academy</Link></li>
+              <li><Link href="/enterprise" className="hover:text-primary transition-colors py-2 block" data-testid="link-enterprise">Enterprise</Link></li>
+              <li><Link href="/referral" className="hover:text-primary transition-colors py-2 block" data-testid="link-referral">Referral Program</Link></li>
+              <li><Link href="/resolution-center" className="hover:text-primary transition-colors py-2 block" data-testid="link-resolution-center">Resolution Center</Link></li>
+              <li><Link href="/support" className="hover:text-primary transition-colors py-2 block" data-testid="link-faq">FAQ</Link></li>
+              <li><Link href="/support" className="hover:text-primary transition-colors py-2 block" data-testid="link-contact">Contact</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-bold text-primary mb-4">Innovation</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/ai-match" className="hover:text-primary transition-colors" data-testid="link-ai-match">AI Smart Matching</Link></li>
-              <li><Link href="/credentials" className="hover:text-primary transition-colors" data-testid="link-credentials">Blockchain Credentials</Link></li>
-              <li><Link href="/payments-hub" className="hover:text-primary transition-colors" data-testid="link-payments-hub">Payments Hub</Link></li>
-              <li><Link href="/analytics" className="hover:text-primary transition-colors" data-testid="link-analytics">Freelancer Analytics</Link></li>
-              <li><Link href="/sustainability" className="hover:text-primary transition-colors" data-testid="link-sustainability">Green Impact</Link></li>
-              <li><Link href="/accessibility" className="hover:text-primary transition-colors" data-testid="link-accessibility">Accessibility</Link></li>
+            <ul className="space-y-1 text-sm text-muted-foreground">
+              <li><Link href="/ai-match" className="hover:text-primary transition-colors py-2 block" data-testid="link-ai-match">AI Smart Matching</Link></li>
+              <li><Link href="/credentials" className="hover:text-primary transition-colors py-2 block" data-testid="link-credentials">Blockchain Credentials</Link></li>
+              <li><Link href="/payments-hub" className="hover:text-primary transition-colors py-2 block" data-testid="link-payments-hub">Payments Hub</Link></li>
+              <li><Link href="/analytics" className="hover:text-primary transition-colors py-2 block" data-testid="link-analytics">Freelancer Analytics</Link></li>
+              <li><Link href="/sustainability" className="hover:text-primary transition-colors py-2 block" data-testid="link-sustainability">Green Impact</Link></li>
+              <li><Link href="/accessibility" className="hover:text-primary transition-colors py-2 block" data-testid="link-accessibility">Accessibility</Link></li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
+        <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <Shield className="h-4 w-4 text-green-500" />
             <p>© 2026 FreelanceSkills (Pty) Ltd. All rights reserved. Payments protected by escrow.</p>

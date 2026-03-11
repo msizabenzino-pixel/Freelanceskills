@@ -136,8 +136,8 @@ function App() {
             <Toaster />
             <CountrySelectorDialog />
             <Router />
-            <FloatingActionButton />
-            <SupportChat />
+            <div id="floating-fab"><FloatingActionButton /></div>
+            <div id="floating-support"><SupportChat /></div>
             <CookieConsent />
             <OnboardingCarousel />
             <OfflineScreen />

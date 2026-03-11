@@ -27,7 +27,7 @@ export function CookieConsent() {
 
   return (
     <div 
-      className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-background border-t border-border shadow-2xl animate-in slide-in-from-bottom-full duration-500"
+      className="fixed bottom-0 left-0 right-0 z-[60] p-4 bg-background/95 backdrop-blur-sm border-t border-border shadow-2xl animate-in slide-in-from-bottom-full duration-500"
       data-testid="banner-cookie-consent"
     >
       <div className="container mx-auto max-w-7xl flex flex-col md:flex-row items-center justify-between gap-4">
@@ -43,8 +43,7 @@ export function CookieConsent() {
         <div className="flex items-center gap-2 w-full md:w-auto">
           <Button 
             variant="outline" 
-            size="sm" 
-            className="flex-1 md:flex-none"
+            className="flex-1 md:flex-none min-h-[44px] text-sm"
             onClick={handleDecline}
             data-testid="button-decline-cookies"
           >
@@ -52,8 +51,7 @@ export function CookieConsent() {
           </Button>
           <Button 
             variant="default" 
-            size="sm" 
-            className="flex-1 md:flex-none"
+            className="flex-1 md:flex-none min-h-[44px] text-sm"
             onClick={handleAccept}
             data-testid="button-accept-cookies"
           >
