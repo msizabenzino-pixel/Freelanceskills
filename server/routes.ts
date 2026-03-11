@@ -2194,5 +2194,325 @@ Experience level: ${experienceLevel || 'Any'}`
     }
   });
 
+  // ============ AI ENGINE V2 ROUTES (#21-#40) ============
+  const aiEngine = await import("./ai-engine");
+
+  // #21 Enhanced task-chat with conversation memory
+  app.post("/api/ai/task-chat-v2", async (req, res) => {
+    try {
+      const { message, sessionId } = req.body;
+      const sid = sessionId || (req.session as any)?.userId || `anon-${Date.now()}`;
+      const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
+      const baseUrl = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL || "https://api.openai.com/v1";
+      if (!apiKey) return res.status(500).json({ message: "AI API key not configured" });
+
+      aiEngine.storeConversation(sid, "user", message);
+      const history = aiEngine.getConversationHistory(sid);
+
+      const systemPrompt = `You are the FreelanceSkills AI Task Assistant v2 with memory. You remember the conversation context.
+FreelanceSkills is a South African freelance marketplace.
+
+Budget Estimation Rules (SA Market Rates):
+- General Labor/Cleaning: R150 - R300/hr
+- Skilled Trades (Plumbing/Electrical): R400 - R800/hr call-out + labor
+- Professional Services (Design/Writing): R300 - R1000/hr
+- Specialized Tech/Consulting: R800 - R2500+/hr
+
+You can:
+1. Analyze tasks and suggest budgets
+2. Identify skill gaps in requirements
+3. Predict realistic rate ranges when clients mention budgets
+4. Suggest improvements to job descriptions
+5. Flag when a task needs multiple specialists
+
+Be professional, helpful, concise. Use South African English and Rand (R).`;
+
+      const messages = [
+        { role: "system", content: systemPrompt },
+        ...history,
+      ];
+
+      const response = await fetch(`${baseUrl}/chat/completions`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
+        body: JSON.stringify({ model: "gpt-4o-mini", messages, temperature: 0.7 }),
+      });
+      if (!response.ok) throw new Error("AI API error");
+      const data = await response.json();
+      const aiResponse = data.choices[0].message.content;
+
+      aiEngine.storeConversation(sid, "assistant", aiResponse);
+
+      res.json({ message: aiResponse, sessionId: sid, memoryLength: history.length });
+    } catch (error) {
+      console.error("Error in task-chat-v2:", error);
+      res.status(500).json({ message: "I'm having trouble processing your request." });
+    }
+  });
+
+  app.delete("/api/ai/conversation/:sessionId", (req, res) => {
+    aiEngine.clearConversation(req.params.sessionId);
+    res.json({ cleared: true });
+  });
+
+  // #22 Budget prediction
+  app.post("/api/ai/predict-budget", async (req, res) => {
+    try {
+      const { clientStatement, category } = req.body;
+      if (!clientStatement) return res.status(400).json({ message: "clientStatement is required" });
+      const prediction = await aiEngine.predictBudget(clientStatement, category);
+      res.json(prediction);
+    } catch (error) {
+      console.error("Error predicting budget:", error);
+      res.status(500).json({ message: "Failed to predict budget" });
+    }
+  });
+
+  // #23 Skill-gap analysis
+  app.post("/api/ai/skill-gap", async (req, res) => {
+    try {
+      const { jobSkills, freelancerSkills } = req.body;
+      if (!jobSkills || !freelancerSkills) return res.status(400).json({ message: "jobSkills and freelancerSkills arrays required" });
+      const analysis = await aiEngine.analyzeSkillGaps(jobSkills, freelancerSkills);
+      res.json(analysis);
+    } catch (error) {
+      console.error("Error analyzing skill gaps:", error);
+      res.status(500).json({ message: "Failed to analyze skill gaps" });
+    }
+  });
+
+  // #24 Application fraud/risk scoring
+  app.post("/api/ai/application-risk", isAuthenticated, async (req: any, res) => {
+    try {
+      const { jobId, profileData } = req.body;
+      const userId = (req.session as any).userId;
+      const risk = await aiEngine.scoreApplicationRisk(userId, jobId, profileData);
+      res.json(risk);
+    } catch (error) {
+      console.error("Error scoring application risk:", error);
+      res.status(500).json({ message: "Failed to score risk" });
+    }
+  });
+
+  // #25 Predictive job success score
+  app.post("/api/ai/predict-success", isAuthenticated, async (req: any, res) => {
+    try {
+      const { freelancerId, jobId } = req.body;
+      if (!freelancerId) return res.status(400).json({ message: "freelancerId required" });
+      const prediction = await aiEngine.predictJobSuccess(freelancerId, jobId);
+      res.json(prediction);
+    } catch (error) {
+      console.error("Error predicting success:", error);
+      res.status(500).json({ message: "Failed to predict success" });
+    }
+  });
+
+  // #26 Auto-suggest job post improvements
+  app.post("/api/ai/improve-listing", async (req, res) => {
+    try {
+      const job = req.body;
+      const suggestions = await aiEngine.suggestJobPostImprovements(job);
+      res.json(suggestions);
+    } catch (error) {
+      console.error("Error suggesting improvements:", error);
+      res.status(500).json({ message: "Failed to generate suggestions" });
+    }
+  });
+
+  // #27 Location-aware matching
+  app.post("/api/ai/location-boost", (req, res) => {
+    const { jobLocation, freelancerLocation } = req.body;
+    if (!jobLocation || !freelancerLocation) return res.status(400).json({ message: "Both locations required" });
+    res.json(aiEngine.locationBoost(jobLocation, freelancerLocation));
+  });
+
+  // #28 Urgency escalation
+  app.post("/api/ai/urgency-check", (req, res) => {
+    const { jobCreatedAt, applicationCount } = req.body;
+    if (!jobCreatedAt) return res.status(400).json({ message: "jobCreatedAt required" });
+    res.json(aiEngine.urgencyEscalation(jobCreatedAt, applicationCount || 0));
+  });
+
+  // #29 Reputation modifier
+  app.get("/api/ai/reputation/:freelancerId", async (req, res) => {
+    try {
+      const result = await aiEngine.getReputationModifier(req.params.freelancerId);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get reputation modifier" });
+    }
+  });
+
+  // #30 Referral trust boost
+  app.get("/api/ai/referral-trust/:freelancerId", async (req, res) => {
+    try {
+      const result = await aiEngine.getReferralTrustBoost(req.params.freelancerId);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get referral trust boost" });
+    }
+  });
+
+  // #31 Course completion boost
+  app.get("/api/ai/course-boost/:freelancerId", async (req, res) => {
+    try {
+      const category = req.query.category as string | undefined;
+      const result = await aiEngine.getCourseCompletionBoost(req.params.freelancerId, category);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get course boost" });
+    }
+  });
+
+  // #32 Availability check
+  app.get("/api/ai/availability/:freelancerId", (req, res) => {
+    res.json(aiEngine.checkAvailability(req.params.freelancerId));
+  });
+
+  app.post("/api/ai/availability", isAuthenticated, (req: any, res) => {
+    const userId = (req.session as any).userId;
+    aiEngine.setAvailability(userId, req.body);
+    res.json({ updated: true });
+  });
+
+  // #33 Multi-skill weighting
+  app.post("/api/ai/skill-weight-match", (req, res) => {
+    const { requiredSkills, freelancerSkills } = req.body;
+    if (!requiredSkills || !freelancerSkills) return res.status(400).json({ message: "requiredSkills and freelancerSkills required" });
+    res.json(aiEngine.multiSkillMatch(requiredSkills, freelancerSkills));
+  });
+
+  // #34 Client satisfaction prediction
+  app.post("/api/ai/predict-satisfaction", isAuthenticated, async (req: any, res) => {
+    try {
+      const { clientId, freelancerId } = req.body;
+      if (!clientId || !freelancerId) return res.status(400).json({ message: "clientId and freelancerId required" });
+      const result = await aiEngine.predictClientSatisfaction(clientId, freelancerId);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to predict satisfaction" });
+    }
+  });
+
+  // #35 Auto-reply templates
+  app.post("/api/ai/auto-reply-templates", (req, res) => {
+    const { freelancerName, hourlyRate, skills } = req.body;
+    res.json(aiEngine.generateAutoReplyTemplates(freelancerName || "Freelancer", hourlyRate || 0, skills || []));
+  });
+
+  // #36 Voice-to-text stub
+  app.get("/api/ai/voice-to-text", (_req, res) => {
+    res.json(aiEngine.voiceToTextStub());
+  });
+
+  // #37 Image recognition stub
+  app.post("/api/ai/image-recognition", (req, res) => {
+    const { imageDescription } = req.body;
+    res.json(aiEngine.imageRecognitionStub(imageDescription));
+  });
+
+  // #38 Review sentiment analysis
+  app.post("/api/ai/review-sentiment", async (req, res) => {
+    try {
+      const { reviews } = req.body;
+      if (!reviews || !Array.isArray(reviews)) return res.status(400).json({ message: "reviews array required" });
+      const result = await aiEngine.analyzeReviewSentiment(reviews);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to analyze sentiment" });
+    }
+  });
+
+  // #39 Dynamic pricing
+  app.post("/api/ai/dynamic-pricing", async (req, res) => {
+    try {
+      const { category, currentRate, location } = req.body;
+      if (!category) return res.status(400).json({ message: "category required" });
+      const result = await aiEngine.suggestDynamicPricing(category, currentRate || 0, location || "");
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to suggest pricing" });
+    }
+  });
+
+  // #40 Blockchain credential mock + green impact badge
+  app.post("/api/ai/blockchain-credential", isAuthenticated, (req: any, res) => {
+    const userId = (req.session as any).userId;
+    const { type, issuer, date } = req.body;
+    res.json(aiEngine.blockchainCredentialMock(userId, { type: type || "Professional Certificate", issuer: issuer || "FreelanceSkills Academy", date: date || new Date().toISOString() }));
+  });
+
+  app.get("/api/ai/green-impact/:freelancerId", (req, res) => {
+    res.json(aiEngine.greenImpactBadge(req.params.freelancerId));
+  });
+
+  // Enhanced matching engine (combines #27, #29, #30, #31, #33)
+  app.post("/api/ai/enhanced-match", isAuthenticated, async (req: any, res) => {
+    try {
+      const { job, freelancerId } = req.body;
+      if (!job || !freelancerId) return res.status(400).json({ message: "job and freelancerId required" });
+
+      const profile = await storage.getProfile(freelancerId);
+      if (!profile) return res.status(404).json({ message: "Freelancer not found" });
+
+      const result = await aiEngine.enhancedMatch(
+        { ...job, skills: job.skills || [], location: job.location || "" },
+        {
+          id: freelancerId,
+          skills: profile.skills || [],
+          location: profile.location || "",
+          hourlyRate: profile.hourlyRate || 0,
+          rating: profile.rating || 0,
+          completedJobs: profile.completedJobs || 0,
+          isPro: profile.isPro || false,
+        }
+      );
+      res.json(result);
+    } catch (error) {
+      console.error("Error in enhanced match:", error);
+      res.status(500).json({ message: "Failed to compute enhanced match" });
+    }
+  });
+
+  // Batch enhanced matching — match job against all freelancers
+  app.post("/api/ai/enhanced-match-all", isAuthenticated, async (req: any, res) => {
+    try {
+      const { job } = req.body;
+      if (!job) return res.status(400).json({ message: "job object required" });
+
+      const freelancers = await storage.searchFreelancers(job.category, job.location);
+      const matches = await Promise.all(
+        freelancers.slice(0, 20).map(async (f) => {
+          const result = await aiEngine.enhancedMatch(
+            { ...job, skills: job.skills || [], location: job.location || "" },
+            {
+              id: f.userId,
+              skills: f.skills || [],
+              location: f.location || "",
+              hourlyRate: f.hourlyRate || 0,
+              rating: f.rating || 0,
+              completedJobs: f.completedJobs || 0,
+              isPro: f.isPro || false,
+            }
+          );
+          return { freelancer: { id: f.userId, title: f.title, location: f.location, rating: f.rating, isPro: f.isPro, skills: f.skills }, ...result };
+        })
+      );
+
+      const ranked = matches.sort((a, b) => b.totalScore - a.totalScore);
+      res.json({
+        matches: ranked,
+        summary: {
+          total: ranked.length,
+          topScore: ranked[0]?.totalScore || 0,
+          avgScore: ranked.length > 0 ? Math.round(ranked.reduce((s, m) => s + m.totalScore, 0) / ranked.length) : 0,
+        },
+      });
+    } catch (error) {
+      console.error("Error in enhanced match all:", error);
+      res.status(500).json({ message: "Failed to compute matches" });
+    }
+  });
+
   return httpServer;
 }

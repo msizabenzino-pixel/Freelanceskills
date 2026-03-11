@@ -47,6 +47,7 @@ export interface IStorage {
   // Review operations
   createReview(review: InsertReview): Promise<Review>;
   getFreelancerReviews(freelancerId: string): Promise<Review[]>;
+  getReviewsForUser(userId: string): Promise<Review[]>;
   
   // Messaging operations
   getConversation(id: string): Promise<Conversation | undefined>;
@@ -266,6 +267,13 @@ class DatabaseStorage implements IStorage {
   async getFreelancerReviews(freelancerId: string): Promise<Review[]> {
     return db.select().from(reviews)
       .where(eq(reviews.revieweeId, freelancerId))
+      .orderBy(desc(reviews.createdAt));
+  }
+
+  async getReviewsForUser(userId: string): Promise<Review[]> {
+    const { or } = await import("drizzle-orm");
+    return db.select().from(reviews)
+      .where(or(eq(reviews.revieweeId, userId), eq(reviews.reviewerId, userId)))
       .orderBy(desc(reviews.createdAt));
   }
 

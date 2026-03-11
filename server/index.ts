@@ -79,7 +79,7 @@ app.use("/api/ai", (req, res, next) => {
   const ip = req.ip || req.connection.remoteAddress || "unknown";
   const now = Date.now();
   const windowMs = 3600000; // 1 hour window
-  const maxRequests = 10; // 10 AI requests per hour per IP
+  const maxRequests = 60; // 60 AI requests per hour per IP (many endpoints are lightweight)
 
   const entry = aiRateLimitMap.get(ip);
   if (!entry || now > entry.resetTime) {

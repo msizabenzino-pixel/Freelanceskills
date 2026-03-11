@@ -37,7 +37,7 @@ Preferred communication style: Simple, everyday language.
 - **Share channels**: WhatsApp (pre-filled message), Email (mailto), Copy link
 - **Referral Program**: `/referral` page with tiered rewards (Bronze/Silver/Gold/Platinum), DB-backed tracking with `referrals` table, real referral codes, stats API, claim-on-signup flow
 
-### AI Features
+### AI Features (v1)
 - **AI Task Recommendation Engine**: Recommends categories, budget estimates, skills, and task breakdowns.
 - **AI Proposal Assistant**: Helps freelancers generate and improve proposals.
 - **AI Job Post Helper**: Assists clients in creating professional job posts.
@@ -49,7 +49,34 @@ Preferred communication style: Simple, everyday language.
 - **AI Support Chat Bot** (`SupportChat.tsx`): Floating chat widget (bottom-right) powered by OpenAI gpt-4o-mini. Answers platform questions intelligently. Hands off to WhatsApp (wa.me/27601234567) after 3 messages or on request.
 - **AI Task Chat** (`/api/ai/task-chat`): Multi-turn conversational task analysis with context memory, budget refinement, and skill-gap identification.
 - **AI Fraud Detection** (`/api/ai/fraud-check`): Rule-based risk scoring for applications (new account age, application velocity, spam patterns). Returns riskScore, flags, recommendation.
-- **API Endpoints**: `/api/ai/analyze-task`, `/api/ai/task-chat`, `/api/ai/fraud-check`, `/api/ai/generate-proposal`, `/api/ai/support-chat`, `/api/cv/parse`, `/api/job-board`, `/api/opportunities/search`, etc.
+
+### AI Engine v2 (`server/ai-engine.ts`) — 20 New Features (#21-#40)
+- **#21 Multi-turn Conversation Memory** (`/api/ai/task-chat-v2`): Stores last 10 messages per session (30-min TTL), full context passed to OpenAI
+- **#22 Budget Prediction** (`/api/ai/predict-budget`): Parses "R500-800" client statements, compares to SA market rates, suggests realistic ranges
+- **#23 Skill-Gap Analysis** (`/api/ai/skill-gap`): Compares job vs freelancer skills with synonym matching (React=ReactJS, etc.), returns matched/missing/partial
+- **#24 Application Fraud Scoring** (`/api/ai/application-risk`): Detects mass-apply (>20/hr), duplicate applications, incomplete profiles
+- **#25 Job Success Prediction** (`/api/ai/predict-success`): Multi-factor scoring (skill match, completion rate, rating trend, experience)
+- **#26 Job Post Improvements** (`/api/ai/improve-listing`): Auto-suggests adding deadline (+40% applies), budget (+60%), skills (+35%), etc.
+- **#27 Location-Aware Matching** (`/api/ai/location-boost`): Haversine distance between SA cities, 25pts for <10km, 15pts for <50km
+- **#28 Urgency Escalation** (`/api/ai/urgency-check`): Jobs >48h with <3 applies get visibility boost suggestions (R49-R99)
+- **#29 Negative Feedback Loop** (`/api/ai/reputation/:id`): Low-rated freelancers (-30 score), excellent ones (+10 boost)
+- **#30 Referral Trust Multiplier** (`/api/ai/referral-trust/:id`): Referred freelancers get +10-20% based on referrer tier
+- **#31 Course Completion Boost** (`/api/ai/course-boost/:id`): Academy grads get +5-20% visibility boost, higher for relevant courses
+- **#32 Availability Check** (`/api/ai/availability/:id`): Calendar stub — set/get freelancer availability, timezone, busy slots
+- **#33 Multi-Skill Weighting** (`/api/ai/skill-weight-match`): React 70% + Node 30% → weighted scoring per skill priority
+- **#34 Client Satisfaction Prediction** (`/api/ai/predict-satisfaction`): Based on past hires of same freelancer by same client
+- **#35 Auto-Reply Templates** (`/api/ai/auto-reply-templates`): 5 pre-written templates (Quick Start, Professional, Budget Flex, Portfolio, Same Day)
+- **#36 Voice-to-Text Stub** (`/api/ai/voice-to-text`): Mobile mic → text job post stub (EN, AF, ZU, XH)
+- **#37 Image Recognition Stub** (`/api/ai/image-recognition`): Upload photo → detect job type (pool, garden, kitchen, office)
+- **#38 Sentiment Analysis** (`/api/ai/review-sentiment`): Toxic pattern detection in reviews (scam, threats, discrimination flags)
+- **#39 Dynamic Pricing** (`/api/ai/dynamic-pricing`): Suggests rates based on supply/demand in freelancer's category
+- **#40 2031 Vision Stubs**: Blockchain credential mock (`/api/ai/blockchain-credential`), Green Impact badge (`/api/ai/green-impact/:id`)
+- **Enhanced Matching Engine** (`/api/ai/enhanced-match`, `/api/ai/enhanced-match-all`): Combines location boost (#27), reputation (#29), referral trust (#30), course boost (#31), skill weighting (#33) into a single composite score
+
+### AI API Endpoints (complete list)
+- v1: `/api/ai/analyze-task`, `/api/ai/task-chat`, `/api/ai/fraud-check`, `/api/ai/generate-proposal`, `/api/ai/support-chat`, `/api/cv/parse`, `/api/job-board`, `/api/opportunities/search`
+- v2: `/api/ai/task-chat-v2`, `/api/ai/predict-budget`, `/api/ai/skill-gap`, `/api/ai/application-risk`, `/api/ai/predict-success`, `/api/ai/improve-listing`, `/api/ai/location-boost`, `/api/ai/urgency-check`, `/api/ai/reputation/:id`, `/api/ai/referral-trust/:id`, `/api/ai/course-boost/:id`, `/api/ai/availability/:id`, `/api/ai/skill-weight-match`, `/api/ai/predict-satisfaction`, `/api/ai/auto-reply-templates`, `/api/ai/voice-to-text`, `/api/ai/image-recognition`, `/api/ai/review-sentiment`, `/api/ai/dynamic-pricing`, `/api/ai/blockchain-credential`, `/api/ai/green-impact/:id`, `/api/ai/enhanced-match`, `/api/ai/enhanced-match-all`
+- Rate limit: 60 AI requests/hr per IP
 
 ### Authentication Flow
 - Custom email/password auth (POST `/api/auth/register`, POST `/api/auth/login`, POST `/api/auth/logout`, GET `/api/auth/user`)
