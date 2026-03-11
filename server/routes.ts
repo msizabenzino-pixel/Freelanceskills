@@ -65,6 +65,8 @@ export async function registerRoutes(
   const { checkMessageSafety, SAFETY_DISCLAIMERS, REPORT_REASONS } = await import("@shared/safety");
   const { registerGrowthRoutes } = await import("./growth");
   registerGrowthRoutes(app, isAuthenticated);
+  const { registerVisionRoutes } = await import("./vision");
+  registerVisionRoutes(app, isAuthenticated);
 
   // Dashboard Stats
   app.get("/api/dashboard/stats", isAuthenticated, async (req: any, res) => {

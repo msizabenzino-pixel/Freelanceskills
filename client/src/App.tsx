@@ -46,6 +46,7 @@ const Accessibility = lazy(() => import("@/pages/Accessibility"));
 const Analytics = lazy(() => import("@/pages/Analytics"));
 const EnterpriseDashboard = lazy(() => import("@/pages/EnterpriseDashboard"));
 const AISmartMatch = lazy(() => import("@/pages/AISmartMatch"));
+const Roadmap2031 = lazy(() => import("@/pages/roadmap-2031"));
 const JobBoard = lazy(() => import("@/pages/JobBoard"));
 const OpportunityFinder = lazy(() => import("@/pages/OpportunityFinder"));
 const ClaimBusiness = lazy(() => import("@/pages/ClaimBusiness"));
@@ -112,6 +113,7 @@ function Router() {
         </Route>
         <Route path="/accessibility" component={Accessibility} />
         <Route path="/ai-match" component={AISmartMatch} />
+        <Route path="/roadmap" component={Roadmap2031} />
         <Route path="/job-board" component={JobBoard} />
         <Route path="/opportunity-finder" component={OpportunityFinder} />
         <Route path="/claim-business" component={ClaimBusiness} />

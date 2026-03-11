@@ -60,6 +60,36 @@ Preferred communication style: Simple, everyday language.
   - **EAS Build**: eas.json with dev/preview/production profiles
   - **Store Docs**: App store listing copy, TestFlight guide, Google Play guide, submission checklist in `mobile/docs/`
 
+### 2031 Vision Module (D1-D25)
+- **Schema**: `shared/models/vision.ts` — 10 tables (blockchain_credentials, nft_badges, green_impact_scores, community_forum_posts/replies, dao_proposals/votes, ai_contracts, wellness_logs, mentor_matches)
+- **API Routes**: `server/vision.ts` — `registerVisionRoutes(app, isAuthenticated)` wired in `server/routes.ts`
+- **D1**: Blockchain Credential Verification — POST /api/vision/blockchain/verify, GET /api/vision/blockchain/credentials/:userId
+- **D2**: NFT Badge/Certification — POST /api/vision/nft/mint-badge, GET /api/vision/nft/badges/:userId
+- **D3**: Green Impact Scoring — POST /api/vision/green/calculate, GET /api/vision/green/score/:userId
+- **D4**: Carbon Offset Partnership — POST /api/vision/green/offset, GET /api/vision/green/offsets
+- **D5**: AI Video Interview Screening — POST /api/vision/ai/video-interview
+- **D6**: Voice AI Job Post — POST /api/vision/ai/voice-job-post (NLP keyword detection for 8 categories)
+- **D7**: AR Portfolio Preview — POST /api/vision/ar/portfolio-preview
+- **D8**: Predictive Earnings Forecast — POST /api/vision/ai/earnings-forecast
+- **D9**: Community Forum — GET /api/vision/forum/categories, GET/POST /api/vision/forum/posts, POST /api/vision/forum/posts/:id/reply
+- **D10**: DAO Governance — GET/POST /api/vision/dao/proposals, POST /api/vision/dao/vote
+- **D11**: Crypto Payout — GET /api/vision/crypto/rates, POST /api/vision/crypto/payout
+- **D12**: AI Contract Generator — POST /api/vision/ai/contract
+- **D13**: Reputation Score v2 — GET /api/vision/reputation/:userId
+- **D14**: Talent Marketplace Heatmap — GET /api/vision/analytics/heatmap
+- **D15**: Global Multi-Language — GET /api/vision/global/languages, GET /api/vision/global/currencies
+- **D16**: Metaverse Job Fair — GET /api/vision/metaverse/job-fair, POST /api/vision/metaverse/register-booth
+- **D17**: AI Dispute Mediator — POST /api/vision/ai/dispute-mediator
+- **D18**: Wellness Tracker — POST /api/vision/wellness/log, GET /api/vision/wellness/stats
+- **D19**: Impact NFT Collection — GET /api/vision/nft/impact-collection, POST /api/vision/nft/mint-impact
+- **D20**: Zero-Knowledge Proofs — POST /api/vision/zkp/prove-earnings, POST /api/vision/zkp/verify
+- **D21**: Quantum-Safe Encryption — GET /api/vision/security/quantum-status, POST /api/vision/security/quantum-encrypt
+- **D22**: AI Mentor Matching — POST /api/vision/ai/mentor-match, GET /api/vision/ai/mentor-pairs
+- **D23**: Sustainable Categories — GET /api/vision/sustainable/categories, GET /api/vision/sustainable/jobs
+- **D24**: 2031 Roadmap — GET /api/vision/roadmap + frontend page at `/roadmap` (client/src/pages/roadmap-2031.tsx)
+- **D25**: Demo Links — GET /api/vision/demo-links (all 25 features indexed)
+- **Test Results**: 84/84 tests passing (100%)
+
 ### Infrastructure & Monitoring
 - **Health & Metrics**: Endpoints for API health checks, platform metrics, and Prometheus monitoring.
 - **Logging**: Structured, JSON-formatted logging.

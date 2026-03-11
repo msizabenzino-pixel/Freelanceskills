@@ -12,3 +12,4 @@ export * from "./models/notifications";
 export * from "./models/fraud";
 export * from "./models/fortify";
 export * from "./models/growth";
+export * from "./models/vision";
