@@ -6,3 +6,6 @@ export * from "./models/messages";
 export * from "./models/verification";
 export * from "./models/ai_chat";
 export * from "./models/enterprise";
+export * from "./models/academy";
+export * from "./models/referrals";
+export * from "./models/notifications";

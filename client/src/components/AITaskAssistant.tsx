@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, MapPin, Loader2, TrendingUp, Lightbulb, CheckCircle2, ArrowRight } from "lucide-react";
+import { Sparkles, MapPin, Loader2, TrendingUp, Lightbulb, CheckCircle2, ArrowRight, Send, User, Bot } from "lucide-react";
 import { useCountry } from "@/components/CountrySelector";
 import { useLocation } from "wouter";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface TaskRecommendation {
   suggestedCategories: {
@@ -28,6 +29,12 @@ interface TaskRecommendation {
   tips: string[];
 }
 
+interface Message {
+  role: "user" | "assistant";
+  content: string;
+  recommendation?: TaskRecommendation;
+}
+
 async function analyzeTask(taskDescription: string, location?: string): Promise<TaskRecommendation> {
   const response = await fetch("/api/ai/analyze-task", {
     method: "POST",
@@ -41,14 +48,54 @@ async function analyzeTask(taskDescription: string, location?: string): Promise<
   return response.json();
 }
 
+async function sendChat(message: string, history: Message[]): Promise<string> {
+  const response = await fetch("/api/ai/task-chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ 
+      message, 
+      conversationHistory: history.map(({ role, content }) => ({ role, content }))
+    }),
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to get AI response");
+  }
+  const data = await response.json();
+  return data.message;
+}
+
 export function AITaskAssistant() {
   const [taskDescription, setTaskDescription] = useState("");
   const [location, setLocation] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [chatInput, setChatInput] = useState("");
   const [, navigate] = useLocation();
   const { formatPrice } = useCountry();
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const analyzeMutation = useMutation({
     mutationFn: () => analyzeTask(taskDescription, location),
+    onSuccess: (data) => {
+      setMessages([
+        { 
+          role: "user", 
+          content: `Task: ${taskDescription}${location ? ` (Location: ${location})` : ""}` 
+        },
+        { 
+          role: "assistant", 
+          content: "I've analyzed your task. Here are my recommendations to get you started:",
+          recommendation: data 
+        }
+      ]);
+    }
+  });
+
+  const chatMutation = useMutation({
+    mutationFn: (message: string) => sendChat(message, messages),
+    onSuccess: (aiMessage) => {
+      setMessages(prev => [...prev, { role: "assistant", content: aiMessage }]);
+    }
   });
 
   const handleAnalyze = () => {
@@ -57,7 +104,191 @@ export function AITaskAssistant() {
     }
   };
 
-  const recommendation = analyzeMutation.data;
+  const handleSendChat = () => {
+    if (chatInput.trim() && !chatMutation.isPending) {
+      const newMessage: Message = { role: "user", content: chatInput };
+      setMessages(prev => [...prev, newMessage]);
+      chatMutation.mutate(chatInput);
+      setChatInput("");
+    }
+  };
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
+  if (messages.length > 0) {
+    return (
+      <Card className="h-[700px] flex flex-col border-2 border-primary/20">
+        <CardHeader className="border-b bg-muted/30">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-primary" />
+            <div>
+              <CardTitle className="text-lg">Task Assistant Chat</CardTitle>
+              <CardDescription>Refining your requirements</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="flex-1 overflow-hidden p-0 flex flex-col">
+          <ScrollArea className="flex-1 p-4">
+            <div className="space-y-6">
+              {messages.map((msg, idx) => (
+                <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                  <div className={`flex gap-3 max-w-[85%] ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
+                    <div className={`h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                      msg.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground border"
+                    }`}>
+                      {msg.role === "user" ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
+                    </div>
+                    <div className="space-y-4">
+                      <div className={`rounded-2xl px-4 py-2 text-sm ${
+                        msg.role === "user" 
+                          ? "bg-primary text-primary-foreground rounded-tr-none" 
+                          : "bg-muted rounded-tl-none"
+                      }`}>
+                        {msg.content}
+                      </div>
+                      
+                      {msg.recommendation && (
+                        <div className="space-y-4 w-full">
+                          <Card className="bg-background">
+                            <CardHeader className="pb-3 px-4 pt-4">
+                              <CardTitle className="text-md flex items-center gap-2">
+                                <TrendingUp className="h-4 w-4 text-primary" />
+                                Recommended Categories
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className="px-4 pb-4">
+                              <div className="space-y-3">
+                                {msg.recommendation.suggestedCategories.map((cat, index) => (
+                                  <div
+                                    key={cat.categoryId}
+                                    data-testid={`category-recommendation-${index}`}
+                                    className="flex items-start justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                                  >
+                                    <div className="space-y-1">
+                                      <div className="flex items-center gap-2">
+                                        <span className="font-medium text-xs">{cat.categoryName}</span>
+                                        <Badge variant={cat.confidence >= 0.8 ? "default" : "secondary"} className="text-[10px] px-1.5 h-4">
+                                          {Math.round(cat.confidence * 100)}%
+                                        </Badge>
+                                      </div>
+                                    </div>
+                                    <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => navigate(`/services?category=${cat.categoryId}`)}>
+                                        Browse <ArrowRight className="ml-1 h-3 w-3" />
+                                      </Button>
+                                  </div>
+                                ))}
+                              </div>
+                            </CardContent>
+                          </Card>
+
+                          <div className="grid gap-4 md:grid-cols-2">
+                            <Card className="bg-background">
+                              <CardHeader className="pb-2 px-4 pt-4">
+                                <CardTitle className="text-md">Budget Estimate</CardTitle>
+                              </CardHeader>
+                              <CardContent className="px-4 pb-4">
+                                <div className="text-lg font-bold text-primary">
+                                  {formatPrice(msg.recommendation.estimatedBudgetRange.min * 100)} - {formatPrice(msg.recommendation.estimatedBudgetRange.max * 100)}
+                                </div>
+                                <div className="flex flex-wrap gap-1 mt-2">
+                                  <Badge variant="outline" className="text-[10px] px-1 h-4">
+                                    {msg.recommendation.recommendedLocationType}
+                                  </Badge>
+                                  <Badge variant="outline" className="text-[10px] px-1 h-4">
+                                    {msg.recommendation.urgencyLevel}
+                                  </Badge>
+                                </div>
+                              </CardContent>
+                            </Card>
+
+                            <Card className="bg-background">
+                              <CardHeader className="pb-2 px-4 pt-4">
+                                <CardTitle className="text-md">Skills</CardTitle>
+                              </CardHeader>
+                              <CardContent className="px-4 pb-4">
+                                <div className="flex flex-wrap gap-1">
+                                  {msg.recommendation.skillsNeeded.slice(0, 5).map((skill) => (
+                                    <Badge key={skill} variant="secondary" className="text-[10px] px-1 h-4">
+                                      {skill}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </CardContent>
+                            </Card>
+                          </div>
+
+                          <Card className="bg-amber-50 border-amber-200 dark:bg-amber-950/20 dark:border-amber-800">
+                            <CardHeader className="pb-2 px-4 pt-4">
+                              <CardTitle className="text-md flex items-center gap-2 text-amber-700 dark:text-amber-400">
+                                <Lightbulb className="h-4 w-4" />
+                                Pro Tips
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className="px-4 pb-4">
+                              <ul className="space-y-1">
+                                {msg.recommendation.tips.slice(0, 2).map((tip, index) => (
+                                  <li key={index} className="flex gap-2 text-xs text-amber-800 dark:text-amber-300">
+                                    <span>•</span> {tip}
+                                  </li>
+                                ))}
+                              </ul>
+                            </CardContent>
+                          </Card>
+
+                          <Button className="w-full h-10 text-sm" data-testid="button-post-job-chat" onClick={() => navigate("/post-job")}>
+                            Ready to Post Job
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {chatMutation.isPending && (
+                <div className="flex justify-start">
+                  <div className="flex gap-3 items-center">
+                    <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center border">
+                      <Bot className="h-4 w-4 text-muted-foreground" />
+                    </div>
+                    <div className="bg-muted rounded-2xl px-4 py-2">
+                      <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div ref={scrollRef} />
+            </div>
+          </ScrollArea>
+          <div className="p-4 border-t bg-background">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Ask follow-up questions about budget, skills, or process..."
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSendChat()}
+                disabled={chatMutation.isPending}
+                className="flex-1"
+                data-testid="input-chat-message"
+              />
+              <Button 
+                size="icon" 
+                onClick={handleSendChat} 
+                disabled={!chatInput.trim() || chatMutation.isPending}
+                data-testid="button-send-message"
+              >
+                <Send className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -139,150 +370,6 @@ export function AITaskAssistant() {
           )}
         </CardContent>
       </Card>
-
-      {recommendation && (
-        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-primary" />
-                Recommended Categories
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {recommendation.suggestedCategories.map((cat, index) => (
-                  <div
-                    key={cat.categoryId}
-                    data-testid={`category-recommendation-${index}`}
-                    className="flex items-start justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
-                  >
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">{cat.categoryName}</span>
-                        <Badge variant={cat.confidence >= 0.8 ? "default" : "secondary"}>
-                          {Math.round(cat.confidence * 100)}% match
-                        </Badge>
-                      </div>
-                      <div className="flex flex-wrap gap-1">
-                        {cat.relevantSubcategories.slice(0, 4).map((sub) => (
-                          <Badge key={sub} variant="outline" className="text-xs">
-                            {sub}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <Button variant="ghost" size="sm" data-testid={`button-browse-${cat.categoryId}`} onClick={() => navigate(`/services?category=${cat.categoryId}`)}>
-                        Browse <ArrowRight className="ml-1 h-4 w-4" />
-                      </Button>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Budget Estimate</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-primary" data-testid="text-budget-estimate">
-                  {formatPrice(recommendation.estimatedBudgetRange.min * 100)} - {formatPrice(recommendation.estimatedBudgetRange.max * 100)}
-                </div>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Based on South African market rates
-                </p>
-                <div className="flex gap-2 mt-3">
-                  <Badge variant="outline">
-                    {recommendation.recommendedLocationType === "onsite"
-                      ? "On-site service"
-                      : recommendation.recommendedLocationType === "remote"
-                      ? "Remote work"
-                      : "Flexible location"}
-                  </Badge>
-                  <Badge variant="outline">
-                    {recommendation.urgencyLevel === "urgent"
-                      ? "Urgent"
-                      : recommendation.urgencyLevel === "standard"
-                      ? "Standard timeline"
-                      : "Flexible timing"}
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Skills Needed</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2" data-testid="skills-needed">
-                  {recommendation.skillsNeeded.map((skill) => (
-                    <Badge key={skill} className="bg-primary/10 text-primary hover:bg-primary/20">
-                      {skill}
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <CheckCircle2 className="h-5 w-5 text-green-600" />
-                Task Breakdown
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ol className="space-y-2" data-testid="task-breakdown">
-                {recommendation.taskBreakdown.map((step, index) => (
-                  <li key={index} className="flex gap-3">
-                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-sm font-medium flex items-center justify-center">
-                      {index + 1}
-                    </span>
-                    <span className="text-sm">{step}</span>
-                  </li>
-                ))}
-              </ol>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-amber-50 border-amber-200 dark:bg-amber-950/20 dark:border-amber-800">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2 text-amber-700 dark:text-amber-400">
-                <Lightbulb className="h-5 w-5" />
-                Pro Tips
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2" data-testid="pro-tips">
-                {recommendation.tips.map((tip, index) => (
-                  <li key={index} className="flex gap-2 text-sm text-amber-800 dark:text-amber-300">
-                    <span className="text-amber-600">•</span>
-                    {tip}
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="flex-1">
-              <Button className="w-full" size="lg" data-testid="button-post-job" onClick={() => navigate("/post-job")}>
-                Post a Job
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-            <div className="flex-1">
-              <Button variant="outline" className="w-full" size="lg" data-testid="button-browse-services" onClick={() => navigate("/services")}>
-                Browse Services
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

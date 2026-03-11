@@ -7,6 +7,56 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+  // Health endpoint
+  app.get("/api/health", async (_req, res) => {
+    try {
+      // Check database connection
+      const { sql } = await import("drizzle-orm");
+      const { db } = await import("./db");
+      await db.execute(sql`SELECT 1`);
+      
+      const status = {
+        status: "ok",
+        uptime: process.uptime(),
+        version: "2.0.0",
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV,
+        dependencies: {
+          database: "connected",
+          stripe: process.env.STRIPE_SECRET_KEY ? "configured" : "missing",
+          ai: (process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY) ? "configured" : "missing",
+        }
+      };
+      res.json(status);
+    } catch (error) {
+      res.status(500).json({ 
+        status: "error", 
+        database: "disconnected",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  // Metrics endpoint
+  app.get("/api/metrics", async (_req, res) => {
+    try {
+      const { metrics } = await import("./index");
+      const stats = await storage.getGlobalStats();
+      
+      res.json({
+        ...stats,
+        uptime: process.uptime(),
+        memory: process.memoryUsage(),
+        requests: {
+          total: metrics.totalRequests,
+          byPrefix: metrics.requestsByPrefix
+        }
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch metrics" });
+    }
+  });
+
   // Setup authentication FIRST
   await setupAuth(app);
   registerAuthRoutes(app);
@@ -261,6 +311,116 @@ export async function registerRoutes(
     }
   });
 
+  // AI Task Assistant multi-turn chat endpoint
+  app.post("/api/ai/task-chat", async (req, res) => {
+    try {
+      const { message, conversationHistory = [] } = req.body;
+      const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
+      const baseUrl = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL || "https://api.openai.com/v1";
+
+      if (!apiKey) {
+        return res.status(500).json({ message: "AI API key not configured" });
+      }
+
+      const systemPrompt = `You are the FreelanceSkills AI Task Assistant. Your goal is to help users refine their task requirements, suggest budgets, and prepare to hire a freelancer.
+FreelanceSkills is a South African freelance marketplace.
+
+Budget Estimation Rules (SA Market Rates):
+- General Labor/Cleaning: R150 - R300 per hour
+- Skilled Trades (Plumbing/Electrical): R400 - R800 per hour call-out + labor
+- Professional Services (Design/Writing): R300 - R1000 per hour
+- Specialized Tech/Consulting: R800 - R2500+ per hour
+
+Guidelines:
+- Discuss the task details to identify skill gaps.
+- Suggest budget adjustments based on SA market rates.
+- Recommend types of freelancers (e.g., "You need a Level 2 Electrician").
+- When the user is ready, offer to create a job post.
+- Be professional, helpful, and concise.
+- Use South African English and Rand (R) for currency.`;
+
+      const messages = [
+        { role: "system", content: systemPrompt },
+        ...conversationHistory.map((m: any) => ({ role: m.role, content: m.content })),
+        { role: "user", content: message }
+      ];
+
+      const response = await fetch(`${baseUrl}/chat/completions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          messages,
+          temperature: 0.7,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to get AI response");
+      }
+
+      const data = await response.json();
+      const aiResponse = data.choices[0].message.content;
+
+      res.json({ message: aiResponse });
+    } catch (error) {
+      console.error("Error in task-chat:", error);
+      res.status(500).json({ message: "I'm having trouble processing your request. Please try again." });
+    }
+  });
+
+  // AI Fraud Detection stub endpoint
+  app.post("/api/ai/fraud-check", async (req, res) => {
+    try {
+      const { applicationData } = req.body;
+      let riskScore = 0;
+      const flags: string[] = [];
+
+      // Simple rule-based logic
+      const now = new Date();
+      const accountCreated = applicationData.accountCreatedAt ? new Date(applicationData.accountCreatedAt) : now;
+      const accountAgeHours = (now.getTime() - accountCreated.getTime()) / (1000 * 60 * 60);
+
+      // Rule 1: New account (<24h) applying to high-value job (>R50,000)
+      if (accountAgeHours < 24 && applicationData.jobBudget > 50000) {
+        riskScore += 30;
+        flags.push("New account applying to high-value job");
+      }
+
+      // Rule 2: Multiple applications in <1 hour (simulated with applicationCount)
+      if (applicationData.recentApplicationCount > 5) {
+        riskScore += 20;
+        flags.push("High frequency of applications");
+      }
+
+      // Rule 3: Description matches common spam patterns
+      const description = applicationData.description || "";
+      if (description === description.toUpperCase() && description.length > 20) {
+        riskScore += 15;
+        flags.push("All caps description");
+      }
+      if ((description.match(/http|www/g) || []).length > 2) {
+        riskScore += 10;
+        flags.push("Excessive links in description");
+      }
+
+      let recommendation: "approve" | "review" | "reject" = "approve";
+      if (riskScore > 70) {
+        recommendation = "reject";
+      } else if (riskScore >= 40) {
+        recommendation = "review";
+      }
+
+      res.json({ riskScore, flags, recommendation });
+    } catch (error) {
+      console.error("Error in fraud-check:", error);
+      res.status(500).json({ message: "Failed to perform fraud check" });
+    }
+  });
+
   // Review routes
   app.get("/api/freelancers/:id/reviews", async (req, res) => {
     try {
@@ -308,8 +468,8 @@ export async function registerRoutes(
             otherUser: {
               id: otherUserId,
               name: otherProfile?.title || "Freelancer",
-              avatar: otherProfile?.avatarUrl,
-              role: otherProfile?.category || "Professional",
+              avatar: (otherProfile as any)?.avatarUrl,
+              role: (otherProfile as any)?.category || "Professional",
             },
             lastMessage: lastMessage?.content || "",
             unreadCount,
@@ -1171,6 +1331,191 @@ Respond with ONLY the JSON object, no markdown.`
     }
   });
 
+  // ============ ACADEMY ROUTES ============
+
+  app.get("/api/courses", async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const allCourses = await storage.getCourses();
+      
+      const coursesWithProgress = await Promise.all(allCourses.map(async (course) => {
+        let progress = 0;
+        if (userId) {
+          const userProgress = await storage.getCourseProgress(userId, course.id);
+          const completedCount = userProgress.filter(p => p.completed).length;
+          progress = course.totalLessons > 0 ? Math.round((completedCount / course.totalLessons) * 100) : 0;
+        }
+        return { ...course, progress };
+      }));
+
+      res.json(coursesWithProgress);
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+      res.status(500).json({ message: "Failed to fetch courses" });
+    }
+  });
+
+  app.get("/api/courses/:id", async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const courseId = parseInt(req.params.id);
+      const course = await storage.getCourse(courseId);
+      
+      if (!course) {
+        return res.status(404).json({ message: "Course not found" });
+      }
+
+      const lessons = await storage.getCourseLessons(courseId);
+      let progress: any[] = [];
+      if (userId) {
+        progress = await storage.getCourseProgress(userId, courseId);
+      }
+
+      const lessonsWithProgress = lessons.map(lesson => ({
+        ...lesson,
+        completed: progress.find(p => p.lessonId === lesson.id)?.completed || false
+      }));
+
+      res.json({ ...course, lessons: lessonsWithProgress });
+    } catch (error) {
+      console.error("Error fetching course details:", error);
+      res.status(500).json({ message: "Failed to fetch course details" });
+    }
+  });
+
+  app.post("/api/courses/:courseId/lessons/:lessonId/complete", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const courseId = parseInt(req.params.courseId);
+      const lessonId = parseInt(req.params.lessonId);
+      
+      const progress = await storage.markLessonComplete(userId, courseId, lessonId);
+      res.json(progress);
+    } catch (error) {
+      console.error("Error marking lesson complete:", error);
+      res.status(500).json({ message: "Failed to mark lesson complete" });
+    }
+  });
+
+  app.get("/api/courses/:courseId/certificate", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const courseId = parseInt(req.params.courseId);
+      
+      const course = await storage.getCourse(courseId);
+      if (!course) return res.status(404).json({ message: "Course not found" });
+
+      const progress = await storage.getCourseProgress(userId, courseId);
+      const completedCount = progress.filter(p => p.completed).length;
+
+      if (completedCount < course.totalLessons) {
+        return res.status(400).json({ message: "Course not completed yet" });
+      }
+
+      let cert = await storage.getCertificate(userId, courseId);
+      if (!cert) {
+        cert = await storage.issueCertificate({
+          userId,
+          courseId,
+          certificateCode: `CERT-${courseId}-${userId.substring(0, 8)}-${Date.now().toString(36).toUpperCase()}`,
+        });
+      }
+
+      res.json(cert);
+    } catch (error) {
+      console.error("Error generating certificate:", error);
+      res.status(500).json({ message: "Failed to generate certificate" });
+    }
+  });
+
+  app.get("/api/certificates/my", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const certificates = await storage.getUserCertificates(userId);
+      
+      const certsWithCourse = await Promise.all(certificates.map(async (cert) => {
+        const course = await storage.getCourse(cert.courseId);
+        return { ...cert, courseTitle: course?.title };
+      }));
+
+      res.json(certsWithCourse);
+    } catch (error) {
+      console.error("Error fetching certificates:", error);
+      res.status(500).json({ message: "Failed to fetch certificates" });
+    }
+  });
+
+  // Seed courses if they don't exist
+  async function seedCourses() {
+    const existing = await storage.getCourses();
+    if (existing.length === 0) {
+      const course1 = await storage.createCourse({
+        title: "AI Basics for Freelancers",
+        description: "Master the fundamentals of AI tools to boost your productivity and earnings.",
+        category: "AI Basics",
+        difficulty: "beginner",
+        duration: "1 hour",
+        totalLessons: 5,
+        isFree: true,
+      });
+
+      const course1Lessons = [
+        { title: "Introduction to AI", content: "AI is transforming the freelance landscape in South Africa. This lesson covers the basics of what AI is and why it matters for your career.", orderIndex: 1, type: "text" },
+        { title: "Generative AI Tools", content: "Explore tools like ChatGPT, Claude, and Midjourney that can help you create content, code, and designs faster.", orderIndex: 2, type: "text" },
+        { title: "AI for Administrative Tasks", content: "Learn how to use AI to automate invoicing, scheduling, and client communication.", orderIndex: 3, type: "text" },
+        { title: "Ethics and AI", content: "Understanding the importance of ethical AI use, including data privacy and avoiding bias.", orderIndex: 4, type: "text" },
+        { title: "Building your AI Workflow", content: "How to integrate AI tools into your daily freelance routine for maximum efficiency.", orderIndex: 5, type: "text" },
+      ];
+
+      for (const lesson of course1Lessons) {
+        await storage.createLesson({ ...lesson, courseId: course1.id });
+      }
+
+      const course2 = await storage.createCourse({
+        title: "Building Your Freelance Brand",
+        description: "Learn how to stand out in the crowded freelance marketplace with a strong personal brand.",
+        category: "Soft Skills",
+        difficulty: "beginner",
+        duration: "2 hours",
+        totalLessons: 4,
+        isFree: true,
+      });
+
+      const course2Lessons = [
+        { title: "Defining Your Niche", content: "Why specializing is better than being a generalist and how to find your unique selling proposition.", orderIndex: 1, type: "text" },
+        { title: "Creating a Winning Portfolio", content: "How to showcase your work effectively to attract high-paying clients.", orderIndex: 2, type: "text" },
+        { title: "Marketing Yourself", content: "Strategies for using social media and networking to find new opportunities.", orderIndex: 3, type: "text" },
+        { title: "Client Retention", content: "The secret to long-term freelance success: turning one-off projects into ongoing relationships.", orderIndex: 4, type: "text" },
+      ];
+
+      for (const lesson of course2Lessons) {
+        await storage.createLesson({ ...lesson, courseId: course2.id });
+      }
+
+      const course3 = await storage.createCourse({
+        title: "Advanced Client Communication",
+        description: "Master the art of negotiation and difficult conversations to scale your freelance business.",
+        category: "Soft Skills",
+        difficulty: "intermediate",
+        duration: "1.5 hours",
+        totalLessons: 3,
+        isFree: true,
+      });
+
+      const course3Lessons = [
+        { title: "Effective Onboarding", content: "How to set expectations from day one to ensure a smooth project delivery.", orderIndex: 1, type: "text" },
+        { title: "Negotiating Like a Pro", content: "Techniques for discussing rates and scope without losing the client.", orderIndex: 2, type: "text" },
+        { title: "Handling Conflict", content: "What to do when things go wrong: professional ways to resolve disputes and maintain your reputation.", orderIndex: 3, type: "text" },
+      ];
+
+      for (const lesson of course3Lessons) {
+        await storage.createLesson({ ...lesson, courseId: course3.id });
+      }
+    }
+  }
+  
+  seedCourses().catch(console.error);
+
   app.post("/api/ai/generate-cover-letter", isAuthenticated, async (req: any, res) => {
     try {
       const { jobTitle, company, jobDescription, userSkills, userName } = req.body;
@@ -1461,11 +1806,151 @@ Experience level: ${experienceLevel || 'Any'}`
     await handleWebhook(req, res);
   });
 
+  // Account operations (POPIA compliance)
+  app.get("/api/account/export", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const userData = await storage.exportUserData(userId);
+      
+      res.setHeader("Content-Disposition", `attachment; filename="freelanceskills-data-export-${userId}.json"`);
+      res.setHeader("Content-Type", "application/json");
+      res.json(userData);
+    } catch (error) {
+      console.error("Error exporting user data:", error);
+      res.status(500).json({ message: "Failed to export data" });
+    }
+  });
+
+  app.delete("/api/account/delete", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      await storage.deleteUserAccount(userId);
+      
+      // Clear session after soft delete
+      req.session.destroy();
+      res.json({ message: "Account successfully deleted and personal data anonymized." });
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      res.status(500).json({ message: "Failed to delete account" });
+    }
+  });
+
+  // Notification routes
+  app.get("/api/notifications", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const notifications = await storage.getNotifications(userId);
+      res.json(notifications);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+      res.status(500).json({ message: "Failed to fetch notifications" });
+    }
+  });
+
+  app.patch("/api/notifications/:id/read", isAuthenticated, async (req: any, res) => {
+    try {
+      const notification = await storage.markAsRead(parseInt(req.params.id));
+      if (!notification) {
+        return res.status(404).json({ message: "Notification not found" });
+      }
+      res.json(notification);
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+      res.status(500).json({ message: "Failed to update notification" });
+    }
+  });
+
+  app.patch("/api/notifications/read-all", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      await storage.markAllAsRead(userId);
+      res.json({ message: "All notifications marked as read" });
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+      res.status(500).json({ message: "Failed to update notifications" });
+    }
+  });
+
+  app.get("/api/notifications/unread-count", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const count = await storage.getUnreadCount(userId);
+      res.json({ count });
+    } catch (error) {
+      console.error("Error fetching unread count:", error);
+      res.status(500).json({ message: "Failed to fetch unread count" });
+    }
+  });
+
   if (isStripeConfigured()) {
     console.log("Stripe payment routes registered (including webhook)");
   } else {
     console.log("Stripe credentials not configured - payments will be unavailable");
   }
+
+  // Referral routes
+  app.get("/api/referrals/my-code", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      let stats = await storage.getReferralStats(userId);
+      
+      if (!stats.referralCode) {
+        // Generate new referral code
+        const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+        await storage.createReferral({
+          referrerId: userId,
+          referralCode: code,
+          status: "pending",
+          rewardAmount: 10000, // R100 in cents
+          tier: "bronze",
+        });
+        stats = await storage.getReferralStats(userId);
+      }
+      
+      res.json({ referralCode: stats.referralCode });
+    } catch (error) {
+      console.error("Error fetching referral code:", error);
+      res.status(500).json({ message: "Failed to fetch referral code" });
+    }
+  });
+
+  app.get("/api/referrals/stats", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const stats = await storage.getReferralStats(userId);
+      const referrals = await storage.getReferralsByReferrer(userId);
+      res.json({ ...stats, referrals });
+    } catch (error) {
+      console.error("Error fetching referral stats:", error);
+      res.status(500).json({ message: "Failed to fetch referral stats" });
+    }
+  });
+
+  app.post("/api/referrals/claim/:code", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const code = req.params.code;
+      
+      const referral = await storage.getReferralByCode(code);
+      if (!referral) {
+        return res.status(404).json({ message: "Invalid referral code" });
+      }
+      
+      if (referral.referrerId === userId) {
+        return res.status(400).json({ message: "You cannot refer yourself" });
+      }
+
+      if (referral.status !== "pending") {
+        return res.status(400).json({ message: "Referral code already claimed or invalid" });
+      }
+      
+      await storage.updateReferralStatus(referral.id, "signup", userId);
+      res.json({ message: "Referral code claimed successfully" });
+    } catch (error) {
+      console.error("Error claiming referral code:", error);
+      res.status(500).json({ message: "Failed to claim referral code" });
+    }
+  });
 
   return httpServer;
 }

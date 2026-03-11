@@ -1,0 +1,47 @@
+You are now accelerating freelanceskills.net — a LIVE South African freelance marketplace connecting verified local talent with households/SMEs/enterprises. Current site: live job board, AI Task Assistant, escrow payments (Stripe), ID verification, categories (programming, engineering, healthcare, trades, handyman, etc.), impact stats (12k+ jobs, R47M generated), upskilling academy, 2031 vision (AI/blockchain/green).
+
+Goal: Evolve this into investor/board-ready dominance — harden security/scalability, supercharge AI matching, polish UX, add monetization depth, prep demo assets. Build on existing (do NOT rebuild from zero — assume NestJS/Node backend, React frontend, Stripe integration).
+
+Execute in order — show progress + testable output after each block:
+
+1. Infrastructure lockdown:
+   - Add Redis caching, advanced rate limiting, Winston + Sentry logging, Prometheus metrics
+   - Docker compose yaml stub, cron backup script
+   - Health endpoint with uptime/version/dependencies
+   - Custom domain prep for freelanceskills.net (CNAME instructions)
+
+2. AI Task Assistant & Matching upgrade:
+   - Multi-turn conversational flow with context memory
+   - Budget/skill-gap prediction (mock ML or rule-based)
+   - Fraud detection stub (unusual patterns in applications)
+   - Tool-calling for job post → auto-match → escrow setup
+
+3. Core UX polish (React):
+   - Mobile-first responsive fixes
+   - Real-time notifications (WebSockets for new jobs/applications)
+   - In-app chat stub between client/freelancer
+   - Profile wizard + portfolio uploader
+   - Dark mode toggle
+
+4. Monetization expansion:
+   - Premium freelancer tiers (visibility, priority, R79/mo stub)
+   - Enterprise dashboard (bulk post, analytics)
+   - Referral tracking + payouts
+   - Stripe webhooks for tier upgrades
+
+5. Upskilling Academy:
+   - Course player stub (video/text progress tracking)
+   - Certification badges linked to profiles
+   - Job-matching tie-in ("Finish course → unlock higher gigs")
+
+6. Testing & reliability:
+   - 10 E2E flows (post job → apply → escrow → payout)
+   - Load test stub (simulate 1k concurrent)
+   - Accessibility + POPIA export/delete endpoints
+
+7. Investor demo prep:
+   - Markdown pitch deck (Problem: SA freelance trust gap → Solution: Verified local marketplace + AI → Traction: Live stats → Ask)
+   - 60-sec demo script
+   - Metrics dashboard stub (jobs/revenue/satisfaction)
+
+After each section, pause, show file changes, key code, test commands (curl, browser preview). Production-grade only — validate, log, secure. If package missing, mock smartly. START THE TAKEOVER NOW!

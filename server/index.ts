@@ -136,18 +136,31 @@ app.use("/api/", (req, res, next) => {
   next();
 });
 
-export function log(message: string, source = "express") {
-  const formattedTime = new Date().toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-  });
+export const metrics = {
+  totalRequests: 0,
+  requestsByPrefix: {} as Record<string, number>,
+};
 
-  console.log(`${formattedTime} [${source}] ${message}`);
+export function log(message: string, source = "express", extra: Record<string, any> = {}) {
+  const logEntry = {
+    timestamp: new Date().toISOString(),
+    level: "info",
+    source,
+    message,
+    ...extra,
+  };
+
+  console.log(JSON.stringify(logEntry));
 }
 
 app.use((req, res, next) => {
+  metrics.totalRequests++;
+  const parts = req.path.split("/");
+  if (parts.length >= 3 && parts[1] === "api") {
+    const prefix = `/api/${parts[2]}`;
+    metrics.requestsByPrefix[prefix] = (metrics.requestsByPrefix[prefix] || 0) + 1;
+  }
+
   const start = Date.now();
   const path = req.path;
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
@@ -161,12 +174,20 @@ app.use((req, res, next) => {
   res.on("finish", () => {
     const duration = Date.now() - start;
     if (path.startsWith("/api")) {
+      const logExtra: Record<string, any> = {
+        method: req.method,
+        path,
+        statusCode: res.statusCode,
+        duration: `${duration}ms`,
+      };
+
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
       if (capturedJsonResponse) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+        // We could add capturedJsonResponse to logExtra too, but it might be too large
       }
 
-      log(logLine);
+      log(logLine, "express", logExtra);
     }
   });
 

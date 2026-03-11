@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { useCurrency } from "@/lib/currency";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   TrendingUp,
   TrendingDown,
@@ -15,6 +16,7 @@ import {
   Star,
   Clock,
   BarChart3,
+  Briefcase,
   PieChart,
   Activity,
   Target,
@@ -36,38 +38,7 @@ import {
   FileText,
 } from "lucide-react";
 
-const earningsData = {
-  weekly: [
-    { label: "Mon", value: 1200 },
-    { label: "Tue", value: 800 },
-    { label: "Wed", value: 2100 },
-    { label: "Thu", value: 1500 },
-    { label: "Fri", value: 3200 },
-    { label: "Sat", value: 900 },
-    { label: "Sun", value: 400 },
-  ],
-  monthly: [
-    { label: "Jan", value: 18500 },
-    { label: "Feb", value: 22000 },
-    { label: "Mar", value: 19800 },
-    { label: "Apr", value: 28500 },
-    { label: "May", value: 32000 },
-    { label: "Jun", value: 27500 },
-    { label: "Jul", value: 35000 },
-    { label: "Aug", value: 31200 },
-    { label: "Sep", value: 38500 },
-    { label: "Oct", value: 42000 },
-    { label: "Nov", value: 39800 },
-    { label: "Dec", value: 45200 },
-  ],
-  yearly: [
-    { label: "2028", value: 185000 },
-    { label: "2029", value: 268000 },
-    { label: "2030", value: 342000 },
-    { label: "2031", value: 380000 },
-  ],
-};
-
+// Mock data as fallback
 const funnelSteps = [
   { label: "Profile Views", value: 1842, percentage: 100, color: "bg-blue-500" },
   { label: "Proposal Requests", value: 423, percentage: 23, color: "bg-indigo-500" },
@@ -90,18 +61,6 @@ const skillDemandData = [
   { skill: "Carpentry", demand: 55, trend: "stable", change: "+2%" },
   { skill: "Photography", demand: 48, trend: "down", change: "-12%" },
 ];
-
-const competitiveMetrics = {
-  rank: 12,
-  totalInCategory: 847,
-  percentile: 98.6,
-  avgRating: 4.9,
-  categoryAvgRating: 4.2,
-  avgResponseTime: "1.2 hrs",
-  categoryAvgResponseTime: "4.8 hrs",
-  completionRate: 98,
-  categoryAvgCompletionRate: 89,
-};
 
 const aiPredictions = [
   {
@@ -139,21 +98,61 @@ const aiPredictions = [
   },
 ];
 
-const performanceMetrics = [
-  { label: "Response Rate", value: 96, unit: "%", icon: MessageSquare, color: "text-blue-500", trend: "+2%", trendPositive: true },
-  { label: "Completion Rate", value: 98, unit: "%", icon: CheckCircle2, color: "text-green-500", trend: "+1%", trendPositive: true },
-  { label: "Repeat Clients", value: 67, unit: "%", icon: Repeat, color: "text-purple-500", trend: "+5%", trendPositive: true },
-  { label: "Avg Response Time", value: 1.2, unit: "hrs", icon: Clock, color: "text-orange-500", trend: "-0.3 hrs", trendPositive: true, trendNote: "faster" },
-  { label: "Profile Views", value: 1842, unit: "/mo", icon: Eye, color: "text-indigo-500", trend: "+12%", trendPositive: true },
-  { label: "Client Satisfaction", value: 4.9, unit: "/5", icon: ThumbsUp, color: "text-rose-500", trend: "+0.1", trendPositive: true },
-];
-
 export default function Analytics() {
   const { formatAmount } = useCurrency();
   const [earningsPeriod, setEarningsPeriod] = useState<"weekly" | "monthly" | "yearly">("monthly");
 
-  const currentEarnings = earningsData[earningsPeriod];
-  const maxEarning = Math.max(...currentEarnings.map((d) => d.value));
+  const { data: metrics } = useQuery<any>({
+    queryKey: ["/api/metrics"],
+  });
+
+  const { data: profile } = useQuery<any>({
+    queryKey: ["/api/profile"],
+  });
+
+  const { data: bookings } = useQuery<any[]>({
+    queryKey: ["/api/bookings"],
+  });
+
+  // Calculate earnings from bookings
+  const earningsByMonth = bookings?.reduce((acc: any, booking: any) => {
+    const month = new Date(booking.createdAt).toLocaleString('default', { month: 'short' });
+    acc[month] = (acc[month] || 0) + (booking.amount || 0);
+    return acc;
+  }, {}) || {};
+
+  const currentEarnings = Object.entries(earningsByMonth).map(([label, value]) => ({
+    label,
+    value: value as number,
+  })) || [];
+
+  if (currentEarnings.length === 0) {
+    // Fallback if no bookings
+    currentEarnings.push({ label: "Jan", value: 0 });
+  }
+
+  const maxEarning = Math.max(...currentEarnings.map((d) => d.value), 1);
+
+  const performanceMetrics = [
+    { label: "Total Jobs Posted", value: metrics?.jobs || 0, unit: "", icon: Briefcase, color: "text-blue-500", trend: "+5", trendPositive: true },
+    { label: "Completion Rate", value: 98, unit: "%", icon: CheckCircle2, color: "text-green-500", trend: "+1%", trendPositive: true },
+    { label: "Repeat Clients", value: 67, unit: "%", icon: Repeat, color: "text-purple-500", trend: "+5%", trendPositive: true },
+    { label: "Avg Response Time", value: 1.2, unit: "hrs", icon: Clock, color: "text-orange-500", trend: "-0.3 hrs", trendPositive: true, trendNote: "faster" },
+    { label: "Profile Views", value: profile?.viewCount || 0, unit: "/mo", icon: Eye, color: "text-indigo-500", trend: "+12%", trendPositive: true },
+    { label: "Client Satisfaction", value: profile?.rating || 4.9, unit: "/5", icon: ThumbsUp, color: "text-rose-500", trend: "+0.1", trendPositive: true },
+  ];
+
+  const competitiveMetrics = {
+    rank: 12,
+    totalInCategory: metrics?.profiles || 847,
+    percentile: 98.6,
+    avgRating: profile?.rating || 4.9,
+    categoryAvgRating: 4.2,
+    avgResponseTime: "1.2 hrs",
+    categoryAvgResponseTime: "4.8 hrs",
+    completionRate: 98,
+    categoryAvgCompletionRate: 89,
+  };
 
   return (
     <div className="min-h-screen bg-background font-sans flex flex-col overflow-x-hidden">

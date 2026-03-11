@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useDarkMode } from "@/hooks/use-dark-mode";
 import { VoiceSearch } from "./VoiceSearch";
 import { CountrySelector } from "./CountrySelector";
+import { NotificationBell } from "./NotificationBell";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -263,6 +264,13 @@ export function Navbar() {
           )}>
             <CountrySelector />
           </div>
+          {isAuthenticated && (
+            <div className={cn(
+              isScrolled || location !== "/" ? "text-muted-foreground" : "text-white/90"
+            )}>
+              <NotificationBell />
+            </div>
+          )}
           <Button 
               variant="ghost" 
               className={cn(

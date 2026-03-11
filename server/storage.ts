@@ -5,12 +5,15 @@ import {
   type InsertEnterpriseLead, type EnterpriseLead,
   type AggregatedJob, type InsertAggregatedJob, type JobApplication, type InsertJobApplication,
   type BusinessInvitation, type InsertBusinessInvitation,
+  type Referral, type InsertReferral,
+  type Course, type InsertCourse, type Lesson, type InsertLesson, type CourseProgress, type InsertCourseProgress, type Certificate, type InsertCertificate,
+  type Notification, type InsertNotification,
   jobs, profiles, servicePackages, bookings, reviews, conversations, messages,
   freelancerVerifications, privateFeedback, enterpriseLeads, aggregatedJobs, jobApplications,
-  businessInvitations
+  businessInvitations, referrals, courses, lessons, courseProgress, certificates, notifications
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, or, sql, desc } from "drizzle-orm";
+import { eq, and, or, sql, desc, count } from "drizzle-orm";
 
 export interface IStorage {
   // Job operations
@@ -82,6 +85,45 @@ export interface IStorage {
   getAllBusinessInvitations(filters?: { province?: string; category?: string; status?: string }): Promise<BusinessInvitation[]>;
   getBusinessInvitationStats(): Promise<{ total: number; pending: number; claimed: number }>;
   searchBusinessInvitations(query: string): Promise<BusinessInvitation[]>;
+  getGlobalStats(): Promise<{ jobs: number; profiles: number; bookings: number; messages: number }>;
+
+  // Referral operations
+  createReferral(referral: InsertReferral): Promise<Referral>;
+  getReferralByCode(code: string): Promise<Referral | undefined>;
+  getReferralsByReferrer(referrerId: string): Promise<Referral[]>;
+  getReferralByReferrer(referrerId: string): Promise<Referral | undefined>;
+  updateReferralStatus(id: number, status: string, referredUserId?: string): Promise<Referral | undefined>;
+  getReferralStats(userId: string): Promise<{ 
+    totalReferred: number; 
+    totalEarned: number; 
+    pendingRewards: number; 
+    tier: string;
+    referralCode?: string;
+  }>;
+
+  // Academy operations
+  getCourses(): Promise<Course[]>;
+  getCourse(id: number): Promise<Course | undefined>;
+  getCourseLessons(courseId: number): Promise<Lesson[]>;
+  getLesson(id: number): Promise<Lesson | undefined>;
+  getCourseProgress(userId: string, courseId: number): Promise<CourseProgress[]>;
+  markLessonComplete(userId: string, courseId: number, lessonId: number): Promise<CourseProgress>;
+  getCertificate(userId: string, courseId: number): Promise<Certificate | undefined>;
+  issueCertificate(certificate: InsertCertificate): Promise<Certificate>;
+  getUserCertificates(userId: string): Promise<Certificate[]>;
+  createCourse(course: InsertCourse): Promise<Course>;
+  createLesson(lesson: InsertLesson): Promise<Lesson>;
+
+  // Account operations
+  exportUserData(userId: string): Promise<any>;
+  deleteUserAccount(userId: string): Promise<void>;
+
+  // Notification operations
+  createNotification(notification: InsertNotification): Promise<Notification>;
+  getNotifications(userId: string): Promise<Notification[]>;
+  markAsRead(id: number): Promise<Notification | undefined>;
+  markAllAsRead(userId: string): Promise<void>;
+  getUnreadCount(userId: string): Promise<number>;
 }
 
 class DatabaseStorage implements IStorage {
@@ -440,6 +482,229 @@ class DatabaseStorage implements IStorage {
       ))
       .orderBy(desc(businessInvitations.createdAt))
       .limit(50);
+  }
+
+  async getGlobalStats(): Promise<{ jobs: number; profiles: number; bookings: number; messages: number }> {
+    const [jobsCount] = await db.select({ count: sql<number>`cast(count(*) as integer)` }).from(jobs);
+    const [profilesCount] = await db.select({ count: sql<number>`cast(count(*) as integer)` }).from(profiles);
+    const [bookingsCount] = await db.select({ count: sql<number>`cast(count(*) as integer)` }).from(bookings);
+    const [messagesCount] = await db.select({ count: sql<number>`cast(count(*) as integer)` }).from(messages);
+
+    return {
+      jobs: jobsCount?.count || 0,
+      profiles: profilesCount?.count || 0,
+      bookings: bookingsCount?.count || 0,
+      messages: messagesCount?.count || 0,
+    };
+  }
+
+  // Referral operations
+  async createReferral(referral: InsertReferral): Promise<Referral> {
+    const [newReferral] = await db.insert(referrals).values(referral).returning();
+    return newReferral;
+  }
+
+  async getReferralByCode(code: string): Promise<Referral | undefined> {
+    const [referral] = await db.select().from(referrals).where(eq(referrals.referralCode, code));
+    return referral;
+  }
+
+  async getReferralsByReferrer(referrerId: string): Promise<Referral[]> {
+    return db.select().from(referrals).where(eq(referrals.referrerId, referrerId));
+  }
+
+  async getReferralByReferrer(referrerId: string): Promise<Referral | undefined> {
+    const [referral] = await db.select().from(referrals).where(eq(referrals.referrerId, referrerId)).limit(1);
+    return referral;
+  }
+
+  async updateReferralStatus(id: number, status: string, referredUserId?: string): Promise<Referral | undefined> {
+    const updateData: any = { status };
+    if (referredUserId) updateData.referredUserId = referredUserId;
+    
+    const [updated] = await db.update(referrals)
+      .set(updateData)
+      .where(eq(referrals.id, id))
+      .returning();
+    return updated;
+  }
+
+  async getReferralStats(userId: string): Promise<{ 
+    totalReferred: number; 
+    totalEarned: number; 
+    pendingRewards: number; 
+    tier: string;
+    referralCode?: string;
+  }> {
+    const userReferrals = await this.getReferralsByReferrer(userId);
+    const referralCode = userReferrals[0]?.referralCode;
+
+    const totalReferred = userReferrals.filter(r => r.status !== "pending").length;
+    const totalEarned = userReferrals
+      .filter(r => r.status === "paid")
+      .reduce((sum, r) => sum + r.rewardAmount, 0);
+    const pendingRewards = userReferrals
+      .filter(r => r.status === "completed")
+      .reduce((sum, r) => sum + r.rewardAmount, 0);
+
+    let tier = "bronze";
+    if (totalReferred >= 50) tier = "platinum";
+    else if (totalReferred >= 16) tier = "gold";
+    else if (totalReferred >= 6) tier = "silver";
+
+    return {
+      totalReferred,
+      totalEarned,
+      pendingRewards,
+      tier,
+      referralCode,
+    };
+  }
+
+  // Academy operations
+  async getCourses(): Promise<Course[]> {
+    return db.select().from(courses);
+  }
+
+  async getCourse(id: number): Promise<Course | undefined> {
+    const [course] = await db.select().from(courses).where(eq(courses.id, id));
+    return course;
+  }
+
+  async getCourseLessons(courseId: number): Promise<Lesson[]> {
+    return db.select().from(lessons).where(eq(lessons.courseId, courseId)).orderBy(lessons.orderIndex);
+  }
+
+  async getLesson(id: number): Promise<Lesson | undefined> {
+    const [lesson] = await db.select().from(lessons).where(eq(lessons.id, id));
+    return lesson;
+  }
+
+  async getCourseProgress(userId: string, courseId: number): Promise<CourseProgress[]> {
+    return db.select().from(courseProgress).where(and(eq(courseProgress.userId, userId), eq(courseProgress.courseId, courseId)));
+  }
+
+  async markLessonComplete(userId: string, courseId: number, lessonId: number): Promise<CourseProgress> {
+    const existing = await db.select().from(courseProgress).where(and(
+      eq(courseProgress.userId, userId),
+      eq(courseProgress.lessonId, lessonId)
+    ));
+
+    if (existing.length > 0) {
+      const [updated] = await db.update(courseProgress)
+        .set({ completed: true, completedAt: new Date() })
+        .where(eq(courseProgress.id, existing[0].id))
+        .returning();
+      return updated;
+    }
+
+    const [created] = await db.insert(courseProgress).values({
+      userId,
+      courseId,
+      lessonId,
+      completed: true,
+      completedAt: new Date(),
+    }).returning();
+    return created;
+  }
+
+  async getCertificate(userId: string, courseId: number): Promise<Certificate | undefined> {
+    const [cert] = await db.select().from(certificates).where(and(
+      eq(certificates.userId, userId),
+      eq(certificates.courseId, courseId)
+    ));
+    return cert;
+  }
+
+  async issueCertificate(certificate: InsertCertificate): Promise<Certificate> {
+    const [created] = await db.insert(certificates).values(certificate).returning();
+    return created;
+  }
+
+  async getUserCertificates(userId: string): Promise<Certificate[]> {
+    return db.select().from(certificates).where(eq(certificates.userId, userId));
+  }
+
+  async createCourse(course: InsertCourse): Promise<Course> {
+    const [created] = await db.insert(courses).values(course).returning();
+    return created;
+  }
+
+  async createLesson(lesson: InsertLesson): Promise<Lesson> {
+    const [created] = await db.insert(lessons).values(lesson).returning();
+    return created;
+  }
+
+  // Account operations
+  async exportUserData(userId: string): Promise<any> {
+    const profile = await this.getProfile(userId);
+    const jobsList = await db.select().from(jobs).where(eq(jobs.clientId, userId));
+    const bookingsList = await this.getUserBookings(userId);
+    const reviewsList = await db.select().from(reviews).where(or(eq(reviews.reviewerId, userId), eq(reviews.revieweeId, userId)));
+    const conversationsList = await this.getUserConversations(userId);
+    const messagesList = await db.select().from(messages).where(eq(messages.senderId, userId));
+    const referralsList = await this.getReferralsByReferrer(userId);
+
+    return {
+      profile,
+      jobs: jobsList,
+      bookings: bookingsList,
+      reviews: reviewsList,
+      conversations: conversationsList,
+      messages: messagesList,
+      referrals: referralsList
+    };
+  }
+
+  async deleteUserAccount(userId: string): Promise<void> {
+    // Soft delete: Mark profile as deleted and anonymize
+    await db.update(profiles)
+      .set({ 
+        title: "Deleted User", 
+        bio: "This account has been deleted.",
+        location: "Unknown",
+        hourlyRate: null,
+        updatedAt: new Date() 
+      })
+      .where(eq(profiles.userId, userId));
+    
+    // Anonymize messages
+    await db.update(messages)
+      .set({ content: "[Message removed - Account deleted]" })
+      .where(eq(messages.senderId, userId));
+  }
+
+  // Notification operations
+  async createNotification(notification: InsertNotification): Promise<Notification> {
+    const [newNotification] = await db.insert(notifications).values(notification).returning();
+    return newNotification;
+  }
+
+  async getNotifications(userId: string): Promise<Notification[]> {
+    return db.select().from(notifications)
+      .where(eq(notifications.userId, userId))
+      .orderBy(desc(notifications.createdAt));
+  }
+
+  async markAsRead(id: number): Promise<Notification | undefined> {
+    const [updated] = await db.update(notifications)
+      .set({ isRead: true })
+      .where(eq(notifications.id, id))
+      .returning();
+    return updated;
+  }
+
+  async markAllAsRead(userId: string): Promise<void> {
+    await db.update(notifications)
+      .set({ isRead: true })
+      .where(eq(notifications.userId, userId));
+  }
+
+  async getUnreadCount(userId: string): Promise<number> {
+    const result = await db.select({ count: sql<number>`cast(count(*) as integer)` })
+      .from(notifications)
+      .where(and(eq(notifications.userId, userId), eq(notifications.isRead, false)));
+    return result[0]?.count || 0;
   }
 }
 

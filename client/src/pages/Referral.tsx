@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import {
   Gift,
   Share2,
@@ -19,6 +20,7 @@ import {
   Award,
   CheckCircle2,
 } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 const REWARD_TIERS = [
   {
@@ -93,12 +95,34 @@ const FAQ_ITEMS = [
 export default function Referral() {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
+  const { user } = useAuth();
+
+  const { data: referralData } = useQuery<any>({
+    queryKey: ["/api/referrals/stats"],
+    enabled: !!user,
+  });
+
+  const { data: myCodeData } = useQuery<any>({
+    queryKey: ["/api/referrals/my-code"],
+    enabled: !!user,
+  });
+
+  const referralCode = myCodeData?.referralCode || "YOUR_CODE";
+  const referralLink = `https://freelanceskills.net/auth?ref=${referralCode}`;
 
   const handleCopy = () => {
-    navigator.clipboard.writeText("https://freelanceskills.co.za/ref/YOUR_CODE");
+    navigator.clipboard.writeText(referralLink);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  const currentTier = referralData?.tier || "bronze";
+  const stats = [
+    { label: "Total Referred", value: referralData?.totalReferred || 0, icon: UserPlus },
+    { label: "Total Earned", value: `R${(referralData?.totalEarned || 0) / 100}`, icon: Coins },
+    { label: "Pending Rewards", value: `R${(referralData?.pendingRewards || 0) / 100}`, icon: Gift },
+    { label: "Current Tier", value: currentTier.charAt(0).toUpperCase() + currentTier.slice(1), icon: Trophy },
+  ];
 
   return (
     <div className="min-h-screen bg-background font-sans flex flex-col">
@@ -116,11 +140,23 @@ export default function Referral() {
             <p className="text-xl text-white/80 max-w-2xl mx-auto mb-8">
               Refer friends to FreelanceSkills, and you both earn rewards. The more you share, the more you earn.
             </p>
-            <a href="/auth">
-              <Button size="lg" className="bg-accent text-primary hover:bg-accent/90 font-bold gap-2" data-testid="button-get-referral-link-hero">
-                <Gift className="h-4 w-4" /> Get Your Referral Link
-              </Button>
-            </a>
+            {user ? (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-8">
+                {stats.map((stat, i) => (
+                  <div key={i} className="bg-white/10 border border-white/20 rounded-xl p-4 text-center">
+                    <stat.icon className="h-5 w-5 mx-auto mb-2 text-accent" />
+                    <div className="text-xs text-white/60 uppercase tracking-wider mb-1">{stat.label}</div>
+                    <div className="text-xl font-bold">{stat.value}</div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <a href="/auth">
+                <Button size="lg" className="bg-accent text-primary hover:bg-accent/90 font-bold gap-2" data-testid="button-get-referral-link-hero">
+                  <Gift className="h-4 w-4" /> Get Your Referral Link
+                </Button>
+              </a>
+            )}
           </div>
         </section>
 
@@ -161,7 +197,11 @@ export default function Referral() {
               {REWARD_TIERS.map((tier, i) => (
                 <div
                   key={i}
-                  className={`rounded-2xl border p-6 text-center ${tier.color}`}
+                  className={`rounded-2xl border p-6 text-center transition-all ${
+                    currentTier.toLowerCase() === tier.name.toLowerCase() 
+                    ? "ring-2 ring-primary scale-105 shadow-lg z-10" 
+                    : "opacity-75 grayscale-[0.5]"
+                  } ${tier.color}`}
                   data-testid={`card-tier-${tier.name.toLowerCase()}`}
                 >
                   <tier.icon className={`h-10 w-10 mx-auto mb-3 ${tier.iconColor}`} />
@@ -176,6 +216,11 @@ export default function Referral() {
                       </li>
                     ))}
                   </ul>
+                  {currentTier.toLowerCase() === tier.name.toLowerCase() && (
+                    <div className="mt-4 bg-primary text-white text-xs font-bold py-1 px-2 rounded-full inline-block">
+                      CURRENT TIER
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -230,7 +275,7 @@ export default function Referral() {
                 <input
                   type="text"
                   readOnly
-                  value="https://freelanceskills.co.za/ref/YOUR_CODE"
+                  value={referralLink}
                   className="flex-1 bg-transparent px-3 py-2 text-sm text-foreground outline-none"
                   data-testid="input-referral-link"
                 />
@@ -242,7 +287,7 @@ export default function Referral() {
 
               <div className="flex flex-wrap justify-center gap-3">
                 <a
-                  href="https://wa.me/?text=Join%20FreelanceSkills%20and%20earn!%20https://freelanceskills.co.za/ref/YOUR_CODE"
+                  href={`https://wa.me/?text=Join%20FreelanceSkills%20and%20earn!%20${encodeURIComponent(referralLink)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -252,7 +297,7 @@ export default function Referral() {
                   </Button>
                 </a>
                 <a
-                  href="https://www.facebook.com/sharer/sharer.php?u=https://freelanceskills.co.za/ref/YOUR_CODE"
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -261,7 +306,7 @@ export default function Referral() {
                   </Button>
                 </a>
                 <a
-                  href="https://twitter.com/intent/tweet?text=Join%20FreelanceSkills%20and%20earn!&url=https://freelanceskills.co.za/ref/YOUR_CODE"
+                  href={`https://twitter.com/intent/tweet?text=Join%20FreelanceSkills%20and%20earn!&url=${encodeURIComponent(referralLink)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -272,7 +317,7 @@ export default function Referral() {
                     X
                   </Button>
                 </a>
-                <a href="mailto:?subject=Join%20FreelanceSkills&body=Sign%20up%20using%20my%20link:%20https://freelanceskills.co.za/ref/YOUR_CODE">
+                <a href={`mailto:?subject=Join%20FreelanceSkills&body=Sign%20up%20using%20my%20link:%20${encodeURIComponent(referralLink)}`}>
                   <Button variant="outline" className="gap-2" data-testid="button-share-email">
                     <Mail className="h-4 w-4" /> Email
                   </Button>
@@ -320,11 +365,17 @@ export default function Referral() {
             <p className="text-white/80 text-lg max-w-xl mx-auto mb-8">
               Sign up today and get your unique referral link. Share it with your network and watch the rewards roll in.
             </p>
-            <a href="/auth">
-              <Button size="lg" className="bg-accent text-primary hover:bg-accent/90 font-bold gap-2 px-8" data-testid="button-get-referral-link-cta">
-                <Gift className="h-4 w-4" /> Get Your Referral Link
+            {user ? (
+              <Button size="lg" onClick={handleCopy} className="bg-accent text-primary hover:bg-accent/90 font-bold gap-2 px-8" data-testid="button-get-referral-link-cta">
+                <Gift className="h-4 w-4" /> Copy Your Referral Link
               </Button>
-            </a>
+            ) : (
+              <a href="/auth">
+                <Button size="lg" className="bg-accent text-primary hover:bg-accent/90 font-bold gap-2 px-8" data-testid="button-get-referral-link-cta">
+                  <Gift className="h-4 w-4" /> Get Your Referral Link
+                </Button>
+              </a>
+            )}
           </div>
         </section>
       </main>

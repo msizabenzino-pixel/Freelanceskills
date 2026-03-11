@@ -27,7 +27,7 @@ Preferred communication style: Simple, everyday language.
 ### Data Storage
 - **Database**: PostgreSQL
 - **ORM**: Drizzle ORM with drizzle-zod
-- **Key Models**: Users (with password field), Profiles, Jobs, Aggregated Jobs, Service Packages, Bookings, Reviews, Messages, AI Conversations, Business Invitations.
+- **Key Models**: Users (with password field), Profiles, Jobs, Aggregated Jobs, Service Packages, Bookings, Reviews, Messages, AI Conversations, Business Invitations, Referrals, Courses, Lessons, Course Progress, Certificates, Notifications, Password Reset Tokens.
 
 ### Growth System
 - **Business Invite System**: `/invite-businesses` page for adding businesses and generating unique invite codes
@@ -35,7 +35,7 @@ Preferred communication style: Simple, everyday language.
 - **Database**: `business_invitations` table with invite codes, status (pending/claimed), province/city/category
 - **API Routes**: POST/GET `/api/business-invitations`, POST `/api/business-invitations/bulk`, GET `/api/business-invitations/stats`, POST `/api/business-invitations/:code/claim`
 - **Share channels**: WhatsApp (pre-filled message), Email (mailto), Copy link
-- **Referral Program**: `/referral` page with tiered rewards (Bronze/Silver/Gold/Diamond)
+- **Referral Program**: `/referral` page with tiered rewards (Bronze/Silver/Gold/Platinum), DB-backed tracking with `referrals` table, real referral codes, stats API, claim-on-signup flow
 
 ### AI Features
 - **AI Task Recommendation Engine**: Recommends categories, budget estimates, skills, and task breakdowns.
@@ -47,7 +47,9 @@ Preferred communication style: Simple, everyday language.
 - **AI Opportunity Finder** (`/opportunity-finder`): AI agent that sources jobs, apprenticeships, bursaries, learnerships, internships, and graduate programmes matching user profile.
 - **AI Cover Letter Generator**: Generates tailored cover letters for job applications.
 - **AI Support Chat Bot** (`SupportChat.tsx`): Floating chat widget (bottom-right) powered by OpenAI gpt-4o-mini. Answers platform questions intelligently. Hands off to WhatsApp (wa.me/27601234567) after 3 messages or on request.
-- **API Endpoints**: `/api/ai/analyze-task`, `/api/ai/generate-proposal`, `/api/ai/support-chat`, `/api/cv/parse`, `/api/job-board`, `/api/opportunities/search`, etc.
+- **AI Task Chat** (`/api/ai/task-chat`): Multi-turn conversational task analysis with context memory, budget refinement, and skill-gap identification.
+- **AI Fraud Detection** (`/api/ai/fraud-check`): Rule-based risk scoring for applications (new account age, application velocity, spam patterns). Returns riskScore, flags, recommendation.
+- **API Endpoints**: `/api/ai/analyze-task`, `/api/ai/task-chat`, `/api/ai/fraud-check`, `/api/ai/generate-proposal`, `/api/ai/support-chat`, `/api/cv/parse`, `/api/job-board`, `/api/opportunities/search`, etc.
 
 ### Authentication Flow
 - Custom email/password auth (POST `/api/auth/register`, POST `/api/auth/login`, POST `/api/auth/logout`, GET `/api/auth/user`)
@@ -62,12 +64,43 @@ Preferred communication style: Simple, everyday language.
 ### Privacy & Compliance
 - **Cookie Consent Banner**: POPIA/GDPR compliant, `CookieConsent.tsx` component, persists choice in localStorage
 - Privacy policy at `/privacy`, Terms at `/terms`
+- **POPIA Data Export**: `GET /api/account/export` — downloads all user data as JSON
+- **POPIA Account Deletion**: `DELETE /api/account/delete` — soft-deletes account, anonymizes PII
+
+### Notification System
+- **NotificationBell** component in Navbar (authenticated users only)
+- `notifications` DB table with type (job_match/message/payment/system), read status, link
+- API: `GET /api/notifications`, `PATCH /api/notifications/:id/read`, `PATCH /api/notifications/read-all`, `GET /api/notifications/unread-count`
+- Polls every 30 seconds for new notifications
+
+### Upskilling Academy
+- DB tables: `courses`, `lessons`, `course_progress`, `certificates`
+- 3 seeded starter courses with real lesson content (auto-seeded on server start)
+- Course player with lesson navigation, content viewer, progress tracking
+- Certificate generation on course completion with unique codes
+- API: `GET /api/courses`, `GET /api/courses/:id`, `POST /api/courses/:courseId/lessons/:lessonId/complete`, `GET /api/courses/:courseId/certificate`, `GET /api/certificates/my`
+
+### Infrastructure & Monitoring
+- **Health endpoint**: `GET /api/health` — returns DB status, dependency checks, uptime, version
+- **Metrics endpoint**: `GET /api/metrics` — platform stats, memory usage, request counts
+- **Structured logging**: JSON-formatted logs with timestamp, level, source, method, path, statusCode, duration
+- **Request tracking**: In-memory counter middleware tracking total requests and per-endpoint prefix counts
+
+### Enterprise Features
+- **Enterprise Dashboard** (`/enterprise-dashboard`): Bulk job posting, spending overview, active jobs table, team management stub
+- **Enterprise Lead Form** (`/enterprise`): Contact form for sales enquiries
+
+### Investor Resources
+- `/INVESTOR_PITCH_DECK.md` — Full markdown pitch deck (Problem → Solution → Traction → Ask)
+- `/DEMO_SCRIPT.md` — 60-second demo walkthrough with timestamps
+- `/CNAME_SETUP.md` — Custom domain setup instructions
 
 ### Security
 - Rate limiting: custom middleware in `server/index.ts` (100 req/min general, 10 req/hr AI, 5 req/hr expensive ops)
 - Profile PATCH strips `userId`, `id`, `isPro` fields to prevent mass assignment
 - Session-based auth: all protected routes use `(req.session as any).userId`
 - SESSION_SECRET env var for session signing (no hardcoded fallback in production)
+- Fraud detection: `/api/ai/fraud-check` rule-based risk scoring
 
 ### Build & Deployment
 - **Development**: Vite dev server with HMR.
