@@ -699,7 +699,26 @@ class DatabaseStorage implements IStorage {
   }
 
   async deleteUserAccount(userId: string): Promise<void> {
-    // Soft delete: Mark profile as deleted and anonymize
+    await db.update(escrowTransactions)
+      .set({ status: "frozen" })
+      .where(and(
+        or(
+          eq(escrowTransactions.freelancerId, userId),
+          eq(escrowTransactions.clientId, userId)
+        ),
+        eq(escrowTransactions.status, "held")
+      ));
+
+    await db.update(bookings)
+      .set({ status: "suspended" })
+      .where(and(
+        or(
+          eq(bookings.freelancerId, userId),
+          eq(bookings.clientId, userId)
+        ),
+        sql`${bookings.status} IN ('pending', 'confirmed', 'in_progress', 'delivered')`
+      ));
+
     await db.update(profiles)
       .set({ 
         title: "Deleted User", 
@@ -710,7 +729,6 @@ class DatabaseStorage implements IStorage {
       })
       .where(eq(profiles.userId, userId));
     
-    // Anonymize messages
     await db.update(messages)
       .set({ content: "[Message removed - Account deleted]" })
       .where(eq(messages.senderId, userId));
@@ -718,6 +736,21 @@ class DatabaseStorage implements IStorage {
 
   // Notification operations
   async createNotification(notification: InsertNotification): Promise<Notification> {
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const [countResult] = await db.select({ count: count() })
+      .from(notifications)
+      .where(and(
+        eq(notifications.userId, notification.userId),
+        sql`${notifications.createdAt} >= ${todayStart}`
+      ));
+    if (countResult && countResult.count >= 10) {
+      const [existing] = await db.select().from(notifications)
+        .where(eq(notifications.userId, notification.userId))
+        .orderBy(desc(notifications.createdAt))
+        .limit(1);
+      return existing;
+    }
     const [newNotification] = await db.insert(notifications).values(notification).returning();
     return newNotification;
   }

@@ -21,7 +21,11 @@ export const jobs = pgTable("jobs", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const insertJobSchema = createInsertSchema(jobs).omit({
+export const insertJobSchema = createInsertSchema(jobs, {
+  budget: z.number().int().min(100, "Budget must be at least R1.00 (100 cents)"),
+  title: z.string().min(3, "Title must be at least 3 characters").max(200),
+  description: z.string().min(10, "Description must be at least 10 characters").max(5000),
+}).omit({
   id: true,
   createdAt: true,
   updatedAt: true,

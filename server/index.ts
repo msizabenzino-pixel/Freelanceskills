@@ -6,6 +6,7 @@ import { setupSocket } from "./socket";
 import { securityHeaders, corsMiddleware, auditMiddleware, tieredRateLimiter, startCronScheduler, trackMetric } from "./fortify";
 
 const app = express();
+app.disable("x-powered-by");
 const httpServer = createServer(app);
 const io = setupSocket(httpServer);
 
@@ -88,7 +89,11 @@ app.use(["/api/cv/parse", "/api/opportunities/search"], (req, res, next) => {
   next();
 });
 
-app.use("/api/", tieredRateLimiter);
+app.use("/api/", (req: Request, res: Response, next: NextFunction) => {
+  const exemptPaths = ["/api/health", "/api/metrics", "/api/metrics/prometheus", "/api/metrics/dashboard", "/api/stats/public", "/api/stripe/webhook"];
+  if (exemptPaths.includes(req.path)) return next();
+  return tieredRateLimiter(req, res, next);
+});
 
 setInterval(() => {
   const now = Date.now();
