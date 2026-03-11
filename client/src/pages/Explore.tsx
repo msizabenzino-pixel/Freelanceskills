@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Slider } from "@/components/ui/slider";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -49,8 +49,11 @@ import {
   Zap,
   Users,
   BadgeCheck,
-  Bot
+  Bot,
+  Wallet
 } from "lucide-react";
+import { JobCard } from "@/components/JobCard";
+import { cn } from "@/lib/utils";
 
 const ICON_MAP: Record<string, any> = {
   Code, Wrench, Heart, Hammer, Home, Waves, Car, Shield, Palette, PenTool, 
@@ -119,6 +122,24 @@ const FEATURED_FREELANCERS = [
   }
 ];
 
+const MOCK_JOBS = Array.from({ length: 50 }).map((_, i) => ({
+  id: i + 1,
+  title: [
+    "Need a professional plumber",
+    "React developer for 3-month project",
+    "House cleaning service needed",
+    "Graphic designer for logo",
+    "Electrician for office setup"
+  ][i % 5],
+  company: ["BuildIt SA", "TechFlow", "HomeCare", "CreativeMinds", "PowerUp"][i % 5],
+  type: ["Freelance", "Urgent", "Contract", "Part-time"][i % 4],
+  budget: ["R5,000 - R10,000", "R20,000 - R40,000", "R1,500", "R2,500 - R5,000"][i % 4],
+  location: ["Cape Town", "Johannesburg", "Durban", "Remote", "Pretoria"][i % 5],
+  postedAt: ["2 hours ago", "1 day ago", "5 hours ago", "Just now"][i % 4],
+  tags: ["Plumbing", "Repair", "Maintenance", "Urgent"].slice(0, (i % 3) + 2),
+  description: "Looking for a highly skilled professional to help with our ongoing project. Must have at least 3 years of experience and be available to start immediately."
+}));
+
 export default function Explore() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -129,6 +150,11 @@ export default function Explore() {
   const [experience, setExperience] = useState<string>("");
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const { formatAmount, formatRange, formatRate } = useCurrency();
+
+  // Infinite Scroll State
+  const [visibleJobs, setVisibleJobs] = useState(12);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const loaderRef = useRef<HTMLDivElement>(null);
 
   const TRENDING_PROJECTS = [
     { title: "E-commerce Website Development", budget: formatRange(15000, 25000), bids: 23, category: "Programming" },
@@ -158,11 +184,32 @@ export default function Explore() {
     setSearchQuery("");
   };
 
+  // Infinite Scroll Observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !isLoadingMore && visibleJobs < MOCK_JOBS.length) {
+          setIsLoadingMore(true);
+          setTimeout(() => {
+            setVisibleJobs((prev) => prev + 12);
+            setIsLoadingMore(false);
+          }, 800);
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    if (loaderRef.current) {
+      observer.observe(loaderRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [isLoadingMore, visibleJobs]);
+
   const filteredFreelancers = FEATURED_FREELANCERS.filter(freelancer => {
     if (selectedCategory && freelancer.category !== selectedCategory) return false;
     if (searchQuery && !freelancer.name.toLowerCase().includes(searchQuery.toLowerCase()) && !freelancer.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     if (location && !freelancer.location.toLowerCase().includes(location.toLowerCase())) return false;
-    // Note: other filters like budget/rating can be added here if we had more mock data
     return true;
   });
 
@@ -174,6 +221,8 @@ export default function Explore() {
     if (searchQuery && !project.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
   });
+
+  const jobsToShow = MOCK_JOBS.slice(0, visibleJobs);
 
   return (
     <div className="min-h-screen bg-background">
@@ -241,8 +290,39 @@ export default function Explore() {
           </div>
         </section>
 
+        {/* Filter Chips Bar */}
+        <div className="bg-background border-b sticky top-16 z-20 overflow-x-auto no-scrollbar">
+          <div className="container mx-auto px-4 py-3 flex items-center gap-2 whitespace-nowrap">
+            <span className="text-sm font-medium text-muted-foreground mr-2">Quick Filters:</span>
+            {[
+              { name: "Urgent", value: "urgent", icon: Zap },
+              { name: "Remote", value: "remote", icon: MapPin },
+              { name: "Under R5k", value: "budget_low", icon: Wallet },
+              { name: "Top Rated", value: "top_rated", icon: Star },
+            ].map((chip) => {
+              const isActive = activeFilters.includes(chip.name);
+              return (
+                <button
+                  key={chip.name}
+                  onClick={() => isActive ? removeFilter(chip.name) : addFilter(chip.name)}
+                  data-testid={`filter-chip-${chip.name.toLowerCase()}`}
+                  className={cn(
+                    "flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium transition-all border",
+                    isActive 
+                      ? "bg-primary text-white border-primary" 
+                      : "bg-muted/50 text-muted-foreground hover:bg-muted border-transparent"
+                  )}
+                >
+                  <chip.icon className="w-3.5 h-3.5" />
+                  {chip.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Categories Grid */}
-        <section className="py-12 bg-muted">
+        <section className="py-12 bg-muted/30">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between mb-8">
               <div>
@@ -290,7 +370,7 @@ export default function Explore() {
             <div className="flex flex-col lg:flex-row gap-8">
               {/* Filters Sidebar - Desktop */}
               <div className="hidden lg:block w-72 shrink-0">
-                <div className="bg-card rounded-xl border p-6 sticky top-24">
+                <div className="bg-card rounded-xl border p-6 sticky top-40">
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="font-bold text-lg">Filters</h3>
                     {activeFilters.length > 0 && (
@@ -445,11 +525,46 @@ export default function Explore() {
                   </div>
                 )}
 
-                {/* Personalized Suggestions */}
+                {/* All Jobs with Infinite Scroll */}
                 <div className="mb-8">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-2">
+                      <Briefcase className="h-5 w-5 text-primary" />
+                      <h3 className="font-bold text-lg" data-testid="text-jobs-title">Available Jobs</h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground">Showing {jobsToShow.length} of {MOCK_JOBS.length} jobs</p>
+                  </div>
+                  
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    {jobsToShow.map((job) => (
+                      <JobCard key={job.id} {...job} />
+                    ))}
+                  </div>
+
+                  {/* Infinite Scroll Loader */}
+                  <div ref={loaderRef} className="py-8" data-testid="explore-load-more">
+                    {isLoadingMore && (
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        {[1, 2, 3, 4].map((i) => (
+                          <div key={i} className="space-y-4">
+                            <Skeleton className="h-[200px] w-full rounded-xl" />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {!isLoadingMore && visibleJobs >= MOCK_JOBS.length && (
+                      <div className="text-center py-4 text-muted-foreground">
+                        No more jobs to load.
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Personalized Suggestions */}
+                <div className="mb-12">
                   <div className="flex items-center gap-2 mb-4">
                     <Sparkles className="h-5 w-5 text-amber-500" />
-                    <h3 className="font-bold text-lg" data-testid="text-recommendations-title">Recommended for You</h3>
+                    <h3 className="font-bold text-lg" data-testid="text-recommendations-title">Top Rated Freelancers</h3>
                   </div>
                   <div className="grid md:grid-cols-2 gap-4">
                     {filteredFreelancers.length > 0 ? (
@@ -494,40 +609,6 @@ export default function Explore() {
                       <div className="col-span-full py-12 text-center bg-card rounded-xl border border-dashed">
                         <p className="text-muted-foreground">No freelancers found matching your criteria.</p>
                         <Button variant="link" onClick={clearAllFilters} className="mt-2">Clear all filters</Button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Trending Projects */}
-                <div>
-                  <div className="flex items-center gap-2 mb-4">
-                    <TrendingUp className="h-5 w-5 text-green-500" />
-                    <h3 className="font-bold text-lg" data-testid="text-trending-projects-title">Trending Projects</h3>
-                  </div>
-                  <div className="space-y-3">
-                    {filteredProjects.length > 0 ? (
-                      filteredProjects.map((project, i) => (
-                        <div key={i} className="bg-card rounded-xl border p-4 hover:shadow-md transition-shadow cursor-pointer" data-testid={`card-project-${i}`}>
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <h4 className="font-semibold" data-testid={`text-project-title-${i}`}>{project.title}</h4>
-                              <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
-                                <span data-testid={`text-project-category-${i}`}>{project.category}</span>
-                                <span data-testid={`text-project-budget-${i}`}>{project.budget}</span>
-                                <span className="flex items-center gap-1" data-testid={`text-project-bids-${i}`}>
-                                  <Users className="h-3 w-3" />
-                                  {project.bids} proposals
-                                </span>
-                              </div>
-                            </div>
-                            <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="py-8 text-center bg-card rounded-xl border border-dashed">
-                        <p className="text-muted-foreground">No trending projects in this category.</p>
                       </div>
                     )}
                   </div>

@@ -134,6 +134,50 @@
   }
 }
 
+.high-contrast {
+  --primary: 0 0% 0%;
+  --primary-foreground: 0 0% 100%;
+  --background: 0 0% 100%;
+  --foreground: 0 0% 0%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 0%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 0%;
+  --secondary: 0 0% 90%;
+  --secondary-foreground: 0 0% 0%;
+  --muted: 0 0% 90%;
+  --muted-foreground: 0 0% 20%;
+  --accent: 0 0% 90%;
+  --accent-foreground: 0 0% 0%;
+  --destructive: 0 100% 30%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 0 0% 0%;
+  --input: 0 0% 0%;
+  --ring: 0 0% 0%;
+}
+
+.high-contrast .bg-primary {
+  background-color: #000 !important;
+  color: #fff !important;
+}
+
+.high-contrast .text-primary {
+  color: #000 !important;
+}
+
+.high-contrast border {
+  border-color: #000 !important;
+}
+
+.high-contrast img {
+  filter: contrast(1.2);
+}
+
+:focus-visible {
+  outline: 2px solid hsl(var(--ring)) !important;
+  outline-offset: 2px !important;
+}
+
 @layer utilities {
   /* Premium gradient text utility */
   .gradient-text {

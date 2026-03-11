@@ -17,12 +17,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { LayoutDashboard, Wallet, MessageSquare, Settings, AlertCircle, PlusCircle, Package, Star, Clock, MapPin, CheckCircle2, X, Edit, Loader2 } from "lucide-react";
+import { 
+  LayoutDashboard, 
+  Wallet, 
+  MessageSquare, 
+  Settings, 
+  AlertCircle, 
+  PlusCircle, 
+  Package, 
+  Star, 
+  Clock, 
+  MapPin, 
+  CheckCircle2, 
+  X, 
+  Edit, 
+  Loader2,
+  TrendingUp,
+  Briefcase,
+  Users,
+  Award
+} from "lucide-react";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCurrency } from "@/lib/currency";
 import { SERVICE_CATEGORIES } from "@shared/categories";
 import { apiRequest } from "@/lib/queryClient";
+import { Link } from "wouter";
 
 interface ServicePackageForm {
   title: string;
@@ -52,6 +72,7 @@ export default function Dashboard() {
   const [showCreatePackage, setShowCreatePackage] = useState(false);
   const [packageForm, setPackageForm] = useState<ServicePackageForm>(emptyPackageForm);
   const [packageSaved, setPackageSaved] = useState(false);
+  const [dashboardRole, setDashboardRole] = useState<"client" | "freelancer">("client");
   const { formatAmount } = useCurrency();
   const queryClient = useQueryClient();
 
@@ -65,6 +86,16 @@ export default function Dashboard() {
       }
       return res.json();
     },
+  });
+
+  const { data: stats, isLoading: statsLoading } = useQuery<any>({
+    queryKey: ["/api/dashboard/stats"],
+    queryFn: async () => {
+      const res = await fetch("/api/dashboard/stats");
+      if (!res.ok) throw new Error("Failed to fetch dashboard stats");
+      return res.json();
+    },
+    enabled: !!userRes?.id,
   });
 
   const { data: myPackages = [], isLoading: packagesLoading, isError: packagesError } = useQuery<any[]>({
@@ -127,32 +158,24 @@ export default function Dashboard() {
     });
   };
 
-  const activeContracts = [
-    {
-      title: "Mobile App UI Design",
-      freelancer: "Sarah L.",
-      budget: formatAmount(12500),
-      initialStatus: "in_progress" as const,
-      description: "Finalizing the high-fidelity mockups for the checkout screen and profile settings."
-    },
-    {
-      title: "Python Scraper Development",
-      freelancer: "Thabo M.",
-      budget: formatAmount(5000),
-      initialStatus: "delivered" as const,
-      description: "Work has been submitted. Please review the codebase and documentation before releasing payment."
-    }
-  ];
+  const clientStats = stats?.client || {
+    activeJobs: [],
+    escrowBalance: 0,
+    totalSpent: 0,
+    activeProjectsCount: 0,
+    avgRatingGiven: 0,
+  };
 
-  const recentlyCompleted = [
-    {
-      title: "SEO Strategy Whitepaper",
-      freelancer: "Nandi Z.",
-      budget: formatAmount(8000),
-      initialStatus: "completed" as const,
-      description: "Complete 50-page SEO strategy delivered and approved."
-    }
-  ];
+  const freelancerStats = stats?.freelancer || {
+    totalEarned: 0,
+    pendingPayouts: 0,
+    thisMonthEarnings: 0,
+    referralStats: { totalReferred: 0, tier: "Bronze", pendingRewards: 0 },
+    activeGigs: [],
+    earningsHistory: [],
+  };
+
+  const isBoth = stats?.role === "both";
 
   return (
     <AuthGuard message="Sign in to access your dashboard, manage jobs, and track payments.">
@@ -168,8 +191,14 @@ export default function Dashboard() {
       <div className="container mx-auto px-4 md:px-6 pt-24 md:pt-32 pb-20 flex-1">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
-            <h1 className="text-3xl font-display font-bold text-primary">Client Dashboard</h1>
-            <p className="text-muted-foreground">Manage your active jobs and intellectual service contracts.</p>
+            <h1 className="text-3xl font-display font-bold text-primary">
+              {dashboardRole === "client" ? "Client Dashboard" : "Freelancer Dashboard"}
+            </h1>
+            <p className="text-muted-foreground">
+              {dashboardRole === "client" 
+                ? "Manage your active jobs and intellectual service contracts." 
+                : "Track your earnings, active gigs, and referral rewards."}
+            </p>
           </div>
           <div className="flex flex-col items-end gap-2">
             <div className="flex items-center gap-3 bg-card p-3 rounded-xl border border-border shadow-sm">
@@ -177,12 +206,18 @@ export default function Dashboard() {
                  <Wallet className="w-5 h-5" />
                </div>
                <div>
-                 <div className="text-[10px] text-muted-foreground font-bold uppercase leading-none">Escrow Balance</div>
-                 <div className="text-lg font-bold text-primary">{formatAmount(17500)}</div>
+                 <div className="text-[10px] text-muted-foreground font-bold uppercase leading-none">
+                   {dashboardRole === "client" ? "Escrow Balance" : "Pending Payout"}
+                 </div>
+                 <div className="text-lg font-bold text-primary">
+                   {formatAmount(dashboardRole === "client" ? clientStats.escrowBalance : freelancerStats.pendingPayouts)}
+                 </div>
                </div>
-               <Button size="sm" className="ml-2 h-8" onClick={() => setShowPaymentModal(true)}>
-                 <PlusCircle className="w-4 h-4 mr-1" /> Deposit
-               </Button>
+               {dashboardRole === "client" && (
+                 <Button size="sm" className="ml-2 h-8" onClick={() => setShowPaymentModal(true)}>
+                   <PlusCircle className="w-4 h-4 mr-1" /> Deposit
+                 </Button>
+               )}
             </div>
             <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
               10% platform commission applied on completion
@@ -190,13 +225,30 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {isBoth && (
+          <div className="flex bg-muted/50 p-1 rounded-xl mb-8 w-fit">
+            <button
+              onClick={() => setDashboardRole("client")}
+              className={`px-6 py-2 rounded-lg font-bold transition-all ${dashboardRole === "client" ? "bg-white text-primary shadow-sm" : "text-muted-foreground hover:text-primary"}`}
+            >
+              I'm a Client
+            </button>
+            <button
+              onClick={() => setDashboardRole("freelancer")}
+              className={`px-6 py-2 rounded-lg font-bold transition-all ${dashboardRole === "freelancer" ? "bg-white text-primary shadow-sm" : "text-muted-foreground hover:text-primary"}`}
+            >
+              I'm a Freelancer
+            </button>
+          </div>
+        )}
+
         <div className="grid lg:grid-cols-4 gap-8">
           <div className="lg:col-span-1 space-y-4">
             <Card className="border-none shadow-none bg-transparent">
               <nav className="space-y-1">
                 {[
                   { icon: LayoutDashboard, label: "Overview" },
-                  { icon: Package, label: "My Services" },
+                  { icon: dashboardRole === "client" ? Briefcase : Package, label: dashboardRole === "client" ? "My Jobs" : "My Services" },
                   { icon: MessageSquare, label: "Messages", count: 3 },
                   { icon: Wallet, label: "Payments" },
                   { icon: Settings, label: "Settings" }
@@ -219,7 +271,7 @@ export default function Dashboard() {
           </div>
 
           <div className="lg:col-span-3">
-            {userLoading ? (
+            {(userLoading || statsLoading) ? (
               <div className="flex justify-center py-12">
                 <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
               </div>
@@ -229,41 +281,212 @@ export default function Dashboard() {
                 <h3 className="text-lg font-bold text-destructive mb-1">Error Loading Dashboard</h3>
                 <p className="text-sm text-destructive">Could not load user information. Please refresh the page.</p>
               </div>
-            ) : activeNav === "Overview" && (
-              <Tabs defaultValue="active" className="w-full">
-                <TabsList className="bg-muted/50 p-1 rounded-xl mb-6">
-                  <TabsTrigger value="active" className="rounded-lg font-bold px-6" data-testid="tab-active-jobs">Active Jobs</TabsTrigger>
-                  <TabsTrigger value="completed" className="rounded-lg font-bold px-6" data-testid="tab-history">History</TabsTrigger>
-                  <TabsTrigger value="disputed" className="rounded-lg font-bold px-6 text-red-500" data-testid="tab-disputes">Disputes</TabsTrigger>
-                </TabsList>
+            ) : activeNav === "Overview" ? (
+              <div className="space-y-8">
+                {/* Stats Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {dashboardRole === "client" ? (
+                    <>
+                      <Card className="border-none bg-primary/5 p-6" data-testid="dashboard-total-spent">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                            <TrendingUp className="w-6 h-6" />
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground font-medium">Total Spent</p>
+                            <h3 className="text-2xl font-bold text-primary">{formatAmount(clientStats.totalSpent)}</h3>
+                          </div>
+                        </div>
+                      </Card>
+                      <Card className="border-none bg-accent/5 p-6" data-testid="dashboard-active-projects">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
+                            <Briefcase className="w-6 h-6" />
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground font-medium">Active Projects</p>
+                            <h3 className="text-2xl font-bold text-primary">{clientStats.activeProjectsCount}</h3>
+                          </div>
+                        </div>
+                      </Card>
+                      <Card className="border-none bg-secondary/5 p-6" data-testid="dashboard-avg-rating">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary">
+                            <Star className="w-6 h-6" />
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground font-medium">Avg Rating Given</p>
+                            <h3 className="text-2xl font-bold text-primary">{clientStats.avgRatingGiven.toFixed(1)}</h3>
+                          </div>
+                        </div>
+                      </Card>
+                    </>
+                  ) : (
+                    <>
+                      <Card className="border-none bg-primary/5 p-6" data-testid="dashboard-earnings">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                            <TrendingUp className="w-6 h-6" />
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground font-medium">Total Earned</p>
+                            <h3 className="text-2xl font-bold text-primary">{formatAmount(freelancerStats.totalEarned)}</h3>
+                          </div>
+                        </div>
+                      </Card>
+                      <Card className="border-none bg-accent/5 p-6" data-testid="dashboard-month-earnings">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
+                            <Clock className="w-6 h-6" />
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground font-medium">This Month</p>
+                            <h3 className="text-2xl font-bold text-primary">{formatAmount(freelancerStats.thisMonthEarnings)}</h3>
+                          </div>
+                        </div>
+                      </Card>
+                      <Card className="border-none bg-secondary/5 p-6" data-testid="dashboard-referrals">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary">
+                            <Users className="w-6 h-6" />
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground font-medium">Referrals</p>
+                            <h3 className="text-2xl font-bold text-primary">{freelancerStats.referralStats.totalReferred}</h3>
+                          </div>
+                        </div>
+                      </Card>
+                    </>
+                  )}
+                </div>
 
-                <TabsContent value="active" className="space-y-6">
-                  <div className="grid gap-6">
-                    {activeContracts.map((job, i) => (
-                      <JobLifecycleCard key={i} {...job} data-testid={`job-card-active-${i}`} />
-                    ))}
+                {dashboardRole === "client" ? (
+                  <div className="space-y-6">
+                    <section data-testid="dashboard-active-jobs">
+                      <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-xl font-bold text-primary flex items-center gap-2">
+                          <Briefcase className="w-5 h-5" /> Active Jobs
+                        </h2>
+                        <Link href="/post-job">
+                          <Button variant="outline" size="sm" data-testid="button-post-job">Post New Job</Button>
+                        </Link>
+                      </div>
+                      <div className="grid gap-4">
+                        {clientStats.activeJobs.length > 0 ? (
+                          clientStats.activeJobs.map((job: any) => (
+                            <Card key={job.id} className="p-4 border border-border">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <h3 className="font-bold text-primary">{job.title}</h3>
+                                  <div className="flex gap-4 mt-2">
+                                    <Badge variant="secondary">{job.status}</Badge>
+                                    <span className="text-sm text-muted-foreground">{job.applicantCount} applicants</span>
+                                  </div>
+                                </div>
+                                <Button size="sm" variant="ghost" data-testid={`view-applicants-${job.id}`}>View Applicants</Button>
+                              </div>
+                            </Card>
+                          ))
+                        ) : (
+                          <div className="text-center py-12 border border-dashed rounded-xl bg-muted/20">
+                            <p className="text-muted-foreground">No active jobs found.</p>
+                          </div>
+                        )}
+                      </div>
+                    </section>
+
+                    <section data-testid="dashboard-escrow-status">
+                      <h2 className="text-xl font-bold text-primary mb-4 flex items-center gap-2">
+                        <Wallet className="w-5 h-5" /> Escrow Status
+                      </h2>
+                      <Card className="p-6 border border-border">
+                        <div className="space-y-4">
+                          <div className="flex justify-between items-center pb-4 border-b">
+                            <span className="text-muted-foreground">Total Funds in Escrow</span>
+                            <span className="text-xl font-bold text-primary">{formatAmount(clientStats.escrowBalance)}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground">Funds are held securely by FreelanceSkills and only released when you approve the work.</p>
+                        </div>
+                      </Card>
+                    </section>
                   </div>
-                </TabsContent>
+                ) : (
+                  <div className="space-y-6">
+                    <section data-testid="dashboard-earnings-chart">
+                      <h2 className="text-xl font-bold text-primary mb-4 flex items-center gap-2">
+                        <TrendingUp className="w-5 h-5" /> Earnings Overview
+                      </h2>
+                      <Card className="p-6 border border-border">
+                        <div className="h-48 flex items-end gap-2 px-2">
+                          {freelancerStats.earningsHistory.map((h: any, i: number) => (
+                            <div key={i} className="flex-1 flex flex-col items-center gap-2">
+                              <div 
+                                className="w-full bg-primary/20 rounded-t-lg transition-all hover:bg-primary/40" 
+                                style={{ height: `${Math.max(10, (h.amount / 1000) * 100)}%` }}
+                              />
+                              <span className="text-[10px] text-muted-foreground font-medium">{h.month}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </Card>
+                    </section>
 
-                <TabsContent value="completed" className="space-y-6">
-                  <div className="grid gap-6">
-                    {recentlyCompleted.map((job, i) => (
-                      <JobLifecycleCard key={i} {...job} data-testid={`job-card-completed-${i}`} />
-                    ))}
+                    <section data-testid="dashboard-active-gigs">
+                      <h2 className="text-xl font-bold text-primary mb-4 flex items-center gap-2">
+                        <Package className="w-5 h-5" /> Active Gigs
+                      </h2>
+                      <div className="grid gap-4">
+                        {freelancerStats.activeGigs.length > 0 ? (
+                          freelancerStats.activeGigs.map((gig: any) => (
+                            <Card key={gig.id} className="p-4 border border-border">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <h3 className="font-bold text-primary">{gig.title || "Project Work"}</h3>
+                                  <p className="text-sm text-muted-foreground">Client ID: {gig.clientId}</p>
+                                  <div className="flex gap-4 mt-2">
+                                    <Badge variant="secondary">{gig.status}</Badge>
+                                    <span className="text-sm text-muted-foreground">Due: {new Date(gig.updatedAt).toLocaleDateString()}</span>
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <div className="font-bold text-primary">{formatAmount(gig.totalAmount)}</div>
+                                </div>
+                              </div>
+                            </Card>
+                          ))
+                        ) : (
+                          <div className="text-center py-12 border border-dashed rounded-xl bg-muted/20">
+                            <p className="text-muted-foreground">No active gigs found.</p>
+                          </div>
+                        )}
+                      </div>
+                    </section>
+
+                    <section data-testid="dashboard-referrals-section">
+                      <h2 className="text-xl font-bold text-primary mb-4 flex items-center gap-2">
+                        <Award className="w-5 h-5" /> Referral Program
+                      </h2>
+                      <Card className="p-6 border border-border bg-gradient-to-br from-primary/5 to-accent/5">
+                        <div className="grid md:grid-cols-3 gap-6">
+                          <div className="text-center">
+                            <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider mb-1">Tier</p>
+                            <Badge className="bg-primary text-white">{freelancerStats.referralStats.tier}</Badge>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider mb-1">Total Referred</p>
+                            <p className="text-xl font-bold text-primary">{freelancerStats.referralStats.totalReferred}</p>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider mb-1">Pending Rewards</p>
+                            <p className="text-xl font-bold text-primary">{formatAmount(freelancerStats.referralStats.pendingRewards)}</p>
+                          </div>
+                        </div>
+                      </Card>
+                    </section>
                   </div>
-                </TabsContent>
-                
-                <TabsContent value="disputed" className="flex flex-col items-center justify-center py-20 text-center">
-                   <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-                     <AlertCircle className="w-8 h-8 text-muted-foreground" />
-                   </div>
-                   <h3 className="font-bold text-lg text-primary" data-testid="text-no-disputes">No active disputes</h3>
-                   <p className="text-muted-foreground text-sm max-w-xs mx-auto">Disputes are rare and handled by our admin team within 48 hours.</p>
-                </TabsContent>
-              </Tabs>
-            )}
-
-            {activeNav === "My Services" && (
+                )}
+              </div>
+            ) : activeNav === "My Services" ? (
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -481,7 +704,7 @@ export default function Dashboard() {
                       );
                     })}
                   </div>
-                ) : !showCreatePackage && (
+                ) : !showCreatePackage ? (
                   <Card className="border border-dashed border-border">
                     <CardContent className="flex flex-col items-center justify-center py-16 text-center">
                       <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
@@ -496,11 +719,9 @@ export default function Dashboard() {
                       </Button>
                     </CardContent>
                   </Card>
-                )}
+                ) : null}
               </div>
-            )}
-
-            {activeNav !== "Overview" && activeNav !== "My Services" && (
+            ) : (
               <div className="flex flex-col items-center justify-center py-20 text-center">
                 <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
                   <AlertCircle className="w-8 h-8 text-muted-foreground" />
@@ -512,7 +733,6 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-
       </main>
       <Footer />
     </div>

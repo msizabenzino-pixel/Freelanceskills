@@ -4,15 +4,19 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Star, MapPin, ShieldCheck, Clock, MessageSquare, Loader2 } from "lucide-react";
+import { Star, MapPin, ShieldCheck, Clock, MessageSquare, Loader2, Edit } from "lucide-react";
 import { Link, useParams } from "wouter";
 import { useCurrency } from "@/lib/currency";
 import { useQuery } from "@tanstack/react-query";
 import type { Profile, Review } from "@shared/schema";
+import { useAuth } from "@/hooks/use-auth";
+import { PortfolioUploader } from "@/components/PortfolioUploader";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 export default function FreelancerProfile() {
   const { id } = useParams<{ id: string }>();
   const { formatAmount } = useCurrency();
+  const { user } = useAuth();
 
   const { data: profile, isLoading: isLoadingProfile, error: profileError } = useQuery<Profile>({
     queryKey: [`/api/profile/${id}`],
@@ -56,6 +60,7 @@ export default function FreelancerProfile() {
   const bio = profile.bio || "No bio provided.";
   const hourlyRate = profile.hourlyRate || 0;
   const skills = profile.skills || [];
+  const isOwnProfile = user?.id === profile.userId;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -172,6 +177,27 @@ export default function FreelancerProfile() {
                 </div>
 
                 <TabsContent value="portfolio" className="p-6">
+                  {isOwnProfile && (
+                    <div className="mb-8">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-bold text-primary">Upload Portfolio Items</h3>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button size="sm">
+                              <Edit className="w-4 h-4 mr-2" />
+                              Manage Portfolio
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-2xl">
+                            <DialogHeader>
+                              <DialogTitle>Update Your Portfolio</DialogTitle>
+                            </DialogHeader>
+                            <PortfolioUploader />
+                          </DialogContent>
+                        </Dialog>
+                      </div>
+                    </div>
+                  )}
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="col-span-full py-12 text-center border-2 border-dashed border-border rounded-xl">
                       <p className="text-muted-foreground">Portfolio items will appear here once uploaded.</p>

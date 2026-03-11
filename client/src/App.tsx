@@ -8,7 +8,10 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { lazy, Suspense } from "react";
 import { SupportChat } from "@/components/SupportChat";
 import { CookieConsent } from "@/components/CookieConsent";
+import { OnboardingCarousel } from "@/components/OnboardingCarousel";
+import { OfflineScreen } from "@/components/OfflineScreen";
 import { AuthGuard } from "@/components/AuthGuard";
+import { FloatingActionButton } from "@/components/FloatingActionButton";
 import NotFound from "@/pages/not-found";
 
 const Home = lazy(() => import("@/pages/Home"));
@@ -133,8 +136,11 @@ function App() {
             <Toaster />
             <CountrySelectorDialog />
             <Router />
+            <FloatingActionButton />
             <SupportChat />
             <CookieConsent />
+            <OnboardingCarousel />
+            <OfflineScreen />
           </TooltipProvider>
         </CountryProvider>
       </QueryClientProvider>

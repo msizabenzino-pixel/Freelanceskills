@@ -22,6 +22,18 @@ export function Navbar() {
   const [location, navigate] = useLocation();
   const { user, isLoading, isAuthenticated } = useAuth();
   const { isDark, toggle: toggleDarkMode } = useDarkMode();
+  const [highContrast, setHighContrast] = useState(() => localStorage.getItem("high-contrast") === "true");
+
+  useEffect(() => {
+    if (highContrast) {
+      document.body.classList.add("high-contrast");
+    } else {
+      document.body.classList.remove("high-contrast");
+    }
+    localStorage.setItem("high-contrast", highContrast.toString());
+  }, [highContrast]);
+
+  const toggleHighContrast = () => setHighContrast(!highContrast);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -182,6 +194,7 @@ export function Navbar() {
           : "bg-transparent py-5 text-white"
       )}
     >
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-background focus:px-4 focus:py-2 focus:border-2 focus:border-primary focus:rounded-md">Skip to main content</a>
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
         {/* Logo + Nav Links */}
         <div className="flex items-center gap-10">
@@ -200,31 +213,34 @@ export function Navbar() {
               </span>
           </Link>
 
-          {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-1">
             <FindWorkMenu />
             {navLinks.map((link) => {
               const isActive = location === link.href;
               return (
-                <Link key={link.name} href={link.href} className={cn(
-                  "text-sm font-medium transition-all px-3 py-2 rounded-lg flex items-center gap-1.5 relative",
-                  isScrolled || location !== "/"
-                    ? isActive
-                      ? "text-primary bg-primary/8 font-semibold"
-                      : "text-muted-foreground hover:text-primary hover:bg-muted/60"
-                    : isActive
-                      ? "text-white font-semibold bg-white/15"
-                      : "text-white/90 hover:text-white hover:bg-white/10",
-                  link.icon && !isActive && (isScrolled || location !== "/" ? "text-primary" : "text-accent")
-                )}>
-                  {link.icon && <link.icon className="h-4 w-4" />}
-                  {link.name}
-                  {isActive && (
-                    <span className={cn(
-                      "absolute bottom-0.5 left-3 right-3 h-0.5 rounded-full",
-                      isScrolled || location !== "/" ? "bg-primary" : "bg-accent"
-                    )} />
+                <Link key={link.name} href={link.href}>
+                  <a className={cn(
+                    "text-sm font-medium transition-all px-3 py-2 rounded-lg flex items-center gap-1.5 relative",
+                    isScrolled || location !== "/"
+                      ? isActive
+                        ? "text-primary bg-primary/8 font-semibold"
+                        : "text-muted-foreground hover:text-primary hover:bg-muted/60"
+                      : isActive
+                        ? "text-white font-semibold bg-white/15"
+                        : "text-white/90 hover:text-white hover:bg-white/10",
+                    link.icon && !isActive && (isScrolled || location !== "/" ? "text-primary" : "text-accent")
                   )}
+                  aria-label={link.name}
+                  >
+                    {link.icon && <link.icon className="h-4 w-4" aria-hidden="true" />}
+                    {link.name}
+                    {isActive && (
+                      <span className={cn(
+                        "absolute bottom-0.5 left-3 right-3 h-0.5 rounded-full",
+                        isScrolled || location !== "/" ? "bg-primary" : "bg-accent"
+                      )} aria-hidden="true" />
+                    )}
+                  </a>
                 </Link>
               );
             })}
@@ -246,6 +262,19 @@ export function Navbar() {
             <Mic className="h-4 w-4" />
           </button>
           <HelpMenu />
+          <button
+            onClick={toggleHighContrast}
+            className={cn(
+              "p-2 rounded-lg transition-colors",
+              isScrolled || location !== "/"
+                ? "text-muted-foreground hover:bg-muted"
+                : "text-white/90 hover:bg-white/10"
+            )}
+            aria-label={highContrast ? "Disable high contrast" : "Enable high contrast"}
+            data-testid="button-high-contrast"
+          >
+            <Zap className={cn("h-4 w-4", highContrast && "fill-current")} />
+          </button>
           <button
             onClick={toggleDarkMode}
             className={cn(
@@ -326,6 +355,7 @@ export function Navbar() {
                     isScrolled || location !== "/" ? "text-primary" : "text-white"
                   )}
                   data-testid="button-login"
+                  aria-label="Log in to your account"
                 >
                   Log In
                 </Button>
@@ -339,6 +369,7 @@ export function Navbar() {
                       : "bg-accent text-primary hover:bg-accent/90"
                   )}
                   data-testid="button-signup"
+                  aria-label="Sign up for a new account"
                 >
                   Sign Up
                 </Button>
@@ -352,6 +383,8 @@ export function Navbar() {
           className="md:hidden"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           data-testid="button-mobile-menu-toggle"
+          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={isMobileMenuOpen}
         >
           {isMobileMenuOpen ? (
             <X className={cn("w-6 h-6", isScrolled || location !== "/" ? "text-primary" : "text-white")} />

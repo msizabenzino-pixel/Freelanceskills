@@ -4,7 +4,7 @@ import { JobCard } from "@/components/JobCard";
 import { FreelancerCard } from "@/components/FreelancerCard";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users, Gift, Building2, Brain, Link2, Wallet, BarChart3, Leaf, Globe, ChevronRight, ShieldCheck, Lock, FileText, Headphones, Star, Quote, Send } from "lucide-react";
+import { ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users, Gift, Building2, Brain, Link2, Wallet, BarChart3, Leaf, Globe, ChevronRight, ShieldCheck, Lock, FileText, Headphones, Star, Quote, Send, Zap } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { useCurrency } from "@/lib/currency";
 import { SERVICE_CATEGORIES } from "@shared/categories";
@@ -13,11 +13,54 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { motion, AnimatePresence } from "framer-motion";
 
 const ICON_MAP: Record<string, any> = {
   Code, Wrench, Heart, Hammer, Home: HomeIcon, Waves, Car, Shield: ShieldIcon, Palette, PenTool, 
   Briefcase, PartyPopper, GraduationCap, TrendingUp, Sparkles: SparklesIcon, Bot
 };
+
+function UrgentJobBanner() {
+  const [isVisible, setIsVisible] = useState(true);
+  const urgentCount = 3; // Mocking as per requirements
+
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: "auto", opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          className="bg-red-600 text-white py-2 relative overflow-hidden"
+          data-testid="banner-urgent-jobs"
+        >
+          <motion.div
+            className="absolute inset-0 bg-red-500"
+            animate={{
+              opacity: [0.3, 0.6, 0.3],
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+          <div className="container mx-auto px-4 flex justify-center items-center gap-4 relative z-10">
+            <Zap className="w-4 h-4 fill-white animate-pulse" />
+            <p className="text-sm font-bold tracking-wide">
+              {urgentCount} Urgent Jobs Need Attention!
+            </p>
+            <Link href="/jobs?urgent=true">
+              <a className="text-xs font-bold underline underline-offset-4 hover:text-white/80 transition-colors">
+                View Now
+              </a>
+            </Link>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
 
 function AnimatedCounter({ value, duration = 2000 }: { value: number; duration?: number }) {
   const [count, setCount] = useState(0);
@@ -138,59 +181,22 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background font-sans flex flex-col overflow-x-hidden">
+      <UrgentJobBanner />
       <Navbar />
       <Hero />
       <main id="main-content" role="main">
-
-      {/* AI Task Assistant CTA */}
-      <section className="py-12 relative overflow-hidden bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 border-b border-primary/10">
-        <div className="absolute inset-0 bg-grid opacity-30 pointer-events-none" />
-        <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6 max-w-4xl mx-auto">
-            <div className="flex items-center gap-4">
-              <div className="p-3.5 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/10 shadow-sm">
-                <Sparkles className="h-8 w-8 text-primary" />
-              </div>
+        {/* Featured Jobs */}
+        <section className="py-20 md:py-24 bg-muted/30" aria-labelledby="latest-opportunities">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
               <div>
-                <h3 className="text-xl font-bold text-foreground">Not sure where to start?</h3>
-                <p className="text-muted-foreground">Let our AI help you find the right service category and budget estimate</p>
+                <h2 id="latest-opportunities" className="text-3xl md:text-4xl font-bold text-primary mb-3">Latest Opportunities</h2>
+                <p className="text-muted-foreground text-lg">Find high-paying projects from verified local businesses.</p>
               </div>
+              <Button variant="outline" className="gap-2 group" onClick={() => navigate("/jobs")} data-testid="button-view-all-jobs" aria-label="View all jobs">
+                  View All Jobs <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+                </Button>
             </div>
-            <Button size="lg" className="gap-2 whitespace-nowrap shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-transform" data-testid="button-homepage-ai-assistant" onClick={() => navigate("/task-assistant")}>
-              <Sparkles className="h-4 w-4" />
-              Try AI Task Assistant
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Trusted By Section */}
-      <section className="py-10 border-b border-border bg-card">
-        <div className="container mx-auto px-4 md:px-6">
-          <p className="text-center text-sm font-semibold text-muted-foreground mb-6 uppercase tracking-wider">Connecting Households, SMEs & Enterprise</p>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-            {/* Logos represented by text for mockup, in reality would be SVGs */}
-            <span className="text-xl font-bold font-display">Dept. of Public Works</span>
-            <span className="text-xl font-bold font-display">Standard Bank</span>
-            <span className="text-xl font-bold font-display">Builders Warehouse</span>
-            <span className="text-xl font-bold font-display">MTN</span>
-            <span className="text-xl font-bold font-display">Private Households</span>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Jobs */}
-      <section className="py-20 md:py-24 bg-muted/30">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-primary mb-3">Latest Opportunities</h2>
-              <p className="text-muted-foreground text-lg">Find high-paying projects from verified local businesses.</p>
-            </div>
-            <Button variant="outline" className="gap-2 group" onClick={() => navigate("/jobs")} data-testid="button-view-all-jobs">
-                View All Jobs <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
-          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
             {featuredJobs.map((job, i) => (

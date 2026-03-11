@@ -64,6 +64,70 @@ export async function registerRoutes(
   const { insertJobSchema, insertProfileSchema, insertServicePackageSchema, insertBookingSchema, insertReviewSchema, insertMessageSchema } = await import("@shared/schema");
   const { checkMessageSafety, SAFETY_DISCLAIMERS, REPORT_REASONS } = await import("@shared/safety");
 
+  // Dashboard Stats
+  app.get("/api/dashboard/stats", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const profile = await storage.getProfile(userId);
+      const bookings = await storage.getUserBookings(userId);
+      const allJobs = await storage.getAllJobs();
+      
+      const stats: any = {
+        role: profile?.userType || "client",
+      };
+
+      if (stats.role === "client" || stats.role === "both") {
+        const myJobs = allJobs.filter(j => j.clientId === userId);
+        const myBookings = bookings.filter(b => b.clientId === userId);
+        const completedBookings = myBookings.filter(b => b.status === "completed");
+        
+        stats.client = {
+          activeJobs: myJobs.map(j => ({
+            ...j,
+            applicantCount: 0, // Placeholder, would need application counts
+          })),
+          escrowBalance: myBookings
+            .filter(b => b.status === "confirmed" || b.status === "in_progress" || b.status === "delivered")
+            .reduce((sum, b) => sum + b.totalAmount, 0),
+          totalSpent: completedBookings.reduce((sum, b) => sum + b.totalAmount, 0),
+          activeProjectsCount: myBookings.filter(b => b.status === "in_progress" || b.status === "delivered").length,
+          avgRatingGiven: 0, // Placeholder
+        };
+      }
+
+      if (stats.role === "freelancer" || stats.role === "both") {
+        const myBookings = bookings.filter(b => b.freelancerId === userId);
+        const completedBookings = myBookings.filter(b => b.status === "completed");
+        const referralStats = await storage.getReferralStats(userId);
+        
+        stats.freelancer = {
+          totalEarned: completedBookings.reduce((sum, b) => sum + b.totalAmount, 0),
+          pendingPayouts: myBookings
+            .filter(b => b.status === "confirmed" || b.status === "in_progress" || b.status === "delivered")
+            .reduce((sum, b) => sum + b.totalAmount, 0),
+          thisMonthEarnings: completedBookings
+            .filter(b => b.createdAt && new Date(b.createdAt).getMonth() === new Date().getMonth())
+            .reduce((sum, b) => sum + b.totalAmount, 0),
+          referralStats,
+          activeGigs: myBookings.filter(b => b.status === "in_progress" || b.status === "delivered"),
+          earningsHistory: [ // Placeholder for chart
+            { month: "Jan", amount: 0 },
+            { month: "Feb", amount: 0 },
+            { month: "Mar", amount: 0 },
+            { month: "Apr", amount: 0 },
+            { month: "May", amount: 0 },
+            { month: "Jun", amount: 0 },
+          ]
+        };
+      }
+
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching dashboard stats:", error);
+      res.status(500).json({ message: "Failed to fetch dashboard stats" });
+    }
+  });
+
   // Job routes
   app.get("/api/jobs", async (_req, res) => {
     try {
