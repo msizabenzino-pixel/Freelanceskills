@@ -37,7 +37,28 @@ Preferred communication style: Simple, everyday language.
 - **Payment & Escrow**: Integrated Stripe for all payments, managing payment intents and webhooks for an escrow system that holds and releases funds.
 - **Security & Fraud Prevention**: Features rate limiting, CORS, Helmet-equivalent headers, mass assignment prevention, session-based auth, cron-job based fraud detection, audit logging, and dispute resolution.
 - **Notification System**: Real-time notifications via Socket.io and a persistent database.
-- **Mobile App Skeleton**: A React Native / Expo project structure is provided for a mobile application, mirroring web functionalities.
+- **Mobile App (React Native/Expo)**: Full-featured mobile application in `mobile/` directory with:
+  - **Navigation**: 5-tab bottom navigator (Home/Jobs/Messages/Academy/Profile) + stack screens for JobDetail, JobApply, Chat, Premium, Camera, CourseViewer
+  - **Push Notifications**: Expo Notifications with handler for matches/messages, deep link navigation from push
+  - **Biometric Auth**: FaceID/TouchID/Fingerprint login via expo-local-authentication
+  - **Deep Linking**: `freelanceskills://` scheme + `https://freelanceskills.net` universal links for jobs, courses, chat
+  - **Offline Cache**: AsyncStorage-based job caching with sync-when-online via useOfflineCache hook
+  - **Camera**: ID verification + portfolio photos via expo-camera with front/back toggle
+  - **Chat**: Full-screen real-time chat with Socket.io + image send via expo-image-picker
+  - **Job Apply**: Resume upload + voice-to-text cover letter input
+  - **Premium**: Subscription screen with Stripe payment sheet integration
+  - **Academy**: Course browser + video player with progress tracking via expo-video
+  - **Dark Mode**: Native sync via useColorScheme, automatic userInterfaceStyle
+  - **Haptic Feedback**: On apply, message sent, payout received via expo-haptics
+  - **Crashlytics**: Sentry integration for error tracking
+  - **Analytics**: Screen views, job applications, premium purchases event tracking
+  - **Rate Limiting UI**: Toast feedback when hitting free tier caps
+  - **Voice Input**: Speech-to-text stub for job descriptions
+  - **Location**: Nearby job alerts via expo-location
+  - **Calendar**: Integration stub for job dates via expo-calendar
+  - **PWA Bridge**: Fallback for PWA-to-native transition
+  - **EAS Build**: eas.json with dev/preview/production profiles
+  - **Store Docs**: App store listing copy, TestFlight guide, Google Play guide, submission checklist in `mobile/docs/`
 
 ### Infrastructure & Monitoring
 - **Health & Metrics**: Endpoints for API health checks, platform metrics, and Prometheus monitoring.
@@ -51,4 +72,4 @@ Preferred communication style: Simple, everyday language.
 - **AI**: OpenAI API (gpt-4o-mini)
 - **Payments**: Stripe API (`@stripe/stripe-js`)
 - **UI Components**: shadcn/ui (Radix UI), Lucide React (icons), Framer Motion (animations), Embla Carousel
-- **Mobile**: React Native / Expo (for `mobile/` skeleton)
+- **Mobile**: React Native / Expo SDK 51, React Navigation 6, Sentry, Expo modules (notifications, camera, location, haptics, biometrics, calendar, video, speech, image-picker, secure-store, linking)

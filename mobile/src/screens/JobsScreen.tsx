@@ -1,35 +1,58 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { theme } from '../theme';
 import apiClient from '../api/client';
 import { Job } from '../types';
-import { Filter, MapPin, Briefcase } from 'lucide-react-native';
+import { Filter, MapPin, Briefcase, WifiOff } from 'lucide-react-native';
+import { useOfflineCache } from '../hooks/useOfflineCache';
+import { useAnalytics } from '../hooks/useAnalytics';
 
-const JobsScreen = () => {
+const JobsScreen = ({ navigation }: any) => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
+  
+  const { data: cachedJobs, updateData: cacheJobs, isOffline } = useOfflineCache<Job[]>('jobs_list', []);
+  const { logScreen } = useAnalytics();
+
+  const fetchJobs = useCallback(async (isRefresh = false) => {
+    try {
+      if (!isRefresh) setLoading(true);
+      const endpoint = activeTab === 'all' ? '/jobs' : `/jobs?type=${activeTab}`;
+      const response = await apiClient.get(endpoint);
+      setJobs(response.data);
+      cacheJobs(response.data);
+    } catch (err) {
+      console.error('Failed to fetch jobs', err);
+      if (cachedJobs) {
+        setJobs(cachedJobs);
+      }
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [activeTab, cacheJobs, cachedJobs]);
 
   useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        setLoading(true);
-        const response = await apiClient.get('/jobs');
-        setJobs(response.data);
-      } catch (err) {
-        console.error('Failed to fetch jobs', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    logScreen('Jobs');
     fetchJobs();
-  }, [activeTab]);
+  }, [fetchJobs, logScreen]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchJobs(true);
+  }, [fetchJobs]);
 
   const renderJob = ({ item }: { item: Job }) => (
-    <TouchableOpacity style={styles.jobCard}>
+    <TouchableOpacity 
+      style={styles.jobCard}
+      onPress={() => navigation.navigate('JobDetail', { jobId: item.id })}
+      data-testid={`card-job-${item.id}`}
+    >
       <View style={styles.jobHeader}>
-        <Text style={styles.jobTitle}>{item.title}</Text>
-        <Text style={styles.jobBudget}>{item.currency} {item.budget}</Text>
+        <Text style={styles.jobTitle} data-testid={`text-job-title-${item.id}`}>{item.title}</Text>
+        <Text style={styles.jobBudget} data-testid={`text-job-budget-${item.id}`}>{item.currency} {item.budget}</Text>
       </View>
       <Text style={styles.jobDescription} numberOfLines={2}>{item.description}</Text>
       <View style={styles.jobFooter}>
@@ -37,16 +60,22 @@ const JobsScreen = () => {
           <Briefcase size={12} color={theme.colors.textMuted} />
           <Text style={styles.metaText}>{item.category}</Text>
         </View>
-        <Text style={styles.jobDate}>{new Date(item.postedAt).toLocaleDateString()}</Text>
+        <Text style={styles.jobDate}>{new Date(item.createdAt || '').toLocaleDateString()}</Text>
       </View>
     </TouchableOpacity>
   );
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} data-testid="screen-jobs">
+      {isOffline && (
+        <View style={styles.offlineBanner} data-testid="status-offline">
+          <WifiOff size={16} color="#fff" />
+          <Text style={styles.offlineText}>Offline Mode - Showing Cached Jobs</Text>
+        </View>
+      )}
       <View style={styles.header}>
         <Text style={styles.title}>Job Board</Text>
-        <TouchableOpacity style={styles.filterButton}>
+        <TouchableOpacity style={styles.filterButton} data-testid="button-filter">
           <Filter size={20} color={theme.colors.text} />
         </TouchableOpacity>
       </View>
@@ -57,6 +86,7 @@ const JobsScreen = () => {
             key={tab} 
             onPress={() => setActiveTab(tab)}
             style={[styles.tab, activeTab === tab && styles.activeTab]}
+            data-testid={`button-tab-${tab}`}
           >
             <Text style={[styles.tabText, activeTab === tab && styles.activeTabText]}>
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -65,7 +95,7 @@ const JobsScreen = () => {
         ))}
       </View>
 
-      {loading ? (
+      {loading && !refreshing ? (
         <View style={styles.loader}>
           <ActivityIndicator color={theme.colors.primary} />
         </View>
@@ -75,6 +105,14 @@ const JobsScreen = () => {
           renderItem={renderJob}
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={styles.listContent}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />
+          }
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>No jobs found</Text>
+            </View>
+          }
         />
       )}
     </View>
@@ -83,6 +121,14 @@ const JobsScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: theme.colors.background },
+  offlineBanner: {
+    backgroundColor: theme.colors.error,
+    padding: 8,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  offlineText: { color: '#fff', fontSize: 12, marginLeft: 8, fontWeight: '600' },
   header: { 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
@@ -127,6 +173,8 @@ const styles = StyleSheet.create({
   metaText: { color: theme.colors.textMuted, fontSize: 12, marginLeft: 4 },
   jobDate: { color: theme.colors.textMuted, fontSize: 12 },
   loader: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  emptyContainer: { padding: 40, alignItems: 'center' },
+  emptyText: { color: theme.colors.textMuted },
 });
 
 export default JobsScreen;
