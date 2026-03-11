@@ -67,6 +67,10 @@ export async function registerRoutes(
   registerGrowthRoutes(app, isAuthenticated);
   const { registerVisionRoutes } = await import("./vision");
   registerVisionRoutes(app, isAuthenticated);
+  const { registerEdgeCaseRoutes } = await import("./edge-cases");
+  registerEdgeCaseRoutes(app, isAuthenticated);
+  const { registerVictoryLapRoutes } = await import("./victory-lap");
+  registerVictoryLapRoutes(app, isAuthenticated);
 
   // Dashboard Stats
   app.get("/api/dashboard/stats", isAuthenticated, async (req: any, res) => {
