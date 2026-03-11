@@ -1,0 +1,27 @@
+Execute growth/monetization upgrades on freelanceskills.net. Focus on [FOCUS]. Integrate live. Show code + test.
+
+B1. A/B test premium banner: two variants ("Unlock Top Visibility" vs "Earn 30% More – Go Premium") + tracking pixel
+B2. Launch referral campaign: email template + unique link generator + R100 credit on successful hire
+B3. Facebook/Google pixel stub + conversion events (job post, premium signup, payout)
+B4. Dynamic pricing engine: suggest higher rates in high-demand categories (real-time demand signal)
+B5. Flash sale stub: 50% off first month premium for new freelancers (timer UI + backend flag)
+B6. Upsell modal after job completion: "Upgrade to Premium – Get priority on next gigs"
+B7. Client premium tier: bulk discounts for 10+ jobs/month
+B8. Analytics dashboard for freelancers: earnings trend chart + top clients
+B9. Client analytics: average rate paid, freelancer satisfaction score
+B10. Viral share button on job success: "I just hired [freelancer] on freelanceskills.net!"
+B11. SMS notification stub for urgent jobs (Twilio-like mock)
+B12. Push notification service worker for new matches/applications
+B13. Gamification: badges for 5/10/50 jobs completed → profile flair
+B14. Leaderboard: top earners this month (opt-in privacy)
+B15. Seasonal campaign stub: "Summer Handyman Special – 20% more visibility"
+B16. Affiliate program stub: bloggers get 15% recurring on referred premium signups
+B17. Discount code system: generate/track codes for influencers
+B18. Churn prevention: email sequence for inactive freelancers ("Post one job this week – get R50 credit")
+B19. Retention analytics: cohort analysis stub (signup → first job → premium)
+B20. Revenue forecast calculator (markdown + JS widget)
+B21. Stripe coupon system integration for trials/discounts
+B22. Multi-currency display stub (ZAR primary, USD/EUR toggle)
+B23. Tax calculator helper for freelancers (SARS stub)
+B24. Cash-out speed boost for premium: same-day vs 3-day payout
+B25. Victory deploy: all monetization flows live + test transaction (R1 test charge)

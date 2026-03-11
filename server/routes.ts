@@ -63,6 +63,8 @@ export async function registerRoutes(
   const { isAuthenticated } = await import("./replit_integrations/auth");
   const { insertJobSchema, insertProfileSchema, insertServicePackageSchema, insertBookingSchema, insertReviewSchema, insertMessageSchema } = await import("@shared/schema");
   const { checkMessageSafety, SAFETY_DISCLAIMERS, REPORT_REASONS } = await import("@shared/safety");
+  const { registerGrowthRoutes } = await import("./growth");
+  registerGrowthRoutes(app, isAuthenticated);
 
   // Dashboard Stats
   app.get("/api/dashboard/stats", isAuthenticated, async (req: any, res) => {
