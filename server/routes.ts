@@ -2194,6 +2194,464 @@ Experience level: ${experienceLevel || 'Any'}`
     }
   });
 
+  // ============ FORTIFY ROUTES (#41-#60) ============
+  const fortify = await import("./fortify");
+
+  // #41 — Escrow webhook handler (Stripe → release funds on completion)
+  // Enhanced in server/stripe.ts; escrow creation endpoint:
+  app.post("/api/escrow/create", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const { bookingId, amount, freelancerId, stripePaymentIntentId } = req.body;
+      if (!bookingId || !amount || !freelancerId) {
+        return res.status(400).json({ message: "bookingId, amount, and freelancerId are required" });
+      }
+      const tx = await storage.createEscrowTransaction({
+        bookingId,
+        clientId: userId,
+        freelancerId,
+        amount,
+        stripePaymentIntentId: stripePaymentIntentId || null,
+        status: "held",
+      });
+      fortify.trackMetric("escrowHeld", amount);
+      res.status(201).json(tx);
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to create escrow", error: error.message });
+    }
+  });
+
+  app.get("/api/escrow/booking/:bookingId", isAuthenticated, async (req: any, res) => {
+    try {
+      const tx = await storage.getEscrowByBooking(req.params.bookingId);
+      if (!tx) return res.status(404).json({ message: "No escrow found for this booking" });
+      res.json(tx);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch escrow" });
+    }
+  });
+
+  app.get("/api/escrow/stats", isAuthenticated, async (req: any, res) => {
+    try {
+      const stats = await storage.getEscrowStats();
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch escrow stats" });
+    }
+  });
+
+  // #43 — Cache management endpoints
+  app.get("/api/cache/stats", isAuthenticated, async (req: any, res) => {
+    res.json(fortify.cache.stats());
+  });
+
+  app.delete("/api/cache/invalidate", isAuthenticated, async (req: any, res) => {
+    const { pattern } = req.body;
+    const count = fortify.cache.invalidate(pattern || "");
+    res.json({ invalidated: count });
+  });
+
+  // Cached job listings (#43)
+  app.get("/api/cached/jobs", async (_req, res) => {
+    try {
+      const cacheKey = "jobs:all";
+      const cached = fortify.cache.get<any[]>(cacheKey);
+      if (cached) {
+        res.setHeader("X-Cache", "HIT");
+        return res.json(cached);
+      }
+
+      const allJobs = await storage.getAllJobs();
+      fortify.cache.set(cacheKey, allJobs, 300);
+      res.setHeader("X-Cache", "MISS");
+      res.json(allJobs);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch cached jobs" });
+    }
+  });
+
+  // Cached freelancer profiles (#43)
+  app.get("/api/cached/freelancers", async (req, res) => {
+    try {
+      const { query, location } = req.query;
+      const cacheKey = `freelancers:${query || "all"}:${location || "all"}`;
+      const cached = fortify.cache.get<any[]>(cacheKey);
+      if (cached) {
+        res.setHeader("X-Cache", "HIT");
+        return res.json(cached);
+      }
+
+      const profiles = await storage.searchFreelancers(query as string, location as string);
+      fortify.cache.set(cacheKey, profiles, 300);
+      res.setHeader("X-Cache", "MISS");
+      res.json(profiles);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch cached freelancers" });
+    }
+  });
+
+  // #44 — Audit log endpoints
+  app.get("/api/admin/audit-logs", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      if (userId !== "user_2Pz69BfA5yS3R8M") {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      const { action, resource, limit } = req.query;
+      const logs = await storage.getAuditLogs({
+        action: action as string,
+        resource: resource as string,
+        limit: limit ? parseInt(limit as string) : 100,
+      });
+      res.json(logs);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch audit logs" });
+    }
+  });
+
+  app.get("/api/audit-logs/my", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const logs = await storage.getAuditLogs({ userId, limit: 50 });
+      res.json(logs);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch your audit logs" });
+    }
+  });
+
+  // #45 — Premium tier endpoints
+  app.get("/api/premium/tier", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const tier = await storage.getPremiumTier(userId);
+      res.json(tier || { tier: "free", visibilityBoost: 0, rateLimitMultiplier: 1 });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch premium tier" });
+    }
+  });
+
+  app.post("/api/premium/upgrade", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const { tier, stripeSubscriptionId } = req.body;
+      if (!["free", "premium", "enterprise"].includes(tier)) {
+        return res.status(400).json({ message: "Invalid tier. Must be free, premium, or enterprise" });
+      }
+      const boosts: Record<string, number> = { free: 0, premium: 25, enterprise: 50 };
+      const multipliers: Record<string, number> = { free: 1, premium: 5, enterprise: 10 };
+      const result = await storage.upsertPremiumTier({
+        userId,
+        tier,
+        visibilityBoost: boosts[tier],
+        rateLimitMultiplier: multipliers[tier],
+        stripeSubscriptionId: stripeSubscriptionId || null,
+        featuredUntil: tier !== "free" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : null,
+      });
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to upgrade tier" });
+    }
+  });
+
+  app.get("/api/premium/top/:category", async (req, res) => {
+    try {
+      const top = await fortify.getTopPremiumInCategory(req.params.category);
+      res.json(top);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch premium listings" });
+    }
+  });
+
+  // #46 — Enterprise bulk post (CSV upload → create 50 jobs)
+  app.post("/api/jobs/bulk-upload", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const { csv } = req.body;
+      if (!csv) return res.status(400).json({ message: "CSV content required in 'csv' field" });
+
+      const parsedJobs = fortify.parseCSVToJobs(csv, userId);
+      if (parsedJobs.length === 0) return res.status(400).json({ message: "No valid jobs found in CSV" });
+
+      const created = [];
+      const errors: string[] = [];
+      for (const job of parsedJobs) {
+        try {
+          const newJob = await storage.createJob(job);
+          created.push(newJob);
+          fortify.trackMetric("jobsCreated");
+        } catch (err: any) {
+          errors.push(`Row "${job.title}": ${err.message}`);
+        }
+      }
+
+      fortify.cache.invalidate("jobs:");
+
+      await storage.createAuditLog({
+        userId,
+        action: "bulk_job_upload",
+        resource: "jobs",
+        metadata: { totalParsed: parsedJobs.length, created: created.length, errors: errors.length },
+      });
+
+      res.status(201).json({
+        message: `${created.length} jobs created, ${errors.length} errors`,
+        created: created.length,
+        errors,
+        jobs: created,
+      });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message || "Failed to process CSV" });
+    }
+  });
+
+  // #47 — Referral payout calculation (R100 per successful referral)
+  app.get("/api/referrals/payout", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const payout = await fortify.calculateReferralPayout(userId);
+      res.json(payout);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to calculate referral payout" });
+    }
+  });
+
+  // #48 — Job completion confirmation flow
+  app.post("/api/bookings/:id/confirm-completion", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const result = await fortify.processJobCompletion(req.params.id, userId);
+      fortify.trackMetric("escrowReleased", result.amount);
+      fortify.cache.invalidate("jobs:");
+      res.json(result);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message || "Failed to confirm completion" });
+    }
+  });
+
+  // #49 — Dispute resolution stub
+  app.post("/api/disputes", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const { bookingId, respondentId, reason, description } = req.body;
+      if (!bookingId || !respondentId || !reason || !description) {
+        return res.status(400).json({ message: "bookingId, respondentId, reason, and description required" });
+      }
+      const dispute = await fortify.createDispute({
+        bookingId, initiatorId: userId, respondentId, reason, description,
+      });
+      res.status(201).json(dispute);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message || "Failed to create dispute" });
+    }
+  });
+
+  app.get("/api/disputes/my", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const disputes = await storage.getDisputesByUser(userId);
+      res.json(disputes);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch disputes" });
+    }
+  });
+
+  app.get("/api/admin/disputes", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      if (userId !== "user_2Pz69BfA5yS3R8M") {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      const status = req.query.status as string | undefined;
+      const allDisputes = await storage.getAllDisputes(status);
+      res.json(allDisputes);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch disputes" });
+    }
+  });
+
+  app.patch("/api/admin/disputes/:id/resolve", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      if (userId !== "user_2Pz69BfA5yS3R8M") {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      const { resolution } = req.body;
+      if (!resolution) return res.status(400).json({ message: "resolution required" });
+      const dispute = await storage.resolveDispute(parseInt(req.params.id), userId, resolution);
+      if (!dispute) return res.status(404).json({ message: "Dispute not found" });
+      res.json(dispute);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to resolve dispute" });
+    }
+  });
+
+  app.get("/api/disputes/:id/chat-export", isAuthenticated, async (req: any, res) => {
+    try {
+      const dispute = await storage.getDispute(parseInt(req.params.id));
+      if (!dispute) return res.status(404).json({ message: "Dispute not found" });
+      const userId = (req.session as any).userId;
+      if (dispute.initiatorId !== userId && dispute.respondentId !== userId && userId !== "user_2Pz69BfA5yS3R8M") {
+        return res.status(403).json({ message: "Access denied" });
+      }
+      res.json({
+        disputeId: dispute.id,
+        bookingId: dispute.bookingId,
+        chatLog: dispute.chatLogExport || [],
+        exportedAt: new Date().toISOString(),
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to export chat log" });
+    }
+  });
+
+  // #52 — Public stats endpoint for impact dashboard
+  app.get("/api/stats/public", async (_req, res) => {
+    try {
+      const cacheKey = "stats:public";
+      const cached = fortify.cache.get<any>(cacheKey);
+      if (cached) return res.json(cached);
+
+      const stats = await storage.getGlobalStats();
+      const escrowStats = await storage.getEscrowStats();
+      const invitationStats = await storage.getBusinessInvitationStats();
+
+      const result = {
+        platform: "FreelanceSkills.net",
+        country: "South Africa",
+        stats: {
+          totalJobs: stats.jobs,
+          totalFreelancers: stats.profiles,
+          totalBookings: stats.bookings,
+          totalMessages: stats.messages,
+          escrowProtected: escrowStats.held + escrowStats.released,
+          escrowReleased: escrowStats.released,
+          businessesInvited: invitationStats.total,
+          businessesClaimed: invitationStats.claimed,
+        },
+        updatedAt: new Date().toISOString(),
+      };
+
+      fortify.cache.set(cacheKey, result, 300);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch public stats" });
+    }
+  });
+
+  // #54 — Manual cron trigger (admin only)
+  app.post("/api/admin/cron/purge-expired", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      if (userId !== "user_2Pz69BfA5yS3R8M") {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      const result = await fortify.cronPurgeExpiredJobs();
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to run cron" });
+    }
+  });
+
+  // #55 — Manual fraud detection trigger (admin only)
+  app.post("/api/admin/cron/fraud-detection", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      if (userId !== "user_2Pz69BfA5yS3R8M") {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      const result = await fortify.cronFraudDetection();
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to run fraud detection" });
+    }
+  });
+
+  // #56 — SEO meta tags generator
+  app.get("/api/seo/job/:id", async (req, res) => {
+    try {
+      const job = await storage.getJob(req.params.id);
+      if (!job) return res.status(404).json({ message: "Job not found" });
+      res.json(fortify.generateSEOMetaTags("job", job));
+    } catch (error) {
+      res.status(500).json({ message: "Failed to generate SEO tags" });
+    }
+  });
+
+  app.get("/api/seo/category/:slug", async (req, res) => {
+    try {
+      const slug = req.params.slug;
+      const name = slug.replace(/-/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
+      const packages = await storage.getAllPackages(slug);
+      res.json(fortify.generateSEOMetaTags("category", {
+        name, slug, location: "South Africa", count: packages.length,
+      }));
+    } catch (error) {
+      res.status(500).json({ message: "Failed to generate SEO tags" });
+    }
+  });
+
+  app.get("/api/seo/profile/:userId", async (req, res) => {
+    try {
+      const profile = await storage.getProfile(req.params.userId);
+      if (!profile) return res.status(404).json({ message: "Profile not found" });
+      res.json(fortify.generateSEOMetaTags("profile", profile));
+    } catch (error) {
+      res.status(500).json({ message: "Failed to generate SEO tags" });
+    }
+  });
+
+  // #59 — Backup cron stub
+  app.post("/api/admin/cron/backup", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      if (userId !== "user_2Pz69BfA5yS3R8M") {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      const result = await fortify.cronBackupStub();
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to run backup" });
+    }
+  });
+
+  // #60 — Prometheus metrics + Grafana dashboard stub
+  app.get("/api/metrics/prometheus", (_req, res) => {
+    res.setHeader("Content-Type", "text/plain; version=0.0.4; charset=utf-8");
+    res.send(fortify.prometheusTextFormat());
+  });
+
+  app.get("/api/metrics/dashboard", async (_req, res) => {
+    try {
+      const metrics = fortify.getPrometheusMetrics();
+      const stats = await storage.getGlobalStats();
+      const escrowStats = await storage.getEscrowStats();
+
+      res.json({
+        system: {
+          uptime: metrics.uptime,
+          memory: metrics.memory,
+          cpu: metrics.cpuUsage,
+        },
+        http: {
+          totalRequests: metrics.httpRequestsTotal,
+          latency: metrics.latency,
+          errorsTotal: metrics.errorsTotal,
+        },
+        business: {
+          ...stats,
+          escrow: escrowStats,
+          fraudFlags: metrics.fraudFlagsCreated,
+          jobsCreated: metrics.jobsCreated,
+          bookingsCreated: metrics.bookingsCreated,
+        },
+        cache: fortify.cache.stats(),
+        timestamp: metrics.timestamp,
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch dashboard data" });
+    }
+  });
+
   // ============ AI ENGINE V2 ROUTES (#21-#40) ============
   const aiEngine = await import("./ai-engine");
 

@@ -3,6 +3,7 @@ import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 import { setupSocket } from "./socket";
+import { securityHeaders, corsMiddleware, auditMiddleware, tieredRateLimiter, startCronScheduler, trackMetric } from "./fortify";
 
 const app = express();
 const httpServer = createServer(app);
@@ -41,45 +42,16 @@ app.use(
 
 app.use(express.urlencoded({ extended: false, limit: "10mb" }));
 
-app.use((_req, res, next) => {
-  res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("X-Frame-Options", "SAMEORIGIN");
-  res.setHeader("X-XSS-Protection", "1; mode=block");
-  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
-  res.setHeader("Permissions-Policy", "camera=(self), microphone=(self), geolocation=(self)");
-  const isDev = process.env.NODE_ENV !== "production";
-  res.setHeader("Content-Security-Policy",
-    "default-src 'self'; " +
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://js.stripe.com; " +
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-    "font-src 'self' https://fonts.gstatic.com; " +
-    "img-src 'self' data: https: blob:; " +
-    `connect-src 'self' https: ${isDev ? "ws: wss:" : "wss:"}; ` +
-    "frame-src 'self' https://js.stripe.com https://hooks.stripe.com; " +
-    "frame-ancestors 'self' https://*.replit.dev https://*.replit.app;"
-  );
-  if (process.env.NODE_ENV === "production") {
-    res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
-  }
-  next();
-});
+app.use(corsMiddleware);
+app.use(securityHeaders);
+app.use(auditMiddleware);
 
-const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
-setInterval(() => {
-  const now = Date.now();
-  Array.from(rateLimitMap.keys()).forEach(key => {
-    const entry = rateLimitMap.get(key);
-    if (entry && now > entry.resetTime) rateLimitMap.delete(key);
-  });
-}, 60000);
-
-// Specific rate limit for AI endpoints to prevent abuse and manage costs
 const aiRateLimitMap = new Map<string, { count: number; resetTime: number }>();
 app.use("/api/ai", (req, res, next) => {
-  const ip = req.ip || req.connection.remoteAddress || "unknown";
+  const ip = req.ip || req.socket.remoteAddress || "unknown";
   const now = Date.now();
-  const windowMs = 3600000; // 1 hour window
-  const maxRequests = 60; // 60 AI requests per hour per IP (many endpoints are lightweight)
+  const windowMs = 3600000;
+  const maxRequests = 60;
 
   const entry = aiRateLimitMap.get(ip);
   if (!entry || now > entry.resetTime) {
@@ -96,9 +68,8 @@ app.use("/api/ai", (req, res, next) => {
   next();
 });
 
-// Specific rate limit for other expensive endpoints
 app.use(["/api/cv/parse", "/api/opportunities/search"], (req, res, next) => {
-  const ip = req.ip || req.connection.remoteAddress || "unknown";
+  const ip = req.ip || req.socket.remoteAddress || "unknown";
   const now = Date.now();
   const windowMs = 3600000;
   const maxRequests = 5;
@@ -117,26 +88,14 @@ app.use(["/api/cv/parse", "/api/opportunities/search"], (req, res, next) => {
   next();
 });
 
-app.use("/api/", (req, res, next) => {
-  const ip = req.ip || req.connection.remoteAddress || "unknown";
+app.use("/api/", tieredRateLimiter);
+
+setInterval(() => {
   const now = Date.now();
-  const windowMs = 60000;
-  const maxRequests = 100;
-
-  const entry = rateLimitMap.get(ip);
-  if (!entry || now > entry.resetTime) {
-    rateLimitMap.set(ip, { count: 1, resetTime: now + windowMs });
-    return next();
+  for (const [key, entry] of aiRateLimitMap) {
+    if (now > entry.resetTime) aiRateLimitMap.delete(key);
   }
-
-  entry.count++;
-  if (entry.count > maxRequests) {
-    res.setHeader("Retry-After", Math.ceil((entry.resetTime - now) / 1000).toString());
-    return res.status(429).json({ message: "Too many requests. Please try again shortly." });
-  }
-
-  next();
-});
+}, 60000);
 
 export const metrics = {
   totalRequests: 0,
@@ -157,6 +116,7 @@ export function log(message: string, source = "express", extra: Record<string, a
 
 app.use((req, res, next) => {
   metrics.totalRequests++;
+  trackMetric("httpRequestsTotal");
   const parts = req.path.split("/");
   if (parts.length >= 3 && parts[1] === "api") {
     const prefix = `/api/${parts[2]}`;
@@ -175,6 +135,8 @@ app.use((req, res, next) => {
 
   res.on("finish", () => {
     const duration = Date.now() - start;
+    trackMetric("httpRequestDuration", duration);
+    if (res.statusCode >= 500) trackMetric("errorsTotal");
     if (path.startsWith("/api")) {
       const logExtra: Record<string, any> = {
         method: req.method,
@@ -186,7 +148,6 @@ app.use((req, res, next) => {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
       if (capturedJsonResponse) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-        // We could add capturedJsonResponse to logExtra too, but it might be too large
       }
 
       log(logLine, "express", logExtra);
@@ -222,10 +183,8 @@ app.use((req, res, next) => {
     await setupVite(httpServer, app);
   }
 
-  // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
+  startCronScheduler();
+
   const port = parseInt(process.env.PORT || "5000", 10);
   httpServer.listen(
     {

@@ -9,10 +9,14 @@ import {
   type Course, type InsertCourse, type Lesson, type InsertLesson, type CourseProgress, type InsertCourseProgress, type Certificate, type InsertCertificate,
   type Notification, type InsertNotification,
   type FraudFlag, type InsertFraudFlag,
+  type AuditLog, type InsertAuditLog,
+  type Dispute, type InsertDispute,
+  type EscrowTransaction, type InsertEscrowTransaction,
+  type PremiumTier, type InsertPremiumTier,
   jobs, profiles, servicePackages, bookings, reviews, conversations, messages,
   freelancerVerifications, privateFeedback, enterpriseLeads, aggregatedJobs, jobApplications,
   businessInvitations, referrals, courses, lessons, courseProgress, certificates, notifications,
-  fraudFlags
+  fraudFlags, auditLogs, disputes, escrowTransactions, premiumTiers
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, sql, desc, count } from "drizzle-orm";
@@ -134,6 +138,27 @@ export interface IStorage {
   getFraudFlagsByBooking(bookingId: string): Promise<FraudFlag[]>;
   getUnresolvedFraudFlags(): Promise<FraudFlag[]>;
   resolveFraudFlag(id: number, resolution: string, resolvedBy: string): Promise<FraudFlag | undefined>;
+
+  // Audit log operations (#44)
+  createAuditLog(log: Partial<InsertAuditLog>): Promise<AuditLog>;
+  getAuditLogs(filters?: { userId?: string; action?: string; resource?: string; limit?: number }): Promise<AuditLog[]>;
+
+  // Dispute operations (#49)
+  createDispute(dispute: InsertDispute): Promise<Dispute>;
+  getDispute(id: number): Promise<Dispute | undefined>;
+  getDisputesByUser(userId: string): Promise<Dispute[]>;
+  getAllDisputes(status?: string): Promise<Dispute[]>;
+  resolveDispute(id: number, adminId: string, resolution: string): Promise<Dispute | undefined>;
+
+  // Escrow operations (#41/#48)
+  createEscrowTransaction(tx: InsertEscrowTransaction): Promise<EscrowTransaction>;
+  getEscrowByBooking(bookingId: string): Promise<EscrowTransaction | undefined>;
+  updateEscrowStatus(id: number, status: string): Promise<EscrowTransaction | undefined>;
+  getEscrowStats(): Promise<{ held: number; released: number; refunded: number }>;
+
+  // Premium tier operations (#45)
+  getPremiumTier(userId: string): Promise<PremiumTier | undefined>;
+  upsertPremiumTier(tier: InsertPremiumTier): Promise<PremiumTier>;
 }
 
 class DatabaseStorage implements IStorage {
@@ -753,6 +778,105 @@ class DatabaseStorage implements IStorage {
       .where(eq(fraudFlags.id, id))
       .returning();
     return updated;
+  }
+
+  async createAuditLog(logData: Partial<InsertAuditLog>): Promise<AuditLog> {
+    const [created] = await db.insert(auditLogs).values({
+      action: logData.action || "unknown",
+      resource: logData.resource || "unknown",
+      userId: logData.userId || null,
+      resourceId: logData.resourceId || null,
+      metadata: logData.metadata || null,
+      ipAddress: logData.ipAddress || null,
+      userAgent: logData.userAgent || null,
+    }).returning();
+    return created;
+  }
+
+  async getAuditLogs(filters?: { userId?: string; action?: string; resource?: string; limit?: number }): Promise<AuditLog[]> {
+    const conditions: any[] = [];
+    if (filters?.userId) conditions.push(eq(auditLogs.userId, filters.userId));
+    if (filters?.action) conditions.push(eq(auditLogs.action, filters.action));
+    if (filters?.resource) conditions.push(eq(auditLogs.resource, filters.resource));
+
+    if (conditions.length === 0) {
+      return db.select().from(auditLogs).orderBy(desc(auditLogs.createdAt)).limit(filters?.limit || 100);
+    }
+    return db.select().from(auditLogs).where(and(...conditions)).orderBy(desc(auditLogs.createdAt)).limit(filters?.limit || 100);
+  }
+
+  async createDispute(dispute: InsertDispute): Promise<Dispute> {
+    const [created] = await db.insert(disputes).values(dispute).returning();
+    return created;
+  }
+
+  async getDispute(id: number): Promise<Dispute | undefined> {
+    const [d] = await db.select().from(disputes).where(eq(disputes.id, id));
+    return d;
+  }
+
+  async getDisputesByUser(userId: string): Promise<Dispute[]> {
+    return db.select().from(disputes)
+      .where(or(eq(disputes.initiatorId, userId), eq(disputes.respondentId, userId)))
+      .orderBy(desc(disputes.createdAt));
+  }
+
+  async getAllDisputes(status?: string): Promise<Dispute[]> {
+    if (status) {
+      return db.select().from(disputes).where(eq(disputes.status, status)).orderBy(desc(disputes.createdAt));
+    }
+    return db.select().from(disputes).orderBy(desc(disputes.createdAt));
+  }
+
+  async resolveDispute(id: number, adminId: string, resolution: string): Promise<Dispute | undefined> {
+    const [updated] = await db.update(disputes)
+      .set({ status: "resolved", adminId, resolution, resolvedAt: new Date() })
+      .where(eq(disputes.id, id))
+      .returning();
+    return updated;
+  }
+
+  async createEscrowTransaction(tx: InsertEscrowTransaction): Promise<EscrowTransaction> {
+    const [created] = await db.insert(escrowTransactions).values(tx).returning();
+    return created;
+  }
+
+  async getEscrowByBooking(bookingId: string): Promise<EscrowTransaction | undefined> {
+    const [tx] = await db.select().from(escrowTransactions).where(eq(escrowTransactions.bookingId, bookingId));
+    return tx;
+  }
+
+  async updateEscrowStatus(id: number, status: string): Promise<EscrowTransaction | undefined> {
+    const updates: any = { status };
+    if (status === "released") updates.releasedAt = new Date();
+    if (status === "refunded") updates.refundedAt = new Date();
+    const [updated] = await db.update(escrowTransactions).set(updates).where(eq(escrowTransactions.id, id)).returning();
+    return updated;
+  }
+
+  async getEscrowStats(): Promise<{ held: number; released: number; refunded: number }> {
+    const [held] = await db.select({ total: sql<number>`COALESCE(SUM(amount), 0)::int` }).from(escrowTransactions).where(eq(escrowTransactions.status, "held"));
+    const [released] = await db.select({ total: sql<number>`COALESCE(SUM(amount), 0)::int` }).from(escrowTransactions).where(eq(escrowTransactions.status, "released"));
+    const [refunded] = await db.select({ total: sql<number>`COALESCE(SUM(amount), 0)::int` }).from(escrowTransactions).where(eq(escrowTransactions.status, "refunded"));
+    return { held: held?.total || 0, released: released?.total || 0, refunded: refunded?.total || 0 };
+  }
+
+  async getPremiumTier(userId: string): Promise<PremiumTier | undefined> {
+    const [tier] = await db.select().from(premiumTiers).where(eq(premiumTiers.userId, userId));
+    return tier;
+  }
+
+  async upsertPremiumTier(tier: InsertPremiumTier): Promise<PremiumTier> {
+    const existing = await this.getPremiumTier(tier.userId);
+    if (existing) {
+      const [updated] = await db.update(premiumTiers)
+        .set({ ...tier, updatedAt: new Date() })
+        .where(eq(premiumTiers.userId, tier.userId))
+        .returning();
+      return updated;
+    }
+    const [created] = await db.insert(premiumTiers).values(tier).returning();
+    return created;
   }
 }
 

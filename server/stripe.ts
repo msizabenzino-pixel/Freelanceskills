@@ -138,6 +138,20 @@ export async function handleWebhook(req: Request, res: Response) {
         if (bookingId) {
           await storage.updateBookingStatus(bookingId, "confirmed");
           console.log(`Booking ${bookingId} confirmed via webhook`);
+
+          const booking = await storage.getBooking(bookingId);
+          if (booking && booking.freelancerId) {
+            await storage.createEscrowTransaction({
+              bookingId,
+              clientId: userId,
+              freelancerId: booking.freelancerId,
+              amount: paymentIntent.amount,
+              currency: paymentIntent.currency.toUpperCase(),
+              stripePaymentIntentId: paymentIntent.id,
+              status: "held",
+            });
+            console.log(`Escrow created for booking ${bookingId}: ${paymentIntent.amount} ${paymentIntent.currency}`);
+          }
         }
         break;
       }

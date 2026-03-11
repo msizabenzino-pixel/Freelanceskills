@@ -5,6 +5,25 @@ import { checkMessageSafety } from "@shared/safety";
 import { insertMessageSchema } from "@shared/schema";
 import { log } from "./index";
 
+let ioInstance: Server | null = null;
+
+export function getIO(): Server | null {
+  return ioInstance;
+}
+
+export function emitJobNotification(event: string, data: any) {
+  if (ioInstance) {
+    ioInstance.to("job_notifications").emit(event, data);
+    log(`Job notification emitted: ${event}`, "socket");
+  }
+}
+
+export function emitToUser(userId: string, event: string, data: any) {
+  if (ioInstance) {
+    ioInstance.to(`user_${userId}`).emit(event, data);
+  }
+}
+
 export function setupSocket(httpServer: HttpServer) {
   const io = new Server(httpServer, {
     cors: {
@@ -14,17 +33,29 @@ export function setupSocket(httpServer: HttpServer) {
     pingTimeout: 60000,
   });
 
-  const onlineUsers = new Map<string, string>(); // userId -> socketId
+  ioInstance = io;
+
+  const onlineUsers = new Map<string, string>();
 
   io.on("connection", (socket) => {
-    // We expect the client to emit an 'authenticate' event with their userId
-    // In a more robust setup, we'd use the session, but for this task we'll rely on explicit auth or session sharing
-    
     socket.on("authenticate", (userId: string) => {
       onlineUsers.set(userId, socket.id);
       socket.data.userId = userId;
+      socket.join(`user_${userId}`);
       io.emit("user_online", userId);
       log(`User ${userId} authenticated on socket ${socket.id}`, "socket");
+    });
+
+    socket.on("subscribe_jobs", (filters?: { category?: string; location?: string }) => {
+      socket.join("job_notifications");
+      if (filters?.category) socket.join(`jobs_${filters.category}`);
+      if (filters?.location) socket.join(`jobs_${filters.location}`);
+      log(`Socket ${socket.id} subscribed to job notifications`, "socket");
+    });
+
+    socket.on("unsubscribe_jobs", () => {
+      socket.leave("job_notifications");
+      log(`Socket ${socket.id} unsubscribed from job notifications`, "socket");
     });
 
     socket.on("join_conversation", (conversationId: string) => {
