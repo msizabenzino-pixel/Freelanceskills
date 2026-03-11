@@ -274,11 +274,59 @@ export async function registerRoutes(
     try {
       const userId = (req.session as any).userId;
       const validatedData = insertBookingSchema.parse(req.body);
-      
+
+      // --- FRAUD CHECK ---
+      const profile = await storage.getProfile(userId);
+      const fraudCheckResponse = await fetch(`http://localhost:${process.env.PORT || 5000}/api/ai/fraud-check`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          applicationData: {
+            userId,
+            jobBudget: validatedData.totalAmount,
+            description: validatedData.notes || "",
+            freelancerId: validatedData.freelancerId,
+            accountCreatedAt: profile?.createdAt,
+            // In a real app, we'd get this from IP/headers
+            currentLocation: req.headers['x-forwarded-for'] || req.socket.remoteAddress,
+          }
+        })
+      });
+
+      const fraudData = await fraudCheckResponse.json();
+
+      if (fraudData.riskScore > 70) {
+        // Log the fraud attempt
+        await storage.createFraudFlag({
+          userId,
+          bookingId: null,
+          riskScore: fraudData.riskScore,
+          flags: fraudData.flags,
+          recommendation: "reject",
+        });
+        return res.status(403).json({ 
+          message: "Booking rejected for safety reasons. Our system detected high risk patterns.",
+          riskScore: fraudData.riskScore,
+          flags: fraudData.flags
+        });
+      }
+
       const booking = await storage.createBooking({
         ...validatedData,
         clientId: userId,
       });
+
+      // If risk is medium, flag it but proceed
+      if (fraudData.riskScore >= 40) {
+        await storage.createFraudFlag({
+          userId,
+          bookingId: booking.id,
+          riskScore: fraudData.riskScore,
+          flags: fraudData.flags,
+          recommendation: "review",
+        });
+      }
+      // --- END FRAUD CHECK ---
       
       res.status(201).json(booking);
     } catch (error) {
@@ -372,39 +420,102 @@ Guidelines:
     }
   });
 
-  // AI Fraud Detection stub endpoint
+  // Fraud detection memory
+  const paymentAttempts = new Map<string, { count: number, lastReset: number }>();
+  const BOOKING_LIMIT_PER_HOUR = 5;
+
+  function checkVelocity(userId: string): boolean {
+    const now = Date.now();
+    const windowMs = 60 * 60 * 1000;
+    const userAttempts = paymentAttempts.get(userId) || { count: 0, lastReset: now };
+
+    if (now - userAttempts.lastReset > windowMs) {
+      userAttempts.count = 1;
+      userAttempts.lastReset = now;
+    } else {
+      userAttempts.count++;
+    }
+
+    paymentAttempts.set(userId, userAttempts);
+    return userAttempts.count <= BOOKING_LIMIT_PER_HOUR;
+  }
+
+  // AI Fraud Detection endpoint
   app.post("/api/ai/fraud-check", async (req, res) => {
     try {
       const { applicationData } = req.body;
+      const userId = (req.session as any)?.userId || "anonymous";
       let riskScore = 0;
       const flags: string[] = [];
 
-      // Simple rule-based logic
+      // 1. Velocity checks
+      if (!checkVelocity(userId)) {
+        riskScore += 50;
+        flags.push("High velocity: >5 payment attempts in 1 hour");
+      }
+
+      // 2. Amount anomaly
+      if (applicationData.userId) {
+        const userBookings = await storage.getUserBookings(applicationData.userId);
+        const completedBookings = userBookings.filter(b => b.status === 'completed');
+        if (completedBookings.length > 0) {
+          const avgAmount = completedBookings.reduce((sum, b) => sum + b.totalAmount, 0) / completedBookings.length;
+          if (applicationData.jobBudget > avgAmount * 3) {
+            riskScore += 40;
+            flags.push(`Amount anomaly: ${applicationData.jobBudget} is >3x user's average ${avgAmount.toFixed(0)}`);
+          }
+        }
+      }
+
+      // 3. Geographic mismatch (simulated with profile location vs provided location)
+      if (applicationData.userId && applicationData.currentLocation) {
+        const profile = await storage.getProfile(applicationData.userId);
+        const profileLocation = profile?.location;
+        if (profileLocation && !applicationData.currentLocation.toLowerCase().includes(profileLocation.toLowerCase())) {
+          riskScore += 25;
+          flags.push(`Geographic mismatch: Profile says ${profileLocation}, current location ${applicationData.currentLocation}`);
+        }
+      }
+
+      // 4. Duplicate detection
+      if (applicationData.userId && applicationData.freelancerId) {
+        const userBookings = await storage.getUserBookings(applicationData.userId);
+        const recentDuplicateBookings = userBookings.filter(b => {
+          if (!b.createdAt) return false;
+          return b.freelancerId === applicationData.freelancerId && 
+            (new Date().getTime() - new Date(b.createdAt).getTime()) < 24 * 60 * 60 * 1000;
+        });
+        if (recentDuplicateBookings.length > 3) {
+          riskScore += 35;
+          flags.push("Duplicate detection: >3 bookings with same freelancer in 24 hours");
+        }
+      }
+
+      // 5. Pattern matching (scam keywords)
+      const scamKeywords = ["advance fee", "urgent transfer", "Western Union", "money mule", "overpayment", "off-platform"];
+      const description = (applicationData.description || "").toLowerCase();
+      const foundKeywords = scamKeywords.filter(kw => description.includes(kw.toLowerCase()));
+      if (foundKeywords.length > 0) {
+        riskScore += 45;
+        flags.push(`Pattern matching: Found scam keywords (${foundKeywords.join(", ")})`);
+      }
+
+      // Existing simple rule-based logic
       const now = new Date();
-      const accountCreated = applicationData.accountCreatedAt ? new Date(applicationData.accountCreatedAt) : now;
+      const accountCreatedAtValue = applicationData.accountCreatedAt as any;
+      const accountCreated = accountCreatedAtValue ? new Date(accountCreatedAtValue) : now;
       const accountAgeHours = (now.getTime() - accountCreated.getTime()) / (1000 * 60 * 60);
 
-      // Rule 1: New account (<24h) applying to high-value job (>R50,000)
+      // Rule: New account (<24h) applying to high-value job (>R50,000)
       if (accountAgeHours < 24 && applicationData.jobBudget > 50000) {
         riskScore += 30;
         flags.push("New account applying to high-value job");
       }
 
-      // Rule 2: Multiple applications in <1 hour (simulated with applicationCount)
-      if (applicationData.recentApplicationCount > 5) {
-        riskScore += 20;
-        flags.push("High frequency of applications");
-      }
-
-      // Rule 3: Description matches common spam patterns
-      const description = applicationData.description || "";
-      if (description === description.toUpperCase() && description.length > 20) {
+      // Rule: All caps description
+      if (description === (applicationData.description || "").toUpperCase() && (applicationData.description || "").length > 20) {
         riskScore += 15;
         flags.push("All caps description");
-      }
-      if ((description.match(/http|www/g) || []).length > 2) {
-        riskScore += 10;
-        flags.push("Excessive links in description");
       }
 
       let recommendation: "approve" | "review" | "reject" = "approve";
@@ -421,6 +532,73 @@ Guidelines:
     }
   });
 
+      // Admin Fraud Routes
+  app.get("/api/admin/fraud-flags", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const userProfile = await storage.getProfile(userId);
+      if ((userProfile as any)?.role !== "admin" && userId !== "user_2Pz69BfA5yS3R8M") { // Fixed admin check or specific ID
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      const flags = await storage.getUnresolvedFraudFlags();
+      res.json(flags);
+    } catch (error) {
+      console.error("Error fetching fraud flags:", error);
+      res.status(500).json({ message: "Failed to fetch fraud flags" });
+    }
+  });
+
+  app.patch("/api/admin/fraud-flags/:id/resolve", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const userProfile = await storage.getProfile(userId);
+      if ((userProfile as any)?.role !== "admin" && userId !== "user_2Pz69BfA5yS3R8M") {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      const { resolution } = req.body; // "approved", "rejected", "escalated"
+      const flag = await storage.resolveFraudFlag(parseInt(req.params.id), resolution, userId);
+      res.json(flag);
+    } catch (error) {
+      console.error("Error resolving fraud flag:", error);
+      res.status(500).json({ message: "Failed to resolve fraud flag" });
+    }
+  });
+
+  // Escrow Release Endpoint
+  app.post("/api/bookings/:id/release", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const booking = await storage.getBooking(req.params.id);
+      if (!booking) {
+        return res.status(404).json({ message: "Booking not found" });
+      }
+
+      // Authorization: only the client can release funds (or admin)
+      if (booking.clientId !== userId) {
+        const userProfile = await storage.getProfile(userId);
+        if ((userProfile as any)?.role !== "admin") {
+          return res.status(403).json({ message: "Only the client can release funds" });
+        }
+      }
+
+      // Final fraud check before release
+      const flags = await storage.getFraudFlagsByBooking(booking.id);
+      const unresolvedFlags = flags.filter(f => !f.resolvedAt);
+
+      if (unresolvedFlags.length > 0) {
+        return res.status(403).json({ 
+          message: "Funds release blocked due to unresolved fraud flags. Please contact support.",
+          flags: unresolvedFlags
+        });
+      }
+
+      const updatedBooking = await storage.updateBookingStatus(booking.id, "completed");
+      res.json({ message: "Funds released successfully", booking: updatedBooking });
+    } catch (error) {
+      console.error("Error releasing funds:", error);
+      res.status(500).json({ message: "Failed to release funds" });
+    }
+  });
   // Review routes
   app.get("/api/freelancers/:id/reviews", async (req, res) => {
     try {

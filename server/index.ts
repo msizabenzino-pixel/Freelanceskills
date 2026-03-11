@@ -2,9 +2,11 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
+import { setupSocket } from "./socket";
 
 const app = express();
 const httpServer = createServer(app);
+const io = setupSocket(httpServer);
 
 process.on("uncaughtException", (err) => {
   console.error("Uncaught Exception:", err.message, err.stack);

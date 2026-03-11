@@ -9,3 +9,4 @@ export * from "./models/enterprise";
 export * from "./models/academy";
 export * from "./models/referrals";
 export * from "./models/notifications";
+export * from "./models/fraud";

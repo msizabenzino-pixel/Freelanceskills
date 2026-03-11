@@ -95,12 +95,38 @@ Preferred communication style: Simple, everyday language.
 - `/DEMO_SCRIPT.md` — 60-second demo walkthrough with timestamps
 - `/CNAME_SETUP.md` — Custom domain setup instructions
 
-### Security
+### Real-Time Chat (Socket.io)
+- **Server**: `server/socket.ts` — Socket.io attached to Express HTTP server
+- Events: `join_conversation`, `send_message`, `typing`, `stop_typing`, `mark_read`
+- Tracks online users (Map<userId, socketId>), emits `user_online`/`user_offline`
+- Messages saved to DB + broadcast to conversation room in real-time
+- Safety checks run on socket messages before persistence
+
+### Mobile App Skeleton
+- **Directory**: `mobile/` — React Native / Expo project skeleton
+- Screens: Home, Jobs, Messages, Profile, Login with bottom tab navigation
+- API client pointing to https://freelanceskills.net/api
+- Socket.io client for real-time chat
+- Auth hook using expo-secure-store
+- Dark theme matching web app
+- Setup: `cd mobile && npm install && expo start`
+
+### Security & Fraud Prevention
 - Rate limiting: custom middleware in `server/index.ts` (100 req/min general, 10 req/hr AI, 5 req/hr expensive ops)
 - Profile PATCH strips `userId`, `id`, `isPro` fields to prevent mass assignment
 - Session-based auth: all protected routes use `(req.session as any).userId`
 - SESSION_SECRET env var for session signing (no hardcoded fallback in production)
-- Fraud detection: `/api/ai/fraud-check` rule-based risk scoring
+- **Fraud detection**: `/api/ai/fraud-check` with hardened rules:
+  - Velocity checks (>5 booking attempts/hour)
+  - Amount anomaly (>3x user average)
+  - Geographic mismatch detection
+  - Duplicate booking detection
+  - Scam keyword pattern matching
+- **Auto-fraud gating**: Bookings auto-checked on creation (reject >70, flag 40-70, approve <40)
+- **Escrow release safety**: `POST /api/bookings/:id/release` checks fraud flags before releasing funds
+- **High-value alerts**: Stripe webhook flags payments >R100,000
+- **Admin fraud dashboard**: `/admin/fraud` for reviewing and resolving flagged transactions
+- `fraud_flags` DB table with resolution tracking
 
 ### Build & Deployment
 - **Development**: Vite dev server with HMR.

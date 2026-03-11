@@ -47,6 +47,7 @@ const JobBoard = lazy(() => import("@/pages/JobBoard"));
 const OpportunityFinder = lazy(() => import("@/pages/OpportunityFinder"));
 const ClaimBusiness = lazy(() => import("@/pages/ClaimBusiness"));
 const InviteBusinesses = lazy(() => import("@/pages/InviteBusinesses"));
+const FraudDashboard = lazy(() => import("@/pages/FraudDashboard"));
 const Auth = lazy(() => import("@/pages/Auth"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 
@@ -112,6 +113,11 @@ function Router() {
         <Route path="/opportunity-finder" component={OpportunityFinder} />
         <Route path="/claim-business" component={ClaimBusiness} />
         <Route path="/invite-businesses" component={InviteBusinesses} />
+        <Route path="/admin/fraud">
+          <AuthGuard>
+            <FraudDashboard />
+          </AuthGuard>
+        </Route>
         <Route component={NotFound} />
       </Switch>
     </Suspense>

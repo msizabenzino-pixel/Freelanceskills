@@ -111,6 +111,30 @@ export async function handleWebhook(req: Request, res: Response) {
         console.log(`Payment succeeded: ${paymentIntent.id} — ${paymentIntent.amount} ${paymentIntent.currency}`);
         const { storage } = await import("./storage");
         const bookingId = paymentIntent.metadata?.bookingId;
+        const userId = paymentIntent.metadata?.userId || "unknown";
+
+        // Structured logging
+        console.log(JSON.stringify({
+          event: "payment_intent.succeeded",
+          id: paymentIntent.id,
+          amount: paymentIntent.amount,
+          currency: paymentIntent.currency,
+          bookingId,
+          userId,
+          timestamp: new Date().toISOString()
+        }));
+
+        if (paymentIntent.amount > 10000000) { // R100,000 in cents
+          await storage.createFraudFlag({
+            userId,
+            bookingId: bookingId || null,
+            riskScore: 85,
+            flags: ["High value transaction (> R100,000)"],
+            recommendation: "review",
+          });
+          console.log(`High value transaction flagged for booking ${bookingId}`);
+        }
+
         if (bookingId) {
           await storage.updateBookingStatus(bookingId, "confirmed");
           console.log(`Booking ${bookingId} confirmed via webhook`);

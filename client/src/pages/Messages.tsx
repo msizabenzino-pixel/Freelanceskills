@@ -14,11 +14,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { format } from "date-fns";
+import { io, Socket } from "socket.io-client";
 
 export default function Messages() {
   const { user } = useAuth();
@@ -29,6 +30,9 @@ export default function Messages() {
   const [showSafetyPopup, setShowSafetyPopup] = useState(() => {
     return localStorage.getItem("messageSafetyShown") !== "true";
   });
+  const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
+  const [typingUsers, setTypingUsers] = useState<Record<string, boolean>>({});
+  const socketRef = useRef<Socket | null>(null);
 
   const { data: conversations = [], isLoading: isLoadingConversations } = useQuery<any[]>({
     queryKey: ["/api/conversations"],
@@ -42,6 +46,60 @@ export default function Messages() {
   });
 
   useEffect(() => {
+    const socket = io(window.location.origin);
+    socketRef.current = socket;
+
+    socket.on("connect", () => {
+      if (user) {
+        socket.emit("authenticate", user.id);
+      }
+    });
+
+    socket.on("user_online", (userId: string) => {
+      setOnlineUsers((prev) => new Set(prev).add(userId));
+    });
+
+    socket.on("user_offline", (userId: string) => {
+      setOnlineUsers((prev) => {
+        const next = new Set(prev);
+        next.delete(userId);
+        return next;
+      });
+    });
+
+    socket.on("new_message", (message: any) => {
+      queryClient.setQueryData(["/api/conversations", message.conversationId, "messages"], (old: any[] | undefined) => {
+        if (!old) return [message];
+        if (old.some(m => m.id === message.id)) return old;
+        return [...old, message];
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/conversations"] });
+    });
+
+    socket.on("typing", (data: { conversationId: string, userId: string }) => {
+      if (data.conversationId === selectedConversationId) {
+        setTypingUsers(prev => ({ ...prev, [data.userId]: true }));
+      }
+    });
+
+    socket.on("stop_typing", (data: { conversationId: string, userId: string }) => {
+      if (data.conversationId === selectedConversationId) {
+        setTypingUsers(prev => ({ ...prev, [data.userId]: false }));
+      }
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [user, selectedConversationId]);
+
+  useEffect(() => {
+    if (selectedConversationId && socketRef.current) {
+      socketRef.current.emit("join_conversation", selectedConversationId);
+    }
+  }, [selectedConversationId]);
+
+  useEffect(() => {
     if (conversations.length > 0 && !selectedConversationId) {
       setSelectedConversationId(conversations[0].id);
     }
@@ -52,16 +110,33 @@ export default function Messages() {
       const res = await apiRequest("POST", `/api/conversations/${selectedConversationId}/messages`, { content });
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (newMessage) => {
       setInputText("");
-      queryClient.invalidateQueries({ queryKey: ["/api/conversations", selectedConversationId, "messages"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/conversations"] });
+      // Socket will broadcast the new message, but we can also update locally for better UX
+      // Though the socket listener handles it already.
+      if (socketRef.current && selectedConversationId) {
+        socketRef.current.emit("stop_typing", { conversationId: selectedConversationId, userId: user?.id });
+      }
     },
   });
 
   const handleSendMessage = () => {
     if (!inputText.trim() || sendMessageMutation.isPending) return;
     sendMessageMutation.mutate(inputText);
+  };
+
+  const handleTyping = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputText(e.target.value);
+    if (socketRef.current && selectedConversationId && user) {
+      socketRef.current.emit("typing", { conversationId: selectedConversationId, userId: user.id });
+      
+      // Debounced stop typing would be better, but simple for now
+      setTimeout(() => {
+        if (socketRef.current) {
+          socketRef.current.emit("stop_typing", { conversationId: selectedConversationId, userId: user.id });
+        }
+      }, 3000);
+    }
   };
 
   const dismissSafetyPopup = () => {
@@ -120,6 +195,9 @@ export default function Messages() {
                         <AvatarImage src={chat.otherUser.avatar} />
                         <AvatarFallback>{chat.otherUser.name[0]}</AvatarFallback>
                       </Avatar>
+                      {onlineUsers.has(chat.otherUser.id) && (
+                        <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-card rounded-full" />
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-baseline mb-1">
@@ -161,7 +239,12 @@ export default function Messages() {
                   <div>
                     <h3 className="font-bold text-sm">{selectedConversation.otherUser.name}</h3>
                     <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      {selectedConversation.otherUser.role} • <span className="text-green-600">Online</span>
+                      {selectedConversation.otherUser.role} • 
+                      {onlineUsers.has(selectedConversation.otherUser.id) ? (
+                        <span className="text-green-600">Online</span>
+                      ) : (
+                        <span className="text-muted-foreground">Offline</span>
+                      )}
                     </span>
                   </div>
                 </div>
@@ -199,37 +282,50 @@ export default function Messages() {
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
                     </div>
                   ) : (
-                    messages.map((msg: any) => (
-                      <div key={msg.id} 
-                        data-testid={`message-item-${msg.id}`}
-                        className={cn(
-                        "flex gap-3 max-w-[80%]",
-                        msg.senderId === user?.id ? "ml-auto flex-row-reverse" : ""
-                      )}>
-                        {msg.senderId !== user?.id && (
-                          <Avatar className="w-8 h-8 mt-1">
+                    <>
+                      {messages.map((msg: any) => (
+                        <div key={msg.id} 
+                          data-testid={`message-item-${msg.id}`}
+                          className={cn(
+                          "flex gap-3 max-w-[80%]",
+                          msg.senderId === user?.id ? "ml-auto flex-row-reverse" : ""
+                        )}>
+                          {msg.senderId !== user?.id && (
+                            <Avatar className="w-8 h-8 mt-1">
+                              <AvatarImage src={selectedConversation.otherUser.avatar} />
+                              <AvatarFallback>{selectedConversation.otherUser.name[0]}</AvatarFallback>
+                            </Avatar>
+                          )}
+                          
+                          <div className={cn(
+                            "p-3 rounded-2xl text-sm shadow-sm",
+                            msg.senderId === user?.id 
+                              ? "bg-primary text-white rounded-tr-none" 
+                              : "bg-card text-foreground rounded-tl-none border border-border"
+                          )}>
+                            <p>{msg.content}</p>
+                            <div className={cn(
+                              "text-[10px] mt-1 flex justify-end items-center gap-1",
+                              msg.senderId === user?.id ? "text-white/70" : "text-muted-foreground"
+                            )}>
+                              {msg.createdAt ? format(new Date(msg.createdAt), "p") : ""}
+                              {msg.senderId === user?.id && <CheckCheck className="w-3 h-3" />}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {typingUsers[selectedConversation.otherUser.id] && (
+                        <div className="flex gap-3 max-w-[80%] items-center">
+                           <Avatar className="w-8 h-8">
                             <AvatarImage src={selectedConversation.otherUser.avatar} />
                             <AvatarFallback>{selectedConversation.otherUser.name[0]}</AvatarFallback>
                           </Avatar>
-                        )}
-                        
-                        <div className={cn(
-                          "p-3 rounded-2xl text-sm shadow-sm",
-                          msg.senderId === user?.id 
-                            ? "bg-primary text-white rounded-tr-none" 
-                            : "bg-card text-foreground rounded-tl-none border border-border"
-                        )}>
-                          <p>{msg.content}</p>
-                          <div className={cn(
-                            "text-[10px] mt-1 flex justify-end items-center gap-1",
-                            msg.senderId === user?.id ? "text-white/70" : "text-muted-foreground"
-                          )}>
-                            {msg.createdAt ? format(new Date(msg.createdAt), "p") : ""}
-                            {msg.senderId === user?.id && <CheckCheck className="w-3 h-3" />}
+                          <div className="bg-muted px-3 py-2 rounded-2xl text-xs text-muted-foreground animate-pulse">
+                            {selectedConversation.otherUser.name} is typing...
                           </div>
                         </div>
-                      </div>
-                    ))
+                      )}
+                    </>
                   )}
                 </div>
               </ScrollArea>
@@ -245,7 +341,7 @@ export default function Messages() {
                     placeholder="Type a message..."
                     rows={1}
                     value={inputText}
-                    onChange={(e) => setInputText(e.target.value)}
+                    onChange={handleTyping}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();

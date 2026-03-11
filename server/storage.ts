@@ -8,9 +8,11 @@ import {
   type Referral, type InsertReferral,
   type Course, type InsertCourse, type Lesson, type InsertLesson, type CourseProgress, type InsertCourseProgress, type Certificate, type InsertCertificate,
   type Notification, type InsertNotification,
+  type FraudFlag, type InsertFraudFlag,
   jobs, profiles, servicePackages, bookings, reviews, conversations, messages,
   freelancerVerifications, privateFeedback, enterpriseLeads, aggregatedJobs, jobApplications,
-  businessInvitations, referrals, courses, lessons, courseProgress, certificates, notifications
+  businessInvitations, referrals, courses, lessons, courseProgress, certificates, notifications,
+  fraudFlags
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, sql, desc, count } from "drizzle-orm";
@@ -124,6 +126,13 @@ export interface IStorage {
   markAsRead(id: number): Promise<Notification | undefined>;
   markAllAsRead(userId: string): Promise<void>;
   getUnreadCount(userId: string): Promise<number>;
+
+  // Fraud operations
+  createFraudFlag(flag: InsertFraudFlag): Promise<FraudFlag>;
+  getFraudFlag(id: number): Promise<FraudFlag | undefined>;
+  getFraudFlagsByBooking(bookingId: string): Promise<FraudFlag[]>;
+  getUnresolvedFraudFlags(): Promise<FraudFlag[]>;
+  resolveFraudFlag(id: number, resolution: string, resolvedBy: string): Promise<FraudFlag | undefined>;
 }
 
 class DatabaseStorage implements IStorage {
@@ -705,6 +714,37 @@ class DatabaseStorage implements IStorage {
       .from(notifications)
       .where(and(eq(notifications.userId, userId), eq(notifications.isRead, false)));
     return result[0]?.count || 0;
+  }
+
+  // Fraud operations
+  async createFraudFlag(flag: InsertFraudFlag): Promise<FraudFlag> {
+    const [newFlag] = await db.insert(fraudFlags).values(flag as any).returning();
+    return newFlag;
+  }
+
+  async getFraudFlag(id: number): Promise<FraudFlag | undefined> {
+    const [flag] = await db.select().from(fraudFlags).where(eq(fraudFlags.id, id));
+    return flag;
+  }
+
+  async getFraudFlagsByBooking(bookingId: string): Promise<FraudFlag[]> {
+    return db.select().from(fraudFlags).where(eq(fraudFlags.bookingId, bookingId));
+  }
+
+  async getUnresolvedFraudFlags(): Promise<FraudFlag[]> {
+    return db.select().from(fraudFlags).where(sql`${fraudFlags.resolvedAt} IS NULL`).orderBy(desc(fraudFlags.createdAt));
+  }
+
+  async resolveFraudFlag(id: number, resolution: string, resolvedBy: string): Promise<FraudFlag | undefined> {
+    const [updated] = await db.update(fraudFlags)
+      .set({ 
+        resolution, 
+        resolvedBy, 
+        resolvedAt: new Date() 
+      })
+      .where(eq(fraudFlags.id, id))
+      .returning();
+    return updated;
   }
 }
 
