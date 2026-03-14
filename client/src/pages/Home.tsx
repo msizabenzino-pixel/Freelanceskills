@@ -348,11 +348,12 @@ export default function Home() {
             <div className="flex items-center gap-6 grayscale opacity-70">
               <div className="flex flex-col items-center gap-1">
                 <span className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Powered by</span>
-                <div className="flex items-center gap-1 font-bold text-xl text-[#635BFF]">
+                <div className="flex items-center gap-1 font-bold text-xl text-[#00457C]">
                   <svg viewBox="0 0 40 40" className="w-8 h-8 fill-current">
-                    <path d="M20 0C8.954 0 0 8.954 0 20s8.954 20 20 20 20-8.954 20-20S31.046 0 20 0zm8.932 24.312c-.52 2.373-3.132 3.864-5.834 3.864-3.21 0-5.59-1.637-5.59-4.48 0-3.376 2.825-4.404 5.875-4.404.93 0 1.637.074 2.158.186v-.372c0-1.04-.744-1.637-2.12-1.637-1.154 0-2.308.372-3.385.93l-.707-1.934c1.376-.818 2.94-1.302 4.65-1.302 2.903 0 4.168 1.488 4.168 3.865v5.284zm-3.46-3.163c-.41-.074-.93-.112-1.525-.112-1.786 0-3.126.558-3.126 1.897 0 .967.856 1.488 2.046 1.488 1.376 0 2.308-.707 2.606-1.786v-1.487z"/>
+                    <rect width="40" height="40" rx="8" fill="currentColor"/>
+                    <text x="50%" y="55%" dominantBaseline="middle" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold">PF</text>
                   </svg>
-                  Stripe
+                  PayFast
                 </div>
               </div>
             </div>

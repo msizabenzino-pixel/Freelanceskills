@@ -44,7 +44,7 @@ export const escrowTransactions = pgTable("escrow_transactions", {
   freelancerId: varchar("freelancer_id").notNull(),
   amount: integer("amount").notNull(),
   currency: varchar("currency").notNull().default("ZAR"),
-  stripePaymentIntentId: varchar("stripe_payment_intent_id"),
+  payfastPaymentId: varchar("payfast_payment_id"),
   status: varchar("status").notNull().default("held"),
   releasedAt: timestamp("released_at"),
   refundedAt: timestamp("refunded_at"),
@@ -62,7 +62,7 @@ export const premiumTiers = pgTable("premium_tiers", {
   visibilityBoost: integer("visibility_boost").notNull().default(0),
   rateLimitMultiplier: real("rate_limit_multiplier").notNull().default(1),
   featuredUntil: timestamp("featured_until"),
-  stripeSubscriptionId: varchar("stripe_subscription_id"),
+  payfastSubscriptionId: varchar("payfast_subscription_id"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

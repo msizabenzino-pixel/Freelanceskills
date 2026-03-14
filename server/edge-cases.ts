@@ -66,7 +66,7 @@ export function registerEdgeCaseRoutes(app: Express, isAuthenticated: any) {
   });
 
   app.use("/api", (req: Request, res: Response, next: NextFunction) => {
-    if (req.path === "/stripe/webhook" || req.path === "/edge/sanitization-test") return next();
+    if (req.path === "/payfast/itn" || req.path === "/edge/sanitization-test") return next();
     if (req.body && typeof req.body === "object") {
       const allValues = flattenValues(req.body);
       for (const val of allValues) {

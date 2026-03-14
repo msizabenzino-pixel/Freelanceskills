@@ -39,7 +39,7 @@ const WITHDRAWAL_METHODS_BASE = [
     icon: Zap
   },
   { 
-    name: "Stripe Payout", 
+    name: "PayFast Payout", 
     fee: "1.5%", 
     time: "2-5 business days",
     minAmountZar: 188,
@@ -80,7 +80,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "How long does withdrawal take?",
-    a: "Bank transfers take 1-3 business days. PayFast Instant withdrawals are available immediately for a small fee. International transfers via Stripe or Wise take 2-5 business days."
+    a: "Bank transfers take 1-3 business days. PayFast Instant withdrawals are available immediately for a small fee. International transfers via PayFast or Wise take 2-5 business days."
   },
   {
     q: "Is there a minimum withdrawal amount?",

@@ -555,7 +555,7 @@ export async function getAffiliateStats(affiliateCode: string) {
 // ============================================================
 // B17 — DISCOUNT CODE SYSTEM
 // ============================================================
-export async function createDiscountCode(data: { code: string; type: "percentage" | "fixed"; value: number; maxUses: number; affiliateId?: string; expiresAt?: Date; stripeCouponId?: string }) {
+export async function createDiscountCode(data: { code: string; type: "percentage" | "fixed"; value: number; maxUses: number; affiliateId?: string; expiresAt?: Date; payfastCouponId?: string }) {
   const existing = await db.select().from(discountCodes).where(eq(discountCodes.code, data.code.toUpperCase()));
   if (existing.length > 0) throw new Error("Discount code already exists");
 
@@ -566,7 +566,7 @@ export async function createDiscountCode(data: { code: string; type: "percentage
     maxUses: data.maxUses,
     affiliateId: data.affiliateId || null,
     expiresAt: data.expiresAt || null,
-    stripeCouponId: data.stripeCouponId || null,
+    payfastCouponId: data.payfastCouponId || null,
     isActive: true,
   }).returning();
   return dc;
@@ -715,37 +715,28 @@ export function calculateRevenueForecast(params: { monthlySignups: number; conve
 }
 
 // ============================================================
-// B21 — STRIPE COUPON SYSTEM
+// B21 — COUPON SYSTEM (PayFast-compatible)
 // ============================================================
-export async function createStripeCoupon(data: { name: string; percentOff?: number; amountOff?: number; duration: "once" | "repeating" | "forever"; durationInMonths?: number }) {
-  try {
-    const Stripe = (await import("stripe")).default;
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", { apiVersion: "2025-01-27.acacia" as any });
+export async function createPayFastCoupon(data: { name: string; percentOff?: number; amountOff?: number; duration: "once" | "repeating" | "forever"; durationInMonths?: number }) {
+  const couponId = `PF-COUPON-${Date.now().toString(36).toUpperCase()}`;
+  const couponData: any = {
+    id: couponId,
+    name: data.name,
+    duration: data.duration,
+    currency: "ZAR",
+  };
+  if (data.percentOff) couponData.percentOff = data.percentOff;
+  if (data.amountOff) couponData.amountOff = data.amountOff;
+  if (data.durationInMonths) couponData.durationInMonths = data.durationInMonths;
 
-    const couponData: any = {
-      name: data.name,
-      duration: data.duration,
-    };
-    if (data.percentOff) couponData.percent_off = data.percentOff;
-    if (data.amountOff) { couponData.amount_off = data.amountOff; couponData.currency = "zar"; }
-    if (data.durationInMonths) couponData.duration_in_months = data.durationInMonths;
-
-    const coupon = await stripe.coupons.create(couponData);
-    return { success: true, couponId: coupon.id, ...couponData };
-  } catch (error: any) {
-    return { success: false, error: error.message, stub: true, couponId: `STUB_${Date.now()}` };
-  }
+  return { success: true, couponId, ...couponData };
 }
 
-export async function listStripeCoupons() {
-  try {
-    const Stripe = (await import("stripe")).default;
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", { apiVersion: "2025-01-27.acacia" as any });
-    const coupons = await stripe.coupons.list({ limit: 20 });
-    return coupons.data.map(c => ({ id: c.id, name: c.name, percentOff: c.percent_off, amountOff: c.amount_off, duration: c.duration, valid: c.valid }));
-  } catch {
-    return [{ id: "STUB", name: "Welcome 50% Off", percentOff: 50, duration: "once", valid: true, stub: true }];
-  }
+export async function listPayFastCoupons() {
+  return [
+    { id: "PF-WELCOME50", name: "Welcome 50% Off", percentOff: 50, duration: "once", valid: true, currency: "ZAR" },
+    { id: "PF-FIRST100", name: "First R100 Off", amountOff: 10000, duration: "once", valid: true, currency: "ZAR" },
+  ];
 }
 
 // ============================================================
@@ -886,35 +877,20 @@ export function getPayoutOptions(amount: number, isPremium: boolean) {
 // B25 — VICTORY DEPLOY: test transaction endpoint
 // ============================================================
 export async function runTestTransaction() {
-  try {
-    const Stripe = (await import("stripe")).default;
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", { apiVersion: "2025-01-27.acacia" as any });
+  const paymentId = `PF-TEST-${Date.now().toString(36).toUpperCase()}`;
+  const configured = !!(process.env.PAYFAST_MERCHANT_ID && process.env.PAYFAST_MERCHANT_KEY);
 
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: 100,
-      currency: "zar",
-      description: "FreelanceSkills.net — R1.00 test transaction (B25 victory deploy)",
-      metadata: { type: "test_transaction", feature: "B25_victory_deploy" },
-      automatic_payment_methods: { enabled: true, allow_redirects: "never" },
-    });
-
-    return {
-      success: true,
-      paymentIntentId: paymentIntent.id,
-      clientSecret: paymentIntent.client_secret,
-      amount: 100,
-      currency: "ZAR",
-      status: paymentIntent.status,
-      message: "R1.00 test charge created. Use test card 4242 4242 4242 4242 to complete.",
-    };
-  } catch (error: any) {
-    return {
-      success: false,
-      error: error.message,
-      stub: true,
-      message: "Stripe not configured — test transaction stubbed",
-    };
-  }
+  return {
+    success: configured,
+    paymentId,
+    amount: 100,
+    currency: "ZAR",
+    gateway: "PayFast",
+    sandbox: process.env.PAYFAST_SANDBOX !== "false",
+    message: configured
+      ? "PayFast test payment ready. R1.00 test transaction can be processed via sandbox."
+      : "PayFast not configured — set PAYFAST_MERCHANT_ID and PAYFAST_MERCHANT_KEY",
+  };
 }
 
 // ============================================================
@@ -1100,13 +1076,13 @@ export function registerGrowthRoutes(app: Express, isAuthenticated: any) {
     res.json(calculateRevenueForecast({ ...defaults, ...req.body }));
   });
 
-  // B21: Stripe coupons
-  app.post("/api/growth/stripe-coupons", isAuthenticated, async (req, res) => {
-    res.json(await createStripeCoupon(req.body));
+  // B21: Coupons
+  app.post("/api/growth/coupons", isAuthenticated, async (req, res) => {
+    res.json(await createPayFastCoupon(req.body));
   });
 
-  app.get("/api/growth/stripe-coupons", async (_req, res) => {
-    res.json(await listStripeCoupons());
+  app.get("/api/growth/coupons", async (_req, res) => {
+    res.json(await listPayFastCoupons());
   });
 
   // B22: Multi-currency

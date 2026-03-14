@@ -34,7 +34,7 @@ Preferred communication style: Simple, everyday language.
 - **AI Engine**: A comprehensive AI suite (v1 & v2) for task recommendation, proposal assistance, job post improvement, profile optimization, CV parsing, global job sourcing, opportunity finding, cover letter generation, and a support chatbot. Advanced AI features include multi-turn conversation memory, budget prediction, skill-gap analysis, application fraud scoring, job success prediction, and dynamic pricing.
 - **Growth System**: Includes a Business Invite System for generating unique invite codes and claiming business listings, and a Referral Program with tiered rewards and robust tracking.
 - **Upskilling Academy**: Offers online courses with lesson navigation, progress tracking, and certificate generation.
-- **Payment & Escrow**: Integrated Stripe for all payments, managing payment intents and webhooks for an escrow system that holds and releases funds.
+- **Payment & Escrow**: Integrated PayFast (South Africa's leading payment gateway) for all payments. Supports Credit/Debit Card, EFT, SnapScan, Mobicred, Samsung Pay, and Apple Pay. ITN webhook for escrow system that holds and releases funds. PayFast sandbox mode for development.
 - **Security & Fraud Prevention**: Features rate limiting, CORS, Helmet-equivalent headers, mass assignment prevention, session-based auth, cron-job based fraud detection, audit logging, and dispute resolution.
 - **Notification System**: Real-time notifications via Socket.io and a persistent database.
 - **Mobile App (React Native/Expo)**: Full-featured mobile application in `mobile/` directory with:

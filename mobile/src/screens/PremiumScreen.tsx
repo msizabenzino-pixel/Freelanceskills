@@ -84,7 +84,7 @@ const PremiumScreen = () => {
 
       <View style={styles.guaranteeBox}>
         <Shield size={20} color={theme.colors.textMuted} />
-        <Text style={styles.guaranteeText}>Secure payment with Stripe. Cancel anytime.</Text>
+        <Text style={styles.guaranteeText}>Secure payment with PayFast. Cancel anytime.</Text>
       </View>
 
       <TouchableOpacity style={styles.subscribeButton} onPress={handleSubscribe} data-testid="button-subscribe">

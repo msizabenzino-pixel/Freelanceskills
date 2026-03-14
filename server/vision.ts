@@ -934,7 +934,7 @@ Reference: CONTRACT-${Date.now()}`;
     res.json({
       vision: "1 Million Jobs by 2031 — FreelanceSkills.net",
       phases: [
-        { year: 2024, name: "Foundation", status: "live", progress: 100, features: ["Platform launch", "Job board", "Service packages", "Stripe payments", "User profiles"] },
+        { year: 2024, name: "Foundation", status: "live", progress: 100, features: ["Platform launch", "Job board", "Service packages", "PayFast payments", "User profiles"] },
         { year: 2025, name: "Growth", status: "live", progress: 100, features: ["AI matching", "Academy", "Referral program", "Business invites", "Real-time chat"] },
         { year: 2026, name: "AI & Security", status: "building", progress: 75, features: ["AI proposals", "Fraud detection", "Escrow system", "Premium tiers", "Growth engine", "Mobile app"] },
         { year: 2027, name: "Blockchain & Trust", status: "planned", progress: 15, features: ["NFT badges", "Self-sovereign ID", "DAO governance", "Crypto payouts", "ZK proofs"] },

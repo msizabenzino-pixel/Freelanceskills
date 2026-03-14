@@ -124,7 +124,7 @@ const AUDITED_ACTIONS: Record<string, string> = {
   "POST /api/disputes": "dispute_create",
   "GET /api/account/export": "data_export",
   "DELETE /api/account/delete": "account_delete",
-  "POST /api/stripe/create-payment-intent": "payment_create",
+  "POST /api/payfast/create-payment": "payment_create",
 };
 
 export function auditMiddleware(req: Request, res: Response, next: NextFunction) {
@@ -705,15 +705,15 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
   const isDev = process.env.NODE_ENV !== "production";
   res.setHeader("Content-Security-Policy",
     "default-src 'self'; " +
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://js.stripe.com; " +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://www.payfast.co.za https://sandbox.payfast.co.za; " +
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
     "font-src 'self' https://fonts.gstatic.com; " +
     "img-src 'self' data: https: blob:; " +
     `connect-src 'self' https: ${isDev ? "ws: wss:" : "wss:"}; ` +
-    "frame-src 'self' https://js.stripe.com https://hooks.stripe.com; " +
+    "frame-src 'self' https://www.payfast.co.za https://sandbox.payfast.co.za; " +
     "frame-ancestors 'self' https://*.replit.dev https://*.replit.app; " +
     "base-uri 'self'; " +
-    "form-action 'self';"
+    "form-action 'self' https://www.payfast.co.za https://sandbox.payfast.co.za;"
   );
 
   if (process.env.NODE_ENV === "production") {
@@ -743,7 +743,7 @@ export function corsMiddleware(req: Request, res: Response, next: NextFunction) 
       res.setHeader("Access-Control-Allow-Origin", origin);
       res.setHeader("Access-Control-Allow-Credentials", "true");
       res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
-      res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, stripe-signature");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
       res.setHeader("Access-Control-Max-Age", "86400");
     }
   }

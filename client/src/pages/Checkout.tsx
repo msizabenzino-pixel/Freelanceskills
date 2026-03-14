@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,6 @@ import { Separator } from "@/components/ui/separator";
 import { useLocation } from "wouter";
 import { useCurrency } from "@/lib/currency";
 import { cn } from "@/lib/utils";
-import { loadStripe, type Stripe, type StripeElements, type StripeCardElement } from "@stripe/stripe-js";
 import {
   ShieldCheck,
   Lock,
@@ -26,23 +25,6 @@ import {
 
 type Step = "review" | "payment" | "processing" | "success" | "error";
 
-let stripePromise: Promise<Stripe | null> | null = null;
-
-function getStripe() {
-  if (!stripePromise) {
-    stripePromise = fetch("/api/stripe/config")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.publishableKey) {
-          return loadStripe(data.publishableKey);
-        }
-        return null;
-      })
-      .catch(() => null);
-  }
-  return stripePromise;
-}
-
 export default function Checkout() {
   const [, navigate] = useLocation();
   const { formatAmount } = useCurrency();
@@ -50,12 +32,62 @@ export default function Checkout() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [transactionId, setTransactionId] = useState<string>("");
-  const [stripe, setStripe] = useState<Stripe | null>(null);
-  const [elements, setElements] = useState<StripeElements | null>(null);
-  const cardElementRef = useRef<StripeCardElement | null>(null);
-  const cardContainerRef = useRef<HTMLDivElement | null>(null);
-  const [cardReady, setCardReady] = useState(false);
-  const [cardError, setCardError] = useState<string | null>(null);
+  const formRef = useRef<HTMLFormElement | null>(null);
+
+  const urlParams = new URLSearchParams(window.location.search);
+
+  const pfReturn = urlParams.get("pf_return");
+  const pfPaymentId = urlParams.get("pf_payment_id");
+
+  if (pfReturn === "success" && pfPaymentId) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <Navbar />
+        <main id="main-content" className="flex-1 pt-24 pb-12">
+          <div className="container mx-auto px-4 md:px-6 max-w-4xl">
+            <Card className="p-8 text-center" data-testid="step-success">
+              <div className="w-20 h-20 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CheckCircle2 className="w-10 h-10 text-emerald-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-foreground mb-2">Payment Successful!</h2>
+              <p className="text-muted-foreground mb-6">
+                Your payment has been securely deposited into escrow.
+              </p>
+              <div className="bg-muted rounded-xl p-4 text-left mb-6 max-w-sm mx-auto">
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Payment ID</span>
+                    <span className="font-mono font-bold text-foreground text-xs" data-testid="text-transaction-id">{pfPaymentId}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Method</span>
+                    <span className="font-medium text-foreground">PayFast</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Status</span>
+                    <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">In Escrow</Badge>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4 text-sm text-blue-800 dark:text-blue-300 mb-6 max-w-sm mx-auto">
+                <p className="font-bold mb-1">What happens next?</p>
+                <p>Your freelancer has been notified and will begin work. Funds remain safely in escrow until you confirm the job is complete.</p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button onClick={() => navigate("/dashboard")} data-testid="button-go-dashboard">
+                  Go to Dashboard
+                </Button>
+                <Button variant="outline" onClick={() => navigate("/messages")} data-testid="button-message-freelancer">
+                  Message Freelancer
+                </Button>
+              </div>
+            </Card>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   const params = new URLSearchParams(window.location.search);
   const service = {
@@ -71,74 +103,19 @@ export default function Checkout() {
   const serviceFee = Math.round(service.price * 0.1);
   const total = service.price + serviceFee;
 
-  useEffect(() => {
-    getStripe().then((s) => {
-      if (s) {
-        setStripe(s);
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    if (step === "payment" && stripe && cardContainerRef.current) {
-      if (cardElementRef.current) {
-        try { cardElementRef.current.destroy(); } catch (_) {}
-        cardElementRef.current = null;
-      }
-      setCardReady(false);
-      setCardError(null);
-
-      const elms = stripe.elements();
-      const card = elms.create("card", {
-        style: {
-          base: {
-            fontSize: "16px",
-            color: "#e2e8f0",
-            fontFamily: '"Inter", system-ui, sans-serif',
-            "::placeholder": { color: "#94a3b8" },
-            iconColor: "#f59e0b",
-          },
-          invalid: { color: "#ef4444", iconColor: "#ef4444" },
-        },
-        hidePostalCode: false,
-      });
-      card.mount(cardContainerRef.current);
-      card.on("ready", () => setCardReady(true));
-      card.on("change", (event) => {
-        setCardError(event.error ? event.error.message : null);
-        setCardReady(event.complete);
-      });
-      setElements(elms);
-      cardElementRef.current = card;
-
-      return () => {
-        try { card.destroy(); } catch (_) {}
-        cardElementRef.current = null;
-      };
-    }
-  }, [step, stripe]);
-
   const handlePayment = async () => {
-    if (!stripe || !cardElementRef.current) return;
-
-    if (!cardElementRef.current) {
-      setErrorMessage("Card input not ready. Please wait a moment and try again.");
-      setStep("error");
-      return;
-    }
-
-    const cardEl = cardElementRef.current;
     setIsProcessing(true);
     setErrorMessage(null);
+    setStep("processing");
 
     try {
-      const response = await fetch("/api/stripe/create-payment-intent", {
+      const response = await fetch("/api/payfast/create-payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           amount: total,
-          currency: "zar",
-          description: `FreelanceSkills: ${service.title} by ${service.freelancer}`,
+          itemName: `FreelanceSkills: ${service.title} by ${service.freelancer}`,
+          itemDescription: service.title,
           metadata: {
             serviceTitle: service.title,
             freelancer: service.freelancer,
@@ -149,25 +126,35 @@ export default function Checkout() {
 
       if (!response.ok) {
         const err = await response.json();
-        throw new Error(err.error || "Payment failed");
+        throw new Error(err.error || "Payment creation failed");
       }
 
-      const { clientSecret, paymentIntentId } = await response.json();
+      const data = await response.json();
 
-      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: { card: cardEl },
-      });
-
-      if (error) {
-        throw new Error(error.message || "Payment was declined");
+      if (data.paymentUrl && data.paymentData) {
+        const form = formRef.current;
+        if (form) {
+          form.action = data.paymentUrl;
+          form.innerHTML = "";
+          Object.entries(data.paymentData).forEach(([key, value]) => {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = key;
+            input.value = value as string;
+            form.appendChild(input);
+          });
+          form.submit();
+          return;
+        }
       }
 
-      if (paymentIntent?.status === "succeeded") {
-        setTransactionId(paymentIntentId);
+      if (data.sandbox && data.paymentId) {
+        setTransactionId(data.paymentId);
         setStep("success");
-      } else {
-        throw new Error("Payment was not completed. Please try again.");
+        return;
       }
+
+      throw new Error("No payment URL received from PayFast");
     } catch (err: any) {
       setErrorMessage(err.message || "An unexpected error occurred");
       setStep("error");
@@ -200,6 +187,7 @@ export default function Checkout() {
       <Navbar />
       <main id="main-content" className="flex-1 pt-24 pb-12">
         <div className="container mx-auto px-4 md:px-6 max-w-4xl">
+          <form ref={formRef} method="POST" style={{ display: "none" }} />
 
           {step !== "success" && step !== "processing" && (
             <button
@@ -303,41 +291,35 @@ export default function Checkout() {
               {step === "payment" && (
                 <Card className="p-6" data-testid="step-payment">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center">
+                    <div className="w-10 h-10 bg-gradient-to-r from-[#00457C] to-[#0066B2] rounded-lg flex items-center justify-center">
                       <CreditCard className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <h2 className="text-xl font-bold text-foreground">Pay by Card</h2>
-                      <p className="text-muted-foreground text-sm">Secure payment powered by Stripe</p>
+                      <h2 className="text-xl font-bold text-foreground">Secure Payment</h2>
+                      <p className="text-muted-foreground text-sm">Powered by PayFast — South Africa's trusted gateway</p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 mt-4 mb-6">
                     <img src="https://img.icons8.com/color/32/visa.png" alt="Visa" className="h-6" />
                     <img src="https://img.icons8.com/color/32/mastercard.png" alt="Mastercard" className="h-6" />
-                    <img src="https://img.icons8.com/color/32/amex.png" alt="Amex" className="h-6" />
-                    <span className="text-xs text-muted-foreground ml-1">& more</span>
+                    <span className="text-xs text-muted-foreground ml-1">EFT, SnapScan & more</span>
                   </div>
 
                   <div className="space-y-4">
-                    <div>
-                      <label className="text-sm font-medium text-foreground mb-2 block">Card Details</label>
-                      <div
-                        ref={cardContainerRef}
-                        className="border-2 border-border rounded-lg p-4 bg-white dark:bg-card focus-within:border-primary transition-colors"
-                        data-testid="stripe-card-element"
-                      />
-                      {cardError && (
-                        <p className="text-sm text-red-500 mt-2 flex items-center gap-1" data-testid="text-card-error">
-                          <AlertCircle className="w-3 h-3" /> {cardError}
-                        </p>
-                      )}
+                    <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4 text-sm text-blue-800 dark:text-blue-300">
+                      <p className="font-bold mb-1">How it works</p>
+                      <p>You'll be securely redirected to PayFast to complete your payment using your preferred method (card, EFT, SnapScan, or Mobicred). After payment, you'll be returned here automatically.</p>
                     </div>
 
                     <div className="bg-muted/50 rounded-lg p-4 space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Service</span>
                         <span className="font-medium text-foreground">{service.title}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Freelancer</span>
+                        <span className="font-medium text-foreground">{service.freelancer}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Amount</span>
@@ -350,13 +332,13 @@ export default function Checkout() {
                     className="w-full mt-6 h-12"
                     size="lg"
                     onClick={handlePayment}
-                    disabled={!cardReady || isProcessing || !stripe}
+                    disabled={isProcessing}
                     data-testid="button-pay-now"
                   >
                     {isProcessing ? (
-                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Processing...</>
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Redirecting to PayFast...</>
                     ) : (
-                      <><Lock className="w-4 h-4 mr-2" /> Pay {formatAmount(total)} Securely</>
+                      <><Lock className="w-4 h-4 mr-2" /> Pay {formatAmount(total)} via PayFast</>
                     )}
                   </Button>
 
@@ -380,9 +362,9 @@ export default function Checkout() {
               {step === "processing" && (
                 <Card className="p-12 text-center" data-testid="step-processing">
                   <Loader2 className="w-16 h-16 text-primary animate-spin mx-auto mb-6" />
-                  <h2 className="text-xl font-bold text-foreground mb-2">Processing Your Payment</h2>
-                  <p className="text-muted-foreground">Securely processing your card payment via Stripe...</p>
-                  <p className="text-xs text-muted-foreground mt-4">This usually takes a few seconds. Please don't close this page.</p>
+                  <h2 className="text-xl font-bold text-foreground mb-2">Redirecting to PayFast</h2>
+                  <p className="text-muted-foreground">You'll be redirected to PayFast to complete your secure payment...</p>
+                  <p className="text-xs text-muted-foreground mt-4">Please don't close this page.</p>
                 </Card>
               )}
 
@@ -412,8 +394,8 @@ export default function Checkout() {
                   <div className="bg-muted rounded-xl p-4 text-left mb-6 max-w-sm mx-auto">
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Transaction ID</span>
-                        <span className="font-mono font-bold text-foreground text-xs" data-testid="text-transaction-id">{transactionId.substring(0, 20)}...</span>
+                        <span className="text-muted-foreground">Payment ID</span>
+                        <span className="font-mono font-bold text-foreground text-xs" data-testid="text-transaction-id">{transactionId}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Amount</span>
@@ -421,7 +403,7 @@ export default function Checkout() {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Method</span>
-                        <span className="font-medium text-foreground">Card via Stripe</span>
+                        <span className="font-medium text-foreground">PayFast</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Status</span>
@@ -485,7 +467,7 @@ export default function Checkout() {
                     </div>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Lock className="w-4 h-4 text-blue-500" />
-                      <span>Stripe secure payments</span>
+                      <span>PayFast secure payments</span>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Building2 className="w-4 h-4 text-purple-500" />

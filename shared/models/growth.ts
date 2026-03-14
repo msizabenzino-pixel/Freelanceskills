@@ -40,7 +40,7 @@ export const discountCodes = pgTable("discount_codes", {
   maxUses: integer("max_uses").notNull().default(100),
   currentUses: integer("current_uses").notNull().default(0),
   affiliateId: varchar("affiliate_id"),
-  stripeCouponId: varchar("stripe_coupon_id"),
+  payfastCouponId: varchar("payfast_coupon_id"),
   expiresAt: timestamp("expires_at"),
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow().notNull(),

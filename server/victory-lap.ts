@@ -176,7 +176,7 @@ export function registerVictoryLapRoutes(app: Express, isAuthenticated: any) {
       services: {
         api: { status: "operational", responseTime: `${dbResponseTime}ms` },
         database: { status: dbStatus, responseTime: `${dbResponseTime}ms` },
-        stripe: { status: process.env.STRIPE_SECRET_KEY ? "configured" : "pending", responseTime: "N/A" },
+        payfast: { status: process.env.PAYFAST_MERCHANT_ID ? "configured" : "pending", responseTime: "N/A" },
         ai: { status: process.env.AI_INTEGRATIONS_OPENAI_API_KEY ? "configured" : "pending", responseTime: "N/A" },
         websocket: { status: "operational", responseTime: "<5ms" },
       },

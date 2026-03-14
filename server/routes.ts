@@ -23,7 +23,7 @@ export async function registerRoutes(
         environment: process.env.NODE_ENV,
         dependencies: {
           database: "connected",
-          stripe: process.env.STRIPE_SECRET_KEY ? "configured" : "missing",
+          payfast: process.env.PAYFAST_MERCHANT_ID ? "configured" : "missing",
           ai: (process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY) ? "configured" : "missing",
         }
       };
@@ -2040,20 +2040,20 @@ Experience level: ${experienceLevel || 'Any'}`
     }
   });
 
-  const { createPaymentIntent, getPaymentStatus, getStripePublishableKey, handleWebhook, isStripeConfigured } = await import("./stripe");
+  const { createPayment, getPaymentConfig, getPaymentStatus: getPayFastPaymentStatus, handleITN, isPayFastConfigured } = await import("./payfast");
 
-  app.get("/api/stripe/config", getStripePublishableKey);
+  app.get("/api/payfast/config", getPaymentConfig);
 
-  app.post("/api/stripe/create-payment-intent", async (req, res) => {
-    await createPaymentIntent(req, res);
+  app.post("/api/payfast/create-payment", async (req, res) => {
+    await createPayment(req, res);
   });
 
-  app.get("/api/stripe/payment/:paymentIntentId", async (req, res) => {
-    await getPaymentStatus(req, res);
+  app.get("/api/payfast/payment/:paymentId", async (req, res) => {
+    await getPayFastPaymentStatus(req, res);
   });
 
-  app.post("/api/stripe/webhook", async (req, res) => {
-    await handleWebhook(req, res);
+  app.post("/api/payfast/itn", async (req, res) => {
+    await handleITN(req, res);
   });
 
   // Account operations (POPIA compliance)
@@ -2132,10 +2132,10 @@ Experience level: ${experienceLevel || 'Any'}`
     }
   });
 
-  if (isStripeConfigured()) {
-    console.log("Stripe payment routes registered (including webhook)");
+  if (isPayFastConfigured()) {
+    console.log("PayFast payment routes registered (including ITN webhook)");
   } else {
-    console.log("Stripe credentials not configured - payments will be unavailable");
+    console.log("PayFast credentials not configured - payments will be unavailable. Set PAYFAST_MERCHANT_ID and PAYFAST_MERCHANT_KEY.");
   }
 
   // Referral routes
@@ -2205,12 +2205,12 @@ Experience level: ${experienceLevel || 'Any'}`
   // ============ FORTIFY ROUTES (#41-#60) ============
   const fortify = await import("./fortify");
 
-  // #41 — Escrow webhook handler (Stripe → release funds on completion)
-  // Enhanced in server/stripe.ts; escrow creation endpoint:
+  // #41 — Escrow webhook handler (PayFast → release funds on completion)
+  // Enhanced in server/payfast.ts; escrow creation endpoint:
   app.post("/api/escrow/create", isAuthenticated, async (req: any, res) => {
     try {
       const userId = (req.session as any).userId;
-      const { bookingId, amount, freelancerId, stripePaymentIntentId } = req.body;
+      const { bookingId, amount, freelancerId, payfastPaymentId } = req.body;
       if (!bookingId || !amount || !freelancerId) {
         return res.status(400).json({ message: "bookingId, amount, and freelancerId are required" });
       }
@@ -2219,7 +2219,7 @@ Experience level: ${experienceLevel || 'Any'}`
         clientId: userId,
         freelancerId,
         amount,
-        stripePaymentIntentId: stripePaymentIntentId || null,
+        payfastPaymentId: payfastPaymentId || null,
         status: "held",
       });
       fortify.trackMetric("escrowHeld", amount);
@@ -2341,7 +2341,7 @@ Experience level: ${experienceLevel || 'Any'}`
   app.post("/api/premium/upgrade", isAuthenticated, async (req: any, res) => {
     try {
       const userId = (req.session as any).userId;
-      const { tier, stripeSubscriptionId } = req.body;
+      const { tier, payfastSubscriptionId } = req.body;
       if (!["free", "premium", "enterprise"].includes(tier)) {
         return res.status(400).json({ message: "Invalid tier. Must be free, premium, or enterprise" });
       }
@@ -2352,7 +2352,7 @@ Experience level: ${experienceLevel || 'Any'}`
         tier,
         visibilityBoost: boosts[tier],
         rateLimitMultiplier: multipliers[tier],
-        stripeSubscriptionId: stripeSubscriptionId || null,
+        payfastSubscriptionId: payfastSubscriptionId || null,
         featuredUntil: tier !== "free" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : null,
       });
       res.json(result);
