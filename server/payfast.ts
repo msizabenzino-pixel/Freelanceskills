@@ -1,39 +1,61 @@
 import type { Request, Response } from "express";
 import crypto from "crypto";
 
-const PAYFAST_MERCHANT_ID = process.env.PAYFAST_MERCHANT_ID || "";
-const PAYFAST_MERCHANT_KEY = process.env.PAYFAST_MERCHANT_KEY || "";
-const PAYFAST_PASSPHRASE = process.env.PAYFAST_PASSPHRASE || "";
-const PAYFAST_SANDBOX = process.env.PAYFAST_SANDBOX !== "false";
+function getConfig() {
+  const merchantId = process.env.PAYFAST_MERCHANT_ID || "";
+  const merchantKey = process.env.PAYFAST_MERCHANT_KEY || "";
+  const passphrase = process.env.PAYFAST_PASSPHRASE || "";
 
-const PAYFAST_URL = PAYFAST_SANDBOX
-  ? "https://sandbox.payfast.co.za/eng/process"
-  : "https://www.payfast.co.za/eng/process";
+  const KNOWN_SANDBOX_MERCHANTS = ["10000100", "10046702"];
+  const isSandboxMerchant = KNOWN_SANDBOX_MERCHANTS.includes(merchantId);
+  const envSandbox = process.env.PAYFAST_SANDBOX;
+  let sandbox: boolean;
+  if (isSandboxMerchant) {
+    sandbox = true;
+  } else if (envSandbox === "true") {
+    sandbox = true;
+  } else if (envSandbox === "false") {
+    sandbox = false;
+  } else {
+    sandbox = true;
+  }
 
-const PAYFAST_VALIDATE_URL = PAYFAST_SANDBOX
-  ? "https://sandbox.payfast.co.za/eng/query/validate"
-  : "https://www.payfast.co.za/eng/query/validate";
+  const processUrl = sandbox
+    ? "https://sandbox.payfast.co.za/eng/process"
+    : "https://www.payfast.co.za/eng/process";
+
+  const validateUrl = sandbox
+    ? "https://sandbox.payfast.co.za/eng/query/validate"
+    : "https://www.payfast.co.za/eng/query/validate";
+
+  return { merchantId, merchantKey, passphrase, sandbox, processUrl, validateUrl };
+}
 
 export function isPayFastConfigured(): boolean {
-  return !!(PAYFAST_MERCHANT_ID && PAYFAST_MERCHANT_KEY);
+  const { merchantId, merchantKey } = getConfig();
+  return !!(merchantId && merchantKey);
 }
 
 function generateSignature(data: Record<string, string>, passphrase?: string): string {
-  const params = Object.entries(data)
-    .filter(([_, v]) => v !== undefined && v !== "")
+  const paramString = Object.entries(data)
+    .filter(([_, v]) => v !== undefined && v !== null && v !== "")
     .map(([k, v]) => `${k}=${encodeURIComponent(v.trim()).replace(/%20/g, "+")}`)
     .join("&");
 
-  const signatureString = passphrase ? `${params}&passphrase=${encodeURIComponent(passphrase.trim())}` : params;
+  const signatureString = passphrase
+    ? `${paramString}&passphrase=${encodeURIComponent(passphrase.trim()).replace(/%20/g, "+")}`
+    : paramString;
+
   return crypto.createHash("md5").update(signatureString).digest("hex");
 }
 
 function validateSignature(data: Record<string, string>, receivedSignature: string): boolean {
+  const { passphrase } = getConfig();
   const filtered: Record<string, string> = {};
   for (const [k, v] of Object.entries(data)) {
     if (k !== "signature") filtered[k] = v;
   }
-  const expected = generateSignature(filtered, PAYFAST_PASSPHRASE || undefined);
+  const expected = generateSignature(filtered, passphrase || undefined);
   return expected === receivedSignature;
 }
 
@@ -49,7 +71,9 @@ const VALID_PAYFAST_IPS = [
 ];
 
 export async function createPayment(req: Request, res: Response) {
-  if (!isPayFastConfigured()) {
+  const config = getConfig();
+
+  if (!config.merchantId || !config.merchantKey) {
     return res.status(503).json({ error: "Payment system not configured. Please set PAYFAST_MERCHANT_ID and PAYFAST_MERCHANT_KEY." });
   }
 
@@ -67,39 +91,52 @@ export async function createPayment(req: Request, res: Response) {
     : "https://freelanceskills.net";
 
   const paymentData: Record<string, string> = {
-    merchant_id: PAYFAST_MERCHANT_ID,
-    merchant_key: PAYFAST_MERCHANT_KEY,
+    merchant_id: config.merchantId,
+    merchant_key: config.merchantKey,
     return_url: `${baseUrl}/checkout?pf_return=success&pf_payment_id=${paymentId}`,
     cancel_url: `${baseUrl}/checkout?pf_return=cancelled`,
     notify_url: `${baseUrl}/api/payfast/itn`,
-    name_first: firstName || "Customer",
-    name_last: lastName || "",
-    email_address: email || "",
     m_payment_id: paymentId,
     amount: amountInRands,
     item_name: (itemName || "FreelanceSkills Service").substring(0, 100),
     item_description: (itemDescription || "Service booking payment").substring(0, 255),
-    custom_str1: bookingId || "",
-    custom_str2: userId || "",
-    custom_str3: "freelanceskills",
   };
 
-  const signature = generateSignature(paymentData, PAYFAST_PASSPHRASE || undefined);
+  if (firstName) paymentData.name_first = firstName;
+  if (lastName) paymentData.name_last = lastName;
+  if (email) paymentData.email_address = email;
+  if (bookingId) paymentData.custom_str1 = bookingId;
+  if (userId) paymentData.custom_str2 = userId;
+  paymentData.custom_str3 = "freelanceskills";
+
+  const signature = generateSignature(paymentData, config.passphrase || undefined);
   paymentData.signature = signature;
+
+  console.log(JSON.stringify({
+    event: "payfast_payment_created",
+    paymentId,
+    amount: amountInRands,
+    sandbox: config.sandbox,
+    processUrl: config.processUrl,
+    merchantId: config.merchantId.substring(0, 4) + "****",
+    timestamp: new Date().toISOString(),
+  }));
 
   res.json({
     paymentId,
-    paymentUrl: PAYFAST_URL,
+    paymentUrl: config.processUrl,
     paymentData,
-    sandbox: PAYFAST_SANDBOX,
+    sandbox: config.sandbox,
   });
 }
 
 export async function handleITN(req: Request, res: Response) {
+  const config = getConfig();
+
   try {
     const data = req.body as Record<string, string>;
 
-    if (!PAYFAST_SANDBOX) {
+    if (!config.sandbox) {
       const clientIp = (req.headers["x-forwarded-for"] as string || req.socket.remoteAddress || "").split(",")[0].trim();
       if (!VALID_PAYFAST_IPS.includes(clientIp)) {
         console.error(`PayFast ITN: Invalid source IP: ${clientIp}`);
@@ -107,7 +144,7 @@ export async function handleITN(req: Request, res: Response) {
       }
     }
 
-    if (data.signature && PAYFAST_PASSPHRASE) {
+    if (data.signature && config.passphrase) {
       const isValid = validateSignature(data, data.signature);
       if (!isValid) {
         console.error("PayFast ITN: Invalid signature");
@@ -181,13 +218,14 @@ export async function handleITN(req: Request, res: Response) {
 }
 
 export async function getPaymentConfig(_req: Request, res: Response) {
+  const config = getConfig();
   res.json({
     configured: isPayFastConfigured(),
-    sandbox: PAYFAST_SANDBOX,
+    sandbox: config.sandbox,
     gateway: "PayFast",
     supportedMethods: ["Credit Card", "Debit Card", "EFT", "Masterpass", "SnapScan", "Mobicred", "SCode", "Samsung Pay", "Apple Pay"],
     currencies: ["ZAR"],
-    merchantId: PAYFAST_MERCHANT_ID ? `${PAYFAST_MERCHANT_ID.substring(0, 4)}****` : null,
+    merchantId: config.merchantId ? `${config.merchantId.substring(0, 4)}****` : null,
   });
 }
 
