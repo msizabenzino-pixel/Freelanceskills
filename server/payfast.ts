@@ -86,9 +86,15 @@ export async function createPayment(req: Request, res: Response) {
   const amountInRands = (parseInt(amount) / 100).toFixed(2);
   const paymentId = `PF-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
-  const baseUrl = process.env.REPLIT_DOMAINS
-    ? `https://${process.env.REPLIT_DOMAINS.split(",")[0]}`
-    : "https://freelanceskills.net";
+  let baseUrl = process.env.PUBLIC_URL || process.env.SITE_URL || "";
+  
+  if (!baseUrl) {
+    if (process.env.REPLIT_DOMAINS) {
+      baseUrl = `https://${process.env.REPLIT_DOMAINS.split(",")[0]}`;
+    } else {
+      baseUrl = "https://freelanceskills.net";
+    }
+  }
 
   const paymentData: Record<string, string> = {
     merchant_id: config.merchantId,
