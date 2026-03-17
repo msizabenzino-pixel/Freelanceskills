@@ -157,7 +157,6 @@ export default function Checkout() {
       const data = await response.json();
 
       if (data.paymentUrl && data.paymentData) {
-        // Redirect to server endpoint that handles the form submission
         const redirectResponse = await fetch("/api/payfast/redirect", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -168,8 +167,8 @@ export default function Checkout() {
         });
 
         if (redirectResponse.ok) {
-          const html = await redirectResponse.text();
-          document.documentElement.innerHTML = html;
+          const result = await redirectResponse.json();
+          window.location.href = result.redirectUrl;
           return;
         }
 

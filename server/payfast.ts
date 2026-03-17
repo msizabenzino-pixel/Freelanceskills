@@ -254,55 +254,57 @@ export async function getPaymentStatus(req: Request, res: Response) {
   });
 }
 
-export async function redirectToPayment(req: Request, res: Response) {
+const pendingRedirects = new Map<string, { paymentUrl: string; paymentData: Record<string, string>; createdAt: number }>();
+
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, val] of pendingRedirects) {
+    if (now - val.createdAt > 5 * 60 * 1000) pendingRedirects.delete(key);
+  }
+}, 60000);
+
+export async function storeRedirect(req: Request, res: Response) {
   try {
     const { paymentData, paymentUrl } = req.body;
-
     if (!paymentData || !paymentUrl) {
       return res.status(400).json({ error: "Payment data and URL required" });
     }
+    const token = crypto.randomUUID();
+    pendingRedirects.set(token, { paymentUrl, paymentData, createdAt: Date.now() });
+    res.json({ redirectUrl: `/api/payfast/go/${token}` });
+  } catch (error: any) {
+    console.error("Store redirect error:", error);
+    res.status(500).json({ error: "Failed to prepare redirect" });
+  }
+}
 
-    // Generate HTML form that auto-submits
-    const formHtml = `
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Processing Payment...</title>
-  <script>
-    window.addEventListener('load', function() {
-      document.getElementById('payfast-form').submit();
-    });
-  </script>
-</head>
-<body style="display: none;">
-  <form id="payfast-form" method="POST" action="${paymentUrl}">
-    ${Object.entries(paymentData)
-      .map(
-        ([key, value]) =>
-          `<input type="hidden" name="${key}" value="${String(value).replace(/"/g, '&quot;')}">`
-      )
-      .join("")}
-  </form>
-  <noscript>
-    <p>JavaScript is required to complete this payment. Please enable JavaScript and try again.</p>
-    <form method="POST" action="${paymentUrl}">
-      ${Object.entries(paymentData)
-        .map(
-          ([key, value]) =>
-            `<input type="hidden" name="${key}" value="${String(value).replace(/"/g, '&quot;')}">`
-        )
-        .join("")}
-      <button type="submit">Click here to continue</button>
-    </form>
-  </noscript>
-</body>
-</html>
-    `;
+export async function redirectToPayment(req: Request, res: Response) {
+  try {
+    const { token } = req.params;
+    const data = pendingRedirects.get(token);
+    if (!data) {
+      return res.status(404).send("Payment session expired or not found. Please go back and try again.");
+    }
+    pendingRedirects.delete(token);
+
+    const inputs = Object.entries(data.paymentData)
+      .map(([key, value]) => `<input type="hidden" name="${key}" value="${String(value).replace(/"/g, '&quot;')}">`)
+      .join("\n    ");
 
     res.setHeader("Content-Type", "text/html");
-    res.send(formHtml);
+    res.setHeader("Content-Security-Policy", "default-src 'self' 'unsafe-inline'; form-action https://www.payfast.co.za https://sandbox.payfast.co.za;");
+    res.send(`<!DOCTYPE html>
+<html>
+<head><title>Redirecting to PayFast...</title></head>
+<body onload="document.getElementById('pf').submit()">
+  <p>Redirecting to PayFast. Please wait...</p>
+  <form id="pf" method="POST" action="${data.paymentUrl}">
+    ${inputs}
+  </form>
+</body>
+</html>`);
   } catch (error: any) {
     console.error("Redirect error:", error);
-    res.status(500).json({ error: "Failed to redirect to payment gateway" });
+    res.status(500).send("Failed to redirect to payment gateway");
   }
 }
