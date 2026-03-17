@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -34,8 +34,6 @@ export default function Checkout() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [transactionId, setTransactionId] = useState<string>("");
-  const formRef = useRef<HTMLFormElement | null>(null);
-
   const urlParams = new URLSearchParams(window.location.search);
 
   const pfReturn = urlParams.get("pf_return");
@@ -215,8 +213,6 @@ export default function Checkout() {
       <Navbar />
       <main id="main-content" className="flex-1 pt-24 pb-12">
         <div className="container mx-auto px-4 md:px-6 max-w-4xl">
-          <form ref={formRef} method="POST" style={{ display: "none" }} />
-
           {step !== "success" && step !== "processing" && (
             <button
               onClick={() => {

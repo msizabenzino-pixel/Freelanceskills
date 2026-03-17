@@ -32,16 +32,21 @@ declare module "http" {
   }
 }
 
+const skipBodyParseForSubmit = (middleware: any) => (req: any, res: any, next: any) => {
+  if (req.path === "/api/payfast/submit") return next();
+  return middleware(req, res, next);
+};
+
 app.use(
-  express.json({
+  skipBodyParseForSubmit(express.json({
     limit: "10mb",
-    verify: (req, _res, buf) => {
+    verify: (req: any, _res: any, buf: any) => {
       req.rawBody = buf;
     },
-  }),
+  })),
 );
 
-app.use(express.urlencoded({ extended: false, limit: "10mb" }));
+app.use(skipBodyParseForSubmit(express.urlencoded({ extended: false, limit: "10mb" })));
 
 app.use(corsMiddleware);
 app.use((req, res, next) => {
