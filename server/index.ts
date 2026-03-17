@@ -95,7 +95,7 @@ app.use(["/api/cv/parse", "/api/opportunities/search"], (req, res, next) => {
 });
 
 app.use("/api/", (req: Request, res: Response, next: NextFunction) => {
-  const exemptPaths = ["/api/health", "/api/metrics", "/api/metrics/prometheus", "/api/metrics/dashboard", "/api/stats/public", "/api/payfast/itn"];
+  const exemptPaths = ["/api/health", "/api/metrics", "/api/metrics/prometheus", "/api/metrics/dashboard", "/api/stats/public", "/api/payfast/itn", "/api/payfast/submit"];
   if (exemptPaths.includes(req.path)) return next();
   return tieredRateLimiter(req, res, next);
 });
