@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useLocation } from "wouter";
 import { useCurrency } from "@/lib/currency";
+import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 import {
   ShieldCheck,
@@ -28,6 +29,7 @@ type Step = "review" | "payment" | "processing" | "success" | "error";
 export default function Checkout() {
   const [, navigate] = useLocation();
   const { formatAmount } = useCurrency();
+  const { isAuthenticated, isLoading } = useAuth();
   const [step, setStep] = useState<Step>("review");
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -38,6 +40,29 @@ export default function Checkout() {
 
   const pfReturn = urlParams.get("pf_return");
   const pfPaymentId = urlParams.get("pf_payment_id");
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      navigate("/auth?tab=login&redirect=/checkout");
+    }
+  }, [isAuthenticated, isLoading, navigate]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <Navbar />
+        <main id="main-content" className="flex-1 pt-24 pb-12 flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   if (pfReturn === "success" && pfPaymentId) {
     return (
@@ -132,20 +157,23 @@ export default function Checkout() {
       const data = await response.json();
 
       if (data.paymentUrl && data.paymentData) {
-        const form = formRef.current;
-        if (form) {
-          form.action = data.paymentUrl;
-          form.innerHTML = "";
-          Object.entries(data.paymentData).forEach(([key, value]) => {
-            const input = document.createElement("input");
-            input.type = "hidden";
-            input.name = key;
-            input.value = value as string;
-            form.appendChild(input);
-          });
-          form.submit();
-          return;
-        }
+        // Create form and submit to PayFast
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = data.paymentUrl;
+        form.style.display = "none";
+
+        Object.entries(data.paymentData).forEach(([key, value]) => {
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = key;
+          input.value = value as string;
+          form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+        return;
       }
 
       if (data.sandbox && data.paymentId) {
