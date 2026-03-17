@@ -44,7 +44,12 @@ app.use(
 app.use(express.urlencoded({ extended: false, limit: "10mb" }));
 
 app.use(corsMiddleware);
-app.use(securityHeaders);
+app.use((req, res, next) => {
+  if (req.path === "/api/payfast/submit") {
+    return next();
+  }
+  securityHeaders(req, res, next);
+});
 app.use(auditMiddleware);
 
 const aiRateLimitMap = new Map<string, { count: number; resetTime: number }>();

@@ -254,3 +254,9 @@ export async function getPaymentStatus(req: Request, res: Response) {
   });
 }
 
+export function submitToPayFast(req: Request, res: Response) {
+  const config = getConfig();
+  const targetUrl = config.processUrl;
+  res.redirect(307, targetUrl);
+}
+

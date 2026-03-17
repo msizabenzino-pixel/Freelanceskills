@@ -157,18 +157,21 @@ export default function Checkout() {
       const data = await response.json();
 
       if (data.paymentUrl && data.paymentData) {
-        const inputs = Object.entries(data.paymentData as Record<string, string>)
-          .map(([k, v]) => `<input type="hidden" name="${k}" value="${String(v).replace(/"/g, '&quot;')}">`)
-          .join("");
-        document.open();
-        document.write(
-          `<!DOCTYPE html><html><head><title>Redirecting to PayFast...</title></head>` +
-          `<body><p>Redirecting to PayFast, please wait...</p>` +
-          `<form id="pf" method="POST" action="${data.paymentUrl}">${inputs}</form>` +
-          `<script>document.getElementById("pf").submit();<\/script>` +
-          `</body></html>`
-        );
-        document.close();
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = "/api/payfast/submit";
+        form.style.display = "none";
+
+        Object.entries(data.paymentData as Record<string, string>).forEach(([key, value]) => {
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = key;
+          input.value = String(value);
+          form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
         return;
       }
 
