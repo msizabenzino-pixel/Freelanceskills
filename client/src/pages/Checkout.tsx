@@ -157,30 +157,23 @@ export default function Checkout() {
       const data = await response.json();
 
       if (data.paymentUrl && data.paymentData) {
-        // Create and submit form to PayFast
-        setTimeout(() => {
-          const form = document.createElement("form");
-          form.method = "POST";
-          form.action = data.paymentUrl;
-          form.setAttribute("style", "display: none !important;");
-          form.setAttribute("id", "payfast-form");
+        // Redirect to server endpoint that handles the form submission
+        const redirectResponse = await fetch("/api/payfast/redirect", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            paymentUrl: data.paymentUrl,
+            paymentData: data.paymentData,
+          }),
+        });
 
-          Object.entries(data.paymentData).forEach(([key, value]) => {
-            const input = document.createElement("input");
-            input.type = "hidden";
-            input.name = key;
-            input.value = String(value);
-            form.appendChild(input);
-          });
+        if (redirectResponse.ok) {
+          const html = await redirectResponse.text();
+          document.documentElement.innerHTML = html;
+          return;
+        }
 
-          document.body.appendChild(form);
-          
-          // Use a small delay to ensure form is added before submitting
-          requestAnimationFrame(() => {
-            form.submit();
-          });
-        }, 100);
-        return;
+        throw new Error("Failed to redirect to payment gateway");
       }
 
       if (data.sandbox && data.paymentId) {

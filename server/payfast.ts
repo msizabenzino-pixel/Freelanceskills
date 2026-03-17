@@ -253,3 +253,56 @@ export async function getPaymentStatus(req: Request, res: Response) {
     message: "Payment status is updated via ITN callback. Check your dashboard for the latest status.",
   });
 }
+
+export async function redirectToPayment(req: Request, res: Response) {
+  try {
+    const { paymentData, paymentUrl } = req.body;
+
+    if (!paymentData || !paymentUrl) {
+      return res.status(400).json({ error: "Payment data and URL required" });
+    }
+
+    // Generate HTML form that auto-submits
+    const formHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Processing Payment...</title>
+  <script>
+    window.addEventListener('load', function() {
+      document.getElementById('payfast-form').submit();
+    });
+  </script>
+</head>
+<body style="display: none;">
+  <form id="payfast-form" method="POST" action="${paymentUrl}">
+    ${Object.entries(paymentData)
+      .map(
+        ([key, value]) =>
+          `<input type="hidden" name="${key}" value="${String(value).replace(/"/g, '&quot;')}">`
+      )
+      .join("")}
+  </form>
+  <noscript>
+    <p>JavaScript is required to complete this payment. Please enable JavaScript and try again.</p>
+    <form method="POST" action="${paymentUrl}">
+      ${Object.entries(paymentData)
+        .map(
+          ([key, value]) =>
+            `<input type="hidden" name="${key}" value="${String(value).replace(/"/g, '&quot;')}">`
+        )
+        .join("")}
+      <button type="submit">Click here to continue</button>
+    </form>
+  </noscript>
+</body>
+</html>
+    `;
+
+    res.setHeader("Content-Type", "text/html");
+    res.send(formHtml);
+  } catch (error: any) {
+    console.error("Redirect error:", error);
+    res.status(500).json({ error: "Failed to redirect to payment gateway" });
+  }
+}
