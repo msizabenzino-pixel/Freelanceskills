@@ -157,22 +157,19 @@ export default function Checkout() {
       const data = await response.json();
 
       if (data.paymentUrl && data.paymentData) {
-        const redirectResponse = await fetch("/api/payfast/redirect", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            paymentUrl: data.paymentUrl,
-            paymentData: data.paymentData,
-          }),
-        });
-
-        if (redirectResponse.ok) {
-          const result = await redirectResponse.json();
-          window.location.href = result.redirectUrl;
-          return;
-        }
-
-        throw new Error("Failed to redirect to payment gateway");
+        const inputs = Object.entries(data.paymentData as Record<string, string>)
+          .map(([k, v]) => `<input type="hidden" name="${k}" value="${String(v).replace(/"/g, '&quot;')}">`)
+          .join("");
+        document.open();
+        document.write(
+          `<!DOCTYPE html><html><head><title>Redirecting to PayFast...</title></head>` +
+          `<body><p>Redirecting to PayFast, please wait...</p>` +
+          `<form id="pf" method="POST" action="${data.paymentUrl}">${inputs}</form>` +
+          `<script>document.getElementById("pf").submit();<\/script>` +
+          `</body></html>`
+        );
+        document.close();
+        return;
       }
 
       if (data.sandbox && data.paymentId) {
