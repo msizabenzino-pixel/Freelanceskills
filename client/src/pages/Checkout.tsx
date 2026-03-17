@@ -157,22 +157,29 @@ export default function Checkout() {
       const data = await response.json();
 
       if (data.paymentUrl && data.paymentData) {
-        // Create form and submit to PayFast
-        const form = document.createElement("form");
-        form.method = "POST";
-        form.action = data.paymentUrl;
-        form.style.display = "none";
+        // Create and submit form to PayFast
+        setTimeout(() => {
+          const form = document.createElement("form");
+          form.method = "POST";
+          form.action = data.paymentUrl;
+          form.setAttribute("style", "display: none !important;");
+          form.setAttribute("id", "payfast-form");
 
-        Object.entries(data.paymentData).forEach(([key, value]) => {
-          const input = document.createElement("input");
-          input.type = "hidden";
-          input.name = key;
-          input.value = value as string;
-          form.appendChild(input);
-        });
+          Object.entries(data.paymentData).forEach(([key, value]) => {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = key;
+            input.value = String(value);
+            form.appendChild(input);
+          });
 
-        document.body.appendChild(form);
-        form.submit();
+          document.body.appendChild(form);
+          
+          // Use a small delay to ensure form is added before submitting
+          requestAnimationFrame(() => {
+            form.submit();
+          });
+        }, 100);
         return;
       }
 
@@ -184,6 +191,7 @@ export default function Checkout() {
 
       throw new Error("No payment URL received from PayFast");
     } catch (err: any) {
+      console.error("Payment error:", err);
       setErrorMessage(err.message || "An unexpected error occurred");
       setStep("error");
     } finally {
