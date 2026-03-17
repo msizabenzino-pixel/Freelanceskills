@@ -2040,7 +2040,7 @@ Experience level: ${experienceLevel || 'Any'}`
     }
   });
 
-  const { createPayment, getPaymentConfig, getPaymentStatus: getPayFastPaymentStatus, handleITN, isPayFastConfigured, submitToPayFast } = await import("./payfast");
+  const { createPayment, getPaymentConfig, getPaymentStatus: getPayFastPaymentStatus, handleITN, isPayFastConfigured, storePaymentForRedirect, servePaymentRedirectPage } = await import("./payfast");
 
   app.get("/api/payfast/config", getPaymentConfig);
 
@@ -2048,8 +2048,12 @@ Experience level: ${experienceLevel || 'Any'}`
     await createPayment(req, res);
   });
 
-  app.post("/api/payfast/submit", (req, res) => {
-    submitToPayFast(req, res);
+  app.post("/api/payfast/store-redirect", (req, res) => {
+    storePaymentForRedirect(req, res);
+  });
+
+  app.get("/api/payfast/go/:token", (req, res) => {
+    servePaymentRedirectPage(req, res);
   });
 
   app.get("/api/payfast/payment/:paymentId", async (req, res) => {

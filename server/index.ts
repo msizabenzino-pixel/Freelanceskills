@@ -50,7 +50,7 @@ app.use(skipBodyParseForSubmit(express.urlencoded({ extended: false, limit: "10m
 
 app.use(corsMiddleware);
 app.use((req, res, next) => {
-  if (req.path === "/api/payfast/submit") {
+  if (req.path === "/api/payfast/submit" || req.path.startsWith("/api/payfast/go/")) {
     return next();
   }
   securityHeaders(req, res, next);
@@ -101,6 +101,7 @@ app.use(["/api/cv/parse", "/api/opportunities/search"], (req, res, next) => {
 
 app.use("/api/", (req: Request, res: Response, next: NextFunction) => {
   const exemptPaths = ["/api/health", "/api/metrics", "/api/metrics/prometheus", "/api/metrics/dashboard", "/api/stats/public", "/api/payfast/itn", "/api/payfast/submit"];
+  if (req.path.startsWith("/api/payfast/go/")) return next();
   if (exemptPaths.includes(req.path)) return next();
   return tieredRateLimiter(req, res, next);
 });

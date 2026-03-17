@@ -155,21 +155,14 @@ export default function Checkout() {
       const data = await response.json();
 
       if (data.paymentUrl && data.paymentData) {
-        const form = document.createElement("form");
-        form.method = "POST";
-        form.action = "/api/payfast/submit";
-        form.style.display = "none";
-
-        Object.entries(data.paymentData as Record<string, string>).forEach(([key, value]) => {
-          const input = document.createElement("input");
-          input.type = "hidden";
-          input.name = key;
-          input.value = String(value);
-          form.appendChild(input);
+        const storeRes = await fetch("/api/payfast/store-redirect", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ paymentUrl: data.paymentUrl, paymentData: data.paymentData }),
         });
-
-        document.body.appendChild(form);
-        form.submit();
+        if (!storeRes.ok) throw new Error("Failed to prepare payment redirect");
+        const { token } = await storeRes.json();
+        window.location.href = `/api/payfast/go/${token}`;
         return;
       }
 

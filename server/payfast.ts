@@ -254,9 +254,50 @@ export async function getPaymentStatus(req: Request, res: Response) {
   });
 }
 
-export function submitToPayFast(req: Request, res: Response) {
-  const config = getConfig();
-  const targetUrl = config.processUrl;
-  res.redirect(307, targetUrl);
+const pendingPayments = new Map<string, { paymentUrl: string; paymentData: Record<string, string>; createdAt: number }>();
+
+setInterval(() => {
+  const now = Date.now();
+  for (const [k, v] of pendingPayments) {
+    if (now - v.createdAt > 5 * 60 * 1000) pendingPayments.delete(k);
+  }
+}, 60000);
+
+export function storePaymentForRedirect(req: Request, res: Response) {
+  const { paymentUrl, paymentData } = req.body;
+  if (!paymentUrl || !paymentData) {
+    return res.status(400).json({ error: "Missing payment data" });
+  }
+  const token = crypto.randomUUID();
+  pendingPayments.set(token, { paymentUrl, paymentData, createdAt: Date.now() });
+  res.json({ token });
+}
+
+export function servePaymentRedirectPage(req: Request, res: Response) {
+  const { token } = req.params;
+  const data = pendingPayments.get(token);
+  if (!data) {
+    return res.status(410).send("<html><body><h1>Payment session expired</h1><p>Please go back and try again.</p></body></html>");
+  }
+  pendingPayments.delete(token);
+
+  const inputs = Object.entries(data.paymentData)
+    .map(([k, v]) => `<input type="hidden" name="${k}" value="${String(v).replace(/"/g, "&quot;")}">`)
+    .join("\n");
+
+  res.removeHeader("Content-Security-Policy");
+  res.removeHeader("Cross-Origin-Opener-Policy");
+  res.removeHeader("Cross-Origin-Resource-Policy");
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.setHeader("Cache-Control", "no-store, no-cache");
+  res.send(`<!DOCTYPE html>
+<html><head><title>Redirecting to PayFast...</title></head>
+<body>
+<p>Redirecting to PayFast, please wait...</p>
+<form id="pf" method="POST" action="${data.paymentUrl}">
+${inputs}
+</form>
+<script>document.getElementById("pf").submit();</script>
+</body></html>`);
 }
 
