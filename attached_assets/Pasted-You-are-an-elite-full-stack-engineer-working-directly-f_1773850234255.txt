@@ -1,0 +1,45 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready CONTENT MODERATION department (the platform safety guardian) to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/moderation — the most intelligent, proactive, multimodal content moderation system ever built for a freelance marketplace. It obliterates competitor weaknesses (reactive on Upwork/Fiverr, basic keyword/AI, weak image handling, slow appeals) with real-time pre-publish scanning, AI scoring, smart quarantine, rewrite suggestions, deepfake detection, and Elon first-principles safety.
+
+MANDATORY MODERATED CONTENT & TOOLS — DO NOT REMOVE ANY:
+Moderated Content:
+- Job descriptions
+- Gig descriptions
+- Portfolio images
+- Messages
+(plus: proposals, contracts, reviews, chat)
+
+Core Tools:
+- Keyword filtering
+- AI moderation
+- Manual review
+
+Admin Dashboard Sections (/admin/moderation):
+- Moderation Queue: Table of pending items (AI score 0-100, content type, user, risk flags). Filter by severity, type, date.
+- Content Scanner: Real-time preview/upload tester + AI analysis results.
+- Rules & Keywords: Manage keyword lists, custom rules, AI model thresholds.
+- Image Intelligence Vault: Gallery of flagged images with deepfake/NSFW/plagiarism scores.
+- Analytics: Charts for moderation volume, false positive rate, catch rate, impact on disputes.
+- Appeals: Dedicated appeal queue with timeline + resolution.
+
+200% Intelligence & Human Excellence:
+- Real-time Pre-Publish Scan (block or quarantine high-risk before live)
+- AI Severity Scoring + Predictive Risk + Contextual Understanding
+- Auto-Suggest Rewrite (AI proposes fixed version + Academy course link)
+- Post-Publish Continuous Monitoring
+- Transparent Appeals with AI explanation + human review SLA
+- Africa-first multilingual + low-data mode + USSD escalation
+
+Deliver:
+- New backend routes (/api/moderation/scan, /api/moderation/queue, /api/moderation/appeals, etc.)
+- MongoDB schemas (ModerationItem, ModerationRule, FlaggedContent, Appeal)
+- New React page: src/pages/admin/ContentModeration.jsx (queue table, scanner panel, image vault, analytics, appeals tab)
+- Socket.io events for live queue updates
+- Updated README with “How to access /admin/moderation + how we set the impossible safety bar”
+
+Build with extreme intelligence, first-principles safety, and relentless work ethic — make Freelancerskills.net the safest, most trustworthy marketplace in Africa and beyond. Start with schemas and backend, then the React UI. Output every new file.
