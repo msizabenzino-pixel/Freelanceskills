@@ -28,6 +28,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import { SeverityGauge, RehabPathPanel, EvidenceVault, HealingPath, LiveCollaboration, ResolutionSurvey, EarlyWarningPulse } from "@/components/ReportComponents";
 
 type FilterStatus = "all" | "open" | "under_review" | "resolved" | "closed";
 type SortBy = "severity" | "urgency" | "recidivism" | "rehab" | "financial" | "forecast" | "date";
@@ -93,15 +94,6 @@ function SeverityBar({ score, showLabel = false }: { score: number; showLabel?: 
         <div style={{ width: `${score}%`, background: color, height: "100%" }} />
       </div>
       <span className="text-[10px] font-bold" style={{ color }}>{score}{showLabel ? "/100" : ""}</span>
-    </div>
-  );
-}
-
-function EarlyWarningPulse({ reason }: { reason: string }) {
-  return (
-    <div className="flex items-center gap-2 bg-amber-50 border border-amber-300 rounded-lg px-3 py-2 animate-pulse">
-      <span className="text-orange-600 font-bold text-sm">⚠️</span>
-      <p className="text-[10px] font-bold text-amber-800">{reason}</p>
     </div>
   );
 }
