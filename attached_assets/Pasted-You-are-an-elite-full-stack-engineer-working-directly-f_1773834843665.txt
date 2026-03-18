@@ -1,0 +1,51 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready SUPPORT TICKET SYSTEM (the caring, intelligent helpdesk) to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/support — the most empathetic, intelligent, and Africa-first customer support system ever built. It fixes every competitor weakness (Zendesk slow SLA, Intercom no Academy link, Freshdesk weak context, Fiverr/Upwork manual tickets) with AI first-response, predictive escalation, real-time collaboration, and post-ticket growth paths.
+
+MANDATORY FIELDS & FEATURES — DO NOT REMOVE ANY:
+
+Ticket Fields (table + rich modal):
+- Ticket ID (short UUID)
+- User (linked Freelancer/Client + Academy badge)
+- Category (Technical / Payment / Dispute / Academy / Account / Other)
+- Subject
+- Message (full thread)
+- Priority (Low / Medium / High / Urgent)
+- Status (Open / Pending / In progress / Resolved / Closed)
+- Assigned agent
+
+Human + AI Features:
+- Internal notes (agent-only)
+- File attachments + voice notes (playable)
+- SLA Timer (live countdown with predictive escalation)
+- Escalation rules (auto to senior + Academy suggestion)
+
+Admin Actions:
+- Assign agent
+- Reply with AI-suggested response
+- Add internal note
+- Escalate ticket
+- Mark resolved + send satisfaction survey
+- Link to Order / Dispute / Contract
+
+200% Intelligence & Human Excellence:
+- AI Auto-Categorization + First-Response Generator (solves 60% tickets instantly)
+- Empathy Engine (detects frustration and suggests compassionate video reply or Academy course)
+- Predictive SLA Escalation + Risk Score
+- Post-Resolution Growth Path (Academy recommendations with earnings-lift forecast)
+- Real-time Socket.io collaboration (multiple agents on same ticket)
+- Africa-first zero-data SMS escalation + voice note support
+- Full integration with Disputes, Orders, Academy, Finance
+
+Deliver:
+- New backend routes (/api/support/tickets + /api/support/:id)
+- MongoDB schema extensions (SupportTicket, TicketThread, SLATimer, EmpathyLog)
+- New React page: src/pages/admin/SupportTicketSystem.jsx (table + beautiful modal with thread, voice player, AI suggestions, SLA timer)
+- Socket.io events for live updates
+- Updated README with “How to access /admin/support + how we set the bar impossibly high”
+
+Build this with real soul — make every user feel heard, helped, and inspired to earn more. Start with schemas and backend, then the React UI. Output every new file.
