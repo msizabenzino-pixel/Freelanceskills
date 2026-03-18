@@ -1,0 +1,63 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion platform. Build a complete, production-ready, Fiverr-level User Management System + Admin Dashboard for FreelanceSkills.net — Africa’s fastest-growing freelance & gig platform (Cape Town-based, live at freelanceskills.net).
+
+Tech stack (use exactly):
+- Backend: Node.js + Express + MongoDB (Mongoose) + JWT + bcrypt + rate-limiter-flexible
+- Frontend Dashboard: React 18 + Vite + Tailwind CSS + React-Table v8 + React Query + Axios
+- Real-time: Socket.io for activity & messages
+- Database: MongoDB with proper indexes for 10M+ users
+
+Core requirement: COMPLETE USER LIFECYCLE MANAGEMENT (Elon Musk first-principles style — secure, scalable, auditable, zero-trust, built to handle 1 billion users eventually).
+
+MANDATORY FEATURES — DO NOT REMOVE ANY:
+
+2.1 User List Fields (every row must show all of these):
+- User ID (auto-generated short UUID)
+- Full Name
+- Email
+- Phone (with country code)
+- Role (Freelancer / Client / Admin / Moderator / Upskiller)
+- Account Status (Active / Suspended / Banned / Pending)
+- KYC Status (Not Started / Pending / Verified / Rejected)
+- Country
+- Registration Date
+- Last Login
+- IP Address (last login)
+- Wallet Balance (ZAR, with transaction history link)
+
+Filters (advanced, real-time):
+- Role
+- Country
+- Verification (KYC status)
+- Status (Account Status)
+- Date range (Registration Date + Last Login)
+
+Actions (with confirmation modals and audit log):
+- View full profile (opens detailed modal with tabs)
+- Suspend user (temporary, with reason & duration)
+- Ban user (permanent, with reason)
+- Reset password (force new password + email)
+- Change role
+- Send message (internal + email)
+- View activity log (full audit trail)
+
+ADDITIONAL MUST-HAVE (you may add but never remove):
+- Full Upskilling Academy integration: every user profile shows “AI Academy Progress” tab — courses completed, certifications earned, skill badges, learning streak.
+- Wallet system: simple balance + transaction history (linked to escrow & payouts).
+- Export to CSV/Excel of filtered users.
+- Bulk actions (suspend 50 users, change roles, etc.).
+- Activity Log dashboard (global + per user).
+- Dark/light mode (Tailwind).
+- Responsive mobile-first admin dashboard.
+- Role-based access control (only Super Admin sees everything).
+- Security: 2FA option, IP logging, rate limiting on all admin actions, full audit trail for every change.
+- Scalability notes in code comments: MongoDB indexes, sharding-ready structure, prepared for 1M+ daily users.
+
+Deliver in one Replit project:
+- Folder structure: /backend, /frontend, /shared
+- .env example
+- README.md with “How to run” + “Future scaling plan to 1B users”
+- Live preview links for both backend API and React dashboard
+
+Start by creating the MongoDB schemas first (User, ActivityLog, WalletTransaction, KYC), then build the REST + Socket APIs, then the beautiful React admin dashboard with real-time updates.
+
+Build this as if it is the backbone of a $1 billion company — clean, fast, secure, beautiful, and ready for millions of African freelancers. Begin now and output every file.
