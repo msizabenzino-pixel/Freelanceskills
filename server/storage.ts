@@ -10,13 +10,12 @@ import {
   type Notification, type InsertNotification,
   type FraudFlag, type InsertFraudFlag,
   type AuditLog, type InsertAuditLog,
-  type Dispute, type InsertDispute,
   type EscrowTransaction, type InsertEscrowTransaction,
   type PremiumTier, type InsertPremiumTier,
   jobs, profiles, servicePackages, bookings, reviews, conversations, messages,
   freelancerVerifications, privateFeedback, enterpriseLeads, aggregatedJobs, jobApplications,
   businessInvitations, referrals, courses, lessons, courseProgress, certificates, notifications,
-  fraudFlags, auditLogs, disputes, escrowTransactions, premiumTiers
+  fraudFlags, auditLogs, escrowTransactions, premiumTiers
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, sql, desc, count } from "drizzle-orm";

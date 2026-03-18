@@ -18,25 +18,6 @@ export const insertAuditLogSchema = createInsertSchema(auditLogs).omit({ id: tru
 export type AuditLog = typeof auditLogs.$inferSelect;
 export type InsertAuditLog = z.infer<typeof insertAuditLogSchema>;
 
-export const disputes = pgTable("disputes", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  bookingId: varchar("booking_id").notNull(),
-  initiatorId: varchar("initiator_id").notNull(),
-  respondentId: varchar("respondent_id").notNull(),
-  reason: varchar("reason").notNull(),
-  description: text("description").notNull(),
-  status: varchar("status").notNull().default("open"),
-  adminId: varchar("admin_id"),
-  resolution: text("resolution"),
-  chatLogExport: jsonb("chat_log_export").$type<any[]>(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  resolvedAt: timestamp("resolved_at"),
-});
-
-export const insertDisputeSchema = createInsertSchema(disputes).omit({ id: true, createdAt: true, resolvedAt: true });
-export type Dispute = typeof disputes.$inferSelect;
-export type InsertDispute = z.infer<typeof insertDisputeSchema>;
-
 export const escrowTransactions = pgTable("escrow_transactions", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   bookingId: varchar("booking_id").notNull(),

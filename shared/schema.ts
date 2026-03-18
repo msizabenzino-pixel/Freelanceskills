@@ -18,3 +18,4 @@ export * from "./models/kyc";
 export * from "./models/freelancer";
 export * from "./models/client";
 export * from "./models/payments";
+export * from "./models/disputes";
