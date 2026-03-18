@@ -1,0 +1,45 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready PROPOSAL MANAGEMENT section to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/proposals — a hyper-intelligent proposal control centre that surpasses Upwork (proposal analytics + JSS), Fiverr (requests), Toptal (screening), PeoplePerHour, Guru and Freelancer.com by adding 200% AI intelligence: predictive win probability, Academy earnings-lift correlation, instant spam/fraud detection, and real-time proposal scoring.
+
+MANDATORY FIELDS & FEATURES — DO NOT REMOVE ANY:
+
+Proposal Listings Fields (table + detailed modal):
+- Proposal ID (short UUID)
+- Freelancer (linked with Academy level + earnings-lift badge)
+- Job (linked title + budget)
+- Proposed budget (ZAR)
+- Cover letter (preview + full view)
+- Attachments (images/PDFs with AI scan)
+- Submitted date
+- Status (Pending / Shortlisted / Accepted / Rejected / Withdrawn)
+
+Admin Actions (with confirmation + immutable audit log):
+- Remove spam proposals (one-tap or bulk)
+- Flag suspicious proposal (with reason)
+- Investigate fraud (opens full AI panel)
+- Shortlist / Accept / Reject proposal
+- Message freelancer or client directly
+- Feature high-quality proposal (visibility boost)
+
+200% Intelligence Features (Elon Musk level):
+- AI Proposal Quality Score (0-100 real-time, based on cover letter sentiment, Academy match, past performance)
+- Predictive Win Probability (AI forecast % chance proposal wins the job)
+- Academy Correlation Engine (scatter chart showing how certifications increase win rate + earnings)
+- Instant Spam & Fraud Detection (AI flags duplicate text, unrealistic budgets, suspicious attachments)
+- Real-time Proposal Analytics (average bid, response time, quality trend)
+- Bulk actions (remove 100 spam, shortlist batch, flag fraud ring)
+- One-click export (CSV/Excel with AI scores + Academy ROI)
+
+Deliver:
+- New backend routes (/api/proposals + /api/proposals/:id)
+- MongoDB schema extensions (Proposal, ProposalScore, FraudFlag)
+- New React page: src/pages/admin/ProposalManagement.jsx (table + modal with tabs + charts)
+- Socket.io events for live updates (new proposal, status change, fraud alert)
+- Updated README with “How to access /admin/proposals + how we beat Upwork/Fiverr/Toptal with 200% more intelligence”
+
+Build this as the intelligent gateway that turns proposals into high-value matches on a $1 billion platform — fast, predictive, fraud-proof, and Africa-first. Start with schemas and backend, then the React UI. Output every new file.

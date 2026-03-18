@@ -61,6 +61,7 @@ const PaymentsControl = lazy(() => import("@/pages/PaymentsControl"));
 const AcademyAdmin = lazy(() => import("@/pages/AcademyAdmin"));
 const SystemSettings = lazy(() => import("@/pages/SystemSettings"));
 const GigMarketplace = lazy(() => import("@/pages/GigMarketplace"));
+const ProposalManagement = lazy(() => import("@/pages/ProposalManagement"));
 const Auth = lazy(() => import("@/pages/Auth"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 
@@ -160,6 +161,11 @@ function Router() {
         <Route path="/admin/gigs">
           <AuthGuard>
             <GigMarketplace />
+          </AuthGuard>
+        </Route>
+        <Route path="/admin/proposals">
+          <AuthGuard>
+            <ProposalManagement />
           </AuthGuard>
         </Route>
         <Route path="/admin/mobile">
