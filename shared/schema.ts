@@ -16,3 +16,4 @@ export * from "./models/vision";
 export * from "./models/admin";
 export * from "./models/kyc";
 export * from "./models/freelancer";
+export * from "./models/client";

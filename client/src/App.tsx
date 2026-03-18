@@ -56,6 +56,7 @@ const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
 const AnalyticsDeepDive = lazy(() => import("@/pages/AnalyticsDeepDive"));
 const MobileAdmin = lazy(() => import("@/pages/MobileAdmin"));
 const FreelancerManagement = lazy(() => import("@/pages/FreelancerManagement"));
+const ClientManagement = lazy(() => import("@/pages/ClientManagement"));
 const Auth = lazy(() => import("@/pages/Auth"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 
@@ -130,6 +131,11 @@ function Router() {
         <Route path="/admin/freelancers">
           <AuthGuard>
             <FreelancerManagement />
+          </AuthGuard>
+        </Route>
+        <Route path="/admin/clients">
+          <AuthGuard>
+            <ClientManagement />
           </AuthGuard>
         </Route>
         <Route path="/admin/mobile">
