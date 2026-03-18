@@ -412,6 +412,10 @@ export default function AdminDashboard() {
               Import CSV
               <input ref={importRef} type="file" accept=".csv" className="hidden" onChange={handleImport} />
             </label>
+            <button data-testid="btn-settings" onClick={() => navigate("/admin/settings")}
+              className="px-3 py-1.5 rounded-lg text-sm font-semibold text-white transition-colors" style={{ background: "#6b7280" }}>
+              ⚙️ Settings
+            </button>
             <button data-testid="btn-academy" onClick={() => navigate("/admin/academy")}
               className="px-3 py-1.5 rounded-lg text-sm font-semibold text-white transition-colors" style={{ background: "#8b5cf6" }}>
               🎓 Academy
