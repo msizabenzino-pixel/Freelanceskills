@@ -1,0 +1,35 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready SYSTEM SETTINGS department (the central nervous system of the entire platform) to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/system-settings — the most intelligent, versioned, AI-optimized platform configuration system ever built. It combines the best of Upwork/Fiverr (dynamic fees/escrow), Shopify (currency/timezone/provider switches), and Stripe (security + financial rules) and leaps 3 years ahead.
+
+MANDATORY SECTIONS & FIELDS — DO NOT REMOVE ANY:
+Platform Configuration (tabs):
+- Financial Settings: commission rate (global + tiered + AI-suggested), withdrawal minimum, escrow duration
+- System Settings: default currency, timezone, email provider (SendGrid/Mailgun/etc.), SMS provider (Twilio/AfricasTalking/etc.)
+- Security Settings: login attempt limits, password policy (length, complexity, expiry), 2FA enforcement, IP geofencing
+
+Admin Dashboard Sections (/admin/system-settings):
+- Global Config Editor: Clean cards for each category with live preview
+- Version History & Rollback: Immutable log of every change (linked to Audit Logs)
+- AI Optimizer Panel: Suggests optimal commission/escrow based on current platform data
+- Feature Flags: Toggle platform-wide experiments (e.g., “Enable new Africa micro-payments”)
+- Africa-First Extras: Mobile-money defaults, USSD config toggles, low-data mode
+
+200% Intelligence & Human Excellence:
+- Versioned Configs with Rollback
+- Real-time Socket.io live updates across all services
+- Predictive Compliance Alerts
+- Full integration hooks to every other department
+
+Deliver:
+- New backend routes (/api/system-settings, /api/system-settings/history, /api/system-settings/ai-suggest, etc.)
+- MongoDB schema (SystemConfig, ConfigVersion, FeatureFlag) with middleware that broadcasts changes
+- New React page: src/pages/admin/SystemSettings.jsx (tabbed interface, version timeline, AI panel, beautiful forms with validation)
+- Socket.io events for live config propagation
+- Updated README with “How to access /admin/system-settings + why this is the nuclear heart that controls everything”
+
+Build with extreme precision, first-principles thinking, and relentless optimization — make this the department that powers the entire platform perfectly. Start with schemas + backend middleware, then React UI. Output every new file.
