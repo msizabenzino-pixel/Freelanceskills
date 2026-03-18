@@ -1,0 +1,61 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready ORDER / PROJECT MANAGEMENT section (the human heartbeat of every project) to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/orders — a deeply human, emotionally intelligent project lifecycle control centre that no platform on earth has yet. It combines cold efficiency with warm human touch: voice notes, progress photos, personal notes, satisfaction pulses, empathy alerts, and Academy growth recommendations.
+
+MANDATORY FIELDS & FEATURES — DO NOT REMOVE ANY:
+
+Order Fields (table + beautiful detailed modal):
+- Order ID (short UUID)
+- Buyer (Client name + LTV badge)
+- Seller (Freelancer name + Academy level + earnings-lift badge)
+- Gig / Job (linked title)
+- Amount (ZAR total)
+- Commission (platform fee)
+- Status (Pending / Accepted / In progress / Delivered / Completed / Cancelled / Disputed)
+- Delivery date
+- Completion date
+
+Human Touch Timeline (inside modal — chronological feed):
+- Progress photos/videos uploaded by seller
+- Voice notes (playable)
+- Personal notes & messages from buyer & seller
+- Mid-project Satisfaction Pulse (emoji + short text check-ins)
+- Empathy Alerts (AI detects “seller struggling” and suggests Academy help or extension)
+
+Statuses (colour-coded + filterable):
+- Pending
+- Accepted
+- In progress
+- Delivered
+- Completed
+- Cancelled
+- Disputed
+
+Admin Actions (with confirmation + full human audit log):
+- Force complete
+- Cancel order (with compassionate refund options)
+- Issue refund (partial or full + escrow release)
+- Review messages & evidence
+- Add human admin note (visible to both parties)
+- Send personal message to buyer or seller
+
+Unheard-of Human Excellence (Elon-level + heart):
+- Project Pulse (mid-project happiness check-ins with emoji + text)
+- Evidence Vault (secure photos, videos, voice notes with AI sentiment analysis)
+- AI Empathy Engine (detects frustration and suggests helpful actions like Academy course or extension)
+- Post-Completion Growth Recommendations (tied to AI Academy — “This freelancer can now earn 42% more after completing X course”)
+- Real-time Socket.io updates (new message, photo upload, status change)
+- Bulk actions + Saved Views (“Struggling projects”, “High-satisfaction orders”)
+
+Deliver:
+- New backend routes (/api/orders + /api/orders/:id)
+- MongoDB schema extensions (Order, TimelineEvent, EvidenceItem, SatisfactionPulse)
+- New React page: src/pages/admin/OrderManagement.jsx (table + rich modal with timeline feed + voice player + photo gallery)
+- Socket.io events for live updates
+- Updated README with “How to access /admin/orders + how we created the most human project system ever built”
+
+Build this with real soul — make every project feel cared for, transparent and uplifting. Start with schemas and backend, then the beautiful React UI with human timeline. Output every new file.
