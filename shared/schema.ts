@@ -15,3 +15,4 @@ export * from "./models/growth";
 export * from "./models/vision";
 export * from "./models/admin";
 export * from "./models/kyc";
+export * from "./models/freelancer";

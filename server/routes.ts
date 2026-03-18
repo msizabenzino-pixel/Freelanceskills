@@ -75,6 +75,8 @@ export async function registerRoutes(
   registerAdminRoutes(app, isAuthenticated);
   const { registerAnalyticsRoutes } = await import("./analyticsRoutes");
   registerAnalyticsRoutes(app, isAuthenticated);
+  const { registerFreelancerRoutes } = await import("./freelancerRoutes");
+  registerFreelancerRoutes(app);
 
   // Dashboard Stats
   app.get("/api/dashboard/stats", isAuthenticated, async (req: any, res) => {
