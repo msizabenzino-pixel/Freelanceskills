@@ -328,6 +328,19 @@ export function Navbar() {
                   {user?.firstName || "User"}
                 </span>
               </div>
+              {user?.id === "user_2Pz69BfA5yS3R8M" && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  data-testid="link-admin-dashboard"
+                  className={cn(
+                    "font-semibold text-violet-600 hover:text-violet-700 hover:bg-violet-50 dark:hover:bg-violet-950",
+                  )}
+                  onClick={() => navigate("/admin")}
+                >
+                  Admin
+                </Button>
+              )}
               <Button 
                   variant="ghost" 
                   size="sm"

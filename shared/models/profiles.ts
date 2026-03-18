@@ -9,13 +9,25 @@ export const profiles = pgTable("profiles", {
   userId: varchar("user_id").notNull().references(() => users.id).unique(),
   userType: text("user_type").notNull().default("client"), // "client" | "freelancer" | "both"
   bio: text("bio"),
-  title: text("title"), // Job title for freelancers
-  skills: text("skills").array(), // Array of skills
+  title: text("title"),
+  skills: text("skills").array(),
   hourlyRate: integer("hourly_rate"), // in ZAR cents
-  location: text("location"), // City/Province
+  location: text("location"),
   isPro: boolean("is_pro").notNull().default(false),
-  rating: integer("rating").default(0), // 0-5 scale * 100 (e.g., 450 = 4.5 stars)
+  rating: integer("rating").default(0), // 0-5 scale * 100
   completedJobs: integer("completed_jobs").notNull().default(0),
+  // Admin-managed fields
+  status: text("status").notNull().default("active"), // "active" | "suspended" | "banned" | "pending"
+  role: text("role").notNull().default("client"), // "client" | "freelancer" | "admin" | "moderator" | "upskiller"
+  kycStatus: text("kyc_status").notNull().default("not_started"), // "not_started" | "pending" | "verified" | "rejected"
+  phoneNumber: varchar("phone_number", { length: 30 }),
+  country: varchar("country", { length: 100 }),
+  walletBalance: integer("wallet_balance").notNull().default(0), // in ZAR cents
+  lastLoginAt: timestamp("last_login_at"),
+  lastLoginIp: varchar("last_login_ip", { length: 45 }),
+  suspendedUntil: timestamp("suspended_until"),
+  suspendedReason: text("suspended_reason"),
+  banReason: text("ban_reason"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

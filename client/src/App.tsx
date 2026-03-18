@@ -52,6 +52,7 @@ const OpportunityFinder = lazy(() => import("@/pages/OpportunityFinder"));
 const ClaimBusiness = lazy(() => import("@/pages/ClaimBusiness"));
 const InviteBusinesses = lazy(() => import("@/pages/InviteBusinesses"));
 const FraudDashboard = lazy(() => import("@/pages/FraudDashboard"));
+const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
 const Auth = lazy(() => import("@/pages/Auth"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 
@@ -121,6 +122,11 @@ function Router() {
         <Route path="/admin/fraud">
           <AuthGuard>
             <FraudDashboard />
+          </AuthGuard>
+        </Route>
+        <Route path="/admin">
+          <AuthGuard>
+            <AdminDashboard />
           </AuthGuard>
         </Route>
         <Route component={NotFound} />
