@@ -28,6 +28,9 @@ export const profiles = pgTable("profiles", {
   suspendedUntil: timestamp("suspended_until"),
   suspendedReason: text("suspended_reason"),
   banReason: text("ban_reason"),
+  deletedAt: timestamp("deleted_at"),
+  deletedBy: varchar("deleted_by", { length: 50 }),
+  deleteReason: text("delete_reason"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
