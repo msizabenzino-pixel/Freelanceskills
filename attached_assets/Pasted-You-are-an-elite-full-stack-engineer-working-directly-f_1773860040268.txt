@@ -1,0 +1,44 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready SUBSCRIPTION MANAGEMENT department (the revenue & loyalty backbone) to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/subscriptions — the most intelligent, predictive, personalized subscription & monetization system ever built for a freelance marketplace. It obliterates competitor weaknesses (static tiers on Upwork/Fiverr, generic billing on Patreon/Substack) with AI personalization, hybrid billing, agency tools, dynamic pricing, Africa-first micro-access, and 3-year future-proof intelligence.
+
+MANDATORY FEATURES & PLAN FIELDS — DO NOT REMOVE ANY:
+Premium Plans with example structure:
+- Basic: limited proposals, basic visibility, standard support
+- Pro: unlimited proposals, featured gig priority, faster withdrawals, premium support
+- Agency: team accounts, multi-user roles, shared billing, advanced analytics, white-label options
+
+Plan Fields (for each plan):
+- Plan name
+- Price (support monthly / annual / weekly / daily variants)
+- Duration / Billing Cycle
+- Features (list / bullet points)
+- Limits (proposals/month, gig slots, team size, etc.)
+
+Admin Dashboard Sections (/admin/subscriptions):
+- Plans Management: Table of all plans + create/edit modal (name, price tiers, features, limits)
+- Active Subscriptions: Table (user, plan, start/end, status, revenue generated)
+- Churn & Upgrade Queue: AI-flagged users at risk + suggested interventions
+- Billing & Payment Logs: Integrated overview (placeholder for Stripe/Paystack/Paddle hooks)
+- Analytics Dashboard: Recharts for MRR/ARR, LTV per cohort, churn rate, plan conversion funnel
+
+200% Intelligence & Human Excellence:
+- AI Plan Recommender (suggests best plan based on user behavior / earnings trajectory)
+- Hybrid Billing Engine (fixed subscription + metered overages for proposals/connects)
+- Dynamic Pricing & Auto-Upgrade Paths (AI adjusts price or perks to prevent churn)
+- Agency / Team Features (sub-accounts, role permissions, shared wallet)
+- Africa-first: micro-subscriptions (weekly/daily), mobile-money / airtime billing hooks, USSD signup flow
+- Loyalty Token System (earn tokens on activity → redeem for perks across plans)
+
+Deliver:
+- New backend routes (/api/subscriptions/plans, /api/subscriptions/users, /api/subscriptions/analytics, etc.)
+- MongoDB schemas (SubscriptionPlan, UserSubscription, BillingEvent, LoyaltyToken, ChurnPrediction)
+- New React page: src/pages/admin/SubscriptionManagement.jsx (plans table, user subs overview, analytics tab, AI recommender panel)
+- Socket.io events for real-time subscription updates & churn alerts
+- Updated README with “How to access /admin/subscriptions + why this is the revenue engine of the future”
+
+Build with extreme intelligence, first-principles monetization thinking, and relentless 3-year foresight — make Freelancerskills.net the platform where every user wants to upgrade. Start with schemas and backend, then React UI. Output every new file.
