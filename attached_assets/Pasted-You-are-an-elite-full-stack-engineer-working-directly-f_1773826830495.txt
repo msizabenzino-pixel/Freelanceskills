@@ -1,0 +1,64 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready AI UPSKILLING ACADEMY ADMIN section to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + Recharts + TanStack Table v8 + React Query + Axios
+
+Create new route /admin/academy — the intelligence core that turns every freelancer into a higher-earning talent. This section must surpass Fiverr (learning paths), Upwork (skills badges), LinkedIn Learning, Coursera for Business and any other platform by integrating real earnings-lift data, predictive skill demand, auto-certification ROI and direct correlation to job success.
+
+MANDATORY SECTIONS & FEATURES — DO NOT REMOVE ANY:
+
+1. Academy Overview Dashboard (live widgets)
+   - Total Enrolled Learners
+   - Active Courses
+   - Certifications Issued Today / This Week
+   - Average Completion Rate
+   - Total Earnings Lift Generated (ZAR)
+   - Skill Demand Heat Map (Africa focus)
+
+2. Course Management Table
+   - Course ID + Title
+   - Category + Skills Taught
+   - Enrolments + Completion Rate
+   - Average Rating
+   - Earnings Lift % (post-completion)
+   - Status (Live / Draft / Archived)
+
+3. Learner Analytics (per user + global)
+   - Individual Progress (courses, badges, streak)
+   - Earnings Lift Correlation Chart (before/after certification)
+   - Certification Impact on Job Success Rate
+   - Predictive Future Earnings (AI forecast)
+
+4. Skill Demand Forecasting
+   - Top Rising Skills in Africa (2026–2028)
+   - Gap Analysis vs Marketplace Demand
+   - Auto-suggest New Courses
+
+5. Certification & Badges Engine
+   - Auto-issue certificates (PDF with blockchain-style verification)
+   - Dynamic Freelancer Level Upgrades (New → Rising → Top Rated)
+   - Bulk certification approval queue
+
+Admin Actions:
+- Create/Edit Course (with AI content suggestions)
+- Approve/Reject Certification
+- Feature Course
+- Export Academy Impact Report (DTIC-ready)
+
+Elon-level excellence:
+- Real-time earnings-lift scatter charts + ROI calculator
+- Predictive skill demand engine (tied to job postings)
+- AI course recommendation engine for learners
+- Full integration with Freelancer Profile, Job Matching and Analytics Deep Dive
+- Real-time Socket.io updates (new enrolment, certification, earnings spike)
+- One-click DTIC Impact Report export (job creation + skills uplift metrics)
+
+Deliver:
+- New backend routes (/api/academy + /api/academy/courses + /api/academy/learners)
+- MongoDB schema extensions (AcademyCourse, LearnerProgress, Certification, EarningsLift)
+- New React page: src/pages/admin/AcademyAdmin.jsx (dashboard + tabs + charts)
+- Socket.io events for live updates
+- Updated README with “How to access /admin/academy + how we prove massive ROI”
+
+Build this as the transformative engine that lifts millions of Africans out of unemployment — data-rich, beautiful and investor-ready. Start with schemas, then the React UI. Output every new file.

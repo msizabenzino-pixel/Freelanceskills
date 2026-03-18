@@ -1,0 +1,46 @@
+Now add the FINAL crown jewel: FULL SYSTEM REPORTS & EXPORTS CENTRE at /admin/reports — the executive suite that makes DTIC, SEFA, NYDA and investors instantly approve funding.
+
+Create a beautiful reporting hub that generates investor-grade, DTIC-aligned PDF/Excel reports with one click.
+
+MANDATORY FEATURES — DO NOT REMOVE ANY:
+1. Pre-built Report Templates (with live data):
+   - Monthly Impact Report (users, jobs, GMV, jobs created, women/youth %)
+   - Academy ROI Report (certifications + earnings lift + LTV increase)
+   - Marketplace Health Report
+   - Geographic Impact Report (SA + Nigeria + Kenya + Zimbabwe + Namibia)
+   - Financial Summary + Escrow Transparency
+   - SDG 1/8/10 Alignment Report (poverty, decent work, inequality)
+
+2. Custom Report Builder
+   - Drag-and-drop KPI selector
+   - Date + Country + Role filters
+   - Brand with FreelanceSkills logo + Cape Town header
+
+3. One-Click Export Options
+   - PDF (beautiful investor layout)
+   - Excel/CSV (raw data + charts)
+   - Audit Log included on every export
+
+4. Saved & Scheduled Reports
+   - Save custom templates
+   - Auto-email monthly to founder (or DTIC contact)
+
+5. Executive KPI Wall
+   - All core metrics with YoY growth + trend arrows
+   - Job Creation Counter (real-time total jobs enabled)
+
+Elon-level excellence:
+- Every report includes AI-generated insights paragraph (“This month Academy certifications increased average freelancer earnings by 37%”)
+- Full audit trail for every export
+- Real-time preview before export
+- SDG + B-BBEE + Job Creation metrics auto-calculated
+- Integration with ALL existing sections (Academy, Payments, Jobs, Clients, Freelancers)
+
+Deliver:
+- New backend route /api/reports (with PDF generation via pdf-lib or puppeteer)
+- New React page: src/pages/admin/ReportsCentre.jsx
+- Updated README with “How to generate DTIC-ready reports”
+
+Build this as the proof engine that turns data into funding. Output every new file.
+
+This is the final piece that makes the entire admin unstoppable.
