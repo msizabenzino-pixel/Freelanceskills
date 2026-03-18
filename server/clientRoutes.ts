@@ -112,6 +112,61 @@ function computeChurnRisk(ageMonths: number, daysSinceLastSpend: number, dispute
   return Math.min(Math.round(risk), 100);
 }
 
+/** Client Success Score 0–100 (UNIQUE METRIC — beats all competitors) */
+function computeSuccessScore(p: {
+  totalSpentCents: number; totalJobsPosted: number; disputeCount: number;
+  refundCount: number; hireQualityScore: number; isVerifiedPayer: boolean;
+  kycStatus: string; createdAt?: string | Date;
+}): number {
+  let score = 50; // baseline
+  const spendLevel = Math.min(p.totalSpentCents / 20000000, 1); // normalized to gold level
+  score += spendLevel * 20; // up to 20 pts from spend
+  const jobsGrowth = Math.min(p.totalJobsPosted / 50, 1);
+  score += jobsGrowth * 15; // up to 15 pts from posting activity
+  const disputeRate = p.totalJobsPosted > 0 ? p.disputeCount / p.totalJobsPosted : 0;
+  score -= Math.min(disputeRate * 150, 25); // up to -25 pts from disputes
+  score -= Math.min((p.refundCount / Math.max(p.totalJobsPosted, 1)) * 100, 15); // up to -15 pts from refunds
+  score += (p.hireQualityScore / 100) * 20; // up to 20 pts from Academy hires
+  if (p.isVerifiedPayer) score += 5;
+  if (p.kycStatus === "verified") score += 5;
+  return Math.min(Math.max(Math.round(score), 0), 100);
+}
+
+/** Anomaly detection for investigation (transaction patterns + frequency) */
+function detectAnomalies(payments: any[], disputeCount: number, refundCount: number): string[] {
+  const anomalies: string[] = [];
+  if (!payments.length) return anomalies;
+
+  // Spending spike detection
+  const amounts = payments.filter(p => p.amountCents < 0).map(p => Math.abs(p.amountCents));
+  if (amounts.length > 1) {
+    const avg = amounts.reduce((a, b) => a + b, 0) / amounts.length;
+    const spike = amounts.find(a => a > avg * 5);
+    if (spike) anomalies.push(`💥 Spending spike: ${(spike / 100).toLocaleString()} ZAR`);
+  }
+
+  // High dispute ratio
+  if (disputeCount > 3 && payments.length < 10) {
+    anomalies.push(`⚠️ High dispute ratio: ${disputeCount} disputes from ~${payments.length} txns`);
+  }
+
+  // Frequent refund requests
+  if (refundCount > 2) {
+    anomalies.push(`🔄 Multiple refunds: ${refundCount} refund requests in history`);
+  }
+
+  // Rapid payment then silence
+  if (payments.length > 2) {
+    const recent = payments.filter(p => new Date(p.createdAt).getTime() > Date.now() - 30 * 24 * 3600 * 1000);
+    const old = payments.filter(p => new Date(p.createdAt).getTime() < Date.now() - 60 * 24 * 3600 * 1000);
+    if (old.length > 5 && recent.length === 0) {
+      anomalies.push(`📉 No activity in 60+ days after active period`);
+    }
+  }
+
+  return anomalies;
+}
+
 export function registerClientRoutes(app: Express) {
 
   // ─── GET /api/clients ─────────────────────────────────────────────────────
@@ -289,6 +344,8 @@ export function registerClientRoutes(app: Express) {
       const ltv         = predictiveLTV(monthlyAvg, ageMonths, disputeRate);
       const churnRisk   = computeChurnRisk(ageMonths, daysSince, disputeRate);
       const autoLevel   = cp?.clientLevel || computeClientLevel(totalSpent, disputes, cp?.totalJobsPosted || totalJobs);
+      const successScore = computeSuccessScore({ totalSpentCents: totalSpent, totalJobsPosted: cp?.totalJobsPosted || totalJobs, disputeCount: disputes, refundCount: cp?.refundCount || 0, hireQualityScore: hireQuality, isVerifiedPayer: cp?.isVerifiedPayer || false, kycStatus: profile.kycStatus, createdAt: profile.createdAt });
+      const anomalies = detectAnomalies(payments, disputes, cp?.refundCount || 0);
 
       // 12-month LTV forecast
       const ltvForecast = Array.from({ length: 12 }, (_, i) => {
@@ -317,6 +374,7 @@ export function registerClientRoutes(app: Express) {
         clientLevel: autoLevel, fraudRiskScore: fraudRisk,
         hireQualityScore: hireQuality, churnRiskPct: churnRisk,
         predictiveLtvCents: ltv, ltvForecast, fraudBreakdown, disputeRate, ageMonths,
+        clientSuccessScore: successScore, anomalies: anomalies,
       });
     } catch (err) {
       console.error("Client detail error:", err);
