@@ -1,0 +1,47 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready DISPUTE MANAGEMENT DEPARTMENT (the fair, intelligent, human heart of conflict resolution) to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/disputes — the most advanced, empathetic, and intelligent dispute system ever built. It fixes every competitor weakness and adds unheard-of features: AI Mediator, evidence intelligence, Academy-linked fairness scoring, and post-dispute growth paths.
+
+MANDATORY FIELDS & FEATURES — DO NOT REMOVE ANY:
+
+Dispute Fields (table + rich modal):
+- Dispute ID (short UUID)
+- Order ID / Contract linked
+- Client (name + LTV)
+- Freelancer (name + Academy level + earnings-lift badge)
+- Reason (categorised + custom)
+- Evidence (files, photos, voice notes, screenshots)
+- Chat logs (full replay with highlights)
+- Status (Open / Under review / Resolved / Closed)
+
+Statuses (colour-coded + filterable)
+
+Admin Tools & Actions (with confirmation + immutable audit log):
+- Review files & evidence (full vault viewer)
+- Split payment (fair split calculator)
+- Refund client (partial/full)
+- Pay freelancer (partial/full)
+- Escalate to human mediator
+- Close dispute with resolution note
+
+200% Intelligence & Human Excellence:
+- AI Mediator Engine (auto-suggests fair resolution with Academy progress proof)
+- Evidence Vault with AI analysis (sentiment, plagiarism, voice transcription)
+- Predictive Fairness Score (0-100 with explainable factors)
+- Empathy Alerts (detects emotional tone and suggests compassionate actions)
+- Post-Dispute Academy Growth Path (recommendations + earnings-lift forecast)
+- Real-time Socket.io updates (new message, evidence upload, status change)
+- Bulk actions + Saved Views (“High Academy impact disputes”)
+
+Deliver:
+- New backend routes (/api/disputes + /api/disputes/:id)
+- MongoDB schema extensions (Dispute, EvidenceItem, ResolutionLog, FairnessScore)
+- New React page: src/pages/admin/DisputeManagement.jsx (table + beautiful modal with timeline, evidence gallery, voice player, AI suggestions)
+- Socket.io events for live updates
+- Updated README with “How to access /admin/disputes + how we set the bar impossibly high”
+
+Build this with soul and extreme intelligence — make every dispute feel fair, transparent, and uplifting. Start with schemas and backend, then the React UI. Output every new file.
