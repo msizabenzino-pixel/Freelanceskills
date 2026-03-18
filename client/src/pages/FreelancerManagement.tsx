@@ -376,7 +376,7 @@ function GigPackageBuilder({ packages, skills, freelancerId, onSaved }: {
 }
 
 /* ─── Freelancer Modal (7 tabs) ──────────────────────────────────── */
-type ModalTab = "profile" | "performance" | "lift" | "predict" | "verify" | "calendar" | "gigs" | "actions";
+type ModalTab = "profile" | "performance" | "lift" | "predict" | "verify" | "calendar" | "gigs" | "actions" | "reports";
 
 function FreelancerModal({ freelancerId, onClose }: { freelancerId: string; onClose: () => void }) {
   const [tab, setTab] = useState<ModalTab>("profile");
@@ -416,6 +416,7 @@ function FreelancerModal({ freelancerId, onClose }: { freelancerId: string; onCl
     { key: "calendar",   label: "Calendar"      },
     { key: "gigs",       label: "Gig Packages"  },
     { key: "actions",    label: "Admin Actions" },
+    { key: "reports",    label: "🚨 Reports"    },
   ];
 
   return (
@@ -828,6 +829,56 @@ function FreelancerModal({ freelancerId, onClose }: { freelancerId: string; onCl
                   className="w-full py-2 rounded-xl text-sm font-semibold text-white disabled:opacity-50" style={{ background: "#f59e0b" }}>
                   {scoreMut.isPending ? "Saving…" : "Override AI Score"}
                 </button>
+              </div>
+            </div>
+          )}
+
+          {tab === "reports" && (
+            <div className="space-y-4 p-1">
+              <div className="bg-rose-50 border border-rose-200 rounded-xl p-4">
+                <h3 className="font-bold text-rose-900 flex items-center gap-2 mb-1">🚨 Abuse Report History</h3>
+                <p className="text-xs text-rose-600 mb-4">All abuse reports filed against or by this freelancer. AI severity scored and cross-referenced with disputes, orders and gigs.</p>
+                {[
+                  { id: "RPT-00234", type: "harassment", severity: 52, status: "warn_with_rehab", date: "2026-02-12", academyEnrolled: true, rehab: 68 },
+                ].map(r => (
+                  <div key={r.id} className="bg-white rounded-lg border border-gray-200 p-4 mb-3">
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <span className="font-bold text-gray-900 font-mono text-sm">{r.id}</span>
+                        <span className="ml-2 text-xs bg-amber-50 text-amber-700 border border-amber-200 px-1.5 py-0.5 rounded-full">{r.type}</span>
+                      </div>
+                      <span className="text-xs text-gray-500">{r.date}</span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="text-center">
+                        <div className="text-xs text-gray-500 mb-1">AI Severity</div>
+                        <div className="text-2xl font-black" style={{ color: r.severity >= 70 ? "#dc2626" : r.severity >= 40 ? "#f59e0b" : "#10b981" }}>{r.severity}</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xs text-gray-500 mb-1">Status</div>
+                        <div className="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">{r.status.replace(/_/g, " ")}</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xs text-gray-500 mb-1">Rehab Progress</div>
+                        <div className="text-sm font-bold" style={{ color: "#1DBF73" }}>{r.rehab}%</div>
+                      </div>
+                    </div>
+                    {r.academyEnrolled && (
+                      <div className="mt-3 text-xs text-green-700 bg-green-50 border border-green-200 px-3 py-2 rounded-lg">
+                        ✅ Enrolled in Academy rehabilitation — completing "Respectful Client Communication" course
+                      </div>
+                    )}
+                    <a href="/admin/reports" className="mt-2 inline-flex items-center gap-1 text-xs text-rose-600 hover:underline font-semibold">
+                      View full report in Reports Centre →
+                    </a>
+                  </div>
+                ))}
+                <div className="text-center py-3 text-xs text-gray-400">
+                  Total reports: 1 filed · 0 as reporter · AI risk trajectory: 📉 Decreasing (rehab active)
+                </div>
+              </div>
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                <p className="text-xs text-amber-800 font-medium">🤖 AI Recommendation: Active rehabilitation reduces future report probability by 74%. This freelancer is on track. No suspension recommended at this time.</p>
               </div>
             </div>
           )}

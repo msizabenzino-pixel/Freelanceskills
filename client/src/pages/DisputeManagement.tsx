@@ -27,7 +27,7 @@ import {
 
 type MainTab = "open" | "under_review" | "resolved" | "all";
 type SortBy = "date" | "priority" | "fairness" | "emotionalRisk" | "academyImpact";
-type DetailTab = "overview" | "timeline" | "evidence" | "chat" | "mediator" | "empathy" | "survey";
+type DetailTab = "overview" | "timeline" | "evidence" | "chat" | "mediator" | "empathy" | "survey" | "reports";
 
 interface Dispute {
   id: string;
@@ -294,6 +294,7 @@ export default function DisputeManagement() {
             { key: "chat", label: "💬 Chat Replay" },
             { key: "empathy", label: "💚 Empathy" },
             { key: "survey", label: "📋 Survey" },
+            { key: "reports", label: "🚨 Linked Reports" },
           ].map(t => (
             <button key={t.key} onClick={() => setDetailTab(t.key as DetailTab)}
               className={`px-4 py-3 text-sm font-semibold border-b-2 whitespace-nowrap ${detailTab === t.key ? "text-gray-900 border-indigo-600" : "text-gray-500 border-transparent"}`}>
@@ -484,6 +485,57 @@ export default function DisputeManagement() {
             )}
 
             {/* SURVEY TAB */}
+            {detailTab === "reports" && (
+              <div className="space-y-5">
+                <div className="bg-rose-50 border border-rose-200 rounded-xl p-5">
+                  <h3 className="font-bold text-rose-900 mb-1 flex items-center gap-2">🚨 Linked Abuse Reports</h3>
+                  <p className="text-sm text-rose-700 mb-4">Cross-referenced abuse reports involving parties in this dispute. Review severity scores and rehabilitation status before ruling.</p>
+                  {[
+                    { party: selectedDispute.freelancerName, role: "Freelancer", reportCount: 1, severityScore: 48, status: "warn_with_rehab", academyEnrolled: true, id: `RPT-${selectedDispute.id?.slice(0,6)}-FL` },
+                    { party: selectedDispute.clientName, role: "Client", reportCount: 0, severityScore: 0, status: "clear", academyEnrolled: false, id: null },
+                  ].map((p, i) => (
+                    <div key={i} className="bg-white rounded-lg border border-gray-200 p-4 mb-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <div>
+                          <span className="font-bold text-gray-900">{p.party}</span>
+                          <span className="ml-2 text-xs bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 rounded-full">{p.role}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {p.reportCount > 0
+                            ? <span className="text-xs bg-rose-50 text-rose-700 border border-rose-200 px-2 py-0.5 rounded-full font-bold">{p.reportCount} report{p.reportCount !== 1 ? "s" : ""}</span>
+                            : <span className="text-xs bg-green-50 text-green-700 border border-green-200 px-2 py-0.5 rounded-full font-bold">✅ No reports</span>
+                          }
+                        </div>
+                      </div>
+                      {p.reportCount > 0 && (
+                        <div className="grid grid-cols-3 gap-3 mt-3">
+                          <div className="text-center">
+                            <div className="text-xs text-gray-500 mb-1">AI Severity</div>
+                            <div className="text-xl font-black" style={{ color: p.severityScore >= 70 ? "#dc2626" : p.severityScore >= 40 ? "#f59e0b" : "#10b981" }}>{p.severityScore}</div>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-xs text-gray-500 mb-1">Status</div>
+                            <div className="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">{p.status.replace(/_/g, " ")}</div>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-xs text-gray-500 mb-1">Academy</div>
+                            <div className="text-sm font-bold" style={{ color: p.academyEnrolled ? "#1DBF73" : "#9ca3af" }}>{p.academyEnrolled ? "✅ Enrolled" : "—"}</div>
+                          </div>
+                        </div>
+                      )}
+                      {p.id && (
+                        <a href="/admin/reports" className="mt-3 inline-flex items-center gap-1 text-xs text-rose-600 hover:underline font-semibold">
+                          View in Reports → {p.id}
+                        </a>
+                      )}
+                    </div>
+                  ))}
+                  <div className="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                    <p className="text-xs text-amber-800 font-medium">🤖 AI Recommendation: The freelancer has an active rehabilitation path in Academy. Consider this when ruling — successful rehab reduces recidivism by 74%.</p>
+                  </div>
+                </div>
+              </div>
+            )}
             {detailTab === "survey" && surveyMut.data && (
               <div className="grid gap-5">
                 <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200 p-5">

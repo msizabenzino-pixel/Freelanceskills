@@ -129,8 +129,38 @@ Preferred communication style: Simple, everyday language.
 - **UI Components**: shadcn/ui (Radix UI), Lucide React (icons), Framer Motion (animations), Embla Carousel
 - **Mobile**: React Native / Expo SDK 51, React Navigation 6, Sentry, Expo modules (notifications, camera, location, haptics, biometrics, calendar, video, speech, image-picker, secure-store, linking)
 
+## Admin Platform — 15 Sections (200% Intelligence)
+1. **Freelancer Management** `/admin/freelancers` — AI portfolio scoring, 5-stage KYC, dynamic commissions, predictive analytics
+2. **Client Management** `/admin/clients` — LTV scoring, behaviour analysis, spend forecasting
+3. **Payments Control** `/admin/payments` — PayFast/PayPal, escrow, ZAR/multi-currency, fraud detection
+4. **Finance Department** `/admin/finance` — AI escrow release, zero-day payout, revenue forecasting, explainable fraud
+5. **Academy Admin** `/admin/academy` — Course management, certifications, upskilling impact
+6. **System Settings** `/admin/settings` — Platform config, feature flags, SMTP, rate limits
+7. **Gig Marketplace** `/admin/gigs` — AI gig scoring, SEO optimiser, category analytics
+8. **Proposal Management** `/admin/proposals` — AI proposal quality scoring, win rate prediction
+9. **Order Management** `/admin/orders` — Full lifecycle, AI delivery prediction, empathy engine
+10. **Dispute Management** `/admin/disputes` — AI mediator, fairness scoring, linked abuse reports tab
+11. **Analytics Deep Dive** `/admin/analytics` — Real-time platform intelligence, revenue forecasting
+12. **Support Tickets** `/admin/support` — AI auto-response, predictive SLA, empathy sentiment
+13. **Report & Abuse Management** `/admin/reports` — 7-dimension AI severity, deepfake detection, personalised rehab, USSD Africa
+14. **Mobile Admin** `/admin/mobile` — PWA management, push notifications, offline sync
+15. **Notifications & Communications Centre** `/admin/notifications` — AI personalisation, 6 channels (email/SMS/push/USSD/WhatsApp/in-app), Africa-first USSD, fatigue prevention, A/B testing, automation engine
+
+### Key AI Engines (centralised in server/aiService.ts)
+- `computeSeverityRisk()` — 7-dimension abuse risk scoring
+- `analyseSentiment()` — Text emotion + escalation detection
+- `computeRehabPath()` — Academy course recommendations
+- `analyseEvidence()` — Deepfake + plagiarism detection
+- `checkNotificationFatigue()` — Over-notification prevention
+
+### Reusable Components (client/src/components/ReportComponents.tsx)
+- `SeverityGauge`, `RehabPathPanel`, `EvidenceVault`, `HealingPath`, `LiveCollaboration`, `ResolutionSurvey`, `EarlyWarningPulse`
+
 ## Key Files
-- `server/routes.ts` — Main API routes (2980+ lines)
+- `server/routes.ts` — Main API routes (3000+ lines)
+- `server/aiService.ts` — Centralised AI engine functions
+- `server/notificationsRoutes.ts` — Notifications & Communications (15th section)
+- `server/reportRoutes.ts` — Report & Abuse Management (14th section)
 - `server/growth.ts` — Growth module (B1-B25)
 - `server/vision.ts` — Vision module (D1-D25)
 - `server/edge-cases.ts` — Edge case handlers (E1-E5)
@@ -138,7 +168,10 @@ Preferred communication style: Simple, everyday language.
 - `server/fortify.ts` — Security, caching, monitoring
 - `shared/schema.ts` — Drizzle ORM schema (exports all models)
 - `shared/models/vision.ts` — Vision DB tables
-- `client/src/App.tsx` — React app with lazy-loaded routes
+- `client/src/App.tsx` — React app with 15 admin routes + lazy loading
+- `client/src/pages/NotificationsManagement.tsx` — 15th admin section (7 tabs)
+- `client/src/pages/ReportAbuseManagement.tsx` — 14th admin section (8 tabs)
+- `client/src/components/ReportComponents.tsx` — Reusable component library
 - `client/src/pages/roadmap-2031.tsx` — 2031 vision roadmap page
 - `mobile/` — React Native/Expo mobile app
 - `content/` — Marketing materials (press release, scripts, templates)
