@@ -1,0 +1,43 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready REPORT / ABUSE MANAGEMENT department (the safety & trust backbone) to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/reports — the most intelligent, empathetic, and proactive abuse reporting system ever built. It fixes every competitor weakness (slow manual review on Fiverr/Upwork, reactive only on X/Instagram/TikTok, weak rehabilitation on Reddit/Discord) with AI predictive scoring, Academy rehabilitation paths, evidence intelligence, and Africa-first zero-data tools.
+
+MANDATORY FIELDS & FEATURES — DO NOT REMOVE ANY:
+
+Report Fields (table + rich modal):
+- Report ID (short UUID)
+- Reporter (linked user + motive badge)
+- Reported user (linked + Academy level + previous reports)
+- Report type (Spam / Scam / Fake account / Harassment / Copyright violation / Other)
+- Content (linked gig/job/proposal/message)
+- Evidence (files, screenshots, voice notes, links)
+- Status (Open / Under review / Resolved / Closed)
+
+Admin Actions (with confirmation + immutable audit log):
+- Warn user (with educational note + Academy course suggestion)
+- Suspend user (temporary with duration + reason)
+- Ban user (permanent with appeal window)
+- Review & analyse evidence
+- Escalate to legal/compliance
+- Close with resolution + feedback
+
+200% Intelligence & Human Excellence:
+- AI Severity Scoring + Predictive Risk Engine (0-100 real-time, prevents harm before escalation)
+- Academy Rehabilitation Path (auto-suggests courses + growth plan instead of instant ban)
+- Evidence Intelligence Vault (AI analyses photos/voice for authenticity, sentiment, plagiarism)
+- Real-time Socket.io updates + USSD/zero-data reporting support for Africa
+- Post-Report Healing & Growth Recommendations (for both reporter and reported user)
+- Bulk actions + Saved Views (“High-risk scam rings”, “Academy-rehab candidates”)
+
+Deliver:
+- New backend routes (/api/reports + /api/reports/:id)
+- MongoDB schema extensions (AbuseReport, EvidenceItem, RehabilitationPlan, RiskScore)
+- New React page: src/pages/admin/ReportAbuseManagement.jsx (table + beautiful modal with evidence gallery, voice player, AI scores, rehabilitation suggestions)
+- Socket.io events for live updates
+- Updated README with “How to access /admin/reports + how we set the bar impossibly high”
+
+Build this with extreme intelligence and deep humanity — make the platform the safest, most uplifting place in Africa. Start with schemas and backend, then the React UI. Output every new file.
