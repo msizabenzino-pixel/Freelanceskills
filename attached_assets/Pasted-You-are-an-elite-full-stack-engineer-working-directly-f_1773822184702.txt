@@ -1,0 +1,75 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion platform. Add a complete, production-ready ANALYTICS DEEP DIVE section to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + Recharts + TanStack Table + React Query + Axios + date-fns
+
+Create a new route /admin/analytics as the advanced reporting hub — Elon Musk first-principles: deep, actionable, real-time, auditable, scalable to 10M+ users, with Africa-first insights and beautiful visualizations.
+
+MANDATORY SECTIONS & FEATURES — DO NOT REMOVE ANY:
+
+1. Navigation Tabs (top bar):
+   - User Analytics
+   - Marketplace Analytics
+   - Financial Analytics
+   - Upskilling Academy Analytics
+   - Geographic & Country Analytics
+
+2. Global Filters (sticky top bar, real-time apply):
+   - Date range picker (7d / 30d / 90d / 1Y / Custom)
+   - Country (multi-select, default Africa focus)
+   - Role (Freelancer / Client / Admin)
+   - Category (digital skills, trades, etc.)
+   - Comparison toggle (vs previous period)
+
+3. User Analytics Tab
+   - Acquisition Funnel (registration → verification → first job → first earnings)
+   - Cohort Retention Analysis (table + heat map)
+   - Churn Rate & Reasons
+   - New vs Returning Users
+   - Lifetime Value (LTV) per user segment
+
+4. Marketplace Analytics Tab
+   - Job Posting & Completion Trends (line + bar)
+   - Average Time to Hire / Project Duration
+   - Category Performance (top 10 with growth %)
+   - Active vs Completed Contracts
+   - Dispute Rate by Category
+
+5. Financial Analytics Tab
+   - Revenue Breakdown (GMV, Commission, Escrow)
+   - Payout Trends & Pending Withdrawals
+   - Refund / Chargeback Analysis
+   - Average Earnings per Freelancer (monthly)
+   - Client Spending by Segment
+
+6. Upskilling Academy Analytics Tab
+   - Course Completion Rates & Drop-off
+   - Certifications Earned vs Earnings Lift (correlation chart)
+   - Skill Badges Awarded
+   - Academy Impact on Retention & LTV
+   - Top Performing Courses
+
+7. Geographic Analytics Tab
+   - Africa Heat Map (South Africa, Nigeria, Kenya, Zimbabwe, Namibia, etc.)
+   - Users & GMV by Country
+   - Rural vs Urban split (where available)
+   - Cross-border Projects
+
+Additional Elon-level Excellence:
+- All charts interactive (zoom, hover tooltips, export PNG)
+- Export entire report as PDF/Excel/CSV with one click
+- Real-time refresh button + auto-update via Socket.io
+- Saved Reports & Custom Dashboards (admin can save filter sets)
+- KPI cards with YoY/MoM % change and trend arrows
+- Dark/light mode + fully responsive
+- Every query uses optimized MongoDB aggregations with indexes and caching
+- Full audit log for every analytics export
+
+Deliver:
+- New backend routes (/api/analytics/...) with aggregation pipelines
+- New React page: AnalyticsDeepDive.jsx with tabs and components
+- Socket.io events for live metric updates
+- README update with how to access /admin/analytics
+
+Build this as the brain of a $1 billion African gig platform — deep insights that drive decisions and prove massive impact. Start now and output every new file.
