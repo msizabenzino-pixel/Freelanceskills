@@ -964,4 +964,27 @@ export function registerAdminRoutes(app: Express, isAuthenticated: any) {
     if (!password) return res.status(400).json({ error: "Password required" });
     res.json(validatePasswordStrength(password));
   });
+
+  // ─── GET /api/admin/wallet-transactions (mobile admin: payout monitor) ────
+  app.get("/api/admin/wallet-transactions", isAuthenticated, requireAdmin, async (req: any, res: Response) => {
+    try {
+      const { type = "payout", limit = "20" } = req.query as Record<string, string>;
+      const txs = await db.select({
+        id: walletTransactions.id,
+        userId: walletTransactions.userId,
+        type: walletTransactions.type,
+        amountCents: walletTransactions.amountCents,
+        description: walletTransactions.description,
+        referenceType: walletTransactions.referenceType,
+        createdAt: walletTransactions.createdAt,
+      }).from(walletTransactions)
+        .where(eq(walletTransactions.type, type))
+        .orderBy(desc(walletTransactions.createdAt))
+        .limit(Math.min(parseInt(limit), 100));
+      res.json({ transactions: txs });
+    } catch (err) {
+      console.error("Admin wallet-transactions error:", err);
+      res.status(500).json({ error: "Failed to fetch wallet transactions" });
+    }
+  });
 }

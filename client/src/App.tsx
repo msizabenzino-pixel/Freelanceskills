@@ -54,6 +54,7 @@ const InviteBusinesses = lazy(() => import("@/pages/InviteBusinesses"));
 const FraudDashboard = lazy(() => import("@/pages/FraudDashboard"));
 const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
 const AnalyticsDeepDive = lazy(() => import("@/pages/AnalyticsDeepDive"));
+const MobileAdmin = lazy(() => import("@/pages/MobileAdmin"));
 const Auth = lazy(() => import("@/pages/Auth"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 
@@ -123,6 +124,11 @@ function Router() {
         <Route path="/admin/fraud">
           <AuthGuard>
             <FraudDashboard />
+          </AuthGuard>
+        </Route>
+        <Route path="/admin/mobile">
+          <AuthGuard>
+            <MobileAdmin />
           </AuthGuard>
         </Route>
         <Route path="/admin/analytics">

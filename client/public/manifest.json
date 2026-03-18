@@ -8,6 +8,29 @@
   "theme_color": "#10b981",
   "orientation": "any",
   "scope": "/",
+  "shortcuts": [
+    {
+      "name": "Mobile Admin",
+      "short_name": "Admin",
+      "description": "Open the mobile admin dashboard",
+      "url": "/admin/mobile",
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Analytics",
+      "short_name": "Analytics",
+      "description": "View platform analytics",
+      "url": "/admin/analytics",
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Job Board",
+      "short_name": "Jobs",
+      "description": "Browse all freelance jobs",
+      "url": "/jobs",
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+    }
+  ],
   "icons": [
     {
       "src": "/icons/icon-72x72.png",
