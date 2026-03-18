@@ -73,6 +73,7 @@ const ContentModeration = lazy(() => import("@/pages/ContentModeration"));
 const PromotionManagement = lazy(() => import("@/pages/PromotionManagement"));
 const MarketingSystem = lazy(() => import("@/pages/MarketingSystem"));
 const SubscriptionManagement = lazy(() => import("@/pages/SubscriptionManagement"));
+const SecurityTrustManagement = lazy(() => import("@/pages/SecurityTrustManagement"));
 const Auth = lazy(() => import("@/pages/Auth"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 
@@ -232,6 +233,11 @@ function Router() {
         <Route path="/admin/subscriptions">
           <AuthGuard>
             <SubscriptionManagement />
+          </AuthGuard>
+        </Route>
+        <Route path="/admin/security">
+          <AuthGuard>
+            <SecurityTrustManagement />
           </AuthGuard>
         </Route>
         <Route path="/admin/mobile">
