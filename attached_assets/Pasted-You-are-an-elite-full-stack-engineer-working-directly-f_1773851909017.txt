@@ -1,0 +1,40 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready PROMOTION SYSTEM department (the marketplace visibility accelerator) to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/promotions — the most intelligent, hybrid, AI-driven promotion & visibility system ever built for a freelance marketplace. It obliterates competitor weaknesses (static PPC on Fiverr, basic sponsored bids on Freelancer.com, organic-only on Upwork/Toptal) with dynamic pricing, predictive ROI, merit boosts, creative AI studio, and 3-year future-proof intelligence.
+
+MANDATORY FEATURES & TOOLS — DO NOT REMOVE ANY:
+Marketplace Visibility Features:
+- Featured freelancer
+- Featured gigs
+- Featured jobs
+- Homepage banners
+
+Admin Configuration:
+- Promotion price
+- Promotion duration
+
+Admin Dashboard Sections (/admin/promotions):
+- Active Promotions: Table (type, user/gig/job, price paid, duration left, performance metrics)
+- Promotion Catalog: Create new (Featured Gig, Featured Freelancer, Banner, Sponsored Search, etc.)
+- Pricing Engine: Dynamic pricing rules + manual override
+- Analytics Dashboard: Recharts for ROI, impressions, clicks, conversions, revenue generated
+
+200% Intelligence & Human Excellence:
+- AI Recommendation Engine (suggest best gigs/freelancers to promote based on trends/skills)
+- Merit + Paid Hybrid (free boosts for top Academy users)
+- Real-time Socket.io live performance updates
+- Africa-first micro-tiers + USSD/mobile money hooks
+- Pre-approval queue linked to Content Moderation
+
+Deliver:
+- New backend routes (/api/promotions, /api/promotions/pricing, /api/promotions/analytics, etc.)
+- MongoDB schemas (Promotion, PromotionSlot, PricingRule, PerformanceMetric)
+- New React page: src/pages/admin/PromotionManagement.jsx (catalog, active table, analytics tab, pricing configurator, creative preview)
+- Socket.io events for live metrics
+- Updated README with “How to access /admin/promotions + why this is the revenue & visibility engine of the future”
+
+Build with extreme intelligence, first-principles revenue thinking, and obsessive 3-year foresight — make Freelancerskills.net the platform where every user can become visible and successful. Start with schemas and backend, then the React UI. Output every new file.

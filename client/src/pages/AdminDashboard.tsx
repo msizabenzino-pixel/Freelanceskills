@@ -476,6 +476,10 @@ export default function AdminDashboard() {
               className="px-3 py-1.5 rounded-lg text-sm font-semibold text-white transition-colors" style={{ background: "#ef4444" }}>
               🛡️ Moderation
             </button>
+            <button data-testid="btn-promotions" onClick={() => navigate("/admin/promotions")}
+              className="px-3 py-1.5 rounded-lg text-sm font-semibold text-white transition-colors" style={{ background: "#f59e0b" }}>
+              📣 Promotions
+            </button>
             <button data-testid="btn-analytics" onClick={() => navigate("/admin/analytics")}
               className="px-3 py-1.5 rounded-lg text-sm font-semibold text-white transition-colors" style={{ background: "#6366f1" }}>
               📊 Analytics

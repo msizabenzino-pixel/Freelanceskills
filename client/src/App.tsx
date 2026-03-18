@@ -70,6 +70,7 @@ const ReportAbuseManagement = lazy(() => import("@/pages/ReportAbuseManagement")
 const NotificationsManagement = lazy(() => import("@/pages/NotificationsManagement"));
 const CategorySkillManagement = lazy(() => import("@/pages/CategorySkillManagement"));
 const ContentModeration = lazy(() => import("@/pages/ContentModeration"));
+const PromotionManagement = lazy(() => import("@/pages/PromotionManagement"));
 const Auth = lazy(() => import("@/pages/Auth"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 
@@ -214,6 +215,11 @@ function Router() {
         <Route path="/admin/moderation">
           <AuthGuard>
             <ContentModeration />
+          </AuthGuard>
+        </Route>
+        <Route path="/admin/promotions">
+          <AuthGuard>
+            <PromotionManagement />
           </AuthGuard>
         </Route>
         <Route path="/admin/mobile">
