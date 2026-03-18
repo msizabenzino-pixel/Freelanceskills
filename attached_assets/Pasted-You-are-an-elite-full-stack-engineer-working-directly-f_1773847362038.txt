@@ -1,0 +1,39 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready CATEGORY & SKILL MANAGEMENT department (the marketplace taxonomy backbone) to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/categories — the most intelligent, dynamic, AI-assisted taxonomy management system ever built for a freelance marketplace. It obliterates competitor weaknesses (rigid hierarchies on Upwork/Fiverr, static lists on Freelancer/PeoplePerHour, no evolution on Toptal) with AI auto-suggestions, trend integration, user submissions, proficiency tracking, and deep analytics.
+
+MANDATORY ENTITIES & FEATURES — DO NOT REMOVE ANY:
+Entities:
+- Categories (top-level: Development, Design, Marketing, Writing, etc.)
+- Subcategories (e.g., Web Development, Mobile Apps, SEO)
+- Skills (e.g., React, Laravel, Python, AWS, plus emerging like AI Video Generation)
+
+Admin Actions:
+- Add category/subcategory/skill
+- Edit (name, description, parent, icon, status)
+- Delete (with cascade checks + soft delete)
+- Merge duplicates/synonyms
+- Bulk import/export (CSV/JSON)
+- Approve user-suggested additions
+
+200% Intelligence & Human Excellence:
+- Hierarchical Tree View (nested, draggable reorder)
+- AI Auto-Suggest & Validation (placeholder: suggest new skills based on trends, detect duplicates/synonyms)
+- Proficiency & Endorsement System (skills have levels: Beginner/Intermediate/Expert; endorsements from clients)
+- Analytics Dashboard: Charts for category usage (searches, gigs posted, completions), growth trends, top skills
+- User Suggestion Queue: Moderation panel for freelancer/client suggested new categories/skills
+- Search & Filter: Global search across all entities, filters by usage/popularity
+- Integration Hooks: Auto-apply to user profiles, gigs, jobs, search/matching
+
+Deliver:
+- New backend routes (/api/categories, /api/skills, /api/subcategories, /api/taxonomy/suggest, etc.)
+- MongoDB schemas (Category, Subcategory, Skill, SkillSuggestion, Proficiency)
+- New React page: src/pages/admin/CategorySkillManagement.jsx (tree view, tables, modals for add/edit, analytics tab, suggestion queue)
+- Socket.io events for real-time updates (e.g., new suggestion approved)
+- Updated README with “How to access /admin/categories + why this sets the impossible bar for taxonomy”
+
+Build with extreme intelligence, scalability, and market foresight — make Freelancerskills.net's taxonomy the smartest, most adaptive in Africa and beyond. Start with schemas/backend, then React UI. Output every new file.
