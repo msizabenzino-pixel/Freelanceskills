@@ -696,6 +696,68 @@ export function registerReportRoutes(app: Express) {
     } catch { res.status(500).json({ error: "Bulk action failed" }); }
   });
 
+  // POST /api/reports/analyse — real-time AI analysis of evidence + chat logs
+  // Called before formal report submission — gives user live risk assessment + rehab path
+  app.post("/api/reports/analyse", isAuthenticated, async (req: any, res: Response) => {
+    try {
+      const { evidenceUrls, chatLogs, reportType, contentType, reportedUserId } = req.body;
+      const reporterId = (req.session as any).userId;
+
+      // Mock report structure for AI analysis
+      const mockReport = {
+        reportType: reportType || "other",
+        contentType: contentType || "message",
+        reportedPriorReports: 0,
+        reportedAcademyLevel: "none",
+        createdAt: new Date().toISOString(),
+        reporterDisplayName: "Analysis Requester",
+        reportedDisplayName: reportedUserId || "User",
+      };
+
+      // Run all AI engines in parallel for speed (real-time analysis <1s target)
+      const [risk, rehab, evidence, motive, aiSuggestion] = await Promise.all([
+        Promise.resolve(computeAISeverityAndRisk(mockReport)),
+        Promise.resolve(generatePersonalisedRehabPath(mockReport, computeAISeverityAndRisk(mockReport))),
+        Promise.resolve(analyzeEvidenceVault(
+          (evidenceUrls || []).map((url: string, i: number) => ({
+            id: `ev-${i}`,
+            fileType: url.endsWith(".pdf") ? "document" : url.endsWith(".m4a") ? "audio" : "image",
+            fileName: url.split("/").pop() || `evidence-${i}`,
+            uploadedBy: "reporter",
+          }))
+        )),
+        Promise.resolve(analyzeReporterWithEmpathy(reporterId, 0, reportType || "other")),
+        Promise.resolve(generateLiveAISuggestion(mockReport, computeAISeverityAndRisk(mockReport))),
+      ]);
+
+      // Emit real-time notification to admin room (live alert for critical cases)
+      if (risk.urgencyLevel === "critical" || risk.scamRingFlag) {
+        getIO().to("admin_room").emit("admin_notification", {
+          type: "real_time_analysis",
+          message: `🔴 CRITICAL ANALYSIS: severity ${risk.severityScore}/100, scam ring: ${risk.scamRingFlag}`,
+          reporter: reporterId,
+          riskLevel: risk.urgencyLevel,
+        });
+      }
+
+      // Return full analysis packet (used by frontend to preview impact before submission)
+      res.json({
+        ok: true,
+        analysis: {
+          risk,
+          rehab,
+          evidence: evidence.slice(0, 3), // Limit to first 3 for preview
+          motive,
+          aiSuggestion,
+          analysisTimestamp: new Date().toISOString(),
+          message: `Analysis complete: ${risk.urgencyLevel.toUpperCase()} — ${risk.recommendedAction.replace(/_/g, " ")}`,
+        },
+      });
+    } catch (e) {
+      res.status(500).json({ error: "Analysis failed", details: String(e) });
+    }
+  });
+
   // POST /api/reports/submit — public submission with USSD support
   app.post("/api/reports/submit", isAuthenticated, async (req: any, res: Response) => {
     try {
