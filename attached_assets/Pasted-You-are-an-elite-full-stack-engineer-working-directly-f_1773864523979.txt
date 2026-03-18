@@ -1,0 +1,45 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready AUDIT LOGS department (the unbreakable accountability layer) to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/audit-logs — the most advanced, immutable, intelligent audit logging system ever built. It ensures zero possibility of “we don’t know who did what” and protects every other department we’ve built.
+
+MANDATORY FIELDS & FEATURES — DO NOT REMOVE ANY:
+Fields:
+- Log ID
+- Admin ID (linked user)
+- Action (e.g., user banned, job deleted, payment refunded, template edited, promotion created)
+- Target entity (linked ID + type: User, Job, Gig, Payment, Report, etc.)
+- Timestamp
+- IP address
+
+Plus (mandatory additions):
+- Before/After JSON diff
+- Reason / Note (optional)
+- Severity level (low/medium/high/critical)
+- Session ID
+
+Admin Dashboard Sections (/admin/audit-logs):
+- Live Log Feed: Real-time table with infinite scroll + filters
+- Search & Timeline: Powerful global search + visual timeline replay
+- Analytics: Recharts for action volume, high-risk actions, admin activity heatmaps
+- Export Center: One-click PDF/CSV with filters & digital signature placeholder
+- Anomaly Alerts: AI-flagged suspicious patterns
+
+200% Intelligence & Human Excellence:
+- Immutable Append-Only + Hash-Chained Logs (tamper-proof verification)
+- Real-time Socket.io streaming
+- AI Anomaly Detection (flags unusual patterns instantly)
+- Full Diff Viewer modal (see exactly what changed)
+- Africa-first compliance exports
+
+Deliver:
+- New backend routes (/api/audit-logs, /api/audit-logs/search, /api/audit-logs/export, etc.)
+- MongoDB schema (AuditLog) with indexes + middleware that auto-logs every admin action across the entire app
+- New React page: src/pages/admin/AuditLogs.jsx (live feed, advanced search, timeline, diff viewer, analytics, export panel)
+- Socket.io events for live log streaming + anomaly alerts
+- Updated README with “How to access /admin/audit-logs + why this makes the entire platform legally unbreakable”
+
+Build with extreme precision, immutability obsession, and zero-tolerance for gaps — make this the department that protects the dream forever. Start with schema + middleware (so it auto-captures actions from every other route), then React UI. Output every new file.
