@@ -66,6 +66,7 @@ const OrderManagement = lazy(() => import("@/pages/OrderManagement"));
 const FinanceDepartment = lazy(() => import("@/pages/FinanceDepartment"));
 const DisputeManagement = lazy(() => import("@/pages/DisputeManagement"));
 const SupportTicketSystem = lazy(() => import("@/pages/SupportTicketSystem"));
+const ReportAbuseManagement = lazy(() => import("@/pages/ReportAbuseManagement"));
 const Auth = lazy(() => import("@/pages/Auth"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 
@@ -190,6 +191,11 @@ function Router() {
         <Route path="/admin/support">
           <AuthGuard>
             <SupportTicketSystem />
+          </AuthGuard>
+        </Route>
+        <Route path="/admin/reports">
+          <AuthGuard>
+            <ReportAbuseManagement />
           </AuthGuard>
         </Route>
         <Route path="/admin/mobile">
