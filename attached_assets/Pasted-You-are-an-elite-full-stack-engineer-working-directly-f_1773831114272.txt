@@ -1,0 +1,68 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready PAYMENT & FINANCE DEPARTMENT (the unbreakable financial core) to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT + PayFast API
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/finance — the ultimate world-class financial control centre that fixes every competitor weakness (Fiverr delays + stuck withdrawals, Upwork complex disputes, Toptal international fees, others poor Africa support) with real-time ZAR intelligence, AI predictive scoring, Academy earnings correlation, and investor-grade transparency.
+
+MANDATORY SECTIONS & FEATURES — DO NOT REMOVE ANY:
+
+7.1 Transaction History Table (real-time, filterable, exportable)
+- Transaction ID
+- User ID + Name (Freelancer/Client)
+- Amount (ZAR)
+- Fee
+- Net amount
+- Transaction type (Deposit / Payment / Withdrawal / Refund / Commission)
+- Payment gateway (PayFast / Mobile Money / Crypto / Bank Transfer)
+- Status
+- Date
+
+7.2 Escrow System (dedicated tab + live dashboard)
+- Escrow ID
+- Contract / Order linked
+- Amount held
+- Release status
+- Release date
+- AI Predictive Release Score (0-100, higher for Academy-certified freelancers)
+
+7.3 Withdrawals Queue (dedicated tab)
+- Withdrawal ID
+- Freelancer
+- Amount
+- Method (Bank transfer / PayFast / Mobile Money / Crypto)
+- Bank details / Wallet
+- Status
+- Requested date
+
+7.4 Revenue Tracking Dashboard (live metrics + charts)
+- Total commission earned
+- Subscription revenue
+- Promotion revenue
+- Ad revenue
+- Monthly / Daily / Category revenue breakdowns (with Academy correlation chart)
+
+Admin Actions (with confirmation + immutable audit log):
+- Hold escrow
+- Release funds (one-tap or bulk)
+- Refund escrow (partial/full + reason)
+- Approve / Reject / Process withdrawal
+- Force transaction correction
+
+200% Intelligence & Africa-First Excellence:
+- AI Predictive Escrow Release (Academy certifications = instant/fast release)
+- Real-time ZAR + PayFast + Mobile Money + Crypto payouts (zero delays for rural users)
+- Academy Revenue Correlation (live chart: “Certifications increased platform revenue by X%”)
+- Predictive Fraud Detection + Auto-Hold
+- One-click DTIC/SEFA Investor Report export (monthly revenue + job creation + skills impact)
+- Real-time Socket.io updates + full export (CSV/PDF/Excel)
+
+Deliver:
+- New backend routes (/api/finance/transactions + /escrow + /withdrawals + /revenue)
+- MongoDB schema extensions (Transaction, Escrow, Withdrawal, RevenueMetric)
+- New React page: src/pages/admin/FinanceDepartment.jsx (tabs + live widgets + charts + modals)
+- Socket.io events for live money movement
+- Updated README with “How to access /admin/finance + how we beat every competitor weakness”
+
+Build this as the transparent, lightning-fast, investor-grade financial heart of a $1 billion platform. Start with schemas + PayFast integration, then the beautiful React UI. Output every new file.
