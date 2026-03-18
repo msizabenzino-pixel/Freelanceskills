@@ -22,3 +22,4 @@ export * from "./models/disputes";
 export * from "./models/support";
 export * from "./models/reports";
 export * from "./models/categories";
+export * from "./models/marketing";
