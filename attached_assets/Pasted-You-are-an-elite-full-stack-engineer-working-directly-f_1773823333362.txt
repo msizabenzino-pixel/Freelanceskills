@@ -1,0 +1,60 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready FREELANCER MANAGEMENT section to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/freelancers — a dedicated, searchable table + detailed profile modals that surpass Fiverr (levels + gigs), Upwork (Job Success Score + verification), Toptal (elite screening), PeoplePerHour and Guru (portfolio + earnings) by integrating deep AI Upskilling Academy data, earnings-lift correlation, flexible commissions, AI portfolio scoring, and Africa-first features.
+
+MANDATORY FREELANCER-SPECIFIC ATTRIBUTES — DO NOT REMOVE ANY:
+
+Profile Data (tabs in modal):
+- Profile picture (editable)
+- Title / Professional Headline
+- Skills (multi-tag with AI suggestions from Upskilling Academy)
+- Hourly rate (ZAR, editable)
+- Portfolio (images/videos + AI scoring score 0-100)
+- Experience (years + summary)
+- Languages (with proficiency)
+- Certifications (auto-pulled from AI Academy with earnings-lift %)
+- Availability (real-time calendar toggle + next available date)
+
+Performance Data (live metrics):
+- Total jobs completed
+- Rating (average + breakdown)
+- Reviews (count + latest)
+- Earnings (total + monthly average + predictive future earnings)
+- Job success rate (AI-calculated like Upwork JSS but better)
+- Response time (average hours, with Fiverr-style fast-response badge)
+
+Verification Status (multi-stage with admin queue):
+- Identity verification (KYC + USSD option)
+- Payment verification (bank/PayFast)
+- Portfolio review (AI scoring + admin approval)
+
+Admin Actions (with confirmation + audit log):
+- Approve freelancer (multi-stage like Toptal but faster)
+- Reject freelancer (with reason)
+- Feature freelancer (boost visibility + algorithm multiplier)
+- Change commission (per-freelancer override 5-15%, better than Fiverr/Upwork fixed rates)
+- Suspend account (temporary/permanent with reason)
+
+Surpass-the-competition features (Elon-level excellence):
+- Dynamic Freelancer Levels (New → Rising Talent → Level 1/2 → Top Rated — auto-upgraded by Upskilling Academy progress + earnings lift)
+- AI Portfolio Scoring + predictive earnings potential chart
+- Earnings Lift Correlation (scatter chart: certifications vs earnings increase)
+- Real-time Availability Calendar (integrated with job matching)
+- Gig Packages builder (Fiverr-style but tied to Academy skills)
+- Proposal & Contract Tracking (Upwork-style visibility)
+- One-click export filtered freelancers (CSV/Excel with all metrics)
+- Bulk actions (approve 50, change commissions, feature)
+- Real-time Socket.io updates (new application, earnings, verification)
+
+Deliver:
+- New backend routes (/api/freelancers + /api/freelancers/:id)
+- MongoDB schema extensions (FreelancerProfile, PortfolioScore, AcademyImpact)
+- New React page: src/pages/admin/FreelancerManagement.jsx (table + modal with tabs)
+- Socket.io events for live updates
+- Updated README with “How to access /admin/freelancers + how we surpass Fiverr/Upwork/Toptal”
+
+Build this as the heart of freelancer success on a $1 billion platform — beautiful, fast, auditable, and Africa-first. Start with schemas and backend, then the React UI. Output every new file.
