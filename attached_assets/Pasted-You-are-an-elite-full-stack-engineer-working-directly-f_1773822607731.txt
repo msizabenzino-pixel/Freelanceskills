@@ -1,0 +1,49 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion platform. Add a complete, production-ready MOBILE APP ADMIN VIEW to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB + Socket.io
+- Frontend: React 18 + Vite + Tailwind CSS (PWA-ready with Vite PWA plugin)
+
+Create /admin/mobile as a dedicated mobile-optimized admin interface — designed for Cape Town admins on the go. Make the entire admin installable as PWA. Elon Musk standard: lightning-fast, touch-first, offline-capable, beautiful, and powerful on any African phone.
+
+MANDATORY FEATURES — DO NOT REMOVE ANY:
+
+1. Mobile-First Layout
+   - Bottom navigation (Home | Users | Analytics | Marketplace | Support)
+   - Collapsible header with global search + quick filters
+   - Swipeable tabs on Analytics & Reports
+
+2. Key Mobile Screens (all fully functional and fast-loading):
+   - Home Overview (condensed dashboard cards + pulsing live numbers + quick actions)
+   - User Management (search + swipe actions: View / Suspend / Message / Ban)
+   - Live Activity Feed (real-time Socket.io push notifications)
+   - Quick Analytics Snapshots (top 6 KPIs + 3 mini interactive charts)
+   - Support Tickets Inbox (swipe left to resolve/escalate)
+   - Wallet & Payouts Monitor (pending withdrawals with one-tap approve/reject)
+   - Fraud Alert Centre (red priority list with instant block)
+
+3. Real-time & Offline Excellence
+   - Socket.io push for every live event (new user, payment, dispute, fraud alert)
+   - PWA install prompt + service worker offline caching for key screens
+   - Pull-to-refresh on every screen
+
+4. Extra Mobile Power Features
+   - Quick PIN / biometric login for admins
+   - Voice search for users (Web Speech API)
+   - One-tap bulk actions (suspend multiple users)
+   - Mini Africa map showing live users (Leaflet mobile version)
+   - Upskilling quick stats (latest certifications + earnings lift summary)
+   - Push notification simulation for mobile testing
+
+Security & Scalability:
+- Same JWT + role-based access
+- All actions logged with device info + IP
+- Optimized for low-bandwidth African networks (lazy loading + compressed data)
+
+Deliver:
+- New folder /frontend/mobile with optimized components
+- Route /admin/mobile (with manifest.json and service-worker)
+- Updated service worker for offline + push
+- README section: “How to install Mobile Admin as PWA on Android/iOS + test live updates”
+
+Build this so any admin can run the entire platform from their phone while scaling to 1 million South African users. Output every new file with clear integration steps.

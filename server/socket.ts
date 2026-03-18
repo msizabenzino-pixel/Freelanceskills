@@ -46,6 +46,15 @@ export function setupSocket(httpServer: HttpServer) {
       log(`User ${userId} authenticated on socket ${socket.id}`, "socket");
     });
 
+    socket.on("join_room", (room: string) => {
+      // Allow joining named rooms (analytics_room, etc.) — admin pages use this
+      const allowedRooms = ["analytics_room"];
+      if (allowedRooms.includes(room)) {
+        socket.join(room);
+        log(`Socket ${socket.id} joined room: ${room}`, "socket");
+      }
+    });
+
     socket.on("subscribe_jobs", (filters?: { category?: string; location?: string }) => {
       socket.join("job_notifications");
       if (filters?.category) socket.join(`jobs_${filters.category}`);

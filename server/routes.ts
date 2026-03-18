@@ -73,6 +73,8 @@ export async function registerRoutes(
   registerVictoryLapRoutes(app, isAuthenticated);
   const { registerAdminRoutes } = await import("./adminRoutes");
   registerAdminRoutes(app, isAuthenticated);
+  const { registerAnalyticsRoutes } = await import("./analyticsRoutes");
+  registerAnalyticsRoutes(app, isAuthenticated);
 
   // Dashboard Stats
   app.get("/api/dashboard/stats", isAuthenticated, async (req: any, res) => {
