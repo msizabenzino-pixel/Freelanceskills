@@ -21,3 +21,4 @@ export * from "./models/payments";
 export * from "./models/disputes";
 export * from "./models/support";
 export * from "./models/reports";
+export * from "./models/categories";

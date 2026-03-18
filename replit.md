@@ -35,3 +35,9 @@ The architecture is designed for scalability and maintainability, with clear sep
 -   **Real-time Communication**: Socket.io
 -   **UI Components**: shadcn/ui (based on Radix UI), Lucide React (icons), Framer Motion (animations), Embla Carousel
 -   **Mobile Development**: React Native / Expo SDK 51, React Navigation 6, Sentry, Expo modules (notifications, camera, location, haptics, biometrics, calendar, video, speech, image-picker, secure-store, linking)
+## Admin Platform — 100 Section Build (16 Complete)
+
+Built sections: 1-User Management, 2-Job Board, 3-Gig/Service, 4-Booking/Order, 5-Escrow/Finance, 6-Disputes, 7-Support, 8-Analytics, 9-AI Management, 10-KYC, 11-Growth/Referrals, 12-Academy, 13-System Settings, 14-Mobile Admin, 15-Report/Abuse, **16-Category & Skill Management** (Taxonomy Backbone: hierarchical tree, AI duplicate detection, user suggestion queue, proficiency + endorsement engine, full analytics, bulk CSV/JSON import/export, integration hooks).
+
+Key files (16th section): `shared/models/categories.ts`, `server/categoryRoutes.ts`, `client/src/pages/CategorySkillManagement.tsx`
+Route: `/admin/categories` | 5 tabs: Tree View · Skills · Analytics · Suggestions · Import/Export
