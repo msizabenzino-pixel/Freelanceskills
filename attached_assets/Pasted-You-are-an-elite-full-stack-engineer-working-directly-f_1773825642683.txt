@@ -1,0 +1,57 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready ESCROW & PAYMENTS CONTROL CENTRE to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT + PayFast API integration
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/payments — the financial heart of the platform. A beautiful, real-time control centre that surpasses Fiverr (instant release), Upwork (milestones), Toptal (secure flows), PeoplePerHour, Guru and Freelancer.com by adding AI predictive release scoring, Academy earnings-lift correlation, ZAR-first intelligence, and predictive fraud prevention.
+
+MANDATORY SECTIONS & FEATURES — DO NOT REMOVE ANY:
+
+1. Overview Dashboard Widgets (live updating)
+   - Total Escrow Balance (ZAR)
+   - Pending Releases
+   - Completed Payouts (today / this week)
+   - Refund Requests
+   - Chargebacks
+   - Average Release Time
+
+2. Transactions Table (filterable + sortable)
+   - Transaction ID
+   - Job ID + Title
+   - Client + Freelancer
+   - Amount (ZAR)
+   - Status (Held / Released / Refunded / Disputed)
+   - Release Score (AI 0-100%)
+   - Date
+
+3. Escrow Release Engine
+   - AI Predictive Release Score (factors: Academy certifications, job success rate, client LTV, response time)
+   - One-tap Release + Bulk Release
+   - Auto-release rules (e.g., 100% Academy freelancers auto-release after 48h)
+
+4. Payment History & Payouts
+   - PayFast integration (live status + instant payout button)
+   - ZAR-first multi-currency converter + rural bank alerts
+   - Pending Withdrawals queue with one-tap approve
+
+5. Fraud & Risk Panel
+   - Real-time Fraud Risk Score per transaction
+   - Auto-hold logic + investigation workflow
+
+Surpass-the-competition features (Elon-level excellence):
+- Predictive Release Scoring with Academy correlation chart (show earnings lift after certification)
+- Instant ZAR Payouts with zero-data SMS confirmation for rural freelancers
+- Smart Auto-Release Rules engine (tied to freelancer levels)
+- Full audit trail + export (CSV/PDF with AI scores)
+- Real-time Socket.io updates (new escrow, release, fraud alert)
+- Bulk actions + Saved Filters (“High-risk holds”, “Academy-ready releases”)
+
+Deliver:
+- New backend routes (/api/payments + /api/payments/:id + PayFast webhooks)
+- MongoDB schema extensions (EscrowTransaction, ReleaseScore, PayoutLog)
+- New React page: src/pages/admin/PaymentsControl.jsx (widgets + table + modals + charts)
+- Socket.io events for live updates
+- Updated README with “How to access /admin/payments + how we beat Fiverr/Upwork/Toptal”
+
+Build this as the unbreakable financial backbone of a $1 billion platform — transparent, fast, predictive, and Africa-first. Start with schemas + PayFast integration, then the React UI. Output every new file with ultra-detailed comments.
