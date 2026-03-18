@@ -1,0 +1,49 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready CLIENT MANAGEMENT section to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/clients — a dedicated, searchable table + detailed profile modals that surpass Fiverr (buyer rewards + team budgets), Upwork (payment verification + spend tracking + fraud reporting), Toptal (elite client matching), PeoplePerHour, Guru and Freelancer.com (contract oversight + disputes) by adding AI fraud scoring, Upskilling Academy hire-quality correlation, predictive LTV, and Africa-first payment insights.
+
+MANDATORY CLIENT-SPECIFIC ATTRIBUTES — DO NOT REMOVE ANY:
+
+Profile Data (tabs in modal):
+- Company name / Business name
+- Spending (total + monthly average + trends)
+- Jobs posted (total + active)
+- Average job value (ZAR)
+- Active contracts
+- Payment history (detailed log with ZAR/PayFast status)
+
+Performance & Risk Data:
+- Client LTV (Lifetime Value) with formula display
+- Hire Quality Score (correlation with freelancer Academy certifications & earnings lift)
+- Dispute / Refund rate
+- Fraud Risk Score (AI-generated 0-100)
+
+Admin Actions (with confirmation + full audit log):
+- Flag client (with reason)
+- Restrict job posting (temporary/permanent + budget cap)
+- Refund transactions (one-tap escrow release or partial)
+- Investigate fraud (opens AI-powered investigation panel with transaction + IP + behaviour analysis)
+
+Surpass-the-competition features (Elon-level excellence):
+- AI Fraud Detection & Predictive Alerts (real-time scoring better than Upwork)
+- Client Success with Academy (scatter chart: hires from Academy freelancers vs client ROI/earnings lift)
+- Dynamic Client Levels (New → Bronze → Silver → Gold — auto-upgraded by spending + low dispute rate, like Fiverr rewards but smarter)
+- One-tap Refund with Escrow Control (beats Fiverr/Upwork speed)
+- Job Posting Restriction Engine (AI-based budget + risk limits)
+- Predictive Client LTV & Churn Forecast
+- Real-time Socket.io updates (new job, payment, flag)
+- Bulk actions (flag 50 clients, restrict posting, batch refunds)
+- One-click export (CSV/Excel with all metrics + AI scores)
+
+Deliver:
+- New backend routes (/api/clients + /api/clients/:id)
+- MongoDB schema extensions (ClientProfile, PaymentHistory, FraudInvestigation)
+- New React page: src/pages/admin/ClientManagement.jsx (table + modal with tabs + charts)
+- Socket.io events for live updates
+- Updated README with “How to access /admin/clients + how we surpass Fiverr/Upwork/Toptal”
+
+Build this as the control centre for client success on a $1 billion platform — beautiful, fast, auditable, and Africa-first. Start with schemas and backend, then the React UI. Output every new file.
