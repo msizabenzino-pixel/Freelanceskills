@@ -1,0 +1,37 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready MARKETING SYSTEM department (the ultimate growth & viral acquisition engine) to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/marketing — the most intelligent, predictive, AI-agent-driven growth system ever built for a freelance marketplace. It obliterates competitor weaknesses (basic credits on Fiverr/Upwork, generic automation on Klaviyo/Shopify) with agentic AI, gamification, predictive LTV, Africa-first flows, and 5-year future-proof intelligence.
+
+MANDATORY MODULES & FEATURES — DO NOT REMOVE ANY:
+Growth Features / Modules:
+- Referral system (referral links + referral bonus)
+- Coupon codes (discount codes + usage limits)
+- Affiliate program (affiliate tracking + commissions)
+- Email campaigns (newsletters + announcements)
+
+Admin Dashboard Sections (/admin/marketing):
+- Campaigns: AI Campaign Brain (create newsletter, announcement, win-back, referral push)
+- Referrals: Dashboard with links, bonus rules, viral coefficient tracking
+- Coupons: Create/manage codes with usage limits, dynamic conditions, expiration
+- Affiliates: Tracking table, commission rules, payout management
+- Analytics: Predictive LTV, growth forecasts, ROI per channel
+
+200% Intelligence & Human Excellence:
+- AI Campaign Brain (autonomous agent suggests + builds + A/B tests campaigns)
+- Gamification & Loyalty Tiers (badges, streaks, escalating bonuses)
+- Africa-first: USSD referral codes, WhatsApp flows, mobile-money instant payouts
+- Predictive Growth Engine (forecast viral spread, churn prevention)
+- Real-time Socket.io live campaign performance
+
+Deliver:
+- New backend routes (/api/marketing/campaigns, /api/marketing/referrals, /api/marketing/coupons, /api/marketing/affiliates, etc.)
+- MongoDB schemas (Campaign, Referral, Coupon, AffiliateProgram, GrowthMetric, LoyaltyTier)
+- New React page: src/pages/admin/MarketingSystem.jsx (AI brain panel, tabs for each module, predictive analytics dashboard)
+- Socket.io events for live performance & viral alerts
+- Updated README with “How to access /admin/marketing + why this engine will dominate growth for the next 5 years”
+
+Build with extreme creativity, first-principles growth thinking, and relentless 5-year foresight — make Freelancerskills.net the platform that grows itself. Start with schemas and backend, then React UI. Output every new file.
