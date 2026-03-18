@@ -1,0 +1,43 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready SECURITY & TRUST department (the heart of the entire platform) to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/security — the most advanced, proactive, zero-trust security & user-safety system ever built for a freelance marketplace. It obliterates competitor weaknesses (reactive ID checks on Upwork/Fiverr, basic Radar rules on Stripe, no deepfake defense) with perpetual AI risk scoring, behavioral biometrics, deepfake resistance, predictive quarantine, and Africa-first flows.
+
+MANDATORY USER SAFETY TOOLS & SYSTEMS — DO NOT REMOVE ANY:
+User Safety Tools / Systems:
+- KYC verification
+- Identity document upload
+- Fraud detection
+- IP tracking
+- Login alerts
+
+Admin Features:
+- Suspicious activity alerts
+- Block IP
+- Blacklist accounts
+
+Admin Dashboard Sections (/admin/security):
+- Risk Dashboard: Real-time global risk map + per-user 0-100 AI scores
+- KYC Queue: Pending verifications (ID uploads, selfie/video, voice)
+- Fraud & Activity Log: Table of suspicious events (IP changes, velocity spikes, behavioral anomalies)
+- Blacklist & Blocks: IP blacklist, account blacklist, device fingerprint blocks
+- Alerts Center: Live Socket.io alerts + rule engine
+
+200% Intelligence & Human Excellence:
+- Perpetual AI Risk Engine + Behavioral Biometrics (keystroke/mouse patterns, device fingerprinting)
+- Deepfake & Multimodal Verification Vault (ID + selfie + video + voice authenticity checks)
+- Predictive Quarantine (auto-pause accounts before harm)
+- Real-time Login Alerts + 2FA enforcement (SMS/USSD + authenticator)
+- Africa-first: USSD/offline KYC, mobile-money fraud patterns, voice verification
+
+Deliver:
+- New backend routes (/api/security/kyc, /api/security/risk, /api/security/alerts, /api/security/block, etc.)
+- MongoDB schemas (KYCRecord, RiskScore, SecurityEvent, Blacklist, AuditLog)
+- New React page: src/pages/admin/SecurityTrustManagement.jsx (risk dashboard, KYC queue, activity log, blacklist manager, alerts panel)
+- Socket.io events for live alerts & risk updates
+- Updated README with “How to access /admin/security + why this is the unbreakable heart of the platform”
+
+Build with extreme intelligence, zero-trust thinking, and relentless protection — make Freelancerskills.net the safest platform on earth. Start with schemas and backend, then React UI. Output every new file.
