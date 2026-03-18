@@ -420,6 +420,10 @@ export default function AdminDashboard() {
               className="px-3 py-1.5 rounded-lg text-sm font-semibold text-white transition-colors" style={{ background: "#dc2626" }}>
               ⚖️ Disputes
             </button>
+            <button data-testid="btn-support" onClick={() => navigate("/admin/support")}
+              className="px-3 py-1.5 rounded-lg text-sm font-semibold text-white transition-colors" style={{ background: "#0891b2" }}>
+              🎧 Support
+            </button>
             <button data-testid="btn-orders" onClick={() => navigate("/admin/orders")}
               className="px-3 py-1.5 rounded-lg text-sm font-semibold text-white transition-colors" style={{ background: "#7c3aed" }}>
               📦 Orders
