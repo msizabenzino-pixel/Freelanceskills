@@ -1,0 +1,50 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready GIG MARKETPLACE ADMIN (Fiverr-style) section to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/gigs — a powerful, searchable gig marketplace control centre that surpasses Fiverr (packages + featured gigs), Upwork, Toptal, PeoplePerHour, Guru and Freelancer.com through deep AI intelligence, Academy integration, predictive earnings, and Africa-first ZAR optimization.
+
+MANDATORY FIELDS & FEATURES — DO NOT REMOVE ANY:
+
+Gig Listings Fields (table + modal):
+- Gig ID (short UUID)
+- Gig title
+- Freelancer (linked with level + Academy badge)
+- Category + Skills (multi-tag)
+- Package pricing (Basic / Standard / Premium — ZAR with dynamic suggestions)
+- Delivery time (hours/days, with rural adjustment)
+- Rating (average + breakdown)
+- Orders count (lifetime + this month)
+- Status (Draft / Pending Approval / Active / Paused / Suspended)
+
+Packages Section (inside modal):
+- Basic, Standard, Premium (editable pricing, revisions, delivery, extras)
+- AI-suggested upgrades based on freelancer Academy progress
+
+Admin Actions (with confirmation + audit log):
+- Approve gig (one-tap or with notes)
+- Reject gig (with reason)
+- Feature gig (visibility multiplier + algorithm boost)
+- Remove gig (soft delete)
+- Edit gig (title, packages, pricing)
+- Suspend gig
+
+Surpass-the-competition features (200% intelligence):
+- AI Gig Intelligence Score (0-100 predictive earnings + completion probability)
+- Academy Correlation Engine (show exact earnings multiplier after each certification)
+- Dynamic Package Optimizer (AI suggests pricing & delivery based on demand + freelancer history)
+- Real-time Order Forecasting (next 30 days projected orders)
+- ZAR Pricing Intelligence (auto-adjust for inflation + rural buyer alerts)
+- Bulk actions (approve 50 gigs, feature batch, price adjust)
+- One-click export (CSV/Excel with AI scores + Academy ROI)
+
+Deliver:
+- New backend routes (/api/gigs + /api/gigs/:id)
+- MongoDB schema extensions (Gig, GigPackage, GigAnalytics)
+- New React page: src/pages/admin/GigMarketplace.jsx (table + modal with tabs + charts)
+- Socket.io events for live updates (new order, status change)
+- Updated README with “How to access /admin/gigs + how we beat Fiverr and every competitor”
+
+Build this as the revenue engine of a $1 billion platform — intelligent, fast, predictive, and Africa-first. Start with schemas and backend, then the React UI. Output every new file.

@@ -412,6 +412,10 @@ export default function AdminDashboard() {
               Import CSV
               <input ref={importRef} type="file" accept=".csv" className="hidden" onChange={handleImport} />
             </label>
+            <button data-testid="btn-gigs" onClick={() => navigate("/admin/gigs")}
+              className="px-3 py-1.5 rounded-lg text-sm font-semibold text-white transition-colors" style={{ background: "#f59e0b" }}>
+              🎯 Gigs
+            </button>
             <button data-testid="btn-settings" onClick={() => navigate("/admin/settings")}
               className="px-3 py-1.5 rounded-lg text-sm font-semibold text-white transition-colors" style={{ background: "#6b7280" }}>
               ⚙️ Settings
@@ -606,7 +610,7 @@ export default function AdminDashboard() {
                       <div className="flex items-center gap-1">
                         <button data-testid={`btn-status-${u.id}`} title="Change status"
                           onClick={() => { setActionPayload({ status: u.status || "active" }); setActionModal({ type: "status", user: u }); }}
-                          className="p-1.5 rounded-md hover:bg-amber-50 text-amber-600 transition-colors" title="Status">
+                          className="p-1.5 rounded-md hover:bg-amber-50 text-amber-600 transition-colors">
                           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>
                         </button>
                         <button data-testid={`btn-role-${u.id}`} title="Change role"
