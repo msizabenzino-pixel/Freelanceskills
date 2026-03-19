@@ -127,6 +127,9 @@ export async function registerRoutes(
   const { registerFeatureFlagsRoutes } = await import("./featureFlagsRoutes");
   await registerFeatureFlagsRoutes(app, isAuthenticated);
 
+  const { registerRolesRoutes } = await import("./rolesRoutes");
+  await registerRolesRoutes(app, isAuthenticated);
+
   // Dashboard Stats
   app.get("/api/dashboard/stats", isAuthenticated, async (req: any, res) => {
     try {

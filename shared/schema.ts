@@ -27,3 +27,4 @@ export * from "./models/subscriptions";
 export * from "./models/audit";
 export * from "./models/cms";
 export * from "./models/feature_flags";
+export * from "./models/roles";

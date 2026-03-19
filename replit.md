@@ -35,18 +35,32 @@ The architecture is designed for scalability and maintainability, with clear sep
 -   **Real-time Communication**: Socket.io
 -   **UI Components**: shadcn/ui (based on Radix UI), Lucide React (icons), Framer Motion (animations), Embla Carousel
 -   **Mobile Development**: React Native / Expo SDK 51, React Navigation 6, Sentry, Expo modules (notifications, camera, location, haptics, biometrics, calendar, video, speech, image-picker, secure-store, linking)
-## Admin Platform — 100 Section Build (26 Complete)
+## Admin Platform — 100 Section Build (27 Complete)
 
-Completed sections: 1-User Management, 2-Job Board, 3-Gig/Service, 4-Booking/Order, 5-Escrow/Finance, 6-Disputes, 7-Support, 8-Analytics, 9-AI Management, 10-KYC, 11-Growth/Referrals, 12-Academy, 13-System Settings, 14-Mobile Admin, 15-Report/Abuse, 16-Category & Skill Management, 17-Content Moderation, 18-Promotion System, 19-Marketing System, 20-Subscription Management, 21-Security & Trust, 22-Audit Logs, 23-Notifications, 24-Analytics Deep Dive, **25-CMS Management v2.0** (37 endpoints, 10 tabs: Visual Builder, Agentic AI, Version History, SEO, Dynamic Data, Africa Intelligence, Collaboration, Integration Hub, Component Library), **26-Feature Flags v1.0** (22 endpoints, 30 built-in flags, 5 tabs: Flags Library, Flag Editor, AI Impact Predictor, A/B Testing, History & Rollback).
+Completed sections: 1-User Management, 2-Job Board, 3-Gig/Service, 4-Booking/Order, 5-Escrow/Finance, 6-Disputes, 7-Support, 8-Analytics, 9-AI Management, 10-KYC, 11-Growth/Referrals, 12-Academy, 13-System Settings, 14-Mobile Admin, 15-Report/Abuse, 16-Category & Skill Management, 17-Content Moderation, 18-Promotion System, 19-Marketing System, 20-Subscription Management, 21-Security & Trust, 22-Audit Logs, 23-Notifications, 24-Analytics Deep Dive, 25-CMS Management v2.0, 26-Feature Flags v2.0, **27-Role & Permission System RBAC v1.0** (22 endpoints, 5 core roles, 137 permissions, 25 departments, 5 tabs: Roles Library, Permission Matrix, Role Editor, AI Suggester, Simulator).
 
-**Section 26 — Feature Flags v1.0** (Nuclear Master Control Panel):
-- 22 REST endpoints: CRUD, Enable/Disable/Rollout, Lock/Unlock, Schedule, History, Rollback, Evaluate, AI Predict, A/B Experiments, Integration Status, Seed, Stats
+**Section 27 — Role & Permission System RBAC v1.0** (Gatekeeper of the Entire Platform):
+- 22 REST endpoints: Seed, Stats, List/Create/Update/Delete Roles, Permission Matrix (137×5 grid), Evaluate/Simulate, AI Role Suggester, Bulk Grant/Revoke, Per-Role Permission CRUD, Assign/Revoke User, User Roles
+- 5 Core roles: Admin (137 perms), Support (17), Moderator (14), Finance (24), Marketing (21)
+- 137 granular permissions across 25 departments: users, payments, disputes, notifications, analytics, promotions, cms, feature_flags, audit_logs, subscriptions, security, categories, moderation, academy, system, kyc, roles, reports, jobs, gigs, orders, finance, marketing, support, africa
+- Africa-First: ussd_access, mobile_money_approve, low_data_access, whatsapp_send
+- AI Role Suggester: GPT-4o-mini recommends perfect role + permissions from job title + responsibilities
+- Permission Simulator: Preview exactly what any role or user can/cannot do across all departments
+- Role inheritance: Custom roles copy parent's permission set + customize in matrix
+- Exportable middleware: checkPermission() and hasPermission() for protecting any existing route
+- Beats Salesforce + Okta + Permit.io + Auth0 + Casbin until 2029
+
+Key files (Section 27): `server/rolesRoutes.ts`, `client/src/pages/RolePermissionSystem.tsx`, `shared/models/roles.ts`
+DB Tables: `roles`, `permissions`, `role_permissions`, `user_role_assignments`
+Route: `/admin/roles` | 5 tabs: 📋 Roles Library · ⚡ Permission Matrix · ✏️ Role Editor · 🤖 AI Suggester · 🎭 Simulator
+
+**Section 26 — Feature Flags v2.0** (Nuclear Master Control Panel):
+- 32 REST endpoints: CRUD, Enable/Disable/Rollout, Canary, Lock/Unlock, Schedule, History, Rollback, Evaluate (7D Targeting), AI Impact (confidence + churn), Compliance (POPIA/NDPR/PCI), Monitoring, Africa Dashboard, AI Targeting Suggest, Statistical Significance, Auto-Winner, Bulk Ops, Integration Status, Seed, Stats
 - 30 built-in flags: marketplace (5), payment (4), africa (5), ai (5), academy (3), social (3), security (3), platform (2)
 - Africa-First: USSD mode, Mobile Money (M-Pesa/MTN/Airtel), Multi-Currency (ZAR/NGN/KES/GHS), WhatsApp notifications
 - AI Impact Predictor: GPT-4o-mini predicts revenue, server load, risk, Africa impact, rollout strategy
-- Kill switches: Emergency instant disable with immutable audit trail
-- Beats LaunchDarkly + Split + Unleash + Flagsmith until 2030
+- Beats LaunchDarkly + Split + Unleash + Flagsmith until 2029
 
 Key files (Section 26): `server/featureFlagsRoutes.ts`, `client/src/pages/FeatureFlagsManagement.tsx`, `shared/models/feature_flags.ts`
 DB Tables: `feature_flags`, `flag_history`, `flag_experiments`
-Route: `/admin/feature-flags` | 5 tabs: 🚀 Flags Library · ✏️ Flag Editor · 🤖 AI Impact · 🧪 A/B Testing · 📜 History
+Route: `/admin/feature-flags` | 8 tabs: 🚩 Flags Library · 🎯 Targeting Engine · 🤖 AI Command Centre · 🧪 Experiments · 📡 Live Dashboard · 🌍 Africa Intel · ✏️ Editor · 📜 History
