@@ -1,0 +1,45 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready DATA COMPLIANCE department (the unbreakable legal & trust shield) to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/compliance — the most advanced, automated, multi-jurisdiction data compliance engine ever built for a marketplace. Current site (freelancerskills.net) has ZERO compliance tools. Build from scratch and surpass OneTrust + Vanta + Transcend + DataGrail + Stripe combined.
+
+MANDATORY LEGAL FEATURES — DO NOT OMIT ANY:
+- GDPR data export (full portability package)
+- Account deletion (Right to be Forgotten)
+- Financial audit logs (immutable export)
+
+MANDATORY GOD-TIER ADDITIONS:
+- Automated Data Subject Request (DSR) portal (access, correction, erasure, restriction, objection, portability)
+- Consent management & granular preference center
+- Data mapping & inventory (AI auto-discovery of all personal data)
+- Retention policy engine + scheduled auto-purge
+- Breach detection & 72-hour notification workflow
+- POPIA + CCPA + future-law compliance matrix
+- DPIA (Data Protection Impact Assessment) generator
+- Proof-of-deletion cryptographic certificates
+
+Admin Dashboard Sections (/admin/compliance):
+- Compliance Dashboard: Live status per regulation + pending requests counter
+- DSR Queue: All user requests with SLA timers
+- Data Inventory Map: Visual graph of where personal data lives
+- Audit & Export Center: One-click regulator-ready packages
+- Retention & Purge Scheduler
+- AI Compliance Scanner
+
+200% Intelligence & Human Excellence (hardcore backend):
+- Orchestrated deletion workflow (soft delete → cryptographic proof → final purge after retention window)
+- Immutable financial & operational logs (tied to existing Audit Logs)
+- Real-time Socket.io for pending request alerts
+- Africa-first: USSD/SMS request flow, low-data export formats, POPIA-specific consent signals
+
+Deliver:
+- New backend routes (/api/compliance/dsr, /api/compliance/export, /api/compliance/delete, /api/compliance/audit, /api/compliance/scan, etc.) + deletion orchestrator + retention cron
+- MongoDB schemas (DataRequest, ConsentRecord, DataInventory, RetentionPolicy, DeletionProof, BreachNotification)
+- New React page: src/pages/admin/DataCompliance.jsx (dashboard, DSR queue, data map, export center, AI scanner, retention scheduler)
+- Socket.io events for live request updates + breach alerts
+- Updated README with “How to access /admin/compliance + why this is the nuclear legal shield”
+
+Build with extreme legal + technical aggression — only ADD on top of everything already built, never subtract. Start with schemas + deletion orchestrator + DSR workflow middleware, then React UI. Output every new file.

@@ -15,7 +15,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AreaChart, Area, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
-import { Activity, Zap, AlertTriangle, CheckCircle, Database, Globe, Server, Clock, TrendingUp, TrendingDown, RefreshCw, Plus, Trash2, Eye, Shield, Settings, Target, Cpu, Network, Wifi, Bell, Play, ChevronRight, DollarSign, ToggleLeft, ToggleRight, Minus, Gauge, Layers } from "lucide-react";
+import { Activity, Zap, AlertTriangle, CheckCircle, Database, Globe, Server, Clock, TrendingUp, TrendingDown, RefreshCw, Plus, Trash2, Eye, Shield, Settings, Target, Cpu, Network, Wifi, Bell, Play, ChevronRight, DollarSign, ToggleLeft, ToggleRight, Minus, Gauge, Layers, GitBranch, Sparkles, Radio, BarChart2, Brain, Send, RotateCcw, Link } from "lucide-react";
 import { io, Socket } from "socket.io-client";
 
 const TABS = [
@@ -25,6 +25,10 @@ const TABS = [
   { id: "errors", label: "Error Explorer", icon: AlertTriangle, color: "red" },
   { id: "alerts", label: "Alert Rules", icon: Bell, color: "yellow" },
   { id: "capacity", label: "Capacity Forecast", icon: TrendingUp, color: "purple" },
+  { id: "traces", label: "Distributed Traces", icon: GitBranch, color: "indigo" },
+  { id: "correlation", label: "Business Correlation", icon: BarChart2, color: "violet" },
+  { id: "signals", label: "Dept Signals", icon: Radio, color: "teal" },
+  { id: "aiexplain", label: "AI Explain", icon: Sparkles, color: "pink" },
 ] as const;
 type TabId = typeof TABS[number]["id"];
 
@@ -830,13 +834,364 @@ function CapacityForecastTab() {
   );
 }
 
+// ─── [Feature 1] Distributed Traces Tab ──────────────────────────────────────
+function DistributedTracesTab() {
+  const { data, isLoading, refetch } = useQuery<any>({ queryKey: ["/api/performance/traces"], refetchInterval: 15000 });
+  if (isLoading) return <div className="text-gray-500 text-sm py-12 text-center">Loading trace log...</div>;
+  const traces: any[] = data?.traces || [];
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-base font-semibold text-indigo-300 flex items-center gap-2"><GitBranch size={15} /> Distributed Traces — Express → PostgreSQL → OpenAI → PayFast Waterfall</h2>
+          <p className="text-xs text-gray-500 mt-0.5">Zero Jaeger/Zipkin needed. Each request generates root + child spans. Wrap db.execute() with synthChildSpan() for real production spans.</p>
+        </div>
+        <button data-testid="button-refresh-traces" onClick={() => refetch()} className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-900/30 border border-indigo-700/40 rounded-lg text-xs text-indigo-300"><RefreshCw size={10} />Refresh</button>
+      </div>
+      <div className="grid grid-cols-3 gap-3 mb-2">
+        <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-3 text-center"><div className="text-2xl font-bold text-indigo-300">{data?.total || 0}</div><div className="text-xs text-gray-500 mt-0.5">Recent Traces</div></div>
+        <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-3 text-center"><div className="text-2xl font-bold text-purple-300">{data?.spanCount || 0}</div><div className="text-xs text-gray-500 mt-0.5">Total Spans (buffer)</div></div>
+        <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-3 text-center"><div className="text-2xl font-bold text-red-300">{traces.filter((t: any) => t.hasError).length}</div><div className="text-xs text-gray-500 mt-0.5">Error Traces</div></div>
+      </div>
+      {traces.length === 0 ? (
+        <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-8 text-center text-gray-500 text-sm">No traces yet — traces are generated every 10s when traffic flows. Check back shortly.</div>
+      ) : (
+        <div className="space-y-2">
+          {traces.slice(0, 20).map((trace: any) => (
+            <div key={trace.traceId} data-testid={`trace-${trace.traceId}`} className={`bg-gray-900/60 border ${trace.hasError ? "border-red-800/50" : "border-gray-800"} rounded-xl p-4`}>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <span className={`w-2 h-2 rounded-full ${trace.hasError ? "bg-red-500" : "bg-green-500"}`} />
+                  <span className="text-xs font-mono text-gray-400">{trace.traceId}</span>
+                  {trace.businessContext && <span className="px-2 py-0.5 bg-indigo-900/40 border border-indigo-700/30 rounded text-xs text-indigo-300">{trace.businessContext}</span>}
+                </div>
+                <span className="text-xs text-gray-500">{trace.totalDurationMs}ms total · {trace.services?.join(" → ")}</span>
+              </div>
+              <div className="space-y-1">
+                {(trace.spans || []).map((span: any, i: number) => {
+                  const indent = span.parentSpanId ? "ml-6" : "";
+                  const barW = Math.min(100, Math.round((span.duration / (trace.totalDurationMs || 1)) * 100));
+                  const color = span.service === "express-api" ? "bg-indigo-500" : span.service === "postgresql" ? "bg-blue-500" : span.service === "openai" ? "bg-purple-500" : span.service === "payfast" ? "bg-green-500" : "bg-gray-500";
+                  return (
+                    <div key={i} className={`flex items-center gap-2 ${indent}`}>
+                      <span className="text-xs text-gray-500 w-24 shrink-0 truncate">{span.service}</span>
+                      <span className="text-xs text-gray-400 w-48 shrink-0 truncate">{span.op}</span>
+                      <div className="flex-1 bg-gray-800 rounded h-1.5"><div className={`h-full ${color} rounded`} style={{ width: `${barW}%` }} /></div>
+                      <span className="text-xs text-gray-400 w-14 text-right shrink-0">{span.duration}ms</span>
+                      <span className={`text-xs ${span.status === "error" ? "text-red-400" : "text-green-500"}`}>{span.status}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── [Feature 2+3] Business Correlation Tab ───────────────────────────────────
+function BusinessCorrelationTab() {
+  const { data, isLoading, refetch } = useQuery<any>({ queryKey: ["/api/performance/business-correlation"], refetchInterval: 30000 });
+  const { data: rcData } = useQuery<any>({ queryKey: ["/api/performance/root-cause"], refetchInterval: 30000 });
+  if (isLoading) return <div className="text-gray-500 text-sm py-12 text-center">Loading correlation data...</div>;
+  if (data?.status === "collecting") return (
+    <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-8 text-center">
+      <BarChart2 size={32} className="mx-auto mb-3 text-violet-500 opacity-40" />
+      <p className="text-gray-400 text-sm">{data.message}</p>
+    </div>
+  );
+  const correlations: any[] = data?.correlations || [];
+  const rcEntries: any[] = rcData?.slowRootCauses || [];
+  const history: any[] = data?.history || [];
+  const corrColor = (r: number) => Math.abs(r) > 0.7 ? "text-red-300" : Math.abs(r) > 0.4 ? "text-yellow-300" : "text-gray-400";
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-base font-semibold text-violet-300 flex items-center gap-2"><BarChart2 size={15} /> Business + Infra Correlation Engine</h2>
+          <p className="text-xs text-gray-500 mt-0.5">Pearson r across every business KPI vs every infra metric. When orders/min spikes — does p99 follow? Find out here.</p>
+        </div>
+        <button data-testid="button-refresh-correlation" onClick={() => refetch()} className="flex items-center gap-1.5 px-3 py-1.5 bg-violet-900/30 border border-violet-700/40 rounded-lg text-xs text-violet-300"><RefreshCw size={10} />Refresh</button>
+      </div>
+      {data?.keyInsight && (
+        <div className="bg-violet-950/30 border border-violet-700/40 rounded-xl p-4">
+          <p className="text-sm text-violet-200 font-medium">{data.keyInsight}</p>
+          <p className="text-xs text-gray-500 mt-1">{data.dataPoints} samples collected ({Math.round((data.dataPoints * 10) / 60)} min of data)</p>
+        </div>
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {correlations.map((c: any, i: number) => (
+          <div key={i} data-testid={`correlation-${i}`} className="bg-gray-900/60 border border-gray-800 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs font-medium text-gray-300">{c.pair}</span>
+              <span className={`text-lg font-bold ${corrColor(c.r)}`}>{c.r > 0 ? "+" : ""}{c.r}</span>
+            </div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className={`px-2 py-0.5 rounded text-xs ${c.strength === "strong" ? "bg-red-900/40 text-red-300" : c.strength === "moderate" ? "bg-yellow-900/40 text-yellow-300" : "bg-gray-800 text-gray-500"}`}>{c.strength}</span>
+              <span className="text-xs text-gray-500">{c.direction}</span>
+            </div>
+            <div className="w-full bg-gray-800 rounded h-1.5 mb-2"><div className={`h-full rounded ${Math.abs(c.r) > 0.7 ? "bg-red-500" : Math.abs(c.r) > 0.4 ? "bg-yellow-500" : "bg-gray-600"}`} style={{ width: `${Math.abs(c.r) * 100}%` }} /></div>
+            <p className="text-xs text-gray-500">{c.insight}</p>
+          </div>
+        ))}
+      </div>
+      {history.length > 3 && (
+        <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-4">
+          <h3 className="text-xs font-semibold text-gray-400 mb-3">Orders/min vs API p99 — last {history.length} samples</h3>
+          <ResponsiveContainer width="100%" height={140}>
+            <LineChart data={history.slice(-40)}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+              <XAxis dataKey="ts" tick={false} />
+              <YAxis yAxisId="left" stroke="#a855f7" tick={{ fontSize: 9, fill: "#6b7280" }} />
+              <YAxis yAxisId="right" orientation="right" stroke="#06b6d4" tick={{ fontSize: 9, fill: "#6b7280" }} />
+              <Tooltip contentStyle={{ background: "#111827", border: "1px solid #374151", fontSize: 11 }} />
+              <Line yAxisId="left" type="monotone" dataKey="apiP99" stroke="#a855f7" dot={false} name="API p99 (ms)" />
+              <Line yAxisId="right" type="monotone" dataKey="ordersPerMin" stroke="#06b6d4" dot={false} name="Orders/min" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+      {rcEntries.length > 0 && (
+        <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-4">
+          <h3 className="text-xs font-semibold text-gray-400 mb-3">Root-Cause Fingerprints — Business Context</h3>
+          <div className="space-y-2">
+            {rcEntries.slice(0, 6).map((rc: any, i: number) => (
+              <div key={i} data-testid={`rootcause-${i}`} className="flex items-start gap-3 p-3 bg-gray-950/60 border border-gray-800 rounded-lg">
+                <AlertTriangle size={13} className="text-yellow-400 mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-xs text-gray-300 font-medium">{rc.correlation}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{rc.businessContext}</p>
+                  <p className="text-xs text-indigo-400 mt-0.5">{rc.infraContext}</p>
+                </div>
+                <span className="ml-auto text-xs text-gray-600 shrink-0">{rc.occurrences}x</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── [Feature 10] Dept Signals Tab ───────────────────────────────────────────
+function DeptSignalsTab() {
+  const { data, isLoading, refetch } = useQuery<any>({ queryKey: ["/api/performance/dept-signals"], refetchInterval: 20000 });
+  const { data: carriersData } = useQuery<any>({ queryKey: ["/api/performance/africa/carriers"], refetchInterval: 30000 });
+  if (isLoading) return <div className="text-gray-500 text-sm py-12 text-center">Loading department signals...</div>;
+  const depts = data?.depts || {};
+  const deptList = Object.keys(depts);
+  const carriers: any[] = carriersData?.carriers || [];
+  const trendIcon = (t: string) => t === "up" ? "↑" : t === "down" ? "↓" : "→";
+  const trendColor = (metric: string, t: string) => {
+    const isGoodUp = ["delivery_success_rate"].includes(metric);
+    if (t === "up") return isGoodUp ? "text-green-400" : "text-yellow-400";
+    if (t === "down") return isGoodUp ? "text-yellow-400" : "text-green-400";
+    return "text-gray-500";
+  };
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-base font-semibold text-teal-300 flex items-center gap-2"><Radio size={15} /> Department Performance Signals</h2>
+          <p className="text-xs text-gray-500 mt-0.5">7 departments reporting live signals. POST /api/performance/dept-signal from any dept route to push metrics here.</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-gray-500">{data?.crossDeptHealthScore ?? 100}% health</span>
+          <div className={`w-2 h-2 rounded-full ${(data?.crossDeptHealthScore ?? 100) > 70 ? "bg-green-500" : "bg-red-500"}`} />
+          <button data-testid="button-refresh-signals" onClick={() => refetch()} className="flex items-center gap-1.5 px-3 py-1.5 bg-teal-900/30 border border-teal-700/40 rounded-lg text-xs text-teal-300"><RefreshCw size={10} />Refresh</button>
+        </div>
+      </div>
+      {data?.criticalSignals?.length > 0 && (
+        <div className="bg-red-950/30 border border-red-800/50 rounded-xl p-3 flex items-center gap-2">
+          <AlertTriangle size={13} className="text-red-400" />
+          <p className="text-xs text-red-300">{data.criticalSignals.length} critical signal(s) detected across departments. Review below.</p>
+        </div>
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {deptList.map(dept => (
+          <div key={dept} data-testid={`dept-${dept.replace(/ /g, "-").toLowerCase()}`} className="bg-gray-900/60 border border-gray-800 rounded-xl p-4">
+            <h3 className="text-xs font-semibold text-teal-300 mb-3 flex items-center gap-2"><Layers size={11} />{dept}</h3>
+            <div className="space-y-2">
+              {(depts[dept] || []).map((sig: any, i: number) => (
+                <div key={i} className="flex items-center justify-between gap-2">
+                  <span className="text-xs text-gray-500 truncate w-36">{sig.metric.replace(/_/g, " ")}</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs font-mono text-white">{typeof sig.value === "number" && sig.value < 1 ? sig.value.toFixed(5) : sig.value}{sig.unit && sig.unit !== "%" ? " " + sig.unit : sig.unit}</span>
+                    <span className={`text-xs ${trendColor(sig.metric, sig.trend)}`}>{trendIcon(sig.trend)}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {depts[dept]?.[0]?.impact && <p className="text-xs text-gray-600 mt-2 border-t border-gray-800 pt-2">{depts[dept][0].impact}</p>}
+          </div>
+        ))}
+      </div>
+      {carriers.length > 0 && (
+        <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-4">
+          <h3 className="text-xs font-semibold text-gray-400 mb-3 flex items-center gap-2"><Wifi size={11} /> Africa Carrier Latency — Carrier-Level Degradation Detection</h3>
+          <p className="text-xs text-gray-600 mb-3">{carriersData?.summary?.degrading?.length > 0 ? `DEGRADING: ${carriersData.summary.degrading.join(", ")}` : "All carriers stable"} · Rural/Urban penalty: +{carriersData?.networkBreakdown?.ruralUrbanPenaltyMs ?? 0}ms</p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead><tr className="text-gray-600 border-b border-gray-800"><th className="text-left pb-2">Carrier</th><th className="text-left pb-2">Country</th><th className="text-left pb-2">Network</th><th className="text-right pb-2">Avg</th><th className="text-right pb-2">p95</th><th className="text-right pb-2">Success</th><th className="text-right pb-2">Trend</th></tr></thead>
+              <tbody>{carriers.map((c: any) => (
+                <tr key={c.name} data-testid={`carrier-${c.name.replace(/ /g, "-").toLowerCase()}`} className="border-b border-gray-800/40">
+                  <td className="py-2 font-medium text-gray-300">{c.name}</td>
+                  <td className="py-2 text-gray-500">{c.country}</td>
+                  <td className="py-2 text-gray-500">{c.network}</td>
+                  <td className={`py-2 text-right ${c.avgMs > 400 ? "text-red-400" : c.avgMs > 200 ? "text-yellow-400" : "text-green-400"}`}>{c.avgMs}ms</td>
+                  <td className="py-2 text-right text-gray-400">{c.p95Ms}ms</td>
+                  <td className="py-2 text-right text-gray-400">{c.successRate?.toFixed(1)}%</td>
+                  <td className={`py-2 text-right ${c.trend === "degrading" ? "text-red-400" : c.trend === "improving" ? "text-green-400" : "text-gray-500"}`}>{c.trend}</td>
+                </tr>
+              ))}</tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── [Feature 9] AI Explain Tab ───────────────────────────────────────────────
+function AiExplainTab() {
+  const [result, setResult] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [selectedAnomaly, setSelectedAnomaly] = useState<string>("");
+  const [replaySessionId, setReplaySessionId] = useState<string>("");
+  const [replayStatus, setReplayStatus] = useState<any>(null);
+  const { data: anomalies } = useQuery<any>({ queryKey: ["/api/performance/anomalies"], refetchInterval: 15000 });
+  const { data: instrData } = useQuery<any>({ queryKey: ["/api/performance/instrumentation"] });
+  const { data: advCapacity } = useQuery<any>({ queryKey: ["/api/performance/capacity/advanced"], refetchInterval: 30000 });
+
+  async function explain() {
+    setLoading(true);
+    setResult(null);
+    try {
+      const r = await fetch("/api/performance/ai-explain", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ anomalyId: selectedAnomaly || undefined }) });
+      setResult(await r.json());
+    } catch { setResult({ explanation: "Request failed. Check network and retry.", error: true }); }
+    setLoading(false);
+  }
+
+  async function startReplay() {
+    try {
+      const r = await fetch("/api/performance/replay", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ windowMin: 5 }) });
+      const d = await r.json();
+      setReplaySessionId(d.sessionId || "");
+      setReplayStatus(d);
+    } catch {}
+  }
+
+  async function pollReplay() {
+    if (!replaySessionId) return;
+    try {
+      const r = await fetch(`/api/performance/replay/${replaySessionId}`);
+      setReplayStatus(await r.json());
+    } catch {}
+  }
+
+  const anomalyList: any[] = anomalies?.anomalies || [];
+  const confColor = (c: number) => c > 80 ? "text-green-400" : c > 60 ? "text-yellow-400" : "text-red-400";
+
+  return (
+    <div className="space-y-5">
+      <div>
+        <h2 className="text-base font-semibold text-pink-300 flex items-center gap-2"><Sparkles size={15} /> AI Anomaly Explanation — GPT-4o-mini Performance Analyst</h2>
+        <p className="text-xs text-gray-500 mt-0.5">Explains latency spikes in plain English. "This spike is 87% correlated with AI proposal ranking calls — reduce token limit or add caching."</p>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {/* AI Explain Panel */}
+        <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-4 space-y-3">
+          <h3 className="text-xs font-semibold text-pink-300">Explain an Anomaly</h3>
+          <select data-testid="select-anomaly" value={selectedAnomaly} onChange={e => setSelectedAnomaly(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-300">
+            <option value="">Latest anomaly (auto-select)</option>
+            {anomalyList.map((a: any) => (<option key={a.id} value={a.id}>{a.metric} — z={a.zScore?.toFixed(2)} — {new Date(a.timestamp).toLocaleTimeString()}</option>))}
+          </select>
+          <button data-testid="button-ai-explain" onClick={explain} disabled={loading} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-pink-900/40 hover:bg-pink-900/60 border border-pink-700/40 rounded-lg text-sm text-pink-300 disabled:opacity-50 transition-all">
+            {loading ? <><RefreshCw size={13} className="animate-spin" />Analyzing with GPT-4o-mini...</> : <><Brain size={13} />Explain This Anomaly</>}
+          </button>
+          {result && (
+            <div className="bg-gray-950/80 border border-pink-800/30 rounded-xl p-4 space-y-3">
+              {result.anomaly && (
+                <div className="text-xs text-gray-500 border-b border-gray-800 pb-2">
+                  Anomaly: <span className="text-gray-300">{result.anomaly.metric}</span> · z={result.anomaly.zScore?.toFixed(2)} · value={result.anomaly.value}
+                </div>
+              )}
+              <p className="text-sm text-gray-200">{result.explanation}</p>
+              {result.recommendations?.length > 0 && (
+                <div>
+                  <p className="text-xs font-semibold text-pink-400 mb-1.5">Recommendations</p>
+                  <ul className="space-y-1">{result.recommendations.map((r: string, i: number) => <li key={i} className="text-xs text-gray-400 flex items-start gap-1.5"><ChevronRight size={10} className="text-pink-500 mt-0.5 shrink-0" />{r}</li>)}</ul>
+                </div>
+              )}
+              {result.businessImpact && <p className="text-xs text-yellow-400">{result.businessImpact}</p>}
+              {result.confidence !== undefined && <div className="flex items-center gap-2"><span className="text-xs text-gray-500">Confidence:</span><span className={`text-sm font-bold ${confColor(result.confidence)}`}>{result.confidence}%</span>{result.fallback && <span className="text-xs text-gray-600">(rule-based fallback)</span>}</div>}
+            </div>
+          )}
+        </div>
+
+        {/* Traffic Replay Panel */}
+        <div className="space-y-3">
+          <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-4 space-y-3">
+            <h3 className="text-xs font-semibold text-indigo-300 flex items-center gap-2"><RotateCcw size={11} /> Traffic Replay Simulator — Last 5 Minutes</h3>
+            <p className="text-xs text-gray-500">Fast-forwards historical snapshots. Shows peak p99, heap, req/min from the window. Use to validate infra before deploying a fix.</p>
+            <button data-testid="button-start-replay" onClick={startReplay} className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-indigo-900/40 hover:bg-indigo-900/60 border border-indigo-700/40 rounded-lg text-xs text-indigo-300 transition-all"><Play size={11} />Start 5-min Replay</button>
+            {replaySessionId && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-gray-500">Session: {replaySessionId}</span>
+                  <button data-testid="button-poll-replay" onClick={pollReplay} className="text-xs text-indigo-400 hover:underline">Poll status</button>
+                </div>
+                {replayStatus && (
+                  <div>
+                    <div className="flex items-center justify-between text-xs mb-1"><span className="text-gray-400">{replayStatus.status}</span><span className="text-gray-500">{replayStatus.progress ?? 0}%</span></div>
+                    <div className="w-full bg-gray-800 rounded h-1.5"><div className="h-full bg-indigo-500 rounded transition-all" style={{ width: `${replayStatus.progress ?? 0}%` }} /></div>
+                    {replayStatus.summary && <p className="text-xs text-gray-400 mt-2">{replayStatus.summary}</p>}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* eBPF / Instrumentation Guide */}
+          <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-4 space-y-2">
+            <h3 className="text-xs font-semibold text-orange-300 flex items-center gap-2"><Zap size={11} /> eBPF + clinic.js Instrumentation Guide</h3>
+            {instrData?.ebpf?.tools?.slice(0, 3).map((tool: any, i: number) => (
+              <div key={i} className="bg-gray-950/60 border border-gray-800 rounded-lg p-3">
+                <p className="text-xs font-semibold text-orange-300">{tool.name}</p>
+                <p className="text-xs text-gray-500 mt-0.5">{tool.output}</p>
+                <code className="text-xs text-green-400 font-mono block mt-1 break-all">{tool.run}</code>
+              </div>
+            ))}
+          </div>
+
+          {/* Advanced Capacity */}
+          {advCapacity?.heapForecast && (
+            <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-4 space-y-2">
+              <h3 className="text-xs font-semibold text-purple-300 flex items-center gap-2"><TrendingUp size={11} /> Exponential Capacity Forecast</h3>
+              <p className="text-xs text-gray-400">{advCapacity.recommendation}</p>
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div className="bg-gray-950/60 rounded-lg p-2"><div className="text-sm font-bold text-purple-300">{advCapacity.heapForecast.monthlyGrowthPct}%</div><div className="text-xs text-gray-600">monthly growth</div></div>
+                <div className="bg-gray-950/60 rounded-lg p-2"><div className={`text-sm font-bold ${advCapacity.heapForecast.estimatedBreachDays < 14 ? "text-red-400" : "text-green-400"}`}>{advCapacity.heapForecast.estimatedBreachDays}d</div><div className="text-xs text-gray-600">breach estimate</div></div>
+                <div className={`bg-gray-950/60 rounded-lg p-2`}><div className={`text-sm font-bold ${advCapacity.autoScalingTriggers?.currentStatus === "SCALE_UP_NOW" ? "text-red-400" : "text-green-400"}`}>{advCapacity.autoScalingTriggers?.currentStatus}</div><div className="text-xs text-gray-600">scale status</div></div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function SystemPerformance() {
   const [activeTab, setActiveTab] = useState<TabId>("pulse");
   const { data: statsData } = useQuery({ queryKey: ["/api/performance/stats"], refetchInterval: 15000 });
 
-  const tabColorMap: Record<string, string> = { cyan: "border-cyan-500 text-cyan-300", blue: "border-blue-500 text-blue-300", orange: "border-orange-500 text-orange-300", red: "border-red-500 text-red-300", yellow: "border-yellow-500 text-yellow-300", purple: "border-purple-500 text-purple-300" };
-  const tabBgMap: Record<string, string> = { cyan: "bg-cyan-950/20", blue: "bg-blue-950/20", orange: "bg-orange-950/20", red: "bg-red-950/20", yellow: "bg-yellow-950/20", purple: "bg-purple-950/20" };
+  const tabColorMap: Record<string, string> = { cyan: "border-cyan-500 text-cyan-300", blue: "border-blue-500 text-blue-300", orange: "border-orange-500 text-orange-300", red: "border-red-500 text-red-300", yellow: "border-yellow-500 text-yellow-300", purple: "border-purple-500 text-purple-300", indigo: "border-indigo-500 text-indigo-300", violet: "border-violet-500 text-violet-300", teal: "border-teal-500 text-teal-300", pink: "border-pink-500 text-pink-300" };
+  const tabBgMap: Record<string, string> = { cyan: "bg-cyan-950/20", blue: "bg-blue-950/20", orange: "bg-orange-950/20", red: "bg-red-950/20", yellow: "bg-yellow-950/20", purple: "bg-purple-950/20", indigo: "bg-indigo-950/20", violet: "bg-violet-950/20", teal: "bg-teal-950/20", pink: "bg-pink-950/20" };
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -847,7 +1202,7 @@ export default function SystemPerformance() {
             <div className="p-2 bg-cyan-900/30 border border-cyan-700/40 rounded-xl"><Gauge size={20} className="text-cyan-400" /></div>
             <div>
               <h1 className="text-lg font-bold text-white">System Performance Department</h1>
-              <p className="text-gray-500 text-xs">Section 31 · Prometheus · Sliding Windows · 3-Sigma Anomaly · Capacity Forecast · Africa-First · FreelanceSkills.net</p>
+              <p className="text-gray-500 text-xs">Section 31 v2.0 · 400% God-Mode · Distributed Traces · Business Correlation · Africa Carriers · AI Explain · Dept Signals</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -860,7 +1215,7 @@ export default function SystemPerformance() {
             )}
             <div className="flex items-center gap-2 px-3 py-1.5 bg-cyan-900/30 border border-cyan-700/40 rounded-lg text-xs text-cyan-300">
               <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
-              28 Endpoints · Prometheus /metrics · Live Socket
+              40 Endpoints · Prometheus · Live Socket · AI Explain
             </div>
           </div>
         </div>
@@ -893,6 +1248,10 @@ export default function SystemPerformance() {
         {activeTab === "errors" && <ErrorExplorerTab />}
         {activeTab === "alerts" && <AlertRulesTab />}
         {activeTab === "capacity" && <CapacityForecastTab />}
+        {activeTab === "traces" && <DistributedTracesTab />}
+        {activeTab === "correlation" && <BusinessCorrelationTab />}
+        {activeTab === "signals" && <DeptSignalsTab />}
+        {activeTab === "aiexplain" && <AiExplainTab />}
       </div>
     </div>
   );
