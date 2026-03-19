@@ -1,0 +1,43 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready ANALYTICS & REPORTING department (the Business Intelligence brain) to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/analytics — the most intelligent, predictive, AI-agent-driven business intelligence system ever built. It combines the best of Upwork (earnings/category stats), Fiverr (performance trendlines), Shopify (custom exports), Mixpanel (funnels), and Power BI/Looker (enterprise dashboards) and leaps far ahead.
+
+MANDATORY REPORTS & FEATURES — DO NOT REMOVE ANY:
+Reports:
+- User growth
+- Freelancer earnings
+- Client spending
+- Category performance
+- Revenue reports
+
+Exports:
+- CSV
+- Excel
+- PDF
+
+Admin Dashboard Sections (/admin/analytics):
+- Overview Dashboard: Key KPI cards + real-time charts
+- Reports Library: Pre-built + Custom Builder (user growth, earnings, spending, category, revenue)
+- AI Analyst Chat: Natural language query box (“show earnings by category in rural areas”)
+- Predictive Insights Tab: Forecasts with confidence scores
+- Export Center: One-click multi-format + scheduled reports
+
+200% Intelligence & Human Excellence:
+- Agentic AI Analyst (processes natural language queries and generates reports)
+- Predictive Forecasting (next-quarter earnings, category trends, churn)
+- Cohort & Funnel Analysis
+- Africa-First Layer (regional heatmaps, mobile-money impact)
+- Real-time Socket.io updates
+
+Deliver:
+- New backend routes (/api/analytics/reports, /api/analytics/query, /api/analytics/export, /api/analytics/predict, etc.)
+- MongoDB schemas (ReportTemplate, AnalyticsQuery, PredictionModel, ExportJob) + aggregation pipelines
+- New React page: src/pages/admin/AnalyticsReporting.jsx (dashboard, AI chat, report builder, predictive tab, export panel with beautiful visualizations)
+- Socket.io events for live KPI updates
+- Updated README with “How to access /admin/analytics + why this outshines every platform on earth”
+
+Build with extreme intelligence, predictive power, and relentless data excellence — make this the department that makes every other section smarter. Start with schemas + backend aggregations, then React UI. Output every new file.
