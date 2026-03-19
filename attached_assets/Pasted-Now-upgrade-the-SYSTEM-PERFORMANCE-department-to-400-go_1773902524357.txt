@@ -1,0 +1,23 @@
+Now upgrade the SYSTEM PERFORMANCE department to 400% god-mode — a system no marketplace or SaaS company on Earth can touch in 2026–2030.
+
+1. Distributed tracing stubs (correlation ID → trace ID propagation across Express → Mongoose → external APIs)
+2. Automatic root-cause fingerprinting (groups errors & slow calls by business context: “AI matching endpoint slow → because vector search spiked”)
+3. Business + infra correlation dashboard (“when orders/min > 120 → p95 escrow hold time +180 ms”)
+4. Predictive capacity & degradation forecaster (exponential fit + “need 2 more Node instances in 11 days at current growth”)
+5. Africa-first degradation detection (carrier-level latency spikes, rural 2G/3G vs urban fiber split)
+6. Alert → auto-ticket creation in Support Team System with full context (trace ID, slow query, user impact estimate)
+7. One-click “replay last 5 minutes” traffic shape simulator (feed historical metrics into load-test stub)
+8. eBPF-style low-overhead instrumentation placeholders (Node.js clinic.js / 0x flamegraph integration notes)
+9. Real-time anomaly explanation via AI (tie-in to AI AUTOMATION: “this latency spike is 87% correlated with AI proposal ranking calls”)
+10. Deep integration hooks — every department now reports performance signals:
+    - AI AUTOMATION → inference latency & token usage
+    - Notifications → delivery success rate & latency per channel
+    - Support → average ticket resolution time & agent load
+    - Real-Time Monitoring → cross-reference business vs infra spikes
+    - Feature Flags → performance delta before/after flag flip
+    - Security → login attempt rate vs brute-force spikes
+    - Audit Logs → high-risk action correlation with latency/errors
+
+Rebuild only changed files. Output updated code with extremely detailed comments explaining how we created the single most hardcore, predictive, business-aware, Africa-optimized observability layer ever attached to a freelance marketplace — the cardiology department that keeps the heart beating at any scale.
+
+Only ADD improvements. Never remove or break anything previously built.

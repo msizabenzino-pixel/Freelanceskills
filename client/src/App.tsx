@@ -82,6 +82,7 @@ const RolePermissionSystem = lazy(() => import("@/pages/RolePermissionSystem"));
 const SupportTeamDashboard = lazy(() => import("@/pages/SupportTeamDashboard"));
 const RealTimeMonitoring = lazy(() => import("@/pages/RealTimeMonitoring"));
 const AiBrainDepartment = lazy(() => import("@/pages/AiBrainDepartment"));
+const SystemPerformance = lazy(() => import("@/pages/SystemPerformance"));
 const Auth = lazy(() => import("@/pages/Auth"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 
@@ -269,6 +270,9 @@ function Router() {
         </Route>
         <Route path="/admin/ai-brain">
           <Suspense fallback={<PageLoader />}><AiBrainDepartment /></Suspense>
+        </Route>
+        <Route path="/admin/performance">
+          <Suspense fallback={<PageLoader />}><SystemPerformance /></Suspense>
         </Route>
         <Route path="/admin/feature-flags">
           <AuthGuard>

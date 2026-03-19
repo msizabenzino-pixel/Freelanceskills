@@ -138,6 +138,11 @@ export async function registerRoutes(
   const { registerAiBrainRoutes } = await import("./aiBrainRoutes");
   await registerAiBrainRoutes(app, isAuthenticated);
 
+  const { registerPerformanceRoutes, correlationMiddleware, apiLatencyMiddleware } = await import("./performanceRoutes");
+  app.use(correlationMiddleware);
+  app.use(apiLatencyMiddleware);
+  await registerPerformanceRoutes(app, isAuthenticated);
+
   // Dashboard Stats
   app.get("/api/dashboard/stats", isAuthenticated, async (req: any, res) => {
     try {
