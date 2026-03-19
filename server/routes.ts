@@ -121,6 +121,9 @@ export async function registerRoutes(
   auditLogMiddleware(app);
   registerAuditLogsRoutes(app);
 
+  const { registerCmsRoutes } = await import("./cmsRoutes");
+  registerCmsRoutes(app, isAuthenticated);
+
   // Dashboard Stats
   app.get("/api/dashboard/stats", isAuthenticated, async (req: any, res) => {
     try {

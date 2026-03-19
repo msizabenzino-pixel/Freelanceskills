@@ -1,0 +1,45 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready CMS MANAGEMENT department (the voice & soul of the platform) to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/cms — the most advanced, visual, AI-powered, no-code CMS ever built for a freelance marketplace. It combines the best of Webflow/Sanity/Strapi/Builder.io and leaps far ahead since the current freelancerskills.net site has zero CMS or live pages yet.
+
+MANDATORY PAGES & FEATURES — DO NOT REMOVE ANY:
+Content Management for:
+- Homepage
+- About page
+- Terms of service
+- Privacy policy
+- FAQ
+- Help center
+
+Plus (mandatory additions):
+- Blog / News
+- Careers
+- Dynamic landing pages
+- Footer & legal blocks
+
+Admin Dashboard Sections (/admin/cms):
+- Pages Library: Table of all pages + status (draft/published/scheduled)
+- Visual Builder: Drag-and-drop editor (sections, components, live preview)
+- AI Content Assistant: Generate/rewrite entire pages
+- Version History & Rollback
+- SEO & Publishing Tools
+
+200% Intelligence & Human Excellence:
+- Real-time visual drag-and-drop builder with live domain preview
+- Agentic AI writer + auto-multilingual translation (8 African languages)
+- Versioned immutable history with diff viewer
+- Scheduled & A/B publishing
+- Africa-first: mobile-first blocks, USSD text versions, local currency symbols
+
+Deliver:
+- New backend routes (/api/cms/pages, /api/cms/blocks, /api/cms/publish, /api/cms/ai-generate, etc.)
+- MongoDB schemas (Page, Block, PageVersion, ComponentLibrary) + storage for rendered HTML/JSON
+- New React page: src/pages/admin/CmsManagement.jsx (pages table, beautiful visual builder modal with drag-and-drop, AI panel, version timeline)
+- Socket.io events for live preview & collaboration
+- Updated README with “How to access /admin/cms + why this outshines every platform on earth”
+
+Build with extreme creativity, visual power, and relentless user-experience thinking — make this the department that brings the entire site to life. Start with schemas + backend, then the React visual builder UI. Output every new file.

@@ -25,3 +25,4 @@ export * from "./models/categories";
 export * from "./models/marketing";
 export * from "./models/subscriptions";
 export * from "./models/audit";
+export * from "./models/cms";
