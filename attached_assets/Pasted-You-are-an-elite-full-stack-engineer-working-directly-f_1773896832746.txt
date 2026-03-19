@@ -1,0 +1,38 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready SUPPORT TEAM SYSTEM department (the frontline of user happiness) to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/support — the most intelligent, AI-powered, real-time support team dashboard ever built. Since freelancerskills.net currently has ZERO support tools or ticket system (503 status, no help center, no admin support features in Replit), we add this from scratch and make it better than Zendesk + Intercom + Salesforce combined.
+
+MANDATORY SUPPORT AGENTS WORKFLOW & TOOLS — DO NOT REMOVE ANY:
+- Ticket queue
+- Ticket assignment
+- User lookup
+- Chat history
+- Canned responses
+- Escalation system
+
+Admin/Agent Dashboard Sections (/admin/support):
+- Live Ticket Queue: Real-time table with AI priority, sentiment score, SLA timer
+- Unified Inbox: Tickets + live chat + WhatsApp/SMS/in-app
+- User 360° Lookup: Instant profile + gigs + disputes + payments + Academy progress
+- Canned Responses Library + AI Reply Generator
+- Escalation Workflow: Auto or manual to Moderator/Legal/Finance
+- Agent Performance Dashboard: Response time, resolution rate, leaderboards
+
+200% Intelligence & Human Excellence (hardcore backend):
+- AI Triage + Auto-Assignment + Sentiment Analysis
+- Real-time Socket.io for live chat & queue updates
+- SLA Enforcement Engine with auto-escalation
+- Africa-first: WhatsApp/USSD/SMS priority, mobile-money lookup, voice-note tickets
+
+Deliver:
+- New backend routes (/api/support/tickets, /api/support/assign, /api/support/chat, /api/support/escalate, /api/support/ai-triage, etc.) + full WebSocket server
+- MongoDB schemas (SupportTicket, TicketMessage, CannedResponse, EscalationRule, AgentPerformance)
+- New React page: src/pages/admin/SupportTeamDashboard.jsx (live queue, unified inbox, user lookup modal, AI reply panel, performance charts)
+- Socket.io events for live ticket updates, chat, and escalations
+- Updated README with “How to access /admin/support + why this outshines every platform on earth”
+
+Build with extreme hardcore backend precision, real-time performance, and relentless user-first thinking — only ADD improvements on top of what already exists, never subtract. Start with schemas + WebSocket + AI triage middleware, then React UI. Output every new file.
