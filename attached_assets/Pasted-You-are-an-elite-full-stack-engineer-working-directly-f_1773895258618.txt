@@ -1,0 +1,52 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready ROLE & PERMISSION SYSTEM department (the gatekeeper of the entire platform) to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/roles — the most intelligent, fine-grained, resource-based RBAC system ever built. Since freelancerskills.net currently has ZERO roles or permissions (503 status, no admin controls in Replit), we add this from scratch and make it better than Salesforce + Okta + Permit.io combined.
+
+MANDATORY ROLES & PERMISSIONS — DO NOT REMOVE ANY:
+Core Roles to include and expand:
+- Admin
+- Support
+- Moderator
+- Finance
+- Marketing
+
+Permissions (200+ granular examples):
+- view users / edit users
+- manage payments / approve refunds
+- manage disputes / resolve disputes
+- send notifications / create templates
+- view analytics / export reports
+- manage promotions / approve banners
+- access CMS / publish pages
+- toggle feature flags / run A/B tests
+- view audit logs / export logs
+- manage subscriptions / edit plans
+- access security / run KYC
+- manage categories & skills
+- full CRUD per department + read-only variants
+
+Admin Dashboard Sections (/admin/roles):
+- Roles Library: Table of all roles + assigned users
+- Permission Matrix: Visual grid (roles × resources) with checkboxes
+- Role Editor: Create/edit with inheritance, temporary access, conditions
+- AI Role Suggester: “Recommend role for new Finance user”
+- Simulator: “Preview what this user can see/do”
+
+200% Intelligence & Human Excellence:
+- Real-time Socket.io permission propagation
+- Role Hierarchy + Inheritance
+- Temporary/Expiring Access
+- Africa-first (USSD roles, mobile-money scoped)
+
+Deliver:
+- New backend routes (/api/roles, /api/permissions, /api/roles/evaluate, etc.) + middleware that protects every existing route
+- MongoDB schemas (Role, Permission, UserRoleAssignment, PermissionMatrix)
+- New React page: src/pages/admin/RolePermissionSystem.jsx (roles table, matrix editor, AI suggester, simulator modal)
+- Socket.io events for live permission updates
+- Updated README with “How to access /admin/roles + why this outshines every platform on earth”
+
+Build with extreme precision, security-first thinking, and relentless granularity — only ADD improvements on top of what already exists, never subtract. Start with schemas + JWT middleware, then React UI. Output every new file.
