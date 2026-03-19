@@ -18,7 +18,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { RadarChart, Radar, PolarGrid, PolarAngleAxis, BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
-import { Brain, Zap, Users, Activity, Settings, TrendingUp, AlertTriangle, CheckCircle, DollarSign, Cpu, Globe, MessageSquare, Shield, BookOpen, Clock, ThumbsUp, ThumbsDown, Play, RefreshCw, ChevronRight, ArrowRight, Sparkles, Eye, Target, Leaf } from "lucide-react";
+import { Brain, Zap, Users, Activity, Settings, TrendingUp, AlertTriangle, CheckCircle, DollarSign, Cpu, Globe, MessageSquare, Shield, BookOpen, Clock, ThumbsUp, ThumbsDown, Play, RefreshCw, ChevronRight, ArrowRight, Sparkles, Eye, Target, Leaf, Languages, Network, Dumbbell, FlaskConical, Layers } from "lucide-react";
 
 const TABS = [
   { id: "vitals", label: "Brain Vitals", icon: Brain, color: "cyan" },
@@ -27,6 +27,8 @@ const TABS = [
   { id: "arena", label: "Testing Arena", icon: Zap, color: "green" },
   { id: "rlhf", label: "Self-Improvement", icon: TrendingUp, color: "blue" },
   { id: "cost", label: "Cost & Carbon", icon: DollarSign, color: "yellow" },
+  { id: "africa", label: "Africa AI", icon: Globe, color: "emerald" },
+  { id: "turbo", label: "Dept Turbo", icon: Network, color: "rose" },
 ] as const;
 type TabId = typeof TABS[number]["id"];
 
@@ -716,6 +718,461 @@ function CostCarbonTab() {
   );
 }
 
+// ─── Africa AI Tab ────────────────────────────────────────────────────────────
+function AfricaAITab() {
+  const [mlText, setMlText] = useState("Ngifuna ukufuna umsebenzi njengomuntu osebenza nge-React. Ngine-experience yeminyaka emi-3 futhi ngifuna ukusebenza nabantu base-South Africa.");
+  const [mlLang, setMlLang] = useState("detect");
+  const [mlTask, setMlTask] = useState("translate_and_respond");
+  const [mlResult, setMlResult] = useState<any>(null);
+  const [mlRunning, setMlRunning] = useState(false);
+  const [edgeModel, setEdgeModel] = useState<string | null>(null);
+  const [edgeInput, setEdgeInput] = useState("Urgent!!! I need your bank account to send R50,000 advance for the job. Very confidential. Don't tell anyone. Click here bit.ly/job2024");
+  const [edgeResult, setEdgeResult] = useState<any>(null);
+  const [edgeRunning, setEdgeRunning] = useState(false);
+  const [trainRunning, setTrainRunning] = useState(false);
+  const [trainResult, setTrainResult] = useState<any>(null);
+
+  const { data: edgeModels } = useQuery({ queryKey: ["/api/ai/edge-models"] });
+  const { data: langData } = useQuery({ queryKey: ["/api/ai/languages"] });
+  const { data: trainStatus } = useQuery({ queryKey: ["/api/ai/auto-train/status"], refetchInterval: 30000 });
+
+  const SAMPLE_TEXTS: Record<string, string> = {
+    zu: "Ngifuna ukufuna umsebenzi njengomuntu osebenza nge-React. Ngine-experience yeminyaka emi-3 futhi ngifuna ukusebenza nabantu base-South Africa.",
+    sw: "Ninatafuta mfanyakazi wa programu ya kompyuta. Ninahitaji mtu anayejua React na Node.js. Unaweza kuanza lini?",
+    sheng: "Naomba job ya coding. Niko sharp na React plus Node. Ume-quote ngapi kwa project ya website? Niko Nairobi lakini naweza remote.",
+    pcm: "I wan job as web developer. I sabi React well well. How much you go pay per month? I dey Nigeria but I fit work online.",
+    ha: "Nana neman aiki a matsayin mai shirya shafin yanar gizo. Ina da gogewa shekaru 3 a React da JavaScript.",
+    mix: "I'm looking for a developer who can work on my React app — lakini budget yake ni R500 per day only, is that fair price?",
+  };
+
+  const runMultilingual = async () => {
+    setMlRunning(true); setMlResult(null);
+    try {
+      const resp = await fetch("/api/ai/multilingual", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: mlText, targetLanguage: mlLang === "detect" ? undefined : mlLang, task: mlTask }) });
+      setMlResult(await resp.json());
+    } finally { setMlRunning(false); }
+  };
+
+  const runEdge = async () => {
+    if (!edgeModel) return;
+    setEdgeRunning(true); setEdgeResult(null);
+    try {
+      const resp = await fetch("/api/ai/edge-infer", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ modelId: edgeModel, input: edgeInput }) });
+      setEdgeResult(await resp.json());
+    } finally { setEdgeRunning(false); }
+  };
+
+  const runAutoTrain = async () => {
+    setTrainRunning(true); setTrainResult(null);
+    try {
+      const resp = await fetch("/api/ai/auto-train", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ numAttacks: 3 }) });
+      setTrainResult(await resp.json());
+    } finally { setTrainRunning(false); }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="p-4 bg-emerald-950/20 border border-emerald-700/30 rounded-xl">
+        <div className="flex items-center gap-2 mb-1"><Globe size={14} className="text-emerald-400" /><span className="text-emerald-300 font-semibold text-sm">Africa AI — Multilingual · Edge Inference · Adversarial Self-Training</span></div>
+        <p className="text-gray-500 text-xs">Three capabilities no competitor has: (1) Zero-shot inference in 12 African languages including Sheng + code-switching, (2) ONNX-ready edge models for rural users with zero data cost, (3) Automated red-team self-training that improves fraud detection daily without human labels.</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {[
+          { label: "Languages Supported", value: langData?.totalLanguages ?? 12, color: "text-emerald-400", icon: Languages },
+          { label: "Edge Models Ready", value: edgeModels?.totalModels ?? 5, color: "text-cyan-400", icon: Cpu },
+          { label: "Auto-Train Cycles", value: trainStatus?.cycles ?? 0, color: "text-purple-400", icon: Dumbbell },
+        ].map((s, i) => (
+          <div key={i} className="bg-gray-900/40 border border-gray-700/40 rounded-xl p-4 text-center">
+            <s.icon size={20} className={s.color + " mx-auto mb-2"} />
+            <div className={`text-2xl font-bold ${s.color}`}>{s.value}</div>
+            <div className="text-gray-500 text-xs mt-1">{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Multilingual Section */}
+      <div className="bg-gray-900/40 border border-gray-700/40 rounded-xl p-5">
+        <h3 className="text-gray-300 font-semibold text-sm mb-1 flex items-center gap-2"><Languages size={14} className="text-emerald-400" />Zero-Shot Multilingual Inference</h3>
+        <p className="text-gray-600 text-xs mb-4">Write in any African language (or mix them). AI detects, translates, responds, and analyses code-switching automatically.</p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label className="text-gray-500 text-xs block mb-1">Sample texts</label>
+            <div className="flex flex-wrap gap-1.5 mb-2">
+              {Object.entries(SAMPLE_TEXTS).map(([code, text]) => (
+                <button key={code} onClick={() => setMlText(text)} className="px-2 py-1 text-xs bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-full text-gray-400">{code.toUpperCase()}</button>
+              ))}
+            </div>
+            <textarea data-testid="input-multilingual-text" value={mlText} onChange={e => setMlText(e.target.value)} rows={4} className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-xs text-gray-200 focus:outline-none focus:border-emerald-500 resize-none" />
+          </div>
+          <div className="space-y-3">
+            <div>
+              <label className="text-gray-500 text-xs block mb-1">Response Language</label>
+              <select data-testid="select-language" value={mlLang} onChange={e => setMlLang(e.target.value)} className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 focus:outline-none focus:border-emerald-500">
+                <option value="detect">Auto-detect &amp; respond in same language</option>
+                <option value="English">English</option>
+                <option value="Zulu">Zulu (isiZulu)</option>
+                <option value="Xhosa">Xhosa (isiXhosa)</option>
+                <option value="Sesotho">Sesotho</option>
+                <option value="Swahili">Swahili</option>
+                <option value="Sheng">Sheng</option>
+                <option value="Nigerian Pidgin">Nigerian Pidgin</option>
+                <option value="Hausa">Hausa</option>
+                <option value="Amharic">Amharic</option>
+                <option value="Afrikaans">Afrikaans</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-gray-500 text-xs block mb-1">Task</label>
+              <select value={mlTask} onChange={e => setMlTask(e.target.value)} className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 focus:outline-none focus:border-emerald-500">
+                <option value="translate_and_respond">Translate &amp; Respond</option>
+                <option value="moderate">Moderate Content</option>
+                <option value="support_reply">Support Reply</option>
+                <option value="detect_fraud">Detect Fraud Signals</option>
+              </select>
+            </div>
+            <button data-testid="button-run-multilingual" onClick={runMultilingual} disabled={mlRunning} className="w-full flex items-center justify-center gap-2 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-700 text-white rounded-lg text-sm font-medium">
+              {mlRunning ? <><RefreshCw size={13} className="animate-spin" />Analysing…</> : <><Languages size={13} />Run Multilingual AI</>}
+            </button>
+          </div>
+        </div>
+
+        {mlResult && (
+          <div className="p-4 bg-emerald-950/20 border border-emerald-700/30 rounded-xl space-y-2">
+            <div className="flex flex-wrap gap-2 text-xs mb-2">
+              <span className="px-2 py-1 bg-emerald-900/40 text-emerald-400 rounded-full">Detected: {mlResult.detectedLanguage}</span>
+              {mlResult.isCodeSwitching && <span className="px-2 py-1 bg-yellow-900/40 text-yellow-400 rounded-full">Code-switching: {mlResult.codeSwitch?.languages?.join(" + ")}</span>}
+              <span className="px-2 py-1 bg-gray-800 text-gray-400 rounded-full">{mlResult.languageConfidence}% confidence</span>
+              <span className="px-2 py-1 bg-gray-800 text-gray-400 rounded-full">{fmtCost(Number(mlResult.costUsd || 0))}</span>
+            </div>
+            {mlResult.translationToEnglish && (
+              <div className="text-xs"><span className="text-gray-500">EN translation: </span><span className="text-gray-400">{mlResult.translationToEnglish}</span></div>
+            )}
+            <div className="text-sm text-gray-200 bg-gray-800/50 p-3 rounded-lg">{mlResult.response}</div>
+            {mlResult.africanContext && <div className="text-xs text-gray-600 italic">{mlResult.africanContext}</div>}
+          </div>
+        )}
+      </div>
+
+      {/* Edge Inference Section */}
+      <div className="bg-gray-900/40 border border-gray-700/40 rounded-xl p-5">
+        <h3 className="text-gray-300 font-semibold text-sm mb-1 flex items-center gap-2"><Cpu size={14} className="text-cyan-400" />Edge / On-Device Inference (Rural Africa)</h3>
+        <p className="text-gray-600 text-xs mb-4">ONNX-ready models for offline/low-data use. Users download once on WiFi, then infer locally at 8–45ms with zero API cost. Essential for rural South Africa, township users, and USSD-based interactions.</p>
+
+        {/* Edge Model Registry */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
+          {(edgeModels?.models || []).map((m: any) => (
+            <button key={m.id} data-testid={`edge-model-${m.id}`} onClick={() => setEdgeModel(m.id)} className={`text-left p-3 rounded-xl border text-xs transition-all ${edgeModel === m.id ? "bg-cyan-950/30 border-cyan-600/50" : "bg-gray-800/40 border-gray-700/40 hover:border-gray-600"}`}>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-gray-200 font-medium">{m.name}</span>
+                <span className="text-cyan-400">{m.modelSize}</span>
+              </div>
+              <div className="text-gray-500">{m.description?.slice(0, 80)}</div>
+              <div className="flex gap-2 mt-1">
+                <span className="text-green-600">{m.avgLatencyMs}ms</span>
+                <span className="text-yellow-600">{m.accuracyVsCloud} vs cloud</span>
+                {m.onnxReady && <span className="text-blue-600">ONNX ✓</span>}
+              </div>
+            </button>
+          ))}
+        </div>
+
+        {edgeModel && (
+          <div className="space-y-3">
+            <textarea data-testid="input-edge-input" value={edgeInput} onChange={e => setEdgeInput(e.target.value)} rows={3} className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-xs text-gray-200 focus:outline-none focus:border-cyan-500 resize-none" />
+            <button data-testid="button-run-edge" onClick={runEdge} disabled={edgeRunning} className="flex items-center gap-2 px-5 py-2.5 bg-cyan-700 hover:bg-cyan-600 disabled:bg-gray-700 text-white rounded-lg text-sm font-medium">
+              {edgeRunning ? <><RefreshCw size={13} className="animate-spin" />Running edge…</> : <><Cpu size={13} />Run Edge Inference</>}
+            </button>
+            {edgeResult && (
+              <div className="p-4 bg-cyan-950/20 border border-cyan-700/30 rounded-xl">
+                <div className="flex flex-wrap gap-2 text-xs mb-3">
+                  <span className="px-2 py-1 bg-cyan-900/40 text-cyan-400 rounded-full">Edge: {edgeResult.edgeLatencyMs}ms</span>
+                  <span className="px-2 py-1 bg-gray-800 text-gray-400 rounded-full">Cloud would take: {edgeResult.cloudLatencyMs}ms</span>
+                  <span className="px-2 py-1 bg-green-900/40 text-green-400 rounded-full">{edgeResult.speedupFactor} speedup</span>
+                  <span className="px-2 py-1 bg-green-900/40 text-green-400 rounded-full">Data saved: {edgeResult.dataSaved}</span>
+                  <span className="px-2 py-1 bg-yellow-900/40 text-yellow-400 rounded-full">Cost: {edgeResult.costUsd}</span>
+                </div>
+                <pre className="text-xs text-gray-300 bg-gray-800/50 p-3 rounded-lg overflow-auto max-h-40 font-mono whitespace-pre-wrap">{JSON.stringify(edgeResult.result, null, 2)}</pre>
+                <p className="text-gray-700 text-xs mt-2">{edgeResult.note}</p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Auto Red-Team Training */}
+      <div className="bg-gray-900/40 border border-gray-700/40 rounded-xl p-5">
+        <h3 className="text-gray-300 font-semibold text-sm mb-1 flex items-center gap-2"><Dumbbell size={14} className="text-purple-400" />Adversarial Self-Training — RedTeam vs FraudDetector</h3>
+        <p className="text-gray-600 text-xs mb-4">Background loop runs every 10 minutes: RedTeamSimulator generates novel Africa fraud attacks → FraudDetector scores them → missed attacks become RLHF training signals (weight=2.0). No human labeling. No competitor does this.</p>
+
+        {trainStatus && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+            {[
+              { label: "Training Cycles", value: trainStatus.cycles, color: "text-purple-400" },
+              { label: "Total Attacks Generated", value: trainStatus.totalAttacks, color: "text-red-400" },
+              { label: "Detected", value: trainStatus.detected, color: "text-green-400" },
+              { label: "Detection Rate", value: trainStatus.successRate + "%", color: "text-yellow-400" },
+            ].map((s, i) => (
+              <div key={i} className="bg-gray-800/40 rounded-lg p-3 text-center">
+                <div className={`text-xl font-bold ${s.color}`}>{s.value}</div>
+                <div className="text-gray-600 text-xs mt-1">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {trainStatus?.lastRun && <div className="text-xs text-gray-600 mb-3">Last run: {new Date(trainStatus.lastRun).toLocaleString()} · Next: automatic in ~10 min</div>}
+
+        <button data-testid="button-run-auto-train" onClick={runAutoTrain} disabled={trainRunning || trainStatus?.running} className="flex items-center gap-2 px-5 py-2.5 bg-purple-700 hover:bg-purple-600 disabled:bg-gray-700 text-white rounded-lg text-sm font-medium mb-3">
+          {trainRunning ? <><RefreshCw size={13} className="animate-spin" />Training in progress…</> : <><Dumbbell size={13} />Run Training Cycle Now</>}
+        </button>
+
+        {trainResult && (
+          <div className="p-4 bg-purple-950/20 border border-purple-700/30 rounded-xl text-sm">
+            <div className="flex items-center gap-2 mb-2"><CheckCircle size={14} className="text-green-400" /><span className="text-green-300 font-semibold">Cycle {trainResult.cycle} Complete</span></div>
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <span className="text-gray-400">Attacks generated: <span className="text-red-400">{trainResult.attacksGenerated}</span></span>
+              <span className="text-gray-400">Detected: <span className="text-green-400">{trainResult.detected}</span></span>
+              <span className="text-gray-400">Missed: <span className="text-orange-400">{trainResult.missed}</span></span>
+              <span className="text-gray-400">New signals: <span className="text-blue-400">{trainResult.newTrainingSignals}</span></span>
+            </div>
+            <div className="mt-2 text-xs text-gray-500">{trainResult.message}</div>
+          </div>
+        )}
+
+        {trainStatus?.history && trainStatus.history.length > 0 && (
+          <div className="mt-3 space-y-1">
+            <div className="text-gray-500 text-xs mb-1">Recent training history:</div>
+            {trainStatus.history.slice(0, 5).map((h: any, i: number) => (
+              <div key={i} className="flex items-center gap-3 text-xs p-1.5 bg-gray-800/30 rounded">
+                <span className="text-gray-700 w-36">{new Date(h.ts).toLocaleTimeString()}</span>
+                <span className="text-red-600">{h.attacks} attacks</span>
+                <span className="text-green-600">{h.detected} detected</span>
+                <span className="text-blue-600">{h.newSignals} signals</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Department Turbo Tab ─────────────────────────────────────────────────────
+function DeptTurboTab() {
+  const DEPARTMENTS = [
+    { id: "notifications", label: "Notifications", icon: Zap, color: "#a78bfa", desc: "Optimize channel, timing, copy + CTA for any user segment" },
+    { id: "abuse", label: "Abuse & Reports", icon: Shield, color: "#f87171", desc: "Multi-signal risk scoring with Africa-specific fraud patterns" },
+    { id: "content-moderation", label: "Content Moderation", icon: Eye, color: "#fb923c", desc: "Proactive image/text/voice policy violation detection" },
+    { id: "support", label: "Support", icon: MessageSquare, color: "#c084fc", desc: "Contextual agent-assist with 360° user memory" },
+    { id: "promotions", label: "Promotions", icon: Target, color: "#4ade80", desc: "Best offer, discount depth, channel + timing predictor" },
+    { id: "marketing", label: "Marketing", icon: TrendingUp, color: "#22d3ee", desc: "Campaign score, virality prediction, creative direction" },
+    { id: "subscriptions", label: "Subscriptions", icon: DollarSign, color: "#facc15", desc: "Upgrade propensity, churn risk + dynamic perks" },
+    { id: "monitoring", label: "Real-Time Monitoring", icon: Activity, color: "#34d399", desc: "Anomaly root-cause explanation + fix recommendations" },
+    { id: "cms", label: "CMS", icon: BookOpen, color: "#60a5fa", desc: "AI-generated SEO pages, dynamic blocks, Africa-first copy" },
+    { id: "feature-flags", label: "Feature Flags", icon: Settings, color: "#f472b6", desc: "Safest rollout sequence + blast radius prediction" },
+    { id: "analytics", label: "Analytics", icon: Sparkles, color: "#fb923c", desc: "Natural language → insight, anomaly detection, auto-reports" },
+  ];
+
+  const SAMPLE_CONTEXTS: Record<string, any> = {
+    notifications: { userSegment: "churning_freelancer_ZA", trigger: "3_days_no_login", userData: { name: "Sipho", location: "Johannesburg", preferredChannel: "whatsapp", lastEarning: 8500, skills: ["React", "Node.js"] } },
+    abuse: { userId: "usr_003", reportCount: 4, content: "Will pay R5000 advance if you send your ID and bank details first. Trust me.", accountAge: 3, verifiedId: false },
+    "content-moderation": { text: "Contact me on WhatsApp +27821234567. I'll pay R500 extra if we skip the platform fee", contentType: "message", userId: "usr_002" },
+    support: { ticketId: "TKT-441", message: "I finished the job 5 days ago but no payment. Load-shedding made me miss the deadline by 2 hours. Client is ignoring me.", sentiment: "frustrated", userId: "usr_001" },
+    promotions: { category: "Web Development", currentPrice: 15000, targetSegment: "enterprise_client", season: "Q1", demand: "high" },
+    marketing: { campaign: "Freelancer Referral Q1 2026", currentCTR: 2.3, targetAudience: "SA_freelancers_18_35", budget: 25000, channels: ["whatsapp", "email", "ussd"] },
+    subscriptions: { userId: "usr_007", currentTier: "starter", activeMonths: 8, avgMonthlyEarnings: 12000, lastLogin: "2026-03-15", churnSignals: ["reduced_logins", "no_new_proposals"] },
+    monitoring: { anomalyType: "payment_failure_spike", magnitude: 340, affectedRegion: "Gauteng", timeWindow: "last 2 hours", possibleCauses: ["PayFast_downtime", "MTN_outage"] },
+    cms: { pageType: "landing_page", topic: "Top 10 React Developer Jobs in South Africa 2026", targetKeyword: "react developer jobs south africa", targetAudience: "SA_developers" },
+    "feature-flags": { flagName: "enable_mobile_money_checkout", currentRollout: 5, targetRollout: 100, affectedUsers: 45000, pciScope: true, region: "South Africa" },
+    analytics: { question: "Why did freelancer revenue drop 23% in Gauteng last week?", availableData: { avgRevenue: 85000, weeklyChange: -23, region: "Gauteng", affectedCategories: ["Web Development", "Design"] } },
+  };
+
+  const [selectedDept, setSelectedDept] = useState<string | null>(null);
+  const [context, setContext] = useState<string>("{}");
+  const [query, setQuery] = useState("");
+  const [result, setResult] = useState<any>(null);
+  const [running, setRunning] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { data: deptList } = useQuery({ queryKey: ["/api/ai/turbo/departments"] });
+
+  const selectDept = (id: string) => {
+    setSelectedDept(id);
+    setContext(JSON.stringify(SAMPLE_CONTEXTS[id] || {}, null, 2));
+    setQuery("");
+    setResult(null);
+    setError(null);
+  };
+
+  const runTurbo = async () => {
+    if (!selectedDept) return;
+    setRunning(true); setError(null); setResult(null);
+    try {
+      const contextObj = JSON.parse(context);
+      const resp = await fetch("/api/ai/turbo", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ department: selectedDept, context: contextObj, query }) });
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.message);
+      setResult(data);
+    } catch (e: any) { setError(e.message); }
+    finally { setRunning(false); }
+  };
+
+  const selectedDeptInfo = DEPARTMENTS.find(d => d.id === selectedDept);
+
+  return (
+    <div className="space-y-6">
+      <div className="p-4 bg-rose-950/20 border border-rose-700/30 rounded-xl">
+        <div className="flex items-center gap-2 mb-1"><Network size={14} className="text-rose-400" /><span className="text-rose-300 font-semibold text-sm">Department AI Turbo Buttons — One-Click AI Intelligence for Every Admin Section</span></div>
+        <p className="text-gray-500 text-xs">Every admin department now has an AI turbo button. Give it context and get instant, department-specific AI intelligence — without leaving the admin panel. Upwork has none of this built-in. Fiverr has none. These are paid add-ons ($75–$300/user/mo elsewhere).</p>
+      </div>
+
+      {/* Department Selector */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+        {DEPARTMENTS.map(dept => {
+          const Icon = dept.icon;
+          return (
+            <button key={dept.id} data-testid={`turbo-dept-${dept.id}`} onClick={() => selectDept(dept.id)} className={`text-left p-3 rounded-xl border text-xs transition-all ${selectedDept === dept.id ? "border-rose-600/50 bg-rose-950/20" : "border-gray-700/40 bg-gray-900/40 hover:border-gray-600"}`}>
+              <div className="flex items-center gap-2 mb-1">
+                <Icon size={12} style={{ color: dept.color }} />
+                <span className="text-gray-200 font-medium">{dept.label}</span>
+              </div>
+              <div className="text-gray-600">{dept.desc}</div>
+            </button>
+          );
+        })}
+      </div>
+
+      {selectedDept && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Input */}
+          <div className="bg-gray-900/40 border border-gray-700/40 rounded-xl p-5">
+            <div className="flex items-center gap-2 mb-3">
+              {selectedDeptInfo && <selectedDeptInfo.icon size={14} style={{ color: selectedDeptInfo.color }} />}
+              <h3 className="text-gray-300 font-semibold text-sm">AI Turbo: {selectedDeptInfo?.label}</h3>
+            </div>
+            <div className="mb-3">
+              <label className="text-gray-500 text-xs block mb-1">Optional Query / Question</label>
+              <input data-testid="input-turbo-query" value={query} onChange={e => setQuery(e.target.value)} placeholder="e.g. What's the highest priority action right now?" className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 focus:outline-none focus:border-rose-500" />
+            </div>
+            <div className="mb-4">
+              <label className="text-gray-500 text-xs block mb-1">Context (JSON)</label>
+              <textarea data-testid="input-turbo-context" value={context} onChange={e => setContext(e.target.value)} rows={10} className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-xs text-gray-300 focus:outline-none focus:border-rose-500 resize-none font-mono" />
+            </div>
+            <button data-testid="button-run-turbo" onClick={runTurbo} disabled={running} className="w-full flex items-center justify-center gap-2 py-3 bg-rose-600 hover:bg-rose-700 disabled:bg-gray-700 text-white rounded-lg text-sm font-medium">
+              {running ? <><RefreshCw size={14} className="animate-spin" />AI Turbo running…</> : <><Layers size={14} />Activate AI Turbo</>}
+            </button>
+          </div>
+
+          {/* Output */}
+          <div className="bg-gray-900/40 border border-gray-700/40 rounded-xl p-5">
+            <h3 className="text-gray-300 font-semibold text-sm mb-4">Turbo Intelligence Output</h3>
+            {!result && !error && !running && <div className="text-center py-12 text-gray-600 text-sm">Select a department and activate turbo to see AI intelligence</div>}
+            {running && <div className="flex items-center justify-center py-12"><div className="text-center"><Network size={32} className="text-rose-400 mx-auto mb-2 animate-pulse" /><div className="text-rose-300 text-sm">AI Turbo activating…</div></div></div>}
+            {error && <div className="p-4 bg-red-950/20 border border-red-700/30 rounded-xl text-red-300 text-sm">{error}</div>}
+            {result && (
+              <div className="space-y-3">
+                <div className="flex flex-wrap gap-2 text-xs">
+                  <span className="px-2 py-1 bg-rose-900/30 text-rose-400 rounded-full">Agent: {result.agentUsed}</span>
+                  <span className="px-2 py-1 bg-blue-900/30 text-blue-400 rounded-full">{result.confidence}% confidence</span>
+                  <span className="px-2 py-1 bg-gray-800 text-gray-400 rounded-full">{fmtMs(result.latencyMs)}</span>
+                  <span className="px-2 py-1 bg-gray-800 text-yellow-400 rounded-full">{fmtCost(Number(result.costUsd))}</span>
+                </div>
+                {/* Display result fields as cards */}
+                <div className="space-y-2">
+                  {Object.entries(result.result || {}).map(([key, value]: [string, any]) => (
+                    <div key={key} className="bg-gray-800/50 rounded-lg p-3">
+                      <div className="text-gray-500 text-xs mb-1">{key.replace(/([A-Z])/g, " $1").replace(/_/g, " ").trim()}</div>
+                      <div className="text-gray-200 text-sm">{Array.isArray(value) ? value.join(" · ") : String(value)}</div>
+                    </div>
+                  ))}
+                </div>
+                <div className="text-xs text-gray-600 pt-1">{result.description}</div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* A/B Testing Panel */}
+      <div className="bg-gray-900/40 border border-gray-700/40 rounded-xl p-5">
+        <h3 className="text-gray-300 font-semibold text-sm mb-1 flex items-center gap-2"><FlaskConical size={14} className="text-yellow-400" />A/B Test Model Variants</h3>
+        <p className="text-gray-600 text-xs mb-4">Test two AI system prompts against the same input. Winner gets rolled out via Feature Flags. Measures: confidence, latency, cost. Tied to real ROI via Analytics integration.</p>
+        <ABTestPanel />
+      </div>
+    </div>
+  );
+}
+
+function ABTestPanel() {
+  const [feature, setFeature] = useState("scam-score");
+  const [input, setInput] = useState("URGENT! You have been selected for a R50,000 job. Send your ID and bank details to claim. WhatsApp me: +27821234567");
+  const [varASystem, setVarASystem] = useState("You are FraudDetector v1. Analyze for scam signals. Return JSON: {scamScore: 0-100, verdict: string, confidence: number}");
+  const [varBSystem, setVarBSystem] = useState("You are FraudDetector v2 with extended reasoning. Think step-by-step: consider 419 patterns, mobile money fraud, identity theft. Return JSON: {scamScore: 0-100, verdict: string, confidence: number, chainOfThought: string}");
+  const [running, setRunning] = useState(false);
+  const [result, setResult] = useState<any>(null);
+  const { data: abResults } = useQuery({ queryKey: ["/api/ai/ab-results"] });
+
+  const runAB = async () => {
+    setRunning(true); setResult(null);
+    try {
+      const resp = await fetch("/api/ai/ab-test", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ feature, input, variantAConfig: { system: varASystem }, variantBConfig: { system: varBSystem } }) });
+      setResult(await resp.json());
+    } finally { setRunning(false); }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <label className="text-gray-500 text-xs block mb-1">Variant A — System Prompt</label>
+          <textarea data-testid="input-variant-a" value={varASystem} onChange={e => setVarASystem(e.target.value)} rows={4} className="w-full px-3 py-2 bg-gray-800 border border-blue-800/40 rounded-lg text-xs text-gray-200 focus:outline-none resize-none" />
+        </div>
+        <div>
+          <label className="text-gray-500 text-xs block mb-1">Variant B — System Prompt (Extended Reasoning)</label>
+          <textarea data-testid="input-variant-b" value={varBSystem} onChange={e => setVarBSystem(e.target.value)} rows={4} className="w-full px-3 py-2 bg-gray-800 border border-purple-800/40 rounded-lg text-xs text-gray-200 focus:outline-none resize-none" />
+        </div>
+      </div>
+      <input data-testid="input-ab-text" value={input} onChange={e => setInput(e.target.value)} placeholder="Input text to test against both variants…" className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 focus:outline-none" />
+      <button data-testid="button-run-ab-test" onClick={runAB} disabled={running} className="flex items-center gap-2 px-5 py-2.5 bg-yellow-600 hover:bg-yellow-700 disabled:bg-gray-700 text-white rounded-lg text-sm font-medium">
+        {running ? <><RefreshCw size={13} className="animate-spin" />Running A/B test…</> : <><FlaskConical size={13} />Run A/B Test</>}
+      </button>
+      {result && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className={`p-3 rounded-xl border text-xs ${result.winner === "A" ? "border-green-600/50 bg-green-950/20" : "border-gray-700/40 bg-gray-800/30"}`}>
+            <div className="font-medium text-blue-300 mb-2">Variant A {result.winner === "A" ? "🏆 WINNER" : ""}</div>
+            <div className="text-gray-500">{result.variantA.latencyMs}ms · {fmtCost(Number(result.variantA.costUsd))}</div>
+            <pre className="text-gray-400 mt-2 overflow-auto max-h-24 whitespace-pre-wrap">{JSON.stringify(result.variantA.result, null, 2).slice(0, 200)}</pre>
+          </div>
+          <div className="flex flex-col items-center justify-center text-center text-xs">
+            <div className={`text-lg font-bold ${result.winner === "A" ? "text-blue-400" : "text-purple-400"}`}>Variant {result.winner} Wins</div>
+            <div className="text-gray-600 mt-1">{result.winnerReason}</div>
+            <div className="mt-2 px-3 py-1.5 bg-yellow-900/30 text-yellow-400 rounded-lg">{result.recommendation}</div>
+          </div>
+          <div className={`p-3 rounded-xl border text-xs ${result.winner === "B" ? "border-green-600/50 bg-green-950/20" : "border-gray-700/40 bg-gray-800/30"}`}>
+            <div className="font-medium text-purple-300 mb-2">Variant B {result.winner === "B" ? "🏆 WINNER" : ""}</div>
+            <div className="text-gray-500">{result.variantB.latencyMs}ms · {fmtCost(Number(result.variantB.costUsd))}</div>
+            <pre className="text-gray-400 mt-2 overflow-auto max-h-24 whitespace-pre-wrap">{JSON.stringify(result.variantB.result, null, 2).slice(0, 200)}</pre>
+          </div>
+        </div>
+      )}
+      {abResults?.tests?.length > 0 && (
+        <div className="mt-2">
+          <div className="text-gray-500 text-xs mb-1">Recent A/B tests: A wins {abResults.winnerDistribution?.A || 0} · B wins {abResults.winnerDistribution?.B || 0}</div>
+          <div className="flex gap-2">
+            {abResults.tests.slice(0, 3).map((t: any, i: number) => (
+              <div key={i} className="flex-1 p-2 bg-gray-800/40 rounded-lg text-xs">
+                <div className="text-gray-400">{t.feature}</div>
+                <div className={t.winner === "A" ? "text-blue-400" : "text-purple-400"}>Variant {t.winner} won</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function AiBrainDepartment() {
   const [activeTab, setActiveTab] = useState<TabId>("vitals");
@@ -738,7 +1195,7 @@ export default function AiBrainDepartment() {
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5 bg-purple-900/30 border border-purple-700/40 rounded-lg text-xs text-purple-300">
               <div className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
-              12 Agents Online · GPT-4o-mini · R{">"}$0.0001/call
+              12 Agents · 34 Endpoints · Edge AI · 12 Languages · Auto-Training
             </div>
           </div>
 
@@ -765,6 +1222,8 @@ export default function AiBrainDepartment() {
         {activeTab === "arena" && <TestingArenaTab />}
         {activeTab === "rlhf" && <SelfImprovementTab />}
         {activeTab === "cost" && <CostCarbonTab />}
+        {activeTab === "africa" && <AfricaAITab />}
+        {activeTab === "turbo" && <DeptTurboTab />}
       </div>
     </div>
   );
