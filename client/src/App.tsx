@@ -77,6 +77,7 @@ const SubscriptionManagement = lazy(() => import("@/pages/SubscriptionManagement
 const SecurityTrustManagement = lazy(() => import("@/pages/SecurityTrustManagement"));
 const AuditLogs = lazy(() => import("@/pages/AuditLogs"));
 const CmsManagement = lazy(() => import("@/pages/CmsManagement"));
+const FeatureFlagsManagement = lazy(() => import("@/pages/FeatureFlagsManagement"));
 const Auth = lazy(() => import("@/pages/Auth"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 
@@ -251,6 +252,11 @@ function Router() {
         <Route path="/admin/cms">
           <AuthGuard>
             <CmsManagement />
+          </AuthGuard>
+        </Route>
+        <Route path="/admin/feature-flags">
+          <AuthGuard>
+            <FeatureFlagsManagement />
           </AuthGuard>
         </Route>
         <Route path="/admin/mobile">
