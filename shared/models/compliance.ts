@@ -52,6 +52,13 @@ export const complianceDsr = pgTable("compliance_dsr", {
   rejection_reason:     text("rejection_reason"),
   channel:              varchar("channel",             { length: 32 }).default("web"),  // web|ussd|email|portal
   metadata:             jsonb("metadata").$type<Record<string, any>>().default({}),
+  // v2.0 additions — AI Orchestrator, USSD, language
+  orchestration_data:   jsonb("orchestration_data").$type<Record<string, any>>(),
+  orchestration_status: varchar("orchestration_status", { length: 32 }),
+  orchestration_at:     timestamp("orchestration_at"),
+  user_notified_at:     timestamp("user_notified_at"),
+  ussd_msisdn:          varchar("ussd_msisdn",         { length: 20 }),
+  consent_language:     varchar("consent_language",    { length: 8 }).default("en"),
 }, (t) => [index("idx_dsr_status").on(t.status), index("idx_dsr_user").on(t.user_email)]);
 
 export const insertComplianceDsrSchema = createInsertSchema(complianceDsr).omit({ id: true, submitted_at: true });
@@ -141,6 +148,11 @@ export const complianceRetention = pgTable("compliance_retention", {
   notes:            text("notes"),
   created_at:       timestamp("created_at").notNull().defaultNow(),
   updated_at:       timestamp("updated_at").notNull().defaultNow(),
+  // v2.0 — Legal Hold (SARS/FICA/litigation — suspends auto-purge)
+  legal_hold:        boolean("legal_hold").default(false),
+  legal_hold_reason: text("legal_hold_reason"),
+  legal_hold_by:     varchar("legal_hold_by", { length: 128 }),
+  legal_hold_at:     timestamp("legal_hold_at"),
 });
 
 export const insertComplianceRetentionSchema = createInsertSchema(complianceRetention).omit({ id: true, created_at: true, updated_at: true });
@@ -168,6 +180,9 @@ export const complianceDeletionProof = pgTable("compliance_deletion_proof", {
   verified_by:      varchar("verified_by",   { length: 128 }),
   signature:        text("signature"),        // base64 HMAC-SHA256 for court admissibility
   metadata:         jsonb("metadata").$type<Record<string, any>>().default({}),
+  // v2.0 — Hash chain (blockchain-style: chain_hash[n] = SHA-256(chain_hash[n-1] + cert_hash[n]))
+  chain_hash:       varchar("chain_hash",    { length: 64 }),
+  prev_cert_id:     varchar("prev_cert_id",  { length: 64 }),
 });
 
 export const insertComplianceDeletionProofSchema = createInsertSchema(complianceDeletionProof).omit({ id: true, issued_at: true });
@@ -204,6 +219,10 @@ export const complianceBreach = pgTable("compliance_breach", {
   metadata:               jsonb("metadata").$type<Record<string, any>>().default({}),
   created_at:             timestamp("created_at").notNull().defaultNow(),
   updated_at:             timestamp("updated_at").notNull().defaultNow(),
+  // v2.0 — AI-generated POPIA s.22 / GDPR Art. 33 formal regulator notification
+  regulator_report:        jsonb("regulator_report").$type<Record<string, any>>(),
+  regulator_report_at:     timestamp("regulator_report_at"),
+  user_notification_sent:  boolean("user_notification_sent").default(false),
 }, (t) => [index("idx_breach_status").on(t.status), index("idx_breach_severity").on(t.severity)]);
 
 export const insertComplianceBreachSchema = createInsertSchema(complianceBreach).omit({ id: true, created_at: true, updated_at: true });

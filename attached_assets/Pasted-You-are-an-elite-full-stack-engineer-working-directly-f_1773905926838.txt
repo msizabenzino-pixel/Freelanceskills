@@ -1,0 +1,70 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. This is the FINAL MASTER INTEGRATION & POLISH PROMPT — the legendary capstone that unites EVERY SINGLE DEPARTMENT we have built into one flawless, production-ready, world-dominating admin system.
+
+Tech stack (use exactly what is already in this Replit):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios + date-fns
+
+INTEGRATE AND PERFECT ALL PREVIOUS SECTIONS WE BUILT:
+- User Management
+- Admin Dashboard Overview
+- Analytics Deep Dive
+- Mobile App Admin View
+- Freelancer Management
+- Client Management
+- Job Management
+- Gig Marketplace
+- Proposal Management
+- Contract Management
+- Order / Project Management
+- Payment & Finance Department
+- Dispute Management
+- Support Ticket System
+- Report / Abuse Management
+
+NOW ADD AND SEAMLESSLY INTEGRATE THESE NEW DEPARTMENTS:
+- Notifications Centre (real-time + email + SMS + zero-data)
+- Categories & Content Moderation (AI-powered + manual review)
+- Promotions & Marketing Tools (campaign builder + referral engine)
+- Subscriptions Management (Premium tiers + billing)
+- Security & Audit Logs (immutable + real-time)
+- System Settings (global toggles + feature flags)
+- CMS (dynamic content + pages)
+- Role & Permission System (granular RBAC)
+- Real-Time Monitoring Dashboard (live system health)
+- AI Automation Engine (global commands + auto-tasks)
+- System Performance Monitoring (CPU, memory, latency)
+- Data Compliance & Privacy Centre (POPIA/GDPR + consent logs)
+
+CREATE THE ULTIMATE UNIFIED ADMIN EXPERIENCE:
+1. Beautiful unified sidebar navigation with icons for every department
+2. Global AI Assistant (floating chat that can answer about ANY section, run commands, generate reports)
+3. Top bar with global search, quick actions, and notifications bell
+4. One-click Deploy Script (production-ready Vercel/Render + MongoDB Atlas + PM2 setup)
+5. Africa-first Optimization Guide (zero-data mode, mobile-first, rural-friendly, USSD fallback, low-bandwidth)
+6. Full Compliance Readiness Checklist (POPIA, B-BBEE, DTIC impact metrics, audit export button, one-click compliance report)
+7. Feature Flags System (toggle any feature globally with instant hot-reload)
+8. Real-time System Performance Monitoring (live metrics + alerts)
+9. CMS for dynamic content and marketing pages
+10. Role & Permission Matrix (visual editor)
+
+Elon Musk 200% nuclear excellence requirements:
+- Global AI Assistant that understands context across all departments and can execute actions
+- One-click “Export Full Investor/DTIC Report” that pulls from every section
+- Immutable audit log for every action across the entire system
+- Real-time monitoring dashboard with predictive alerts
+- Africa-first optimizations (zero-data fallback, mobile PWA, rural UX)
+- Full data compliance centre with consent logs and export tools
+- Beautiful, consistent dark/light mode + mobile-responsive design
+- One-command production deploy script with environment variables
+- Final README with “How to run the complete admin system” + scaling guide to 10M users
+
+Deliver the complete integration:
+- Update all existing routes to use the new unified layout
+- Create new files for missing departments (Notifications, CMS, etc.)
+- Build unified layout component with sidebar + global AI assistant
+- Add one-click deploy script and Africa-first guide
+- Generate the final compliance checklist and investor report template
+
+This is the legendary capstone. Build it as the control centre of a $1 billion platform that dominates Africa and the world. Start by creating the unified layout and navigation, then integrate every department, then add the new sections and polish features. Output every new and modified file with clear comments.
+
+Begin now and output the complete system.
