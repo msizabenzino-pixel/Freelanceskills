@@ -1,0 +1,46 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready SYSTEM PERFORMANCE department (operational cardiology — the layer that keeps the entire platform alive under any load) to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/performance — the most hardcore, predictive, business-aware observability system ever attached to a freelance marketplace. Current site has ZERO dedicated performance monitoring. Build from scratch — surpass Datadog + New Relic + Grafana + Sentry + Elastic combined.
+
+MANDATORY CORE METRICS — DO NOT OMIT ANY:
+- API endpoint latency (p50, p95, p99)
+- Database query time (aggregate + slowest queries)
+- Error rate (5xx, 4xx, unhandled exceptions)
+- Queue / background job processing delay & backlog
+
+MANDATORY HARDCORE ADDITIONS:
+- Marketplace business KPIs: proposal-to-order conversion time, escrow hold duration distribution, dispute open-to-resolve latency
+- Africa-specific: mobile-money gateway round-trip, USSD request latency, rural/urban split metrics
+- Node.js runtime: event loop lag, heap usage, GC pause time
+- Socket.io connection count, message drop rate, reconnect storms
+- External service health: email/SMS provider latency, payment gateway success rate & latency
+
+Admin Dashboard Sections (/admin/performance):
+- Live Pulse Dashboard — massive real-time KPI cards + sparklines
+- Service Map — visual dependency graph with latency waterfalls
+- Slowest Queries & Endpoints table (auto-sorted by impact)
+- Error & Anomaly Explorer (group by fingerprint + stack trace)
+- Alert Rules Engine + Notification bridge
+- Predictive Capacity Forecaster (simple linear + exponential projection)
+
+CORE BACKEND REQUIREMENTS (hardcore coding):
+- Prometheus exposition endpoint (/metrics) with custom collectors
+- Structured JSON logging middleware (correlation ID propagation)
+- MongoDB change streams + aggregation pipelines for live counters
+- In-memory sliding-window counters (last 5 min / 1 h) via Map + setInterval
+- Basic anomaly detection (3-sigma or simple MAD on sliding window)
+- Socket.io broadcast channel for live metric updates
+- Automatic alert → Support ticket creation when threshold breached
+
+Deliver:
+- New routes: /metrics (Prometheus format), /api/performance/live, /api/performance/slow-queries, /api/performance/alerts
+- MongoDB schemas: PerformanceSnapshot, SlowQueryLog, AlertRule, AnomalyEvent
+- New React page: src/pages/admin/SystemPerformance.jsx (pulse dashboard, service map, slowest queries, error explorer, capacity forecast, alert config)
+- Socket.io namespace /performance for live streaming
+- Updated README: “How to access /admin/performance + why this is the nuclear layer that prevents 3 a.m. outages”
+
+Build with maximum backend aggression — low-overhead instrumentation, correlation IDs everywhere, sub-second freshness. Only ADD on top of existing departments, never subtract. Start with instrumentation middleware + Prometheus endpoint + change-stream listeners, then React UI. Output every new file.
