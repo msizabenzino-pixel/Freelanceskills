@@ -1,0 +1,47 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready AI AUTOMATION department — the central multi-agent brain that makes Freelancerskills.net the most intelligent marketplace on Earth — to the existing system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/ai-brain — the most advanced, agentic, self-improving, Africa-first AI orchestration engine ever built for a freelance marketplace. Current site (freelancerskills.net) has ZERO AI. We are building from scratch the system that outclasses Upwork Uma + Fiverr Neo + Toptal screening + Vellum + Salesforce Einstein combined.
+
+MANDATORY CORE AI CAPABILITIES — DO NOT OMIT ANY:
+- Semantic proposal ranking & sorting
+- Hyper-personalized job-to-freelancer matching
+- Real-time multi-signal scam & fraud detection
+- Contextual multi-turn support chatbot
+- Multimodal content moderation (text + image + voice)
+
+MANDATORY ADVANCED / GOD-TIER ADDITIONS:
+- Academy course & skill-gap recommender
+- Dynamic pricing & promotion optimizer
+- Hyper-personalized notification & re-engagement engine
+- Dispute prediction & early prevention agent
+- User lifetime value & churn prediction
+- Red-team adversarial scam simulator (self-improves detector)
+
+CORE ARCHITECTURE REQUIREMENTS:
+- Multi-agent swarm with parallel debate & majority voting
+- Vector database / embeddings layer for semantic search & memory
+- Real-time inference pipeline (TensorFlow.js / Transformers.js placeholders + Grok/xAI API fallback)
+- Self-improving RLHF-style loop (user ratings + support resolutions + dispute outcomes → fine-tune signals)
+- On-device / edge inference stubs for rural/low-data users (ONNX export ready)
+- Cross-department memory graph (remembers long-term user patterns across all modules)
+
+Admin Dashboard Sections (/admin/ai-brain):
+- Brain Vital Signs: Live agent health, inference latency, confidence distribution
+- Agent Swarm Visualizer: See agents debating in real time
+- Workflow Composer: Drag-and-drop multi-agent flows
+- Testing Arena: Run any AI feature on live or mock data
+- Self-Improvement Monitor: Feedback loop dashboard + accuracy-over-time
+- Cost & Carbon Tracker: Tokens used, estimated CO₂ per feature
+
+Deliver hardcore backend:
+- New routes: /api/ai/rank-proposals, /api/ai/match-job, /api/ai/scam-score, /api/ai/chat, /api/ai/moderate, /api/ai/orchestrate-swarm, /api/ai/feedback-loop, etc.
+- MongoDB schemas: AIAgent, EmbeddingCache, AgentMemoryGraph, InferenceEvent, FeedbackSignal, SwarmDecision
+- Embeddings storage strategy + vector similarity search middleware
+- Socket.io channels for live agent collaboration & results streaming
+- Updated README: “How this AI brain makes Freelancerskills.net the most intelligent platform alive”
+
+Build with maximum aggression, zero compromise, maximum intelligence — only ADD on top of existing departments, never subtract. Start with schemas + vector layer + multi-agent orchestrator + inference middleware, then React UI. Output every new file.
