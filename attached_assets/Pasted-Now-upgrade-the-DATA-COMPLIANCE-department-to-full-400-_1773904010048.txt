@@ -1,0 +1,25 @@
+Now upgrade the DATA COMPLIANCE department to full 400% Elon-level god-mode — a system no platform (OneTrust, Vanta, Transcend, DataGrail, Osano, Stripe, Shopify, Upwork, Fiverr) can touch in 2026–2030.
+
+1. Fully automated DSR orchestration (user requests → AI finds all data across 18 departments → packaged export or deletion in <48h)
+2. Cryptographic proof-of-deletion certificates (SHA-256 hash chain + timestamped blockchain-style receipt)
+3. AI-powered Data Inventory & Mapping (auto-scans every table, AI model, vector store, log)
+4. Granular Consent Engine v3.0 (linked to existing user preferences + Feature Flags gating)
+5. Retention Policy Engine with auto-purge + legal hold overrides
+6. Breach Detection & Automated 72h Notification (generates regulator + user reports with one click)
+7. POPIA + GDPR + CCPA + LGPD + future-law compliance matrix with evidence export
+8. DPIA & Risk Assessment Generator (tied to AI AUTOMATION for new features)
+9. Africa-First Superpowers (USSD/SMS request handling, low-data export, mobile-money data minimization, Zulu/Xhosa consent language support)
+10. Deep, deep integration with every single department already built:
+    - AI AUTOMATION → logs inference data for export/deletion
+    - Security & KYC → controlled access to identity data
+    - Audit Logs → immutable proof for every compliance action
+    - Support Team → auto-creates tickets from DSRs
+    - Real-Time Monitoring → compliance SLA alerts
+    - Subscriptions & Finance → billing data export
+    - CMS → auto-updates legal pages
+    - Role & Permission → who can access compliance tools
+    - Notifications → sends deletion confirmation
+
+Rebuild only changed files. Output updated code with extremely detailed comments explaining how we studied the current empty freelancerskills.net site and built the single most powerful, automated, legally airtight, Africa-optimized Data Compliance system on Earth — the final shield that protects the entire empire.
+
+Only ADD improvements. Never remove or break anything previously built.

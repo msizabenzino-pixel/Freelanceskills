@@ -138,6 +138,9 @@ export async function registerRoutes(
   const { registerAiBrainRoutes } = await import("./aiBrainRoutes");
   await registerAiBrainRoutes(app, isAuthenticated);
 
+  const { registerComplianceRoutes } = await import("./complianceRoutes");
+  await registerComplianceRoutes(app, isAuthenticated);
+
   const { registerPerformanceRoutes, correlationMiddleware, apiLatencyMiddleware } = await import("./performanceRoutes");
   app.use(correlationMiddleware);
   app.use(apiLatencyMiddleware);

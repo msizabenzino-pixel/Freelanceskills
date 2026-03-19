@@ -83,6 +83,7 @@ const SupportTeamDashboard = lazy(() => import("@/pages/SupportTeamDashboard"));
 const RealTimeMonitoring = lazy(() => import("@/pages/RealTimeMonitoring"));
 const AiBrainDepartment = lazy(() => import("@/pages/AiBrainDepartment"));
 const SystemPerformance = lazy(() => import("@/pages/SystemPerformance"));
+const DataCompliance = lazy(() => import("@/pages/DataCompliance"));
 const Auth = lazy(() => import("@/pages/Auth"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 
@@ -273,6 +274,9 @@ function Router() {
         </Route>
         <Route path="/admin/performance">
           <Suspense fallback={<PageLoader />}><SystemPerformance /></Suspense>
+        </Route>
+        <Route path="/admin/compliance">
+          <Suspense fallback={<PageLoader />}><DataCompliance /></Suspense>
         </Route>
         <Route path="/admin/feature-flags">
           <AuthGuard>
