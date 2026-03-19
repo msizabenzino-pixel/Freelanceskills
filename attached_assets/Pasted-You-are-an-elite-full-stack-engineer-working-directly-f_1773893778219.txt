@@ -1,0 +1,37 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready FEATURE FLAGS department (the master control panel of the entire platform) to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/feature-flags — the most intelligent, predictive, real-time feature-flag system ever built. Since freelancerskills.net currently has ZERO feature flags (503 status, no dynamic controls in Replit or live site), we add this from scratch and make it LaunchDarkly-level but 3 years ahead.
+
+MANDATORY DYNAMIC FEATURE CONTROL — DO NOT REMOVE ANY:
+Examples to include and expand:
+- enable gig marketplace
+- enable bidding
+- enable subscriptions
+- enable AI matching
+
+Admin Dashboard Sections (/admin/feature-flags):
+- Flags Library: Table of all flags with status (off/on), rollout %, targeting rules
+- Flag Editor: Create/edit with targeting (user segment, location, Academy level, subscription tier, skill, rural/urban)
+- AI Impact Predictor: Before enabling, shows projected revenue/earnings/server impact
+- A/B Testing Panel: Create experiments with automatic winner detection
+- Live Rollout Controls: Gradual rollout slider + instant kill switch
+
+200% Intelligence & Human Excellence:
+- Real-time Socket.io updates across all services
+- AI-Powered Impact Forecasting
+- Versioned History + One-Click Rollback (linked to Audit Logs)
+- Africa-first targeting (USSD, mobile-money, low-data mode)
+- Full integration with every existing department
+
+Deliver:
+- New backend routes (/api/feature-flags, /api/feature-flags/evaluate, /api/feature-flags/predict, etc.)
+- MongoDB schemas (FeatureFlag, FlagVariant, TargetingRule, Experiment, FlagHistory)
+- New React page: src/pages/admin/FeatureFlagsManagement.jsx (flags table, editor modal, AI predictor panel, A/B testing tab, rollout controls)
+- Socket.io events for live rollout updates + impact alerts
+- Updated README with “How to access /admin/feature-flags + why this is the nuclear control system that powers everything”
+
+Build with extreme intelligence, predictive power, and relentless safety thinking — only ADD, never subtract from what already exists. Start with schemas + backend evaluation middleware, then React UI. Output every new file.
