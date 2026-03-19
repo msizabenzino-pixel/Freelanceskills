@@ -54,6 +54,7 @@ const InviteBusinesses = lazy(() => import("@/pages/InviteBusinesses"));
 const FraudDashboard = lazy(() => import("@/pages/FraudDashboard"));
 const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
 const AnalyticsDeepDive = lazy(() => import("@/pages/AnalyticsDeepDive"));
+const AnalyticsReporting = lazy(() => import("@/pages/AnalyticsReporting"));
 const MobileAdmin = lazy(() => import("@/pages/MobileAdmin"));
 const FreelancerManagement = lazy(() => import("@/pages/FreelancerManagement"));
 const ClientManagement = lazy(() => import("@/pages/ClientManagement"));
@@ -251,9 +252,14 @@ function Router() {
             <MobileAdmin />
           </AuthGuard>
         </Route>
-        <Route path="/admin/analytics">
+        <Route path="/admin/analytics/deep-dive">
           <AuthGuard>
             <AnalyticsDeepDive />
+          </AuthGuard>
+        </Route>
+        <Route path="/admin/analytics">
+          <AuthGuard>
+            <AnalyticsReporting />
           </AuthGuard>
         </Route>
         <Route path="/admin">
