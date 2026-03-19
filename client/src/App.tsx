@@ -79,6 +79,7 @@ const AuditLogs = lazy(() => import("@/pages/AuditLogs"));
 const CmsManagement = lazy(() => import("@/pages/CmsManagement"));
 const FeatureFlagsManagement = lazy(() => import("@/pages/FeatureFlagsManagement"));
 const RolePermissionSystem = lazy(() => import("@/pages/RolePermissionSystem"));
+const SupportTeamDashboard = lazy(() => import("@/pages/SupportTeamDashboard"));
 const Auth = lazy(() => import("@/pages/Auth"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 
@@ -257,6 +258,9 @@ function Router() {
         </Route>
         <Route path="/admin/roles">
           <Suspense fallback={<PageLoader />}><RolePermissionSystem /></Suspense>
+        </Route>
+        <Route path="/admin/support-team">
+          <Suspense fallback={<PageLoader />}><SupportTeamDashboard /></Suspense>
         </Route>
         <Route path="/admin/feature-flags">
           <AuthGuard>
