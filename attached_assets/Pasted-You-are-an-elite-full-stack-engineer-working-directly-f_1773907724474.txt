@@ -1,0 +1,77 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. This is the FINAL, NO-MERCY, 400% NUCLEAR VERIFICATION AND DEPLOYMENT COMMAND.
+
+All 19 departments have already been built. Your mission is to:
+- Verify the Unified Admin Dashboard exists
+- Ruthlessly test every single department
+- Automatically detect and fix ANY error, conflict, missing file, broken middleware, Socket.io issue, React error, Mongo index problem, permission leak, or integration failure
+- Run live functionality tests
+- Execute production hardening and one-click deploy
+- Generate the complete victory report and confirm the entire system is 100% FUNCTIONAL AND LIVE
+
+List of all 19 departments that MUST be working perfectly:
+1. Notifications (Communication Engine)
+2. Report/Abuse Management
+3. Category & Skill Management
+4. Content Moderation
+5. Promotion System
+6. Marketing System
+7. Subscription Management
+8. Security & Trust
+9. Audit Logs
+10. System Settings
+11. Analytics & Reporting
+12. CMS Management
+13. Feature Flags
+14. Role & Permission System
+15. Support Team System
+16. Real Time Monitoring
+17. AI Automation (ai-brain)
+18. System Performance
+19. Data Compliance
+
+MANDATORY TASKS — EXECUTE IN ORDER, FIX EVERYTHING AUTOMATICALLY:
+
+1. Verify & Fix Unified Admin Dashboard (/admin)
+   - Beautiful sidebar with all 19 departments + icons
+   - Global AI Assistant chat bubble (connected to /api/ai/orchestrate-swarm)
+   - Live performance pulse from System Performance
+   - Dark theme with Africa colors (purple/gold/green)
+   - Enforce JWT + Role & Permission + Feature Flags on every route
+
+2. Run Full Live Tests (auto-fix anything broken):
+   - /admin/analytics → charts must load with real data
+   - /admin/ai-brain → test "rank 10 proposals" and "match job to freelancers"
+   - /admin/monitoring → live users, orders/min, payments/min updating in real time
+   - /admin/compliance → generate test DSR export + deletion proof PDF
+   - /admin/support → create test ticket and AI triage it
+   - /admin/performance → show API latency, DB query time, error rate
+   - Role test: try restricted action as non-admin → must block and log to Audit Logs
+   - Feature Flag test: toggle one flag and confirm UI updates
+
+3. Auto-Fix Protocol (run until zero errors):
+   - Rebuild any broken middleware (permissions, audit logging, data compliance hooks)
+   - Fix Socket.io connections and real-time streams
+   - Re-index MongoDB collections
+   - Resolve any React component or import errors
+   - Ensure AI AUTOMATION can talk to every department
+   - Verify Data Compliance deletion orchestrator and cryptographic proofs work
+
+4. Production Hardening & Deploy:
+   - Run full production build
+   - Enable PM2 clustering or Node cluster
+   - Activate /metrics endpoint
+   - Add security headers, rate limiting, and env validation
+   - Generate final deploy script (npm run deploy) if missing
+   - Create production-ready .env.example with all required variables
+
+5. Generate Final Victory Report:
+   - Big green header: "SYSTEM STATUS: 100% FUNCTIONAL AND LIVE"
+   - Green checkmarks [✓] for all 19 departments
+   - Confirmation that Global AI Assistant, Real-Time Monitoring, Data Compliance, and Role & Permission are fully working
+   - Africa-first optimization summary
+   - One-click production launch checklist
+   - Screenshot-style confirmation text for Bernet
+
+Start executing NOW. Check every file. Fix every error automatically. Do not stop until the system is perfect. Output every fixed file with comments, then end with the loud, binding victory report that says the entire Freelancerskills.net admin system is 100% FUNCTIONAL AND LIVE.
+
+This is the final command. Make it legendary.

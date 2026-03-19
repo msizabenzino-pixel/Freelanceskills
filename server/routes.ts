@@ -146,6 +146,9 @@ export async function registerRoutes(
   app.use(apiLatencyMiddleware);
   await registerPerformanceRoutes(app, isAuthenticated);
 
+  const { registerMissionControlRoutes } = await import("./missionControlRoutes");
+  await registerMissionControlRoutes(app, isAuthenticated);
+
   // Dashboard Stats
   app.get("/api/dashboard/stats", isAuthenticated, async (req: any, res) => {
     try {

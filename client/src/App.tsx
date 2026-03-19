@@ -13,6 +13,8 @@ import { OfflineScreen } from "@/components/OfflineScreen";
 import { AuthGuard } from "@/components/AuthGuard";
 import { FloatingActionButton } from "@/components/FloatingActionButton";
 import NotFound from "@/pages/not-found";
+import AdminLayout from "@/components/AdminLayout";
+import GlobalAiAssistant from "@/components/GlobalAiAssistant";
 
 const Home = lazy(() => import("@/pages/Home"));
 const Jobs = lazy(() => import("@/pages/Jobs"));
@@ -84,6 +86,7 @@ const RealTimeMonitoring = lazy(() => import("@/pages/RealTimeMonitoring"));
 const AiBrainDepartment = lazy(() => import("@/pages/AiBrainDepartment"));
 const SystemPerformance = lazy(() => import("@/pages/SystemPerformance"));
 const DataCompliance = lazy(() => import("@/pages/DataCompliance"));
+const MissionControl = lazy(() => import("@/pages/MissionControl"));
 const Auth = lazy(() => import("@/pages/Auth"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 
@@ -92,6 +95,52 @@ function PageLoader() {
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
     </div>
+  );
+}
+
+function AdminRouter() {
+  return (
+    <AdminLayout>
+      <GlobalAiAssistant />
+      <Suspense fallback={<PageLoader />}>
+        <Switch>
+          <Route path="/admin/mission-control" component={MissionControl} />
+          <Route path="/admin/fraud"><AuthGuard><FraudDashboard /></AuthGuard></Route>
+          <Route path="/admin/freelancers"><AuthGuard><FreelancerManagement /></AuthGuard></Route>
+          <Route path="/admin/clients"><AuthGuard><ClientManagement /></AuthGuard></Route>
+          <Route path="/admin/payments"><AuthGuard><PaymentsControl /></AuthGuard></Route>
+          <Route path="/admin/academy"><AuthGuard><AcademyAdmin /></AuthGuard></Route>
+          <Route path="/admin/settings"><AuthGuard><SystemSettings /></AuthGuard></Route>
+          <Route path="/admin/gigs"><AuthGuard><GigMarketplace /></AuthGuard></Route>
+          <Route path="/admin/proposals"><AuthGuard><ProposalManagement /></AuthGuard></Route>
+          <Route path="/admin/orders"><AuthGuard><OrderManagement /></AuthGuard></Route>
+          <Route path="/admin/finance"><AuthGuard><FinanceDepartment /></AuthGuard></Route>
+          <Route path="/admin/disputes"><AuthGuard><DisputeManagement /></AuthGuard></Route>
+          <Route path="/admin/support"><AuthGuard><SupportTicketSystem /></AuthGuard></Route>
+          <Route path="/admin/reports"><AuthGuard><ReportAbuseManagement /></AuthGuard></Route>
+          <Route path="/admin/notifications"><AuthGuard><NotificationsManagement /></AuthGuard></Route>
+          <Route path="/admin/categories"><AuthGuard><CategorySkillManagement /></AuthGuard></Route>
+          <Route path="/admin/moderation"><AuthGuard><ContentModeration /></AuthGuard></Route>
+          <Route path="/admin/promotions"><AuthGuard><PromotionManagement /></AuthGuard></Route>
+          <Route path="/admin/marketing"><AuthGuard><MarketingSystem /></AuthGuard></Route>
+          <Route path="/admin/subscriptions"><AuthGuard><SubscriptionManagement /></AuthGuard></Route>
+          <Route path="/admin/security"><AuthGuard><SecurityTrustManagement /></AuthGuard></Route>
+          <Route path="/admin/audit-logs"><AuthGuard><AuditLogs /></AuthGuard></Route>
+          <Route path="/admin/cms"><AuthGuard><CmsManagement /></AuthGuard></Route>
+          <Route path="/admin/roles"><RolePermissionSystem /></Route>
+          <Route path="/admin/support-team"><SupportTeamDashboard /></Route>
+          <Route path="/admin/monitoring"><RealTimeMonitoring /></Route>
+          <Route path="/admin/ai-brain"><AiBrainDepartment /></Route>
+          <Route path="/admin/performance"><SystemPerformance /></Route>
+          <Route path="/admin/compliance"><DataCompliance /></Route>
+          <Route path="/admin/feature-flags"><AuthGuard><FeatureFlagsManagement /></AuthGuard></Route>
+          <Route path="/admin/mobile"><AuthGuard><MobileAdmin /></AuthGuard></Route>
+          <Route path="/admin/analytics/deep-dive"><AuthGuard><AnalyticsDeepDive /></AuthGuard></Route>
+          <Route path="/admin/analytics"><AuthGuard><AnalyticsReporting /></AuthGuard></Route>
+          <Route path="/admin"><AuthGuard><AdminDashboard /></AuthGuard></Route>
+        </Switch>
+      </Suspense>
+    </AdminLayout>
   );
 }
 
@@ -150,159 +199,7 @@ function Router() {
         <Route path="/opportunity-finder" component={OpportunityFinder} />
         <Route path="/claim-business" component={ClaimBusiness} />
         <Route path="/invite-businesses" component={InviteBusinesses} />
-        <Route path="/admin/fraud">
-          <AuthGuard>
-            <FraudDashboard />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/freelancers">
-          <AuthGuard>
-            <FreelancerManagement />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/clients">
-          <AuthGuard>
-            <ClientManagement />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/payments">
-          <AuthGuard>
-            <PaymentsControl />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/academy">
-          <AuthGuard>
-            <AcademyAdmin />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/settings">
-          <AuthGuard>
-            <SystemSettings />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/gigs">
-          <AuthGuard>
-            <GigMarketplace />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/proposals">
-          <AuthGuard>
-            <ProposalManagement />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/orders">
-          <AuthGuard>
-            <OrderManagement />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/finance">
-          <AuthGuard>
-            <FinanceDepartment />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/disputes">
-          <AuthGuard>
-            <DisputeManagement />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/support">
-          <AuthGuard>
-            <SupportTicketSystem />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/reports">
-          <AuthGuard>
-            <ReportAbuseManagement />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/notifications">
-          <AuthGuard>
-            <NotificationsManagement />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/categories">
-          <AuthGuard>
-            <CategorySkillManagement />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/moderation">
-          <AuthGuard>
-            <ContentModeration />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/promotions">
-          <AuthGuard>
-            <PromotionManagement />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/marketing">
-          <AuthGuard>
-            <MarketingSystem />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/subscriptions">
-          <AuthGuard>
-            <SubscriptionManagement />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/security">
-          <AuthGuard>
-            <SecurityTrustManagement />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/audit-logs">
-          <AuthGuard>
-            <AuditLogs />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/cms">
-          <AuthGuard>
-            <CmsManagement />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/roles">
-          <Suspense fallback={<PageLoader />}><RolePermissionSystem /></Suspense>
-        </Route>
-        <Route path="/admin/support-team">
-          <Suspense fallback={<PageLoader />}><SupportTeamDashboard /></Suspense>
-        </Route>
-        <Route path="/admin/monitoring">
-          <Suspense fallback={<PageLoader />}><RealTimeMonitoring /></Suspense>
-        </Route>
-        <Route path="/admin/ai-brain">
-          <Suspense fallback={<PageLoader />}><AiBrainDepartment /></Suspense>
-        </Route>
-        <Route path="/admin/performance">
-          <Suspense fallback={<PageLoader />}><SystemPerformance /></Suspense>
-        </Route>
-        <Route path="/admin/compliance">
-          <Suspense fallback={<PageLoader />}><DataCompliance /></Suspense>
-        </Route>
-        <Route path="/admin/feature-flags">
-          <AuthGuard>
-            <FeatureFlagsManagement />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/mobile">
-          <AuthGuard>
-            <MobileAdmin />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/analytics/deep-dive">
-          <AuthGuard>
-            <AnalyticsDeepDive />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin/analytics">
-          <AuthGuard>
-            <AnalyticsReporting />
-          </AuthGuard>
-        </Route>
-        <Route path="/admin">
-          <AuthGuard>
-            <AdminDashboard />
-          </AuthGuard>
-        </Route>
+        <Route path="/admin/:rest*" component={AdminRouter} />
         <Route component={NotFound} />
       </Switch>
     </Suspense>
