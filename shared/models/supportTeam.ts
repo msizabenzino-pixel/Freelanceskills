@@ -90,6 +90,37 @@ export const supportAgentPerformance = pgTable("support_agent_performance", {
 });
 export type AgentPerformance = typeof supportAgentPerformance.$inferSelect;
 
+// ─── Ticket Internal Notes (@mentions, collaboration) ─────────────────────────
+export const supportTicketNotes = pgTable("support_ticket_notes", {
+  id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
+  ticketId: varchar("ticket_id", { length: 36 }).notNull(),
+  authorId: varchar("author_id", { length: 128 }).notNull(),
+  authorName: varchar("author_name", { length: 128 }),
+  content: text("content").notNull(),
+  mentions: varchar("mentions", { length: 512 }),
+  isInternal: boolean("is_internal").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+export type TicketNote = typeof supportTicketNotes.$inferSelect;
+
+// ─── Agent Gamification (streaks, badges, points, ranks) ─────────────────────
+export const supportAgentGamification = pgTable("support_agent_gamification", {
+  id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
+  agentId: varchar("agent_id", { length: 36 }).notNull(),
+  agentName: varchar("agent_name", { length: 128 }),
+  totalPoints: integer("total_points").default(0),
+  currentStreak: integer("current_streak").default(0),
+  longestStreak: integer("longest_streak").default(0),
+  totalResolved: integer("total_resolved").default(0),
+  badges: jsonb("badges").default([]),
+  rank: varchar("rank", { length: 32 }).default("rookie"),
+  weeklyPoints: integer("weekly_points").default(0),
+  monthlyPoints: integer("monthly_points").default(0),
+  lastResolvedAt: timestamp("last_resolved_at"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+export type AgentGamification = typeof supportAgentGamification.$inferSelect;
+
 // ─── Team Tickets (supervisor view) ──────────────────────────────────────────
 export const supportTeamTickets = pgTable("support_team_tickets", {
   id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),

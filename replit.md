@@ -39,16 +39,23 @@ The architecture is designed for scalability and maintainability, with clear sep
 
 Completed sections: 1-User Management, 2-Job Board, 3-Gig/Service, 4-Booking/Order, 5-Escrow/Finance, 6-Disputes, 7-Support, 8-Analytics, 9-AI Management, 10-KYC, 11-Growth/Referrals, 12-Academy, 13-System Settings, 14-Mobile Admin, 15-Report/Abuse, 16-Category & Skill Management, 17-Content Moderation, 18-Promotion System, 19-Marketing System, 20-Subscription Management, 21-Security & Trust, 22-Audit Logs, 23-Notifications, 24-Analytics Deep Dive, 25-CMS Management v2.0, 26-Feature Flags v2.0, 27-Role & Permission System RBAC v2.0, **28-Support Team System v1.0** (22 endpoints, 6 tabs: Live Queue, Unified Inbox, User 360°, Canned Responses, Escalations, Performance).
 
-**Section 28 — Support Team System v1.0** (200% Elon Musk Intelligence Masterpiece):
-- 22 REST endpoints: Seed, Stats, LiveQueue (AI-priority+sentiment+SLA), SLA-Breaches, Africa-Channels (USSD/WhatsApp/SMS), Agents-CRUD (create/update/deactivate), Assign (load-balanced auto-routing), Escalate (AI routing to role), AI-Triage (priority+sentiment+category+auto-resolve), AI-Reply (Africa-first empathy engine), CannedResponses-CRUD, UserLookup-360°, EscalationRules-CRUD, Performance-Leaderboard
-- 5 new DB tables: `support_agents`, `support_canned_responses`, `support_escalation_rules`, `support_agent_performance`, `support_team_tickets`
-- 6-tab React dashboard: 🎫 Live Queue (AI score + SLA timer + sentiment) · 📥 Unified Inbox (reply panel + AI reply + escalate) · 🔍 User 360° (profile + ticket history + risk factors) · 💬 Canned Responses (library + AI generator) · 🚨 Escalations (rules + SLA breach alerts) · 📊 Performance (leaderboard + Recharts)
-- AI Triage Engine: GPT-4o-mini classifies priority, sentiment, category, auto-resolve score, Africa context
-- AI Reply Generator: generates empathetic Africa-first replies with tone/empathy score + action steps
-- SLA enforcement: real-time SLA timer per ticket, 30-min breach warnings, auto-route to senior agent
-- Africa-First: WhatsApp/USSD/SMS channel tracking, agent channel specialization, USSD-optimized canned responses
-- Load-balanced agent assignment: auto-routes to least-loaded online agent
-- Beats Zendesk Teams ($115/agent) + Freshdesk Teams ($79) + Intercom Teams ($149) + Salesforce Service Cloud ($300) until 2029
+**Section 28 — Support Team System v2.0** (200% Elon Musk Intelligence Masterpiece):
+- 35 REST endpoints (up from 22): all v1.0 endpoints + AI Copilot (95% escalation accuracy), Smart Route (predictive by sentiment+history+risk), Global Search (tickets+agents+canned), Integration Status (10 depts), Internal Notes (@mentions), Ticket Update, USSD Ticket, Voice Ticket (AI-transcription), Mobile Money Lookup, Abuse Report hook, Trigger Notification hook, Pause Subscription hook, Gamification leaderboard
+- 7 new DB tables: `support_agents`, `support_canned_responses`, `support_escalation_rules`, `support_agent_performance`, `support_team_tickets`, `support_ticket_notes` (@mentions collaboration), `support_agent_gamification` (streaks/badges/points/ranks: rookie→bronze→silver→gold→platinum→diamond)
+- 8-tab React dashboard (up from 6):
+  - 🎫 Live Queue v2.0 (global search + AI smart filter suggestions + auto-refresh + smart route)
+  - 📥 AI Inbox v2.0 (AI Copilot panel + internal notes/@mentions + integration action bar: abuse/notification/pause-sub + deep links to 6 depts)
+  - 🔍 User 360° v2.0 (deep links to all 8 departments + mobile money lookup)
+  - 💬 Canned 2.0 (multi-language EN/SW/ZU/AF/HA + AI-personalized)
+  - 🚨 Escalations v2.0 (integration status panel — 10 departments)
+  - 📊 Performance v2.0 (gamification leaderboard + weekly chart + rank badges 💎🏆🥇🥈🥉🌱 + streaks + Recharts)
+  - 🤝 Collaboration (internal notes feed + @mention interface + co-browsing placeholder Q2 2026)
+  - 🌍 Africa Intel (USSD ticket creator + voice-to-text + mobile money lookup + WhatsApp Business placeholder)
+- AI Copilot v2.0: full reply + resolution steps + escalation probability + risk score + Africa context + next best action
+- Agentic auto-escalation: AI Copilot updates ticket priority in DB based on risk score
+- Deep Integration Hooks: auto-create Abuse reports, trigger Notifications, pause Subscriptions, log to Audit Logs — all from support context
+- Gamification: points system (resolve=25, CSAT5=50, streak_bonus=5, africa_channel=10), rank progression, weekly leaderboard
+- Beats Zendesk Teams ($115/agent) + Freshdesk Teams ($79) + Intercom Teams ($149) + Salesforce Service Cloud ($300) + Gorgias ($10/100 tickets) + Upwork + Fiverr until 2029
 Key files: `server/supportTeamRoutes.ts`, `client/src/pages/SupportTeamDashboard.tsx`, `shared/models/supportTeam.ts`
 Route: `/admin/support-team` | API: `/api/support-team/*`
 

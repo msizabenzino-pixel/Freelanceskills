@@ -1,0 +1,39 @@
+You are an elite full-stack engineer working directly for Elon Musk on a $1 billion African gig platform. Add a complete, production-ready REAL TIME MONITORING department (the living heartbeat of the platform) to the existing FreelanceSkills.net admin system in this Replit.
+
+Tech stack (use exactly what is already here):
+- Backend: Node.js + Express + MongoDB (Mongoose) + Socket.io + JWT
+- Frontend: React 18 + Vite + Tailwind CSS + TanStack Table v8 + Recharts + React Query + Axios
+
+Create new route /admin/monitoring — the most advanced, sub-second, AI-powered real-time system monitoring dashboard ever built. Since freelancerskills.net currently has ZERO live monitoring or metrics (503 status, no dashboards in Replit), we add this from scratch and make it better than Datadog + New Relic + Grafana combined.
+
+MANDATORY LIVE METRICS & FEATURES — DO NOT REMOVE ANY:
+- Live users online
+- Orders per minute
+- Payments per minute
+- System errors
+
+Plus (mandatory hardcore additions):
+- Gigs posted/min, disputes/min, Academy completions/min, mobile-money velocity
+- Geographic heatmaps (Africa rural/urban split)
+
+Admin Dashboard Sections (/admin/monitoring):
+- Live Overview: Massive KPI cards with real-time counters + sparkline charts
+- Metrics Grid: Recharts live line/bar graphs (orders/min, payments/min, errors)
+- Anomaly Detection Feed: AI-flagged events with severity
+- Geographic Heatmap: Real-time Africa map
+- Alert Rules Engine: Create custom thresholds
+
+200% Intelligence & Human Excellence (hardcore backend):
+- Sub-second Socket.io push + MongoDB change streams + aggregation pipelines
+- AI Anomaly Detection (real-time ML-like rules + pattern recognition)
+- Predictive Trend Lines
+- Africa-first: mobile-money spike tracking, USSD traffic monitoring
+
+Deliver:
+- New backend routes (/api/monitoring/metrics, /api/monitoring/live, /api/monitoring/anomalies, etc.) + full WebSocket server + change-stream listeners
+- MongoDB schemas (LiveMetricSnapshot, AnomalyEvent, AlertRule) + in-memory counters + aggregation jobs
+- New React page: src/pages/admin/RealTimeMonitoring.jsx (live KPI cards, Recharts streaming graphs, anomaly feed, heatmap, alert configurator)
+- Socket.io events for every metric + anomaly alerts
+- Updated README with “How to access /admin/monitoring + why this outshines every platform on earth”
+
+Build with extreme hardcore backend precision, sub-second performance, and relentless observability thinking — only ADD improvements on top of what already exists, never subtract. Start with schemas + WebSocket + change streams + AI anomaly middleware, then React UI. Output every new file.
