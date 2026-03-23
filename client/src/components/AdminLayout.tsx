@@ -1,10 +1,9 @@
 /**
  * AdminLayout — Unified Admin Sidebar + Topbar
- * Section 33 — FreelanceSkills.net
+ * FreelanceSkills.net — 100 Admin Sections Complete
  *
- * The single shell that wraps all 50 admin departments with:
  * - Collapsible sidebar (icon-only or full)
- * - Grouped department navigation (9 categories)
+ * - Grouped department navigation (14 categories, S1–S100)
  * - Topbar: breadcrumb, global search, notifications, user avatar
  * - Mobile: off-canvas drawer (hamburger)
  * - Live system status indicator
@@ -23,7 +22,8 @@ import {
   MapPin, Radio, ClipboardCheck, FileText, Package, Wallet, Bot,
   BookOpen, Hash, Sparkles, Home, Filter, RefreshCw, ChevronDown, ChevronUp,
   Gift, Award, Building, Heart, FileCheck, Calendar,
-  Trophy, Code, Receipt, Target, Gamepad2,
+  Trophy, Code, Receipt, Target, Gamepad2, Clock, Crown, Download,
+  MessageSquare, Landmark, AlertCircle, BarChart, Gauge, Globe2,
 } from "lucide-react";
 
 // ─── Navigation Structure ─────────────────────────────────────────────────────
@@ -32,123 +32,192 @@ const NAV_GROUPS = [
     label: "Overview",
     color: "emerald",
     items: [
-      { label: "Mission Control",    path: "/admin/mission-control", icon: Sparkles,     badge: "NEW" },
-      { label: "Admin Dashboard",    path: "/admin",                 icon: LayoutDashboard },
+      { label: "Mission Control",     path: "/admin/mission-control",     icon: Sparkles,     badge: "NEW" },
+      { label: "Admin Dashboard",     path: "/admin",                     icon: LayoutDashboard },
     ],
   },
   {
     label: "Users & Identity",
     color: "blue",
     items: [
-      { label: "User Management",    path: "/admin",                 icon: Users },
-      { label: "Freelancers",        path: "/admin/freelancers",     icon: Briefcase },
-      { label: "Clients",            path: "/admin/clients",         icon: Users2 },
-      { label: "KYC & Fraud",        path: "/admin/fraud",           icon: UserCheck },
+      { label: "User Management",     path: "/admin",                     icon: Users },
+      { label: "Freelancers",         path: "/admin/freelancers",         icon: Briefcase },
+      { label: "Clients",             path: "/admin/clients",             icon: Users2 },
+      { label: "KYC & Fraud",         path: "/admin/fraud",               icon: UserCheck },
     ],
   },
   {
     label: "Work Lifecycle",
     color: "violet",
     items: [
-      { label: "Gig Marketplace",    path: "/admin/gigs",            icon: ShoppingCart },
-      { label: "Proposals",          path: "/admin/proposals",       icon: FileText },
-      { label: "Orders",             path: "/admin/orders",          icon: Package },
+      { label: "Gig Marketplace",     path: "/admin/gigs",                icon: ShoppingCart },
+      { label: "Proposals",           path: "/admin/proposals",           icon: FileText },
+      { label: "Orders",              path: "/admin/orders",              icon: Package },
     ],
   },
   {
     label: "Money",
     color: "amber",
     items: [
-      { label: "Finance & Escrow",   path: "/admin/finance",         icon: DollarSign },
-      { label: "Payments",           path: "/admin/payments",        icon: Wallet },
-      { label: "Subscriptions",      path: "/admin/subscriptions",   icon: CreditCard },
-      { label: "Invoice & Tax v4.0", path: "/admin/invoices",        icon: Receipt,      badge: "NEW" },
-      { label: "Escrow Intelligence",path: "/admin/escrow-intel",    icon: Lock,         badge: "NEW" },
-      { label: "Monetization v4.0",  path: "/admin/monetization",   icon: TrendingUp,   badge: "NEW" },
+      { label: "Finance & Escrow",    path: "/admin/finance",             icon: DollarSign },
+      { label: "Payments",            path: "/admin/payments",            icon: Wallet },
+      { label: "Subscriptions",       path: "/admin/subscriptions",       icon: CreditCard },
+      { label: "Invoice & Tax v4.0",  path: "/admin/invoices",            icon: Receipt,      badge: "NEW" },
+      { label: "Escrow Intelligence", path: "/admin/escrow-intel",        icon: Lock,         badge: "NEW" },
+      { label: "Monetization v4.0",   path: "/admin/monetization",        icon: TrendingUp,   badge: "NEW" },
     ],
   },
   {
     label: "Resolution",
     color: "red",
     items: [
-      { label: "Disputes",           path: "/admin/disputes",        icon: Scale },
-      { label: "Support Tickets",    path: "/admin/support",         icon: HeadphonesIcon },
-      { label: "Support Team",       path: "/admin/support-team",    icon: Users2 },
-      { label: "Reports & Abuse",    path: "/admin/reports",         icon: AlertOctagon },
-      { label: "Content Moderation", path: "/admin/moderation",      icon: Eye },
+      { label: "Disputes",            path: "/admin/disputes",            icon: Scale },
+      { label: "Support Tickets",     path: "/admin/support",             icon: HeadphonesIcon },
+      { label: "Support Team",        path: "/admin/support-team",        icon: Users2 },
+      { label: "Reports & Abuse",     path: "/admin/reports",             icon: AlertOctagon },
+      { label: "Content Moderation",  path: "/admin/moderation",          icon: Eye },
     ],
   },
   {
     label: "Intelligence",
     color: "pink",
     items: [
-      { label: "Analytics",          path: "/admin/analytics",       icon: BarChart2 },
-      { label: "Analytics Deep Dive",path: "/admin/analytics/deep-dive", icon: PieChart },
-      { label: "AI Brain v3.0",      path: "/admin/ai-brain",        icon: Brain },
-      { label: "Live Monitoring",    path: "/admin/monitoring",      icon: Activity },
-      { label: "System Performance", path: "/admin/performance",     icon: Cpu },
-      { label: "Marketplace Health", path: "/admin/marketplace-health", icon: Activity, badge: "NEW" },
+      { label: "Analytics",           path: "/admin/analytics",           icon: BarChart2 },
+      { label: "Analytics Deep Dive", path: "/admin/analytics/deep-dive", icon: PieChart },
+      { label: "AI Brain v3.0",       path: "/admin/ai-brain",            icon: Brain },
+      { label: "Live Monitoring",     path: "/admin/monitoring",          icon: Activity },
+      { label: "System Performance",  path: "/admin/performance",         icon: Cpu },
+      { label: "Marketplace Health",  path: "/admin/marketplace-health",  icon: Activity,     badge: "NEW" },
     ],
   },
   {
     label: "Growth",
     color: "green",
     items: [
-      { label: "Marketing",          path: "/admin/marketing",       icon: TrendingUp },
-      { label: "Promotions",         path: "/admin/promotions",      icon: Megaphone },
-      { label: "Academy",            path: "/admin/academy",         icon: GraduationCap },
-      { label: "CMS",                path: "/admin/cms",             icon: FileCode2 },
-      { label: "Categories & Skills",path: "/admin/categories",      icon: Layers },
-      { label: "Referral & Affiliate", path: "/admin/referrals",     icon: Gift, badge: "NEW" },
-      { label: "Gamification v4.0",  path: "/admin/gamification",    icon: Trophy,       badge: "NEW" },
+      { label: "Marketing",           path: "/admin/marketing",           icon: TrendingUp },
+      { label: "Promotions",          path: "/admin/promotions",          icon: Megaphone },
+      { label: "Academy",             path: "/admin/academy",             icon: GraduationCap },
+      { label: "CMS",                 path: "/admin/cms",                 icon: FileCode2 },
+      { label: "Categories & Skills", path: "/admin/categories",          icon: Layers },
+      { label: "Referral & Affiliate",path: "/admin/referrals",           icon: Gift,         badge: "NEW" },
+      { label: "Gamification v4.0",   path: "/admin/gamification",        icon: Trophy,       badge: "NEW" },
     ],
   },
   {
     label: "Talent",
     color: "violet",
     items: [
-      { label: "Talent Acquisition v4.0", path: "/admin/talent",    icon: Award, badge: "NEW" },
-      { label: "Customer Success v4.0", path: "/admin/customer-success", icon: Heart, badge: "NEW" },
+      { label: "Talent Acquisition",  path: "/admin/talent",              icon: Award,        badge: "NEW" },
+      { label: "Customer Success",    path: "/admin/customer-success",    icon: Heart,        badge: "NEW" },
     ],
   },
   {
     label: "Operations",
     color: "orange",
     items: [
-      { label: "Territories v4.0",    path: "/admin/territories",    icon: MapPin,       badge: "NEW" },
-      { label: "Agency Portal v4.0",  path: "/admin/agency",         icon: Building,     badge: "NEW" },
-      { label: "Automation v4.0",     path: "/admin/automation",     icon: Zap,          badge: "NEW" },
-      { label: "Resource Planner",    path: "/admin/resources",      icon: Calendar,     badge: "NEW" },
-      { label: "Vendor Management",   path: "/admin/vendors",        icon: Package,      badge: "NEW" },
+      { label: "Territories v4.0",    path: "/admin/territories",         icon: MapPin,       badge: "NEW" },
+      { label: "Agency Portal v4.0",  path: "/admin/agency",              icon: Building,     badge: "NEW" },
+      { label: "Automation v4.0",     path: "/admin/automation",          icon: Zap,          badge: "NEW" },
+      { label: "Resource Planner",    path: "/admin/resources",           icon: Calendar,     badge: "NEW" },
+      { label: "Vendor Management",   path: "/admin/vendors",             icon: Package,      badge: "NEW" },
     ],
   },
   {
     label: "Governance",
     color: "cyan",
     items: [
-      { label: "Roles & Permissions",path: "/admin/roles",           icon: Lock },
-      { label: "Feature Flags",      path: "/admin/feature-flags",   icon: ToggleLeft },
-      { label: "Audit Logs",         path: "/admin/audit-logs",      icon: ScrollText },
-      { label: "Security & Trust",   path: "/admin/security",        icon: Shield },
-      { label: "Contract & SLA v4.0",path: "/admin/contracts",       icon: FileCheck,    badge: "NEW" },
+      { label: "Roles & Permissions", path: "/admin/roles",               icon: Lock },
+      { label: "Feature Flags",       path: "/admin/feature-flags",       icon: ToggleLeft },
+      { label: "Audit Logs",          path: "/admin/audit-logs",          icon: ScrollText },
+      { label: "Security & Trust",    path: "/admin/security",            icon: Shield },
+      { label: "Contract & SLA v4.0", path: "/admin/contracts",           icon: FileCheck,    badge: "NEW" },
     ],
   },
   {
     label: "Compliance & Config",
     color: "orange",
     items: [
-      { label: "Data Compliance",    path: "/admin/compliance",      icon: ShieldCheck },
-      { label: "Notifications",      path: "/admin/notifications",   icon: Bell },
-      { label: "System Settings",    path: "/admin/settings",        icon: Settings },
-      { label: "Mobile Admin v4.0",   path: "/admin/mobile",          icon: Smartphone, badge: "NEW" },
+      { label: "Data Compliance",     path: "/admin/compliance",          icon: ShieldCheck },
+      { label: "Notifications",       path: "/admin/notifications",       icon: Bell },
+      { label: "System Settings",     path: "/admin/settings",            icon: Settings },
+      { label: "Mobile Admin v4.0",   path: "/admin/mobile",              icon: Smartphone,   badge: "NEW" },
     ],
   },
   {
     label: "Developer & Expansion",
     color: "pink",
     items: [
-      { label: "API Gateway v4.0",   path: "/admin/developer",        icon: Code,         badge: "NEW" },
-      { label: "Global Expansion 🎉",path: "/admin/expansion",        icon: Globe,        badge: "S.50" },
+      { label: "API Gateway v4.0",    path: "/admin/developer",           icon: Code,         badge: "NEW" },
+      { label: "Global Expansion",    path: "/admin/expansion",           icon: Globe,        badge: "S.50" },
+    ],
+  },
+  // ── S51–S90: Advanced Platform ────────────────────────────────────────────
+  {
+    label: "AI & Discovery (S51–S62)",
+    color: "cyan",
+    items: [
+      { label: "AI Search & Discovery",   path: "/admin/search-ai",           icon: Search,       badge: "S51" },
+      { label: "Payment Intelligence",    path: "/admin/payment-intel",        icon: CreditCard,   badge: "S52" },
+      { label: "Email Campaigns",         path: "/admin/email-campaigns",      icon: Mail,         badge: "S53" },
+      { label: "Reviews & Social Proof",  path: "/admin/reviews",              icon: Star,         badge: "S54" },
+      { label: "Background Checks",       path: "/admin/background-checks",    icon: UserCheck,    badge: "S55" },
+      { label: "Skill Assessments",       path: "/admin/assessments",          icon: ClipboardCheck, badge: "S56" },
+      { label: "Project Hub",             path: "/admin/project-hub",          icon: Briefcase,    badge: "S57" },
+      { label: "Time Tracking",           path: "/admin/timesheets",           icon: Clock,        badge: "S58" },
+      { label: "Market Insights",         path: "/admin/market-insights",      icon: BarChart2,    badge: "S59" },
+      { label: "Partner Hub",             path: "/admin/partner-hub",          icon: Network,      badge: "S60" },
+      { label: "Data Export",             path: "/admin/data-export",          icon: Download,     badge: "S61" },
+      { label: "Trust & Safety",          path: "/admin/trust-safety",         icon: ShieldCheck,  badge: "S62" },
+    ],
+  },
+  {
+    label: "People & Strategy (S63–S80)",
+    color: "green",
+    items: [
+      { label: "Freelancer Wellness",     path: "/admin/wellness",             icon: Heart,        badge: "S63" },
+      { label: "DEI Dashboard",           path: "/admin/dei",                  icon: Users,        badge: "S64" },
+      { label: "Learning Pathways",       path: "/admin/learning",             icon: BookOpen,     badge: "S65" },
+      { label: "Enterprise Portal",       path: "/admin/enterprise-portal",    icon: Building,     badge: "S66" },
+      { label: "B2B Procurement",         path: "/admin/procurement",          icon: Package,      badge: "S67" },
+      { label: "Risk & Insurance",        path: "/admin/risk-insurance",       icon: Shield,       badge: "S68" },
+      { label: "Payroll & Benefits",      path: "/admin/payroll",              icon: Wallet,       badge: "S69" },
+      { label: "Carbon & ESG",            path: "/admin/esg",                  icon: Globe2,       badge: "S70" },
+      { label: "Predictive Analytics",    path: "/admin/predictive",           icon: TrendingUp,   badge: "S71" },
+      { label: "Knowledge Base",          path: "/admin/knowledge-base",       icon: BookOpen,     badge: "S72" },
+      { label: "Community Forums",        path: "/admin/community",            icon: MessageSquare, badge: "S73" },
+      { label: "Event Management",        path: "/admin/events",               icon: Calendar,     badge: "S74" },
+      { label: "Press & Media",           path: "/admin/press",                icon: Radio,        badge: "S75" },
+      { label: "Investor Relations",      path: "/admin/investor-relations",   icon: Landmark,     badge: "S76" },
+      { label: "Legal Compliance",        path: "/admin/legal-compliance",     icon: Scale,        badge: "S77" },
+      { label: "Crisis Management",       path: "/admin/crisis",               icon: AlertCircle,  badge: "S78" },
+      { label: "Platform Health Score",   path: "/admin/platform-health",      icon: Gauge,        badge: "S79" },
+      { label: "Revenue Share",           path: "/admin/revenue-share",        icon: DollarSign,   badge: "S80" },
+    ],
+  },
+  {
+    label: "Elite & Innovation (S81–S100)",
+    color: "amber",
+    items: [
+      { label: "Blockchain Verification", path: "/admin/blockchain",           icon: Network,      badge: "S81" },
+      { label: "Exec Command Center",     path: "/admin/exec-command",         icon: Crown,        badge: "S82" },
+      { label: "Advanced Reporting",      path: "/admin/reporting",            icon: BarChart,     badge: "S83" },
+      { label: "Market Simulation",       path: "/admin/simulation",           icon: Target,       badge: "S84" },
+      { label: "Platform Roadmap",        path: "/admin/roadmap",              icon: MapPin,       badge: "S85" },
+      { label: "Competitive Intel",       path: "/admin/competitive-intel",    icon: LineChart,    badge: "S86" },
+      { label: "Micro Job Exchange",      path: "/admin/micro-jobs",           icon: Zap,          badge: "S87" },
+      { label: "White Glove Concierge",   path: "/admin/concierge",            icon: HeadphonesIcon, badge: "S88" },
+      { label: "Multi-Currency",          path: "/admin/currency",             icon: Globe,        badge: "S89" },
+      { label: "Fraud Prediction AI",     path: "/admin/fraud-prediction",     icon: AlertOctagon, badge: "S90" },
+      { label: "Performance Benchmarking",path: "/admin/benchmarking",         icon: BarChart2,    badge: "S91" },
+      { label: "Accessibility WCAG",      path: "/admin/accessibility-wcag",   icon: Eye,          badge: "S92" },
+      { label: "Talent Alerts",           path: "/admin/talent-alerts",        icon: Bell,         badge: "S93" },
+      { label: "Smart Notifications",     path: "/admin/smart-notifications",  icon: Sparkles,     badge: "S94" },
+      { label: "Platform Migration",      path: "/admin/migration",            icon: RefreshCw,    badge: "S95" },
+      { label: "Revenue Optimisation AI", path: "/admin/revenue-ai",           icon: Bot,          badge: "S96" },
+      { label: "Ops Intelligence",        path: "/admin/ops-intel",            icon: Activity,     badge: "S97" },
+      { label: "Geo HotSpots",            path: "/admin/hotspots",             icon: MapPin,       badge: "S98" },
+      { label: "Ambassador Program",      path: "/admin/ambassadors",          icon: Star,         badge: "S99" },
+      { label: "Elite Club 👑",           path: "/admin/elite-club",           icon: Trophy,       badge: "S100" },
     ],
   },
 ];
@@ -184,7 +253,7 @@ function NavItem({ item, collapsed, activeColor, onClick }: { item: any; collaps
 }
 
 // ─── Sidebar Group ────────────────────────────────────────────────────────────
-function NavGroup({ group, collapsed, defaultOpen = true }: { group: any; collapsed: boolean; defaultOpen?: boolean }) {
+function NavGroup({ group, collapsed, defaultOpen = false }: { group: any; collapsed: boolean; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen);
   const colors = GROUP_COLORS[group.color] || GROUP_COLORS.blue;
   const [location] = useLocation();
@@ -234,7 +303,7 @@ function GlobalSearch() {
           onChange={e => { setQ(e.target.value); setOpen(true); }}
           onFocus={() => setOpen(true)}
           onBlur={() => setTimeout(() => setOpen(false), 200)}
-          placeholder="Search all 33 departments..."
+          placeholder="Search all 100 departments..."
           className="bg-transparent text-xs text-gray-300 placeholder-gray-600 outline-none w-48"
         />
         {q && <button onClick={() => { setQ(""); setOpen(false); }}><X size={10} className="text-gray-600" /></button>}
@@ -282,7 +351,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {!collapsed && (
             <div>
               <p className="text-xs font-bold text-white leading-none">FreelanceSkills</p>
-              <p className="text-xs text-emerald-500 leading-none">Admin v2.0</p>
+              <p className="text-xs text-emerald-500 leading-none">Admin v4.0 — 100 Sections</p>
             </div>
           )}
           <button onClick={() => setCollapsed(!collapsed)} className={`ml-auto text-gray-600 hover:text-gray-400 hidden md:block`}>
@@ -293,14 +362,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Nav scroll */}
         <nav className="flex-1 overflow-y-auto py-2 px-2 space-y-3 scrollbar-hide">
           {NAV_GROUPS.map(group => (
-            <NavGroup key={group.label} group={group} collapsed={collapsed} defaultOpen={group.label === "Overview" || group.label === "Intelligence"} />
+            <NavGroup
+              key={group.label}
+              group={group}
+              collapsed={collapsed}
+              defaultOpen={group.label === "Overview" || group.label === "Intelligence"}
+            />
           ))}
         </nav>
 
         {/* System status footer */}
         <div className={`border-t border-gray-800 px-3 py-2 flex items-center gap-2 ${collapsed ? "justify-center" : ""}`}>
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-          {!collapsed && <span className="text-xs text-gray-500">All 50 sections operational — Halfway to 100!</span>}
+          <div className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse shrink-0" />
+          {!collapsed && <span className="text-xs text-gray-500">100/100 sections — 400% God Mode 👑</span>}
         </div>
       </aside>
 
@@ -325,11 +399,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {/* Live indicator */}
           <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 bg-emerald-900/30 border border-emerald-800/40 rounded-lg">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-xs text-emerald-400">33 Live</span>
+            <span className="text-xs text-emerald-400">100 Live</span>
           </div>
           {/* Section count */}
-          <div className="hidden md:flex items-center gap-1.5 px-2 py-1 bg-gray-800 rounded-lg">
-            <span className="text-xs text-gray-400">Section 33/100</span>
+          <div className="hidden md:flex items-center gap-1.5 px-2 py-1 bg-yellow-900/30 border border-yellow-800/40 rounded-lg">
+            <Trophy size={10} className="text-yellow-400" />
+            <span className="text-xs text-yellow-400">100/100 — Complete 👑</span>
           </div>
         </header>
 
