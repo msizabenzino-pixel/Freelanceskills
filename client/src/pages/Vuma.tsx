@@ -6,7 +6,7 @@ import {
   Send, Sparkles, RefreshCw, Zap, Users, BookOpen, TrendingUp, MessageSquare, Globe,
   Star, ArrowRight, Brain, Share2, BarChart2, Cpu, Target, DollarSign,
   CheckCircle, XCircle, Copy, ExternalLink, Plus, Trash2, Award, Mic,
-  FileText, Clock, Activity, ChevronRight, Loader2, Heart, Gift,
+  FileText, Clock, Activity, ChevronRight, Loader2, Heart, Gift, Shield,
 } from "lucide-react";
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -102,21 +102,103 @@ const LANGUAGES = ["English", "Zulu", "Xhosa", "Afrikaans", "Swahili", "French",
 
 const GEO_COLORS = ["#10b981", "#3b82f6", "#8b5cf6", "#f59e0b", "#ef4444"];
 
+// ── POPIA Consent Modal ───────────────────────────────────────────────────────
+function POPIAModal() {
+  const [show, setShow] = useState(() => localStorage.getItem("vuma-popia-consent") !== "1");
+
+  if (!show) return null;
+
+  const accept = () => {
+    localStorage.setItem("vuma-popia-consent", "1");
+    setShow(false);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[999] flex items-end sm:items-center justify-center p-4">
+      <div className="bg-gray-900 border border-gray-700 rounded-2xl p-6 max-w-md w-full">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-xl bg-emerald-600/20 flex items-center justify-center flex-shrink-0">
+            <Shield className="w-5 h-5 text-emerald-400" />
+          </div>
+          <div>
+            <h2 className="text-base font-bold text-white">Privacy Notice (POPIA)</h2>
+            <p className="text-xs text-gray-400">FreelanceSkills.net · CIPC 2026/070509/09</p>
+          </div>
+        </div>
+        <div className="text-sm text-gray-300 space-y-2 mb-5">
+          <p>By using Vuma-NUCLEAR, you agree to our use of chat data to improve your experience on FreelanceSkills.net.</p>
+          <ul className="text-xs text-gray-400 space-y-1 list-none">
+            <li className="flex items-start gap-2"><span className="text-emerald-400 mt-0.5">✓</span> Conversations are not permanently stored on our servers</li>
+            <li className="flex items-start gap-2"><span className="text-emerald-400 mt-0.5">✓</span> No personal data is shared with third parties</li>
+            <li className="flex items-start gap-2"><span className="text-emerald-400 mt-0.5">✓</span> Your memory data is stored locally in your browser</li>
+            <li className="flex items-start gap-2"><span className="text-emerald-400 mt-0.5">✓</span> You may request data deletion at support@freelanceskills.net</li>
+          </ul>
+          <p className="text-xs text-gray-500">In compliance with the Protection of Personal Information Act (POPIA), South Africa.</p>
+        </div>
+        <div className="flex gap-2">
+          <button onClick={accept} data-testid="popia-accept-button"
+            className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm font-medium transition-colors">
+            Accept &amp; Continue
+          </button>
+          <a href="/privacy" className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-400 rounded-xl text-sm transition-colors">
+            Full Policy
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Animated Counter ──────────────────────────────────────────────────────────
+function AnimatedCounter({ target, prefix = "", suffix = "", duration = 1500 }: { target: number; prefix?: string; suffix?: string; duration?: number }) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    const start = performance.now();
+    const tick = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.floor(eased * target));
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [target, duration]);
+  return <span>{prefix}{count.toLocaleString()}{suffix}</span>;
+}
+
 // ── Chat Tab ─────────────────────────────────────────────────────────────────
 function ChatTab() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "intro",
       role: "assistant",
-      content: "**Sawubona! I'm Vuma 🔥**\n\nThe official AI agent of FreelanceSkills.net — here to end youth unemployment in Africa, one conversation at a time.\n\n**10,000+ projects completed · 4.9★ rating · 98% satisfaction**\n\nAsk me anything: finding clients, pricing your skills, the Free AI Academy, how we compare to Upwork, or anything about earning in Africa. *Let's go!*",
+      content: "**Sawubona! I'm VUMA-NUCLEAR 🔥**\n\nFreelanceSkills.net's official AI — built to end youth unemployment in Africa. I'm not a support bot. I'm a truth-seeking, income-creating weapon.\n\n**10,247 projects · R18.4M earned · 3,240 youth hired · 4.9★**\n\nAsk me anything — and I'll be brutally honest with you. Let's go!",
       suggestions: ["How do I start earning as a freelancer?", "How do your fees compare to Upwork?", "What is the Free AI Academy?"],
       ts: Date.now(),
     },
   ]);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
+  const [userMsgCount, setUserMsgCount] = useState(0);
+  const [proactiveSent, setProactiveSent] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (userMsgCount >= 3 && !proactiveSent) {
+      const timer = setTimeout(() => {
+        setMessages(prev => [...prev, {
+          id: "proactive-" + Date.now(),
+          role: "assistant",
+          content: "**Sawubona** — I've noticed we've been chatting but haven't locked in any action yet. 🎯\n\nWhat's *really* holding you back?\n\n• 💰 **Money** — our plans start free, R0 to sign up\n• 🧠 **Skills** — Free AI Academy, no experience needed\n• 😰 **Confidence** — 10,247 projects prove this works\n• ⏳ **Time** — 60 seconds to post your first job\n\n**Tell me the real blocker** and I'll fix it in 2 minutes. Or pick one action below and let's go *right now*.",
+          actions: ["Post a Job|/post-job", "Start Free Course|/academy", "Build My Profile|/onboarding"],
+          suggestions: ["I'm worried about getting my first client", "How much can I realistically earn?", "I don't know which skill to offer"],
+          ts: Date.now(),
+        }]);
+        setProactiveSent(true);
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [userMsgCount, proactiveSent]);
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, typing]);
 
@@ -129,6 +211,7 @@ function ChatTab() {
       setMessages(prev => [...prev, { id: crypto.randomUUID(), role: "user", content: msg, ts: Date.now() }]);
       setTyping(true);
       setInput("");
+      setUserMsgCount(c => c + 1);
     },
     onSuccess: (data) => {
       setTyping(false);
@@ -152,6 +235,27 @@ function ChatTab() {
 
   return (
     <div className="flex flex-col h-full">
+      <div className="flex items-center gap-4 mb-4 bg-gray-800/80 border border-gray-700 rounded-xl px-4 py-2 overflow-x-auto">
+        {[
+          { label: "Projects", target: 10247, suffix: "+" },
+          { label: "Youth Hired", target: 3240, suffix: "" },
+          { label: "Satisfaction", target: 98, suffix: "%" },
+          { label: "Avg Rating", target: 4, suffix: ".9★" },
+          { label: "Freelancers", target: 4821, suffix: "" },
+        ].map(s => (
+          <div key={s.label} className="flex flex-col items-center min-w-fit">
+            <span className="text-sm font-bold text-emerald-400 whitespace-nowrap">
+              <AnimatedCounter target={s.target} suffix={s.suffix} duration={1800} />
+            </span>
+            <span className="text-xs text-gray-500 whitespace-nowrap">{s.label}</span>
+          </div>
+        ))}
+        <div className="ml-auto flex items-center gap-1 flex-shrink-0">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-xs text-emerald-400 whitespace-nowrap">Live</span>
+        </div>
+      </div>
+
       <div className="flex-1 overflow-y-auto space-y-4 pb-4">
         {messages.map(msg => (
           <div key={msg.id} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
@@ -886,6 +990,7 @@ export default function VumaUltimate() {
 
   return (
     <div className="min-h-screen bg-gray-950 flex flex-col">
+      <POPIAModal />
       <Navbar />
 
       <div className="flex-1 max-w-7xl mx-auto w-full px-4 py-6">

@@ -161,6 +161,7 @@ const OpsIntelligence = lazy(() => import("@/pages/OpsIntelligence"));
 const GeoHotSpots = lazy(() => import("@/pages/GeoHotSpots"));
 const AmbassadorProgram = lazy(() => import("@/pages/AmbassadorProgram"));
 const EliteClub = lazy(() => import("@/pages/EliteClub"));
+const VumaAdmin = lazy(() => import("@/pages/VumaAdmin"));
 
 function PageLoader() {
   return (
@@ -347,6 +348,7 @@ function Router() {
         <Route path="/claim-business" component={ClaimBusiness} />
         <Route path="/invite-businesses" component={InviteBusinesses} />
         <Route path="/vuma" component={Vuma} />
+        <Route path="/vuma-admin" component={VumaAdmin} />
         <Route path="/admin/:rest*" component={AdminRouter} />
         <Route component={NotFound} />
       </Switch>
