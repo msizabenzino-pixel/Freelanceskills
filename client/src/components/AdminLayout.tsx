@@ -2,7 +2,7 @@
  * AdminLayout — Unified Admin Sidebar + Topbar
  * Section 33 — FreelanceSkills.net
  *
- * The single shell that wraps all 35 admin departments with:
+ * The single shell that wraps all 37 admin departments with:
  * - Collapsible sidebar (icon-only or full)
  * - Grouped department navigation (9 categories)
  * - Topbar: breadcrumb, global search, notifications, user avatar
@@ -22,6 +22,7 @@ import {
   ChevronRight, Search, Menu, X, Star, AlertOctagon, Cpu, Network,
   MapPin, Radio, ClipboardCheck, FileText, Package, Wallet, Bot,
   BookOpen, Hash, Sparkles, Home, Filter, RefreshCw, ChevronDown, ChevronUp,
+  Gift, Award,
 } from "lucide-react";
 
 // ─── Navigation Structure ─────────────────────────────────────────────────────
@@ -94,6 +95,14 @@ const NAV_GROUPS = [
       { label: "Academy",            path: "/admin/academy",         icon: GraduationCap },
       { label: "CMS",                path: "/admin/cms",             icon: FileCode2 },
       { label: "Categories & Skills",path: "/admin/categories",      icon: Layers },
+      { label: "Referral & Affiliate", path: "/admin/referrals",     icon: Gift, badge: "NEW" },
+    ],
+  },
+  {
+    label: "Talent",
+    color: "violet",
+    items: [
+      { label: "Talent Acquisition v4.0", path: "/admin/talent",    icon: Award, badge: "NEW" },
     ],
   },
   {
@@ -265,7 +274,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* System status footer */}
         <div className={`border-t border-gray-800 px-3 py-2 flex items-center gap-2 ${collapsed ? "justify-center" : ""}`}>
           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-          {!collapsed && <span className="text-xs text-gray-500">All 35 sections operational</span>}
+          {!collapsed && <span className="text-xs text-gray-500">All 37 sections operational</span>}
         </div>
       </aside>
 
