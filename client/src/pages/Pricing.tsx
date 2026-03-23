@@ -90,6 +90,7 @@ const FAQ_ITEMS = [
 
 export default function Pricing() {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
   const [, navigate] = useLocation();
   const { country, formatPrice } = useCountry();
   const currencySymbol = country.currency.symbol;
@@ -99,6 +100,13 @@ export default function Pricing() {
   const proEarnings = exampleJob * 0.95;
   const proSavings = proEarnings - freeEarnings;
   const proMonthlyPrice = 7900; // 79 ZAR in cents
+  const proYearlyPrice = Math.round(proMonthlyPrice * 12 * 0.8); // 20% off = 75840 cents = R758/yr
+  const proYearlyPerMonth = Math.round(proYearlyPrice / 12); // ~6320 cents = R63/mo
+
+  const activePrice = billingPeriod === "monthly" ? proMonthlyPrice : proYearlyPrice;
+  const checkoutParams = billingPeriod === "monthly"
+    ? `price=7900&duration=Monthly`
+    : `price=${proYearlyPrice}&duration=Yearly`;
 
   const WITHDRAWAL_METHODS = WITHDRAWAL_METHODS_BASE.map(method => ({
     ...method,
@@ -120,6 +128,27 @@ export default function Pricing() {
       </div>
 
       <div className="container mx-auto px-4 md:px-6 -mt-16 pb-12">
+        {/* Billing toggle */}
+        <div className="flex justify-center mb-10">
+          <div className="inline-flex items-center bg-white rounded-full shadow-lg border border-border p-1.5 gap-1" data-testid="toggle-billing-period">
+            <button
+              onClick={() => setBillingPeriod("monthly")}
+              data-testid="button-billing-monthly"
+              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${billingPeriod === "monthly" ? "bg-primary text-white shadow" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBillingPeriod("yearly")}
+              data-testid="button-billing-yearly"
+              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all flex items-center gap-2 ${billingPeriod === "yearly" ? "bg-primary text-white shadow" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              Yearly
+              <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${billingPeriod === "yearly" ? "bg-white/20 text-white" : "bg-green-100 text-green-700"}`}>SAVE 20%</span>
+            </button>
+          </div>
+        </div>
+
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {/* Free Tier */}
           <div className="bg-card rounded-2xl shadow-xl border border-border overflow-hidden flex flex-col">
@@ -167,13 +196,25 @@ export default function Pricing() {
               <h3 className="text-xl font-bold text-primary mb-2">Premium Talent</h3>
               <div className="flex flex-col mb-4">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-5xl font-display font-bold text-primary" data-testid="text-pro-price">{formatPrice(proMonthlyPrice)}</span>
-                  <span className="text-muted-foreground font-medium">/ month</span>
+                  <span className="text-5xl font-display font-bold text-primary" data-testid="text-pro-price">{formatPrice(activePrice)}</span>
+                  <span className="text-muted-foreground font-medium">
+                    {billingPeriod === "monthly" ? "/ month" : "/ year"}
+                  </span>
                 </div>
-                <div className="mt-2">
+                {billingPeriod === "yearly" && (
+                  <p className="text-sm text-primary/70 mt-1" data-testid="text-yearly-equivalent">
+                    {formatPrice(proYearlyPerMonth)} / month — billed annually
+                  </p>
+                )}
+                <div className="mt-2 flex flex-wrap gap-2">
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800 border border-green-200 uppercase tracking-wide">
                     SAVE 50% on commission
                   </span>
+                  {billingPeriod === "yearly" && (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200 uppercase tracking-wide" data-testid="badge-yearly-saving">
+                      SAVE 20% vs monthly
+                    </span>
+                  )}
                 </div>
               </div>
               <p className="text-gray-600 mb-6">Unlock exclusive global opportunities and premium tools.</p>
@@ -203,9 +244,9 @@ export default function Pricing() {
               </ul>
             </div>
             <div className="p-8 bg-primary/5 border-t border-primary/10">
-              <Button className="w-full bg-primary text-white hover:bg-primary/90 font-bold h-12 shadow-lg rounded-full animate-pulse" data-testid="button-upgrade-pro" onClick={() => navigate("/checkout?title=Premium+Talent+Subscription&freelancer=FreelanceSkills&price=7900&duration=Monthly&location=Global&rating=5&reviews=0")}>
-                  Start Free Trial
-                </Button>
+              <Button className="w-full bg-primary text-white hover:bg-primary/90 font-bold h-12 shadow-lg rounded-full animate-pulse" data-testid="button-upgrade-pro" onClick={() => navigate(`/checkout?title=Premium+Talent+Subscription&freelancer=FreelanceSkills&${checkoutParams}&location=Global&rating=5&reviews=0`)}>
+                Start Free Trial
+              </Button>
             </div>
           </div>
 
