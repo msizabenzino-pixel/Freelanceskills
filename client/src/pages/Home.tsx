@@ -24,49 +24,36 @@ function UrgentJobBanner() {
   const [isVisible, setIsVisible] = useState(true);
   const urgentCount = 3; // Mocking as per requirements
 
+  if (!isVisible) return null;
+
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.div
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: "auto", opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
-          className="bg-red-600 text-white py-2 relative overflow-hidden"
-          data-testid="banner-urgent-jobs"
+    <motion.div
+      initial={{ height: 0, opacity: 0 }}
+      animate={{ height: "auto", opacity: 1 }}
+      exit={{ height: 0, opacity: 0 }}
+      className="fixed top-0 left-0 right-0 z-50 bg-red-600 text-white px-4 py-1.5 shadow-lg"
+      data-testid="banner-urgent-jobs"
+    >
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 text-xs sm:text-sm">
+        <div className="flex items-center gap-2">
+          <Zap className="w-3.5 h-3.5 fill-white flex-shrink-0" />
+          <span className="font-semibold">{urgentCount} urgent jobs need attention</span>
+        </div>
+        <Link href="/jobs?urgent=true">
+          <a className="font-bold whitespace-nowrap hover:text-white/80 transition-colors text-xs">
+            View →
+          </a>
+        </Link>
+        <button
+          onClick={() => setIsVisible(false)}
+          className="text-white/70 hover:text-white transition-colors flex-shrink-0 ml-2"
+          aria-label="Dismiss"
+          data-testid="button-dismiss-urgent-banner"
         >
-          <motion.div
-            className="absolute inset-0 bg-red-500"
-            animate={{
-              opacity: [0.3, 0.6, 0.3],
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-          <div className="container mx-auto px-4 flex justify-center items-center gap-4 relative z-10">
-            <Zap className="w-4 h-4 fill-white animate-pulse" />
-            <p className="text-sm font-bold tracking-wide">
-              {urgentCount} Urgent Jobs Need Attention!
-            </p>
-            <Link href="/jobs?urgent=true">
-              <a className="text-xs font-bold underline underline-offset-4 hover:text-white/80 transition-colors">
-                View Now
-              </a>
-            </Link>
-            <button
-              onClick={() => setIsVisible(false)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors"
-              aria-label="Dismiss"
-              data-testid="button-dismiss-urgent-banner"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+          <X className="w-3.5 h-3.5" />
+        </button>
+      </div>
+    </motion.div>
   );
 }
 
@@ -188,7 +175,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-background font-sans flex flex-col overflow-x-hidden">
+    <div className="min-h-screen bg-background font-sans flex flex-col overflow-x-hidden pt-[42px]">
       <UrgentJobBanner />
       <Navbar />
       <Hero />
