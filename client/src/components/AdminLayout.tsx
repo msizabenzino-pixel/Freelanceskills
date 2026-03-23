@@ -2,7 +2,7 @@
  * AdminLayout — Unified Admin Sidebar + Topbar
  * Section 33 — FreelanceSkills.net
  *
- * The single shell that wraps all 37 admin departments with:
+ * The single shell that wraps all 50 admin departments with:
  * - Collapsible sidebar (icon-only or full)
  * - Grouped department navigation (9 categories)
  * - Topbar: breadcrumb, global search, notifications, user avatar
@@ -22,7 +22,8 @@ import {
   ChevronRight, Search, Menu, X, Star, AlertOctagon, Cpu, Network,
   MapPin, Radio, ClipboardCheck, FileText, Package, Wallet, Bot,
   BookOpen, Hash, Sparkles, Home, Filter, RefreshCw, ChevronDown, ChevronUp,
-  Gift, Award,
+  Gift, Award, Building, Heart, FileCheck, Calendar,
+  Trophy, Code, Receipt, Target, Gamepad2,
 } from "lucide-react";
 
 // ─── Navigation Structure ─────────────────────────────────────────────────────
@@ -61,6 +62,9 @@ const NAV_GROUPS = [
       { label: "Finance & Escrow",   path: "/admin/finance",         icon: DollarSign },
       { label: "Payments",           path: "/admin/payments",        icon: Wallet },
       { label: "Subscriptions",      path: "/admin/subscriptions",   icon: CreditCard },
+      { label: "Invoice & Tax v4.0", path: "/admin/invoices",        icon: Receipt,      badge: "NEW" },
+      { label: "Escrow Intelligence",path: "/admin/escrow-intel",    icon: Lock,         badge: "NEW" },
+      { label: "Monetization v4.0",  path: "/admin/monetization",   icon: TrendingUp,   badge: "NEW" },
     ],
   },
   {
@@ -96,6 +100,7 @@ const NAV_GROUPS = [
       { label: "CMS",                path: "/admin/cms",             icon: FileCode2 },
       { label: "Categories & Skills",path: "/admin/categories",      icon: Layers },
       { label: "Referral & Affiliate", path: "/admin/referrals",     icon: Gift, badge: "NEW" },
+      { label: "Gamification v4.0",  path: "/admin/gamification",    icon: Trophy,       badge: "NEW" },
     ],
   },
   {
@@ -103,6 +108,18 @@ const NAV_GROUPS = [
     color: "violet",
     items: [
       { label: "Talent Acquisition v4.0", path: "/admin/talent",    icon: Award, badge: "NEW" },
+      { label: "Customer Success v4.0", path: "/admin/customer-success", icon: Heart, badge: "NEW" },
+    ],
+  },
+  {
+    label: "Operations",
+    color: "orange",
+    items: [
+      { label: "Territories v4.0",    path: "/admin/territories",    icon: MapPin,       badge: "NEW" },
+      { label: "Agency Portal v4.0",  path: "/admin/agency",         icon: Building,     badge: "NEW" },
+      { label: "Automation v4.0",     path: "/admin/automation",     icon: Zap,          badge: "NEW" },
+      { label: "Resource Planner",    path: "/admin/resources",      icon: Calendar,     badge: "NEW" },
+      { label: "Vendor Management",   path: "/admin/vendors",        icon: Package,      badge: "NEW" },
     ],
   },
   {
@@ -113,6 +130,7 @@ const NAV_GROUPS = [
       { label: "Feature Flags",      path: "/admin/feature-flags",   icon: ToggleLeft },
       { label: "Audit Logs",         path: "/admin/audit-logs",      icon: ScrollText },
       { label: "Security & Trust",   path: "/admin/security",        icon: Shield },
+      { label: "Contract & SLA v4.0",path: "/admin/contracts",       icon: FileCheck,    badge: "NEW" },
     ],
   },
   {
@@ -123,6 +141,14 @@ const NAV_GROUPS = [
       { label: "Notifications",      path: "/admin/notifications",   icon: Bell },
       { label: "System Settings",    path: "/admin/settings",        icon: Settings },
       { label: "Mobile Admin v4.0",   path: "/admin/mobile",          icon: Smartphone, badge: "NEW" },
+    ],
+  },
+  {
+    label: "Developer & Expansion",
+    color: "pink",
+    items: [
+      { label: "API Gateway v4.0",   path: "/admin/developer",        icon: Code,         badge: "NEW" },
+      { label: "Global Expansion 🎉",path: "/admin/expansion",        icon: Globe,        badge: "S.50" },
     ],
   },
 ];
@@ -274,7 +300,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* System status footer */}
         <div className={`border-t border-gray-800 px-3 py-2 flex items-center gap-2 ${collapsed ? "justify-center" : ""}`}>
           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-          {!collapsed && <span className="text-xs text-gray-500">All 37 sections operational</span>}
+          {!collapsed && <span className="text-xs text-gray-500">All 50 sections operational — Halfway to 100!</span>}
         </div>
       </aside>
 

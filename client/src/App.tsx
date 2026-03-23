@@ -61,6 +61,19 @@ const MobileAdmin = lazy(() => import("@/pages/MobileAdmin"));
 const MarketplaceHealth = lazy(() => import("@/pages/MarketplaceHealth"));
 const ReferralAffiliate = lazy(() => import("@/pages/ReferralAffiliate"));
 const TalentAcquisition = lazy(() => import("@/pages/TalentAcquisition"));
+const InvoiceTax = lazy(() => import("@/pages/InvoiceTax"));
+const Territories = lazy(() => import("@/pages/Territories"));
+const AgencyPortal = lazy(() => import("@/pages/AgencyPortal"));
+const Automation = lazy(() => import("@/pages/Automation"));
+const CustomerSuccess = lazy(() => import("@/pages/CustomerSuccess"));
+const ContractSLA = lazy(() => import("@/pages/ContractSLA"));
+const ResourcePlanner = lazy(() => import("@/pages/ResourcePlanner"));
+const EscrowIntel = lazy(() => import("@/pages/EscrowIntel"));
+const Monetization = lazy(() => import("@/pages/Monetization"));
+const VendorManagement = lazy(() => import("@/pages/VendorManagement"));
+const Gamification = lazy(() => import("@/pages/Gamification"));
+const DeveloperPortal = lazy(() => import("@/pages/DeveloperPortal"));
+const GlobalExpansion = lazy(() => import("@/pages/GlobalExpansion"));
 const FreelancerManagement = lazy(() => import("@/pages/FreelancerManagement"));
 const ClientManagement = lazy(() => import("@/pages/ClientManagement"));
 const PaymentsControl = lazy(() => import("@/pages/PaymentsControl"));
@@ -141,6 +154,19 @@ function AdminRouter() {
           <Route path="/admin/marketplace-health"><AuthGuard><MarketplaceHealth /></AuthGuard></Route>
           <Route path="/admin/referrals"><AuthGuard><ReferralAffiliate /></AuthGuard></Route>
           <Route path="/admin/talent"><AuthGuard><TalentAcquisition /></AuthGuard></Route>
+          <Route path="/admin/invoices"><AuthGuard><InvoiceTax /></AuthGuard></Route>
+          <Route path="/admin/territories"><AuthGuard><Territories /></AuthGuard></Route>
+          <Route path="/admin/agency"><AuthGuard><AgencyPortal /></AuthGuard></Route>
+          <Route path="/admin/automation"><AuthGuard><Automation /></AuthGuard></Route>
+          <Route path="/admin/customer-success"><AuthGuard><CustomerSuccess /></AuthGuard></Route>
+          <Route path="/admin/contracts"><AuthGuard><ContractSLA /></AuthGuard></Route>
+          <Route path="/admin/resources"><AuthGuard><ResourcePlanner /></AuthGuard></Route>
+          <Route path="/admin/escrow-intel"><AuthGuard><EscrowIntel /></AuthGuard></Route>
+          <Route path="/admin/monetization"><AuthGuard><Monetization /></AuthGuard></Route>
+          <Route path="/admin/vendors"><AuthGuard><VendorManagement /></AuthGuard></Route>
+          <Route path="/admin/gamification"><AuthGuard><Gamification /></AuthGuard></Route>
+          <Route path="/admin/developer"><AuthGuard><DeveloperPortal /></AuthGuard></Route>
+          <Route path="/admin/expansion"><AuthGuard><GlobalExpansion /></AuthGuard></Route>
           <Route path="/admin/analytics/deep-dive"><AuthGuard><AnalyticsDeepDive /></AuthGuard></Route>
           <Route path="/admin/analytics"><AuthGuard><AnalyticsReporting /></AuthGuard></Route>
           <Route path="/admin"><AuthGuard><AdminDashboard /></AuthGuard></Route>
