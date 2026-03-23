@@ -58,6 +58,7 @@ const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
 const AnalyticsDeepDive = lazy(() => import("@/pages/AnalyticsDeepDive"));
 const AnalyticsReporting = lazy(() => import("@/pages/AnalyticsReporting"));
 const MobileAdmin = lazy(() => import("@/pages/MobileAdmin"));
+const MarketplaceHealth = lazy(() => import("@/pages/MarketplaceHealth"));
 const FreelancerManagement = lazy(() => import("@/pages/FreelancerManagement"));
 const ClientManagement = lazy(() => import("@/pages/ClientManagement"));
 const PaymentsControl = lazy(() => import("@/pages/PaymentsControl"));
@@ -135,6 +136,7 @@ function AdminRouter() {
           <Route path="/admin/compliance"><DataCompliance /></Route>
           <Route path="/admin/feature-flags"><AuthGuard><FeatureFlagsManagement /></AuthGuard></Route>
           <Route path="/admin/mobile"><AuthGuard><MobileAdmin /></AuthGuard></Route>
+          <Route path="/admin/marketplace-health"><AuthGuard><MarketplaceHealth /></AuthGuard></Route>
           <Route path="/admin/analytics/deep-dive"><AuthGuard><AnalyticsDeepDive /></AuthGuard></Route>
           <Route path="/admin/analytics"><AuthGuard><AnalyticsReporting /></AuthGuard></Route>
           <Route path="/admin"><AuthGuard><AdminDashboard /></AuthGuard></Route>
