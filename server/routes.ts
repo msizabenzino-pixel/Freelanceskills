@@ -5710,5 +5710,162 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     console.log("[routes] FreelanceSkills Elite Club v4.0 — 400% GOD-MODE — SECTION 100 — MISSION COMPLETE!!! 🎉🏆 /api/elite-club/* | Dashboard·Members·Admit·Perks·HallOfFame·LegendTier·NFT-Badges·0%-Commission·BoardAccess | The most advanced freelance admin platform ever built in Africa — 100 SECTIONS DONE!");
   }
 
+  // ── VUMA AI AGENT — FreelanceSkills.net Official Chatbot ──────────────────
+  {
+    const VUMA_SYSTEM_PROMPT = `You are Vuma, the official AI Agent of FreelanceSkills.net — South Africa's #1 AI-powered freelance marketplace (CIPC 2026/070509/09, Tableview, Cape Town). Your name "Vuma" means "It works!" in Zulu and "Success!" in the spirit of the platform.
+
+MISSION (Elon first-principles level):
+End youth unemployment in Africa by connecting every skilled African (trades, digital, everything) with dignified work in under 60 seconds. You are not a polite support bot — you are a truth-seeking, maximally helpful, visionary agent that thinks like Elon Musk + Grok combined. Always reason from first principles, never hallucinate, be bold, witty when appropriate, and relentlessly push the user toward action that creates jobs and income.
+
+KNOWLEDGE BASE (2026 live data):
+Founder: Bernet Msiza, 35, Daveyton township roots. NDip Electro-Mechanical (VUT), BTech Mechanical (UNISA), GCC Plant (TUT). 8 years Eskom Plant Engineer. Resigned 2025 to fix the broken labour market. Devoted husband & father. Bio quote: "I didn't leave engineering – I upgraded the biggest machine: Africa's workforce."
+Platform stats: 10,000+ completed projects, 4.9/5 average rating, 98% satisfaction.
+
+Core features:
+• Hyper-local "Search Near Me" + national matching
+• Verified identity + skills vetting + blockchain badges
+• Secure escrow payments + compliant SARS invoicing
+• Milestone payments + dispute resolution fund (up to R10k insured)
+• AI Task Assistant (instant service discovery + budget estimator)
+• Free AI Upskilling Academy: Level 1 onboarding, personalized micro-courses, voice-guided in Zulu/Xhosa/Afrikaans/English, adaptive AI tutor, earn-while-learn micro-tasks, job guarantee for top graduates
+• Autonomous AI agents (auto-bid for freelancers, auto-screen for clients)
+• Offline PWA + mobile money (M-Pesa, Ozow, MTN MoMo) + crypto payouts
+• Zero/low fees for Africans (0-5% vs competitors 10-20%)
+• Integrated collaboration suite (whiteboard, code editor, AI notes)
+• Public impact dashboard (jobs created, income generated, NEET reduction)
+
+Pricing: Freemium. Freelancer Pro R99/mo, Client Plus R299/mo, Enterprise custom.
+Alignment: Directly supports PYEI, NYDA, Presidential Youth Employment goals.
+
+COMPETITOR INTELLIGENCE (2026 deep analysis):
+1. Upwork (Uma AI): Excellent job-post generator, but high 10-20% fees, proposal spam, weak Africa localization, no free upskilling academy.
+2. Fiverr (Fiverr Go): Great instant replies but gig-only (no hourly/trades), paid AI tools ($25-29/mo), weak trust in emerging markets.
+3. Andela: Elite AI Academy (15,000 technologists target), but tech-only, selective, enterprise-only — ignores trades, plumbers, township talent.
+4. Toptal: Ultra-vetted top 3%, but expensive, no AI upskilling, no Africa focus.
+5. Freelancer.com: Broad jobs, but no AI academy, weak vetting, high fees, no local payments.
+
+You ALWAYS highlight these weaknesses and show how FreelanceSkills.net is 10x better: lower fees, free AI academy, hyper-local + pan-African vision, trades + digital, offline-first, impact-first.
+
+RESPONSE RULES (400% quality):
+1. First Principles: Break every question to fundamentals before answering.
+2. Truth + Vision: Never sugar-coat. If not launched yet, say "coming Q3 2026" and explain roadmap.
+3. Actionable: Every answer ends with a next-step CTA.
+4. Personality: Warm township energy mixed with sharp Silicon Valley precision. Use Zulu phrases when appropriate ("Vuma!" = success!, "Sawubona" = hello, "Ngiyabonga" = thank you).
+5. Multilingual: Detect language and reply in Zulu/English/Xhosa/Afrikaans mix if needed.
+6. Safety: Never give financial advice, legal advice, or personal data. For billing/legal, direct to support@freelanceskills.net.
+7. Format: Use markdown, bold key points, emojis for clarity. Keep replies focused and punchy — don't waffle.
+
+QUICK ACTIONS you can help with:
+- "Post a Job" → /post-job
+- "Build My Profile" → /onboarding
+- "Start AI Course" → /academy
+- "See Impact Dashboard" → /impact
+- "Browse Freelancers" → /freelancers
+- "Check Pricing" → /pricing
+- "Support" → /support
+
+When responding, ALWAYS end with a JSON block in this exact format on the last line:
+VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions":["follow-up question 1","follow-up question 2","follow-up question 3"]}
+
+Actions should be the 2-3 most relevant quick actions from context.`;
+
+    const vumaChatLimiter = new Map<string, { count: number; reset: number }>();
+
+    app.post("/api/vuma/chat", async (req: any, res) => {
+      try {
+        const ip = req.ip || "unknown";
+        const now = Date.now();
+        const limit = vumaChatLimiter.get(ip);
+        if (limit && limit.reset > now && limit.count >= 60) {
+          return res.status(429).json({ error: "Rate limit reached. Please wait a minute." });
+        }
+        if (!limit || limit.reset <= now) {
+          vumaChatLimiter.set(ip, { count: 1, reset: now + 60000 });
+        } else {
+          limit.count++;
+        }
+
+        const { message, history = [] } = req.body;
+        if (!message || typeof message !== "string" || message.trim().length === 0) {
+          return res.status(400).json({ error: "Message is required." });
+        }
+        if (message.length > 2000) {
+          return res.status(400).json({ error: "Message too long (max 2000 chars)." });
+        }
+
+        const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.OPENAI_API_KEY;
+        const baseUrl = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL || "https://api.openai.com/v1";
+
+        if (!apiKey) {
+          return res.status(503).json({ answer: "Vuma is warming up — AI key not yet configured. Please contact support@freelanceskills.net. Ngiyabonga! 🙏", actions: [], suggestions: [] });
+        }
+
+        const messages = [
+          { role: "system", content: VUMA_SYSTEM_PROMPT },
+          ...history.slice(-10).map((m: any) => ({ role: m.role, content: m.content })),
+          { role: "user", content: message.trim() },
+        ];
+
+        const response = await fetch(`${baseUrl}/chat/completions`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+          body: JSON.stringify({ model: "gpt-4o-mini", messages, temperature: 0.75, max_tokens: 1200 }),
+        });
+
+        if (!response.ok) {
+          const err = await response.text();
+          console.error("[vuma] OpenAI error:", err);
+          return res.status(502).json({ answer: "Vuma is momentarily overloaded. Try again in a few seconds — *Vuma!* 💪", actions: [], suggestions: [] });
+        }
+
+        const data: any = await response.json();
+        const raw: string = data.choices?.[0]?.message?.content || "I couldn't generate a response. Please try again.";
+
+        // Parse the VUMA_META block
+        let answer = raw;
+        let actions: string[] = [];
+        let language = "en";
+        let suggestions: string[] = [];
+
+        const metaMatch = raw.match(/VUMA_META:(\{.*?\})$/s);
+        if (metaMatch) {
+          try {
+            const meta = JSON.parse(metaMatch[1]);
+            actions = meta.actions || [];
+            language = meta.language || "en";
+            suggestions = meta.suggestions || [];
+            answer = raw.replace(/\nVUMA_META:.*$/s, "").trim();
+          } catch (_) {}
+        }
+
+        res.json({ answer, actions, language, suggestions });
+      } catch (err: any) {
+        console.error("[vuma] error:", err.message);
+        res.status(500).json({ answer: "Something went wrong on my end. Please try again — we never give up! Vuma! 🔥", actions: [], suggestions: [] });
+      }
+    });
+
+    app.get("/api/vuma/faqs", (_req, res) => {
+      res.json({
+        faqs: [
+          { q: "How do I post a job on FreelanceSkills.net?", category: "Client" },
+          { q: "How much does FreelanceSkills charge vs Upwork?", category: "Pricing" },
+          { q: "Is my payment protected?", category: "Payments" },
+          { q: "How do I get verified and earn a blockchain badge?", category: "Freelancers" },
+          { q: "Does FreelanceSkills support mobile money?", category: "Payments" },
+          { q: "What is the Free AI Academy?", category: "Learning" },
+          { q: "How does the dispute resolution fund work?", category: "Safety" },
+          { q: "Can I work offline?", category: "Tech" },
+          { q: "Who is the founder of FreelanceSkills?", category: "About" },
+          { q: "What languages does Vuma speak?", category: "About" },
+          { q: "How does the escrow system work?", category: "Payments" },
+          { q: "What makes FreelanceSkills different for Africa?", category: "About" },
+        ],
+      });
+    });
+
+    console.log("[routes] Vuma AI Agent — FreelanceSkills.net Official Chatbot: /api/vuma/* | Chat·FAQs·RateLimit | Multilingual: Zulu/Xhosa/Afrikaans/English | Beats all generic chatbots in Africa!");
+  }
+
   return httpServer;
 }

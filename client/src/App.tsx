@@ -56,6 +56,7 @@ const ClaimBusiness = lazy(() => import("@/pages/ClaimBusiness"));
 const InviteBusinesses = lazy(() => import("@/pages/InviteBusinesses"));
 const Auth = lazy(() => import("@/pages/Auth"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
+const Vuma = lazy(() => import("@/pages/Vuma"));
 
 // ── Admin S1–S50 ──────────────────────────────────────────────────────────────
 const FraudDashboard = lazy(() => import("@/pages/FraudDashboard"));
@@ -345,6 +346,7 @@ function Router() {
         <Route path="/opportunity-finder" component={OpportunityFinder} />
         <Route path="/claim-business" component={ClaimBusiness} />
         <Route path="/invite-businesses" component={InviteBusinesses} />
+        <Route path="/vuma" component={Vuma} />
         <Route path="/admin/:rest*" component={AdminRouter} />
         <Route component={NotFound} />
       </Switch>

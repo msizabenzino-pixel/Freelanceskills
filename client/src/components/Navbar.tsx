@@ -45,7 +45,7 @@ export function Navbar() {
 
   const navLinks = [
     { name: "Explore", href: "/explore", highlight: true },
-    { name: "AI Assistant", href: "/task-assistant", icon: Sparkles },
+    { name: "Vuma AI", href: "/vuma", icon: Sparkles, highlight: true },
     { name: "Services", href: "/services" },
     { name: "Pricing", href: "/pricing" },
     ...(isAuthenticated ? [
