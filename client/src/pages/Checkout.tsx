@@ -118,7 +118,7 @@ export default function Checkout() {
     freelancer: params.get("freelancer") || "Freelancer",
     rating: parseFloat(params.get("rating") || "4.9"),
     reviews: parseInt(params.get("reviews") || "0"),
-    price: parseInt(params.get("price") || "0"),
+    price: parseInt(params.get("price") || "0") / 100,
     duration: params.get("duration") || "",
     location: params.get("location") || "",
     image: params.get("image") || "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=400&h=250&fit=crop",
@@ -136,7 +136,7 @@ export default function Checkout() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: total,
+          amount: Math.round(total * 100),
           itemName: `FreelanceSkills: ${service.title} by ${service.freelancer}`,
           itemDescription: service.title,
           metadata: {
