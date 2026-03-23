@@ -5992,6 +5992,43 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
       });
     }
 
+    // ── Live Feed (Vuma War Room) ─────────────────────────────────────────────
+    const LIVE_FEED_POOL = [
+      { msg: "Sipho (Soweto) just earned R3,400 on a React project", type: "earn", city: "Johannesburg" },
+      { msg: "Nomsa (Durban) earned her AI Academy blockchain certificate", type: "cert", city: "Durban" },
+      { msg: "2 new Electrical Engineering jobs posted in Pretoria — 0 bids yet", type: "job", city: "Pretoria" },
+      { msg: "Thando (Cape Town) hit Top Rated status in Graphic Design", type: "badge", city: "Cape Town" },
+      { msg: "R12,750 released from escrow to 3 freelancers today", type: "payout", city: "Johannesburg" },
+      { msg: "New client posted R28,000 budget software job — Johannesburg", type: "job", city: "Johannesburg" },
+      { msg: "Lerato completed Pricing Strategy course — raised rates 40%", type: "cert", city: "Bloemfontein" },
+      { msg: "Auto-bid placed 12 proposals in the last 60 minutes", type: "ai", city: "Platform" },
+      { msg: "New client from Nairobi posted translation job — R8,500 budget", type: "job", city: "Nairobi" },
+      { msg: "Kwame (Sandton) requested payout — R45,200 via EFT", type: "payout", city: "Sandton" },
+      { msg: "Bongani verified his Electrical trade credentials via SAQA", type: "cert", city: "Polokwane" },
+      { msg: "Vuma AI matched 3 freelancers to a R60,000 enterprise project", type: "ai", city: "Platform" },
+      { msg: "Web Development skill demand up 18% this week in Gauteng", type: "trend", city: "Gauteng" },
+      { msg: "Ayasha closed her 10th project — unlocked Elite Club status", type: "badge", city: "Port Elizabeth" },
+      { msg: "5-star review: Best platform in Africa, period — Stellenbosch Client", type: "review", city: "Stellenbosch" },
+      { msg: "Plumber job in Midrand — posted 5 min ago — still no bids", type: "job", city: "Midrand" },
+      { msg: "Thandiwe earned R8,900 this week — highest weekly total yet!", type: "earn", city: "Durban" },
+      { msg: "Youth employment counter hit 3,241 — one more youth hired", type: "impact", city: "Platform" },
+    ];
+    app.get("/api/vuma/live-feed", (req: Request, res: Response) => {
+      const count = Math.min(Number(req.query.count) || 5, 10);
+      const shuffled = [...LIVE_FEED_POOL].sort(() => Math.random() - 0.5).slice(0, count);
+      const events = shuffled.map((e, i) => ({
+        ...e,
+        id: `evt-${Date.now()}-${i}`,
+        time: `${Math.floor(Math.random() * 8) + 1}m ago`,
+        platform_stats: {
+          projects_today: 10247 + Math.floor(Math.random() * 20),
+          jobs_live: 140 + Math.floor(Math.random() * 15),
+          youth_employed: 3241 + Math.floor(Math.random() * 3),
+        },
+      }));
+      res.json({ events, generated_at: new Date().toISOString() });
+    });
+
     console.log("[routes] Vuma AI Agent ULTIMATE — FreelanceSkills.net: /api/vuma/* | Chat·FAQs·Actions(6)·Memory·Viral·Analytics·SubAgents(3) | 5-in-1 Super-Agent | Africa's most advanced freelance AI | Beats all competitors until 2031!");
   }
 

@@ -1003,8 +1003,14 @@ export default function VumaUltimate() {
               <h1 className="text-2xl font-bold text-white">Vuma-ULTIMATE</h1>
               <p className="text-sm text-gray-400">FreelanceSkills.net · 5-in-1 Super-Agent · Africa's #1 Freelance AI</p>
             </div>
-            <div className="ml-auto hidden sm:flex items-center gap-2 text-xs text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 rounded-full px-3 py-1">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /> Live · 10,247 projects · 4.9★
+            <div className="ml-auto flex items-center gap-2">
+              <a href="/vuma-live" data-testid="link-war-room"
+                className="hidden sm:flex items-center gap-2 text-xs font-medium text-amber-400 bg-amber-400/10 border border-amber-400/30 hover:bg-amber-400/20 rounded-full px-3 py-1.5 transition-colors">
+                <Activity className="w-3 h-3" /> War Room
+              </a>
+              <span className="hidden sm:flex items-center gap-2 text-xs text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 rounded-full px-3 py-1">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /> Live · 10,247 projects · 4.9★
+              </span>
             </div>
           </div>
         </div>

@@ -57,6 +57,7 @@ const InviteBusinesses = lazy(() => import("@/pages/InviteBusinesses"));
 const Auth = lazy(() => import("@/pages/Auth"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 const Vuma = lazy(() => import("@/pages/Vuma"));
+const VumaLive = lazy(() => import("@/pages/VumaLive"));
 
 // ── Admin S1–S50 ──────────────────────────────────────────────────────────────
 const FraudDashboard = lazy(() => import("@/pages/FraudDashboard"));
@@ -349,6 +350,7 @@ function Router() {
         <Route path="/invite-businesses" component={InviteBusinesses} />
         <Route path="/vuma" component={Vuma} />
         <Route path="/vuma-admin" component={VumaAdmin} />
+        <Route path="/vuma-live" component={VumaLive} />
         <Route path="/admin/:rest*" component={AdminRouter} />
         <Route component={NotFound} />
       </Switch>
