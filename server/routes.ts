@@ -419,6 +419,209 @@ export async function registerRoutes(
     }
   });
 
+  // ── MARKETPLACE: BIDS, REVIEWS, ESCROW ─────────────────────────────────────
+  // POST /api/bids - Freelancer submits a bid on a job
+  app.post("/api/bids", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const { jobId, amount, estimatedDelivery, message } = req.body;
+      
+      // Validate job exists and is open
+      const job = await storage.query(`SELECT * FROM jobs WHERE id = $1 AND status = 'open'`, [jobId]);
+      if (!job || job.length === 0) return res.status(404).json({ error: "Job not found or not open" });
+      
+      // Create bid
+      const bid = await storage.query(
+        `INSERT INTO bids (job_id, freelancer_id, amount, estimated_delivery, message)
+         VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+        [jobId, userId, amount, estimatedDelivery, message || null]
+      );
+      
+      res.status(201).json(bid[0]);
+    } catch (error) {
+      console.error("Error creating bid:", error);
+      res.status(500).json({ error: "Failed to create bid" });
+    }
+  });
+
+  // GET /api/bids/:bidId - Get bid details
+  app.get("/api/bids/:bidId", async (req, res) => {
+    try {
+      const bid = await storage.query(`SELECT * FROM bids WHERE id = $1`, [req.params.bidId]);
+      if (!bid || bid.length === 0) return res.status(404).json({ error: "Bid not found" });
+      res.json(bid[0]);
+    } catch (error) {
+      console.error("Error fetching bid:", error);
+      res.status(500).json({ error: "Failed to fetch bid" });
+    }
+  });
+
+  // GET /api/jobs/:jobId/bids - Get all bids for a job
+  app.get("/api/jobs/:jobId/bids", async (req, res) => {
+    try {
+      const bids = await storage.query(
+        `SELECT b.*, u.title, u.rating FROM bids b 
+         JOIN users u ON b.freelancer_id = u.id 
+         WHERE b.job_id = $1 ORDER BY b.created_at DESC`,
+        [req.params.jobId]
+      );
+      res.json(bids);
+    } catch (error) {
+      console.error("Error fetching bids:", error);
+      res.status(500).json({ error: "Failed to fetch bids" });
+    }
+  });
+
+  // POST /api/jobs/:jobId/accept-bid - Client accepts a bid (creates job assignment + escrow)
+  app.post("/api/jobs/:jobId/accept-bid/:bidId", isAuthenticated, async (req: any, res) => {
+    try {
+      const clientId = (req.session as any).userId;
+      const { jobId, bidId } = req.params;
+      
+      // Verify job belongs to client
+      const job = await storage.query(`SELECT * FROM jobs WHERE id = $1 AND client_id = $2`, [jobId, clientId]);
+      if (!job || job.length === 0) return res.status(403).json({ error: "Not authorized" });
+      
+      // Get bid
+      const bid = await storage.query(`SELECT * FROM bids WHERE id = $1`, [bidId]);
+      if (!bid || bid.length === 0) return res.status(404).json({ error: "Bid not found" });
+      
+      // Update bid status and job assignment in transaction
+      await storage.query("BEGIN");
+      try {
+        await storage.query(`UPDATE bids SET status = 'accepted' WHERE id = $1`, [bidId]);
+        await storage.query(
+          `UPDATE jobs SET freelancer_id = $1, status = 'hired' WHERE id = $2`,
+          [bid[0].freelancer_id, jobId]
+        );
+        
+        // Create escrow transaction
+        const escrow = await storage.query(
+          `INSERT INTO job_escrow (job_id, bid_id, amount)
+           VALUES ($1, $2, $3) RETURNING *`,
+          [jobId, bidId, bid[0].amount]
+        );
+        
+        await storage.query("COMMIT");
+        res.json({ success: true, escrow: escrow[0] });
+      } catch (err) {
+        await storage.query("ROLLBACK");
+        throw err;
+      }
+    } catch (error) {
+      console.error("Error accepting bid:", error);
+      res.status(500).json({ error: "Failed to accept bid" });
+    }
+  });
+
+  // POST /api/reviews - Submit review/rating
+  app.post("/api/reviews", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const { jobId, toUserId, rating, title, comment, tags } = req.body;
+      
+      const review = await storage.query(
+        `INSERT INTO bid_reviews (job_id, from_user_id, to_user_id, rating, title, comment, tags)
+         VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+        [jobId, userId, toUserId, rating, title, comment, tags || []]
+      );
+      
+      res.status(201).json(review[0]);
+    } catch (error) {
+      console.error("Error creating review:", error);
+      res.status(500).json({ error: "Failed to create review" });
+    }
+  });
+
+  // GET /api/reviews/user/:userId - Get all reviews for a user
+  app.get("/api/reviews/user/:userId", async (req, res) => {
+    try {
+      const reviews = await storage.query(
+        `SELECT r.*, u.title FROM bid_reviews r 
+         JOIN users u ON r.from_user_id = u.id 
+         WHERE r.to_user_id = $1 AND r.is_public = true 
+         ORDER BY r.created_at DESC LIMIT 20`,
+        [req.params.userId]
+      );
+      
+      const stats = await storage.query(
+        `SELECT AVG(rating) as avg_rating, COUNT(*) as total_reviews 
+         FROM bid_reviews WHERE to_user_id = $1 AND is_public = true`,
+        [req.params.userId]
+      );
+      
+      res.json({ reviews, stats: stats[0] });
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+      res.status(500).json({ error: "Failed to fetch reviews" });
+    }
+  });
+
+  // POST /api/escrow/release - Release escrow payment (job completion)
+  app.post("/api/escrow/release/:escrowId", isAuthenticated, async (req: any, res) => {
+    try {
+      const clientId = (req.session as any).userId;
+      const { escrowId } = req.params;
+      
+      // Verify escrow and job belong to client
+      const escrow = await storage.query(
+        `SELECT e.*, j.client_id FROM job_escrow e 
+         JOIN jobs j ON e.job_id = j.id 
+         WHERE e.id = $1`,
+        [escrowId]
+      );
+      
+      if (!escrow || escrow.length === 0) return res.status(404).json({ error: "Escrow not found" });
+      if (escrow[0].client_id !== clientId) return res.status(403).json({ error: "Not authorized" });
+      
+      // Release escrow
+      const updated = await storage.query(
+        `UPDATE job_escrow SET status = 'released', released_at = NOW() WHERE id = $1 RETURNING *`,
+        [escrowId]
+      );
+      
+      res.json({ success: true, escrow: updated[0] });
+    } catch (error) {
+      console.error("Error releasing escrow:", error);
+      res.status(500).json({ error: "Failed to release escrow" });
+    }
+  });
+
+  // GET /api/freelancer-skills/:freelancerId - Get freelancer skills (for matching)
+  app.get("/api/freelancer-skills/:freelancerId", async (req, res) => {
+    try {
+      const skills = await storage.query(
+        `SELECT * FROM freelancer_skills WHERE freelancer_id = $1 ORDER BY endorsements DESC`,
+        [req.params.freelancerId]
+      );
+      res.json(skills);
+    } catch (error) {
+      console.error("Error fetching skills:", error);
+      res.status(500).json({ error: "Failed to fetch skills" });
+    }
+  });
+
+  // POST /api/freelancer-skills - Add/update skill
+  app.post("/api/freelancer-skills", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const { skill, proficiency, yearsExperience } = req.body;
+      
+      const result = await storage.query(
+        `INSERT INTO freelancer_skills (freelancer_id, skill, proficiency, years_experience)
+         VALUES ($1, $2, $3, $4) 
+         ON CONFLICT (freelancer_id, skill) DO UPDATE SET proficiency = $3, years_experience = $4
+         RETURNING *`,
+        [userId, skill, proficiency, yearsExperience]
+      );
+      
+      res.status(201).json(result[0]);
+    } catch (error) {
+      console.error("Error saving skill:", error);
+      res.status(500).json({ error: "Failed to save skill" });
+    }
+  });
+
   app.post("/api/bookings", isAuthenticated, async (req: any, res) => {
     try {
       const userId = (req.session as any).userId;

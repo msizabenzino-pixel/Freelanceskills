@@ -29,3 +29,4 @@ export * from "./models/cms";
 export * from "./models/feature_flags";
 export * from "./models/roles";
 export * from "./models/compliance";
+export * from "./models/marketplace";
