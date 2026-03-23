@@ -4,7 +4,7 @@ import { JobCard } from "@/components/JobCard";
 import { FreelancerCard } from "@/components/FreelancerCard";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users, Gift, Building2, Brain, Link2, Wallet, BarChart3, Leaf, Globe, ChevronRight, ShieldCheck, Lock, FileText, Headphones, Star, Quote, Send, Zap } from "lucide-react";
+import { ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users, Gift, Building2, Brain, Link2, Wallet, BarChart3, Leaf, Globe, ChevronRight, ShieldCheck, Lock, FileText, Headphones, Star, Quote, Send, Zap, X } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { useCurrency } from "@/lib/currency";
 import { SERVICE_CATEGORIES } from "@shared/categories";
@@ -55,6 +55,14 @@ function UrgentJobBanner() {
                 View Now
               </a>
             </Link>
+            <button
+              onClick={() => setIsVisible(false)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors"
+              aria-label="Dismiss"
+              data-testid="button-dismiss-urgent-banner"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
         </motion.div>
       )}

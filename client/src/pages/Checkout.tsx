@@ -123,7 +123,8 @@ export default function Checkout() {
     location: params.get("location") || "",
     image: params.get("image") || "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=400&h=250&fit=crop",
   };
-  const serviceFee = Math.round(service.price * 0.1);
+  const isSubscription = service.title.toLowerCase().includes("subscription");
+  const serviceFee = isSubscription ? 0 : Math.round(service.price * 0.1);
   const total = service.price + serviceFee;
 
   const handlePayment = async () => {
@@ -272,18 +273,23 @@ export default function Checkout() {
 
                   <div className="space-y-3">
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Service fee</span>
+                      <span className="text-muted-foreground">{isSubscription ? "Subscription fee" : "Service fee"}</span>
                       <span className="font-medium text-foreground">{formatAmount(service.price)}</span>
                     </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Platform fee (10%)</span>
-                      <span className="font-medium text-foreground">{formatAmount(serviceFee)}</span>
-                    </div>
+                    {!isSubscription && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Platform fee (10%)</span>
+                        <span className="font-medium text-foreground">{formatAmount(serviceFee)}</span>
+                      </div>
+                    )}
                     <Separator />
                     <div className="flex justify-between text-lg font-bold">
                       <span className="text-foreground">Total</span>
                       <span className="text-primary" data-testid="text-total">{formatAmount(total)}</span>
                     </div>
+                    {isSubscription && service.duration && (
+                      <p className="text-xs text-muted-foreground text-center">Billed {service.duration.toLowerCase()} · Cancel anytime</p>
+                    )}
                   </div>
 
                   <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-lg p-4 mt-4 flex gap-3">
@@ -405,7 +411,9 @@ export default function Checkout() {
                   </div>
                   <h2 className="text-2xl font-bold text-foreground mb-2">Payment Successful!</h2>
                   <p className="text-muted-foreground mb-6">
-                    {formatAmount(total)} has been securely deposited into escrow.
+                    {isSubscription
+                      ? `Your Premium Talent plan is now active. Welcome to the Pro community!`
+                      : `${formatAmount(total)} has been securely deposited into escrow.`}
                   </p>
 
                   <div className="bg-muted rounded-xl p-4 text-left mb-6 max-w-sm mx-auto">
@@ -424,23 +432,41 @@ export default function Checkout() {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Status</span>
-                        <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">In Escrow</Badge>
+                        <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
+                          {isSubscription ? "Active" : "In Escrow"}
+                        </Badge>
                       </div>
+                      {isSubscription && service.duration && (
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Billing</span>
+                          <span className="font-medium text-foreground">{service.duration}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
                   <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4 text-sm text-blue-800 dark:text-blue-300 mb-6 max-w-sm mx-auto">
                     <p className="font-bold mb-1">What happens next?</p>
-                    <p>Your freelancer has been notified and will begin work. Funds remain safely in escrow until you confirm the job is complete.</p>
+                    {isSubscription
+                      ? <p>Your Premium Talent badge is live on your profile. Early access to global jobs and priority placement are now active.</p>
+                      : <p>Your freelancer has been notified and will begin work. Funds remain safely in escrow until you confirm the job is complete.</p>
+                    }
                   </div>
 
                   <div className="flex flex-col sm:flex-row gap-3 justify-center">
                     <Button onClick={() => navigate("/dashboard")} data-testid="button-go-dashboard">
                       Go to Dashboard
                     </Button>
-                    <Button variant="outline" onClick={() => navigate("/messages")} data-testid="button-message-freelancer">
-                      Message Freelancer
-                    </Button>
+                    {!isSubscription && (
+                      <Button variant="outline" onClick={() => navigate("/messages")} data-testid="button-message-freelancer">
+                        Message Freelancer
+                      </Button>
+                    )}
+                    {isSubscription && (
+                      <Button variant="outline" onClick={() => navigate("/jobs")} data-testid="button-browse-global-jobs">
+                        Browse Global Jobs
+                      </Button>
+                    )}
                   </div>
                 </Card>
               )}
@@ -463,18 +489,23 @@ export default function Checkout() {
 
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Service</span>
+                      <span className="text-muted-foreground">{isSubscription ? "Subscription" : "Service"}</span>
                       <span className="text-foreground">{formatAmount(service.price)}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Platform fee</span>
-                      <span className="text-foreground">{formatAmount(serviceFee)}</span>
-                    </div>
+                    {!isSubscription && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Platform fee</span>
+                        <span className="text-foreground">{formatAmount(serviceFee)}</span>
+                      </div>
+                    )}
                     <Separator />
                     <div className="flex justify-between font-bold text-base">
                       <span className="text-foreground">Total</span>
                       <span className="text-primary">{formatAmount(total)}</span>
                     </div>
+                    {isSubscription && service.duration && (
+                      <p className="text-xs text-muted-foreground text-center pt-1">Billed {service.duration.toLowerCase()} · Cancel anytime</p>
+                    )}
                   </div>
 
                   <div className="mt-4 space-y-2">
