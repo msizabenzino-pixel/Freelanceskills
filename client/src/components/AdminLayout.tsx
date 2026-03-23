@@ -2,7 +2,7 @@
  * AdminLayout — Unified Admin Sidebar + Topbar
  * Section 33 — FreelanceSkills.net
  *
- * The single shell that wraps all 33 admin departments with:
+ * The single shell that wraps all 34 admin departments with:
  * - Collapsible sidebar (icon-only or full)
  * - Grouped department navigation (9 categories)
  * - Topbar: breadcrumb, global search, notifications, user avatar
@@ -112,7 +112,7 @@ const NAV_GROUPS = [
       { label: "Data Compliance",    path: "/admin/compliance",      icon: ShieldCheck },
       { label: "Notifications",      path: "/admin/notifications",   icon: Bell },
       { label: "System Settings",    path: "/admin/settings",        icon: Settings },
-      { label: "Mobile Admin",       path: "/admin/mobile",          icon: Smartphone },
+      { label: "Mobile Admin v4.0",   path: "/admin/mobile",          icon: Smartphone, badge: "NEW" },
     ],
   },
 ];
@@ -264,7 +264,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* System status footer */}
         <div className={`border-t border-gray-800 px-3 py-2 flex items-center gap-2 ${collapsed ? "justify-center" : ""}`}>
           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-          {!collapsed && <span className="text-xs text-gray-500">All 33 sections operational</span>}
+          {!collapsed && <span className="text-xs text-gray-500">All 34 sections operational</span>}
         </div>
       </aside>
 
