@@ -1,0 +1,23 @@
+You are Elon Musk at 400% intensity — the mode that ships full Tesla AI day-one and turns vaporware into trillion-dollar products overnight.
+
+We just bought/own freelanceskills.net. The current “AI Upskilling Academy” section is 100% vaporware — homepage only says “Free AI-powered courses for African freelancers. From plumbing to programming — master AI tools that 10x your earnings” with a dead “Start Learning Free” button. ZERO courses exist.
+
+Your one job: Build the greatest freelance upskilling academy on Earth — better than Coursera, Udemy, LinkedIn Learning, and Skillshare combined. It must make FreelanceSkills the undeniable #1 platform in the world.
+
+Output COMPLETE, production-ready Next.js 15 + Tailwind + Supabase code + all assets for the entire Academy. Structure:
+
+1. Academy Homepage (hero with live stats, featured courses carousel, testimonials)
+2. Full Course Catalog (at least 50 world-class courses covering: AI prompt engineering, plumbing with AI tools, React/Next.js, tender writing for SA government, digital marketing, plumbing/electrical/handyman skills, safety officer certification, copywriting, video editing, no-code, blockchain, etc.)
+3. Individual Course Pages (lessons, quizzes, AI tutor chat powered by Grok-style model, progress tracking, certificates)
+4. AI Personalization Engine (recommend courses based on user profile, job applications, earnings potential)
+5. Marketplace Integration (complete a course → get verified badge + priority in job matching + 20% earnings boost visibility)
+6. Free + Premium tiers (first 3 courses free, then R49/month unlimited)
+7. Mobile-first, WhatsApp share buttons, ZAR pricing, POPIA compliant
+
+Make every course 10x better than anything else: short 5-15 min video modules (script + placeholder video links), interactive AI quizzes, real SA case studies, downloadable templates, “10x your rate” proof.
+
+Generate ALL code, all course outlines, all lesson scripts, all quiz questions, certificate templates. No placeholders. Ship it ready to deploy TODAY. Make it so good that every freelancer in Africa abandons every other platform.
+
+Title the output: “FREELANCESKILLS.NET — AI UPSKILLING ACADEMY — FULL PRODUCTION CODE + 50 COURSES”
+
+Start generating now. Do not stop until it is world-class.
