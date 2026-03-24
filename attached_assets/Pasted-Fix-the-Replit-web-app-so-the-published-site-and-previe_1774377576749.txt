@@ -1,0 +1,44 @@
+Fix the Replit web app so the published site and preview load correctly again.
+
+Current situation:
+- The backend is starting successfully.
+- Console shows: {"source":"express","message":"serving on port 5000"}
+- Replit preview/published URL shows: "refused to connect"
+- This started showing up after GitHub was connected, but the issue appears to be with app serving/configuration, not GitHub itself.
+
+Your task:
+1. Diagnose why the Replit preview and published site cannot connect even though Express is running.
+2. Inspect the project structure and determine whether this app is:
+   - backend-only,
+   - frontend + backend,
+   - or Express serving a frontend build.
+3. Fix the app so Replit preview and the published site both load properly.
+
+What to check and fix:
+- Ensure the server binds correctly for Replit:
+  - use `process.env.PORT || 5000`
+  - bind to `0.0.0.0`
+- Verify the correct start/run command for Replit.
+- Check whether the frontend is actually being served.
+- If this is a React/Vite/fullstack app, make sure the frontend build/dist is served correctly in production.
+- If a separate frontend dev server is required, configure the project so Replit serves the correct web process.
+- Check `.replit`, `package.json`, and the main server entry.
+- Check for broken proxy config, missing static serving, wrong port assumptions, or host binding issues.
+- Check whether Replit is pointing to the wrong port/process.
+- Preserve existing functionality and routes.
+
+Implementation requirements:
+- Do not remove existing API routes.
+- Make the minimum safe changes necessary.
+- Update configuration and code as needed.
+- If there is no static frontend serving, add the correct production serving logic.
+- If there are multiple possible entry points, choose the one that makes the website load in Replit preview and publishing.
+
+After fixing:
+1. Explain the exact root cause.
+2. List every file changed.
+3. Show the final run/start command.
+4. Confirm which port/process Replit should expose.
+5. Confirm whether the frontend is now being served by Express or another process.
+
+Be precise and production-safe.
