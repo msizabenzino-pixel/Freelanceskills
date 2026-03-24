@@ -17,7 +17,7 @@ export function Footer() {
               Empowering South Africa's workforce through digital connection. The safest way to hire local talent online.
             </p>
             <p className="text-muted-foreground text-xs">
-              CIPC Reg: 2026/070509/09 | Tableview, Cape Town
+              CIPC Reg: 2026/070509/09 | Camps Bay, Cape Town
             </p>
             <div className="flex gap-3 mt-4">
               <a 
@@ -107,6 +107,8 @@ export function Footer() {
             <h4 className="font-bold text-primary mb-4">Company</h4>
             <ul className="space-y-1 text-sm text-muted-foreground">
               <li><Link href="/about" className="hover:text-primary transition-colors py-2 block" data-testid="link-about-us">About Us</Link></li>
+              <li><Link href="/blog" className="hover:text-primary transition-colors py-2 block" data-testid="link-blog">Blog &amp; Resources</Link></li>
+              <li><Link href="/careers" className="hover:text-primary transition-colors py-2 block" data-testid="link-careers">Careers</Link></li>
               <li><Link href="/impact" className="hover:text-primary transition-colors py-2 block" data-testid="link-impact">Social Impact</Link></li>
               <li><Link href="/academy" className="hover:text-primary transition-colors py-2 block" data-testid="link-academy">AI Academy</Link></li>
               <li><Link href="/enterprise" className="hover:text-primary transition-colors py-2 block" data-testid="link-enterprise">Enterprise</Link></li>

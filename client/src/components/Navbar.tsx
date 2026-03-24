@@ -47,6 +47,7 @@ export function Navbar() {
     { name: "Explore", href: "/explore", highlight: true },
     { name: "Vuma AI", href: "/vuma", icon: Sparkles, highlight: true },
     { name: "Services", href: "/services" },
+    { name: "Blog", href: "/blog" },
     { name: "Pricing", href: "/pricing" },
     { name: "About", href: "/about" },
     ...(isAuthenticated ? [

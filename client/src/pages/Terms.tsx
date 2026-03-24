@@ -20,7 +20,7 @@ export default function Terms() {
             <section>
               <h2 className="text-xl font-semibold mb-4">1. Introduction</h2>
               <p className="text-muted-foreground leading-relaxed">
-                Welcome to FreelanceSkills. These Terms of Service ("Terms") govern your use of the FreelanceSkills website and platform located at www.freelanceskills.co.za (the "Service") operated by FreelanceSkills (Pty) Ltd, a company registered in South Africa with CIPC registration number 2026/070509/09, located at Tableview, Cape Town, South Africa.
+                Welcome to FreelanceSkills. These Terms of Service ("Terms") govern your use of the FreelanceSkills website and platform located at www.freelanceskills.co.za (the "Service") operated by FreelanceSkills (Pty) Ltd, a company registered in South Africa with CIPC registration number 2026/070509/09, located at Camps Bay, Cape Town, South Africa.
               </p>
               <p className="text-muted-foreground leading-relaxed mt-4">
                 By accessing or using our Service, you agree to be bound by these Terms. If you disagree with any part of the terms, you may not access the Service.

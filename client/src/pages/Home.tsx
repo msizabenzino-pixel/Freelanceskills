@@ -541,6 +541,56 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Founder Trust Signal */}
+      <section className="py-16 bg-muted/20 border-y border-border" data-testid="section-founder-trust">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="max-w-5xl mx-auto grid md:grid-cols-5 gap-10 items-center">
+            <div className="md:col-span-2 flex justify-center">
+              <div className="relative">
+                <div className="w-48 h-48 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-2xl overflow-hidden border-4 border-white/20">
+                  <div className="text-white text-center p-4">
+                    <div className="text-5xl font-black">BM</div>
+                    <div className="text-xs font-semibold tracking-widest text-white/70 mt-1 uppercase">Founder</div>
+                  </div>
+                </div>
+                <div className="absolute -bottom-3 -right-3 bg-accent text-primary text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
+                  11 Years Eskom ✓
+                </div>
+              </div>
+            </div>
+            <div className="md:col-span-3 space-y-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/8 border border-primary/15 text-primary text-xs font-semibold tracking-wider uppercase">
+                Built by someone who lived the grind
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground leading-tight">
+                "I spent 11 years at Eskom, led teams on R100M+ projects, and still struggled to hire reliable talent for my own business."
+              </h2>
+              <p className="text-muted-foreground leading-relaxed">
+                Ben Msiza, GCC-certified engineer, B-Tech Mechanical, and founder of FreelanceSkills, built this platform because he experienced the hiring problem firsthand — and decided to solve it for every South African.
+              </p>
+              <div className="flex flex-wrap gap-6 pt-2">
+                {[
+                  { label: "GCC Certified", sub: "Govt. Certificate of Competency" },
+                  { label: "B-Tech Mechanical", sub: "UNISA Graduate" },
+                  { label: "CIPC Registered", sub: "2026/070509/09" },
+                ].map((badge, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                    <div>
+                      <div className="text-sm font-bold text-foreground">{badge.label}</div>
+                      <div className="text-xs text-muted-foreground">{badge.sub}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <Button variant="outline" className="gap-2 group mt-2" onClick={() => navigate("/about")} data-testid="button-founder-story">
+                Read the Full Story <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Success Stories Section */}
       <section className="py-20 bg-background" data-testid="section-success-stories">
         <div className="container mx-auto px-4 md:px-6">
@@ -707,6 +757,91 @@ export default function Home() {
                 <p className="text-muted-foreground text-xs leading-relaxed">{item.desc}</p>
               </button>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Blog & Knowledge Hub Teaser */}
+      <section className="py-20 bg-background border-y border-border" data-testid="section-blog-teaser">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 text-xs font-semibold tracking-wider uppercase mb-4">
+                <TrendingUp className="w-3.5 h-3.5" /> #1 SA Freelance Knowledge Hub
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-primary mb-3">Learn. Earn. Grow.</h2>
+              <p className="text-muted-foreground text-lg max-w-xl">South Africa's most practical freelancing guides — from winning your first tender to filing for SARS as a solo professional.</p>
+            </div>
+            <Button variant="outline" className="gap-2 group whitespace-nowrap" onClick={() => navigate("/blog")} data-testid="button-view-blog">
+              Visit the Blog <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                category: "AI Tools",
+                title: "10 AI Tools That Will 10x Your Freelance Income in 2026",
+                excerpt: "ChatGPT, Midjourney, and Copilot are the basics. We break down 10 advanced AI tools that SA freelancers are using right now to double their output and triple their rates.",
+                readTime: "8 min read",
+                color: "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400",
+                href: "/blog/10-ai-tools-freelance-income-2026"
+              },
+              {
+                category: "SA Tax & Legal",
+                title: "The Complete SARS Tax Guide for South African Freelancers",
+                excerpt: "Provisional tax, VAT registration, allowable deductions — everything you need to stay legal and keep more of your hard-earned money.",
+                readTime: "12 min read",
+                color: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400",
+                href: "/blog/sars-tax-guide-south-african-freelancers"
+              },
+              {
+                category: "Tenders & Government",
+                title: "How to Win Your First Government Tender as a Freelancer",
+                excerpt: "A step-by-step walkthrough of registering on the Central Supplier Database (CSD), finding open tenders, and crafting a compliant bid that stands out.",
+                readTime: "15 min read",
+                color: "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400",
+                href: "/blog/win-first-government-tender-south-africa"
+              }
+            ].map((article, i) => (
+              <button
+                key={i}
+                className="text-left bg-card border border-border rounded-2xl p-6 hover:shadow-lg hover:border-primary/30 transition-all group"
+                onClick={() => navigate(article.href)}
+                data-testid={`card-blog-teaser-${i}`}
+              >
+                <span className={`inline-block text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full mb-4 ${article.color}`}>
+                  {article.category}
+                </span>
+                <h3 className="font-bold text-foreground text-lg mb-3 leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                  {article.title}
+                </h3>
+                <p className="text-muted-foreground text-sm leading-relaxed mb-4 line-clamp-3">
+                  {article.excerpt}
+                </p>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <span className="font-medium">{article.readTime}</span>
+                  <span>·</span>
+                  <span className="text-primary font-semibold group-hover:underline">Read article →</span>
+                </div>
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-12 p-6 md:p-8 rounded-2xl bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/10 flex flex-col md:flex-row items-center justify-between gap-6" data-testid="section-academy-funnel">
+            <div className="space-y-1">
+              <div className="text-xs font-bold uppercase tracking-wider text-primary mb-2">Blog → Academy → Jobs Funnel</div>
+              <h3 className="text-xl font-bold text-foreground">Read an article. Take a course. Land a job.</h3>
+              <p className="text-muted-foreground text-sm">Every blog post links to a free Academy course. Every course links to live job listings. Your growth path, automated.</p>
+            </div>
+            <div className="flex gap-3 flex-shrink-0">
+              <Button variant="outline" onClick={() => navigate("/blog")} data-testid="button-funnel-blog">
+                Browse Articles
+              </Button>
+              <Button className="bg-primary hover:bg-primary/90" onClick={() => navigate("/academy")} data-testid="button-funnel-academy">
+                <GraduationCap className="w-4 h-4 mr-2" /> Start Learning
+              </Button>
+            </div>
           </div>
         </div>
       </section>
