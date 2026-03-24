@@ -64,6 +64,7 @@ const Auth = lazy(() => import("@/pages/Auth"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 const Vuma = lazy(() => import("@/pages/Vuma"));
 const VumaLive = lazy(() => import("@/pages/VumaLive"));
+const About = lazy(() => import("@/pages/About"));
 
 // ── Admin S1–S50 ──────────────────────────────────────────────────────────────
 const FraudDashboard = lazy(() => import("@/pages/FraudDashboard"));
@@ -333,6 +334,7 @@ function Router() {
         <Route path="/terms" component={Terms} />
         <Route path="/privacy" component={Privacy} />
         <Route path="/impact" component={Impact} />
+        <Route path="/about" component={About} />
         <Route path="/academy" component={Academy} />
         <Route path="/academy/catalog" component={AcademyCatalog} />
         <Route path="/academy/:id" component={AcademyCourseDetail} />

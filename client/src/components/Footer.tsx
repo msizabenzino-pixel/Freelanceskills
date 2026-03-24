@@ -106,7 +106,7 @@ export function Footer() {
           <div>
             <h4 className="font-bold text-primary mb-4">Company</h4>
             <ul className="space-y-1 text-sm text-muted-foreground">
-              <li><Link href="/impact" className="hover:text-primary transition-colors py-2 block" data-testid="link-about-us">About Us</Link></li>
+              <li><Link href="/about" className="hover:text-primary transition-colors py-2 block" data-testid="link-about-us">About Us</Link></li>
               <li><Link href="/impact" className="hover:text-primary transition-colors py-2 block" data-testid="link-impact">Social Impact</Link></li>
               <li><Link href="/academy" className="hover:text-primary transition-colors py-2 block" data-testid="link-academy">AI Academy</Link></li>
               <li><Link href="/enterprise" className="hover:text-primary transition-colors py-2 block" data-testid="link-enterprise">Enterprise</Link></li>
