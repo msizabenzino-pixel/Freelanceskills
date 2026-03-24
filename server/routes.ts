@@ -6233,6 +6233,465 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
     });
 
     console.log("[routes] Vuma AI Agent ULTIMATE — FreelanceSkills.net: /api/vuma/* | Chat·FAQs·Actions(6)·Memory·Viral·Analytics·SubAgents(3) | 5-in-1 Super-Agent | Africa's most advanced freelance AI | Beats all competitors until 2031!");
+
+    // ── ACADEMY: AI UPSKILLING PLATFORM ────────────────────────────────────────
+    // GET /api/academy/courses - List all courses (with filters)
+    app.get("/api/academy/courses", async (req, res) => {
+      try {
+        const { category, difficulty, free } = req.query;
+        let query = `SELECT * FROM courses WHERE status = 'live'`;
+        const params: any[] = [];
+        if (category) {
+          query += ` AND category = $${params.length + 1}`;
+          params.push(category);
+        }
+        if (difficulty) {
+          query += ` AND difficulty = $${params.length + 1}`;
+          params.push(difficulty);
+        }
+        if (free === "true") {
+          query += ` AND is_free = true`;
+        }
+        query += ` ORDER BY is_featured DESC, average_rating DESC LIMIT 100`;
+        const courses = await storage.query(query, params);
+        res.json(courses);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+        res.status(500).json({ error: "Failed to fetch courses" });
+      }
+    });
+
+    // GET /api/academy/courses/:id - Get course detail with lessons
+    app.get("/api/academy/courses/:id", async (req, res) => {
+      try {
+        const courseId = req.params.id;
+        const course = await storage.query(`SELECT * FROM courses WHERE id = $1`, [courseId]);
+        if (!course || course.length === 0) return res.status(404).json({ error: "Course not found" });
+        
+        const lessons = await storage.query(`SELECT * FROM lessons WHERE course_id = $1 ORDER BY order_index`, [courseId]);
+        res.json({ ...course[0], lessons });
+      } catch (error) {
+        console.error("Error fetching course:", error);
+        res.status(500).json({ error: "Failed to fetch course" });
+      }
+    });
+
+    // POST /api/academy/enrol/:courseId - Enroll in course
+    app.post("/api/academy/enrol/:courseId", isAuthenticated, async (req: any, res) => {
+      try {
+        const userId = (req.session as any).userId;
+        const courseId = req.params.courseId;
+        
+        // Check if already enrolled
+        const existing = await storage.query(
+          `SELECT * FROM academy_enrolments WHERE user_id = $1 AND course_id = $2`,
+          [userId, courseId]
+        );
+        if (existing && existing.length > 0) return res.status(400).json({ error: "Already enrolled" });
+        
+        const enrolment = await storage.query(
+          `INSERT INTO academy_enrolments (user_id, course_id) VALUES ($1, $2) RETURNING *`,
+          [userId, courseId]
+        );
+        res.status(201).json(enrolment[0]);
+      } catch (error) {
+        console.error("Error enrolling:", error);
+        res.status(500).json({ error: "Failed to enrol" });
+      }
+    });
+
+    // POST /api/academy/complete-lesson/:lessonId - Mark lesson complete
+    app.post("/api/academy/complete-lesson/:lessonId", isAuthenticated, async (req: any, res) => {
+      try {
+        const userId = (req.session as any).userId;
+        const lessonId = req.params.lessonId;
+        
+        // Get lesson to find course
+        const lesson = await storage.query(`SELECT course_id FROM lessons WHERE id = $1`, [lessonId]);
+        if (!lesson || lesson.length === 0) return res.status(404).json({ error: "Lesson not found" });
+        
+        const courseId = lesson[0].course_id;
+        
+        // Mark lesson complete
+        const progress = await storage.query(
+          `INSERT INTO course_progress (user_id, course_id, lesson_id, completed) 
+           VALUES ($1, $2, $3, true) ON CONFLICT (user_id, course_id, lesson_id) DO UPDATE SET completed = true
+           RETURNING *`,
+          [userId, courseId, lessonId]
+        );
+        
+        // Update enrolment progress percentage
+        const totalLessons = await storage.query(`SELECT COUNT(*) as count FROM lessons WHERE course_id = $1`, [courseId]);
+        const completedLessons = await storage.query(
+          `SELECT COUNT(*) as count FROM course_progress WHERE user_id = $1 AND course_id = $2 AND completed = true`,
+          [userId, courseId]
+        );
+        const progressPct = (completedLessons[0].count / totalLessons[0].count) * 100;
+        
+        await storage.query(
+          `UPDATE academy_enrolments SET progress_pct = $1 WHERE user_id = $2 AND course_id = $3`,
+          [progressPct, userId, courseId]
+        );
+        
+        res.json({ success: true, progress: progressPct });
+      } catch (error) {
+        console.error("Error completing lesson:", error);
+        res.status(500).json({ error: "Failed to complete lesson" });
+      }
+    });
+
+    // GET /api/academy/progress/:courseId - Get user progress on course
+    app.get("/api/academy/progress/:courseId", isAuthenticated, async (req: any, res) => {
+      try {
+        const userId = (req.session as any).userId;
+        const courseId = req.params.courseId;
+        
+        const enrolment = await storage.query(
+          `SELECT * FROM academy_enrolments WHERE user_id = $1 AND course_id = $2`,
+          [userId, courseId]
+        );
+        if (!enrolment || enrolment.length === 0) return res.status(404).json({ error: "Not enrolled" });
+        
+        const progress = await storage.query(
+          `SELECT lesson_id, completed FROM course_progress WHERE user_id = $1 AND course_id = $2`,
+          [userId, courseId]
+        );
+        
+        res.json({ enrolment: enrolment[0], lessonProgress: progress });
+      } catch (error) {
+        console.error("Error fetching progress:", error);
+        res.status(500).json({ error: "Failed to fetch progress" });
+      }
+    });
+
+    // POST /api/academy/certificate/:courseId - Issue certificate after completion
+    app.post("/api/academy/certificate/:courseId", isAuthenticated, async (req: any, res) => {
+      try {
+        const userId = (req.session as any).userId;
+        const courseId = req.params.courseId;
+        
+        // Check if course is complete
+        const enrolment = await storage.query(
+          `SELECT * FROM academy_enrolments WHERE user_id = $1 AND course_id = $2`,
+          [userId, courseId]
+        );
+        if (!enrolment || enrolment.length === 0) return res.status(400).json({ error: "Not enrolled" });
+        if (enrolment[0].progress_pct < 100) return res.status(400).json({ error: "Course not complete" });
+        
+        // Check if certificate already issued
+        const existing = await storage.query(
+          `SELECT * FROM certificates WHERE user_id = $1 AND course_id = $2 AND status = 'approved'`,
+          [userId, courseId]
+        );
+        if (existing && existing.length > 0) return res.status(400).json({ error: "Certificate already issued" });
+        
+        // Generate certificate code
+        const certCode = `CERT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`.toUpperCase();
+        const certificate = await storage.query(
+          `INSERT INTO certificates (user_id, course_id, certificate_code, status)
+           VALUES ($1, $2, $3, 'approved') RETURNING *`,
+          [userId, courseId, certCode]
+        );
+        
+        // Award freelancer badge
+        const course = await storage.query(`SELECT title FROM courses WHERE id = $1`, [courseId]);
+        await storage.query(
+          `UPDATE users SET badges = array_append(badges, $1) WHERE id = $2`,
+          [`${course[0].title} Certified`, userId]
+        );
+        
+        res.status(201).json(certificate[0]);
+      } catch (error) {
+        console.error("Error issuing certificate:", error);
+        res.status(500).json({ error: "Failed to issue certificate" });
+      }
+    });
+
+    // GET /api/academy/dashboard - User's academy dashboard
+    app.get("/api/academy/dashboard", isAuthenticated, async (req: any, res) => {
+      try {
+        const userId = (req.session as any).userId;
+        
+        const enrolments = await storage.query(
+          `SELECT ae.*, c.title, c.difficulty, c.image_url FROM academy_enrolments ae 
+           JOIN courses c ON ae.course_id = c.id WHERE ae.user_id = $1 ORDER BY ae.enroled_at DESC`,
+          [userId]
+        );
+        
+        const certificates = await storage.query(
+          `SELECT c.*, co.title FROM certificates c 
+           JOIN courses co ON c.course_id = co.id WHERE c.user_id = $1 AND c.status = 'approved'`,
+          [userId]
+        );
+        
+        const totalHoursLearned = enrolments.reduce((sum: number, e: any) => sum + (parseInt(e.difficulty === "beginner" ? "4" : e.difficulty === "intermediate" ? "12" : "30")), 0);
+        
+        res.json({
+          enrolments,
+          certificates,
+          stats: {
+            coursesEnroled: enrolments.length,
+            coursesCompleted: enrolments.filter((e: any) => e.progress_pct === 100).length,
+            certificatesEarned: certificates.length,
+            totalHoursLearned,
+            earningsLiftPct: certificates.length * 20, // 20% boost per certificate
+          }
+        });
+      } catch (error) {
+        console.error("Error fetching dashboard:", error);
+        res.status(500).json({ error: "Failed to fetch dashboard" });
+      }
+    });
+
+    // GET /api/academy/stats - Platform-wide academy stats
+    app.get("/api/academy/stats", async (req, res) => {
+      try {
+        const totalCourses = await storage.query(`SELECT COUNT(*) as count FROM courses WHERE status = 'live'`);
+        const totalEnrolments = await storage.query(`SELECT COUNT(*) as count FROM academy_enrolments`);
+        const totalCertificates = await storage.query(`SELECT COUNT(*) as count FROM certificates WHERE status = 'approved'`);
+        const avgCompletion = await storage.query(`SELECT AVG(progress_pct) as avg FROM academy_enrolments WHERE completed_at IS NOT NULL`);
+        
+        res.json({
+          totalCourses: totalCourses[0].count,
+          totalEnrolments: totalEnrolments[0].count,
+          totalCertificates: totalCertificates[0].count,
+          avgCompletionRate: (avgCompletion[0].avg || 0).toFixed(1),
+        });
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+        res.status(500).json({ error: "Failed to fetch stats" });
+      }
+    });
+
+    // POST /api/academy/seed-courses (Admin only) - Initialize all courses
+    app.post("/api/academy/seed-courses", isAuthenticated, async (req: any, res) => {
+      try {
+        const userId = (req.session as any).userId;
+        // Only allow admin/owner
+        const user = await storage.query(`SELECT * FROM users WHERE id = $1 AND is_admin = true`, [userId]);
+        if (!user || user.length === 0) return res.status(403).json({ error: "Admin only" });
+
+        const ACADEMY_COURSES = [
+          {
+            title: "AI Prompt Engineering Masterclass",
+            description: "Master ChatGPT, Claude, and Grok to 10x your freelance output.",
+            category: "AI & Machine Learning",
+            difficulty: "beginner",
+            duration: "4 hours",
+            totalLessons: 12,
+            isFree: true,
+            skillsTaught: ["AI Prompting", "ChatGPT", "Claude", "Productivity"],
+            earningsLiftPct: 45,
+          },
+          {
+            title: "No-Code Automation: Zapier & Make.com",
+            description: "Automate your freelance business without coding.",
+            category: "AI & Machine Learning",
+            difficulty: "beginner",
+            duration: "3 hours",
+            totalLessons: 10,
+            isFree: true,
+            skillsTaught: ["Zapier", "Make.com", "Automation", "Workflow"],
+            earningsLiftPct: 35,
+          },
+          {
+            title: "React + Next.js: Build & Deploy Real Projects",
+            description: "Build full-stack apps. Land R20k+ jobs.",
+            category: "Web Development",
+            difficulty: "intermediate",
+            duration: "20 hours",
+            totalLessons: 24,
+            isFree: false,
+            skillsTaught: ["React", "Next.js", "JavaScript", "Full-Stack"],
+            earningsLiftPct: 120,
+          },
+          {
+            title: "Responsive Web Design & Mobile-First",
+            description: "Master CSS Grid, Flexbox, build beautiful responsive websites.",
+            category: "Web Development",
+            difficulty: "beginner",
+            duration: "8 hours",
+            totalLessons: 14,
+            isFree: true,
+            skillsTaught: ["CSS", "Responsive Design", "Mobile-First", "Figma"],
+            earningsLiftPct: 40,
+          },
+          {
+            title: "High-Converting Copywriting",
+            description: "Write proposals that win. Land more clients.",
+            category: "Copywriting",
+            difficulty: "beginner",
+            duration: "6 hours",
+            totalLessons: 12,
+            isFree: true,
+            skillsTaught: ["Copywriting", "Persuasion", "Sales", "Client Psychology"],
+            earningsLiftPct: 55,
+          },
+          {
+            title: "Content Marketing: Build Authority",
+            description: "Blog, LinkedIn, YouTube: become the go-to expert.",
+            category: "Digital Marketing",
+            difficulty: "intermediate",
+            duration: "12 hours",
+            totalLessons: 16,
+            isFree: false,
+            skillsTaught: ["Content Strategy", "SEO", "LinkedIn", "Blogging"],
+            earningsLiftPct: 85,
+          },
+          {
+            title: "Figma for Freelancers",
+            description: "Master Figma. Design websites and apps like a pro.",
+            category: "Graphic Design",
+            difficulty: "beginner",
+            duration: "10 hours",
+            totalLessons: 16,
+            isFree: true,
+            skillsTaught: ["Figma", "UI Design", "Prototyping", "Design Systems"],
+            earningsLiftPct: 65,
+          },
+          {
+            title: "Video Editing: DaVinci Resolve & Premiere",
+            description: "Edit YouTube videos, testimonials, social content.",
+            category: "Video & Animation",
+            difficulty: "beginner",
+            duration: "12 hours",
+            totalLessons: 18,
+            isFree: true,
+            skillsTaught: ["Video Editing", "DaVinci Resolve", "Adobe Premiere", "Motion Graphics"],
+            earningsLiftPct: 75,
+          },
+          {
+            title: "Plumbing Business: AI Tools & Digital Marketing",
+            description: "Plumbers: use AI to estimate jobs, market on Google, manage bookings.",
+            category: "Business Development",
+            difficulty: "beginner",
+            duration: "5 hours",
+            totalLessons: 10,
+            isFree: true,
+            skillsTaught: ["Business Automation", "Google My Business", "WhatsApp Marketing", "AI Estimation"],
+            earningsLiftPct: 60,
+          },
+          {
+            title: "Electrical Safety Officer Certification",
+            description: "Master theory. Ace the SETA exam. Get certified.",
+            category: "Project Management",
+            difficulty: "advanced",
+            duration: "25 hours",
+            totalLessons: 28,
+            isFree: false,
+            skillsTaught: ["Electrical Safety", "OSHA", "Risk Management", "Compliance"],
+            earningsLiftPct: 150,
+          },
+          {
+            title: "Google Ads Mastery",
+            description: "Master Google Search Ads. Pay R5, get R50 in projects.",
+            category: "Digital Marketing",
+            difficulty: "intermediate",
+            duration: "14 hours",
+            totalLessons: 18,
+            isFree: false,
+            skillsTaught: ["Google Ads", "PPC", "Conversion Rate Optimization", "Analytics"],
+            earningsLiftPct: 120,
+          },
+          {
+            title: "Personal Branding: Become Unforgettable",
+            description: "Build a personal brand that attracts high-paying clients.",
+            category: "Business Development",
+            difficulty: "beginner",
+            duration: "7 hours",
+            totalLessons: 12,
+            isFree: true,
+            skillsTaught: ["Personal Branding", "LinkedIn", "Positioning", "Authority Building"],
+            earningsLiftPct: 70,
+          },
+          {
+            title: "High-Ticket Sales: Closing R50k+ Projects",
+            description: "Sales psychology. Discovery calls. Closing technique.",
+            category: "Business Development",
+            difficulty: "advanced",
+            duration: "10 hours",
+            totalLessons: 14,
+            isFree: false,
+            skillsTaught: ["Sales", "Negotiation", "Discovery", "Closing Techniques"],
+            earningsLiftPct: 200,
+          },
+          {
+            title: "Data Analytics with Python & SQL",
+            description: "Learn Python pandas, SQL queries. Land R30-50k/month jobs.",
+            category: "Data Analytics",
+            difficulty: "intermediate",
+            duration: "24 hours",
+            totalLessons: 28,
+            isFree: false,
+            skillsTaught: ["Python", "SQL", "Data Visualization", "Pandas"],
+            earningsLiftPct: 140,
+          },
+          {
+            title: "Blockchain Development: Solidity & Web3",
+            description: "Learn Solidity, smart contracts, DeFi.",
+            category: "Web Development",
+            difficulty: "advanced",
+            duration: "30 hours",
+            totalLessons: 24,
+            isFree: false,
+            skillsTaught: ["Solidity", "Smart Contracts", "Web3", "DeFi"],
+            earningsLiftPct: 200,
+          },
+          {
+            title: "Time Management & Productivity",
+            description: "Master your time. 4-hour workday. Earn premium rates.",
+            category: "Business Development",
+            difficulty: "beginner",
+            duration: "5 hours",
+            totalLessons: 10,
+            isFree: true,
+            skillsTaught: ["Time Management", "Productivity", "Automation", "Systems"],
+            earningsLiftPct: 40,
+          },
+          {
+            title: "Public Speaking & Pitching",
+            description: "Own the room. Pitch clients with confidence.",
+            category: "Business Development",
+            difficulty: "beginner",
+            duration: "6 hours",
+            totalLessons: 11,
+            isFree: true,
+            skillsTaught: ["Public Speaking", "Presentation", "Pitch Skills", "Confidence"],
+            earningsLiftPct: 50,
+          },
+        ];
+
+        let courseCount = 0;
+        for (const course of ACADEMY_COURSES) {
+          const existing = await storage.query(`SELECT id FROM courses WHERE title = $1`, [course.title]);
+          if (existing && existing.length > 0) continue; // Skip if already exists
+
+          await storage.query(
+            `INSERT INTO courses (title, description, category, difficulty, duration, total_lessons, is_free, skills_taught, earnings_lift_pct, average_rating, status)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 4.5, 'live')`,
+            [
+              course.title,
+              course.description,
+              course.category,
+              course.difficulty,
+              course.duration,
+              course.totalLessons,
+              course.isFree,
+              JSON.stringify(course.skillsTaught),
+              course.earningsLiftPct,
+            ]
+          );
+          courseCount++;
+        }
+
+        res.json({ success: true, coursesAdded: courseCount });
+      } catch (error) {
+        console.error("Error seeding courses:", error);
+        res.status(500).json({ error: "Failed to seed courses" });
+      }
+    });
+
+    console.log("[routes] AI UPSKILLING ACADEMY — FreelanceSkills.net: /api/academy/* | 17 Production Courses (AI, Web Dev, Design, Copywriting, Data, Blockchain, Trades, Sales) · Lesson System · Quizzes · Certificates · Gamification · Marketplace Integration | Beats Coursera+Udemy+LinkedIn Learning until 2031!");
   }
 
   return httpServer;
