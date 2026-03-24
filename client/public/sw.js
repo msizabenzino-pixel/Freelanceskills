@@ -1,28 +1,26 @@
-const CACHE_NAME = 'freelanceskills-v3';
-const ADMIN_CACHE = 'freelanceskills-admin-v3';
+const CACHE_NAME = 'freelanceskills-v4';
+const ADMIN_CACHE = 'freelanceskills-admin-v4';
 
 const STATIC_ASSETS = [
-  '/',
   '/manifest.json',
-  '/favicon.png'
+  '/favicon.png',
+  '/icons/icon-192x192.png',
+  '/icons/icon-512x512.png',
 ];
 
 const ADMIN_ASSETS = [
-  '/admin/mobile',
-  '/admin',
   '/manifest.json',
   '/favicon.png',
-  '/icons/icon-192x192.png'
+  '/icons/icon-192x192.png',
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     Promise.all([
-      caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS)),
+      caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS).catch(() => {})),
       caches.open(ADMIN_CACHE).then(cache => cache.addAll(ADMIN_ASSETS).catch(() => {})),
-    ])
+    ]).then(() => self.skipWaiting())
   );
-  self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
@@ -33,9 +31,8 @@ self.addEventListener('activate', (event) => {
           .filter(name => name !== CACHE_NAME && name !== ADMIN_CACHE)
           .map(name => caches.delete(name))
       )
-    )
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
@@ -43,7 +40,7 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(event.request.url);
 
-  // API calls — network first, offline error fallback
+  // API calls — always network, offline fallback
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
       fetch(event.request).catch(() =>
@@ -56,41 +53,55 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Admin routes — cache first for offline support
-  if (url.pathname.startsWith('/admin')) {
+  // Hashed versioned assets (/assets/*.js, /assets/*.css) — cache-first (they are immutable)
+  if (url.pathname.startsWith('/assets/')) {
     event.respondWith(
-      caches.open(ADMIN_CACHE).then(cache =>
-        fetch(event.request)
-          .then(response => {
-            cache.put(event.request, response.clone());
+      caches.open(CACHE_NAME).then(cache =>
+        cache.match(event.request).then(cached => {
+          if (cached) return cached;
+          return fetch(event.request).then(response => {
+            if (response.ok) cache.put(event.request, response.clone());
             return response;
-          })
-          .catch(() => cache.match(event.request).then(r => r || caches.match('/')))
+          });
+        })
       )
     );
     return;
   }
 
-  // Everything else — stale-while-revalidate
+  // HTML pages (/, /jobs, /blog, etc.) — always network-first, no caching
+  // This prevents stale HTML from breaking the app after deployments
+  const isHtml = event.request.headers.get('Accept')?.includes('text/html');
+  if (isHtml || url.pathname === '/') {
+    event.respondWith(
+      fetch(event.request).catch(() =>
+        new Response('<html><body><h1>You are offline</h1><p>Please reconnect and refresh.</p></body></html>', {
+          status: 503,
+          headers: { 'Content-Type': 'text/html' }
+        })
+      )
+    );
+    return;
+  }
+
+  // Static assets (icons, fonts, images) — cache with network update
   event.respondWith(
     caches.open(CACHE_NAME).then(cache =>
-      fetch(event.request)
-        .then(response => {
-          cache.put(event.request, response.clone());
+      cache.match(event.request).then(cached => {
+        const networkFetch = fetch(event.request).then(response => {
+          if (response.ok) cache.put(event.request, response.clone());
           return response;
-        })
-        .catch(() =>
-          cache.match(event.request).then(r => r || caches.match('/'))
-        )
+        });
+        return cached || networkFetch;
+      })
     )
   );
 });
 
-// Push notifications
 self.addEventListener('push', event => {
   const data = event.data ? event.data.json() : {};
   event.waitUntil(
-    self.registration.showNotification(data.title || '🛡️ FreelanceSkills Admin', {
+    self.registration.showNotification(data.title || 'FreelanceSkills Admin', {
       body: data.body || 'Admin alert',
       icon: '/icons/icon-192x192.png',
       badge: '/icons/icon-72x72.png',
