@@ -1,0 +1,39 @@
+You are Elon Musk at 400% intensity — the mode that turns a simple “About” page into the reason millions choose Tesla over every other car brand.
+
+We own freelanceskills.net. The current About/Team page is completely blank and killing all trust. This page MUST become the #1 reason every freelancer and client in South Africa (and Africa) chooses us over Upwork, Fiverr, or any other platform.
+
+Your one job: Build the single greatest Founder + Team page in the history of freelance platforms — so powerful that visitors instantly trust us, feel inspired, and want to join immediately.
+
+Use the real founder: Msiza Bernet (known as Ben).
+
+Incorporate these exact facts into an epic, authentic, no-fluff founder story:
+- Started as a hands-on Senior Technician / Supervisor at Eskom (2012–2023) with a proven track record of increasing profitability, leading large engineering teams, managing multi-million rand projects, WCM-TPM/RCM, maintenance excellence, and safety programs.
+- Resigned in 2023 to become a full-time prominent businessman.
+- Built and successfully sold multiple businesses in the process.
+- Now the Founder & CEO of FreelanceSkills.net — the platform created from real industry pain to empower South African freelancers with local payments, AI upskilling, and genuine opportunity.
+- Qualifications: Government Certificate of Competency (2018), B-Tech Mechanical (2015–2018), NDip Mechanical (2009–2012), currently completing Bachelor of Commerce in Business Management.
+- Skills: Large project management, planning & budgeting, analytical & strategic vision, maintenance processes, SAP Planned Maintenance, Contract Supervision, Leadership, Coaching.
+- Languages: English, isiZulu, Sotho (Afrikaans receptive bilingualism).
+- Office: Camps Bay, Cape Town — modern high-end offices overlooking the Atlantic.
+
+Visual assets:
+- Use the exact professional photo from “Ben Office.png” (confident man in grey suit, arms crossed, boardroom setting with city view and team in background). Make it the hero image — high-resolution, cinematic.
+- Add subtle lifestyle/office shots of Cape Town Camps Bay offices if needed (modern, ocean views, professional energy).
+
+Page Structure (Next.js 15 + Tailwind, fully responsive, dark/light mode, mobile-first, lightning-fast):
+1. Hero Section — Stunning photo of Ben + powerful headline + short punchline + “Meet the Founder” CTA
+2. Founder Story — Long-form, first-person narrative (authentic, inspiring, Elon-style direct language) that weaves the full Eskom journey + business-building story + why he created FreelanceSkills
+3. Credentials & Achievements — Beautiful grid with qualifications, courses, key career wins (use real CV data)
+4. Skills & Languages — Icon-rich section
+5. The Vision — Why this platform exists and how Ben’s hands-on leadership will make it the #1 freelance platform in the world
+6. Team Section — Start with Ben as Founder/CEO. Add “Growing fast — we are hiring world-class talent” teaser with open roles (AI engineers, growth hackers, support legends). Include placeholder for future team members with “Join the movement” button linking to careers.
+7. Office Location — High-impact section showing Camps Bay Cape Town offices (address if available, stunning ocean views, modern workspace vibe)
+8. Trust Signals — Testimonials, “Built by a real engineer who understands your struggle”, POPIA/SARS compliance badges, “100% South African owned & operated”
+
+Make every word magnetic. Tone: confident, humble, visionary, no corporate fluff. Use short powerful sentences. Make visitors feel: “This guy is the real deal — I want to be part of this.”
+
+Output COMPLETE production-ready code (full page component + all sections). Include all text, image alt texts, SEO meta, Open Graph tags, and calls-to-action that drive users to sign up / post jobs / join Academy.
+
+Title the output: “FREELANCESKILLS.NET — ABOUT / TEAM PAGE — WORLD-CLASS FOUNDER STORY + PRODUCTION CODE”
+
+Start generating now. Do not stop until this page is so good it single-handedly turns freelanceskills.net into the most trusted platform in Africa.

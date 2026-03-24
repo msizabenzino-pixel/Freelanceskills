@@ -40,6 +40,9 @@ const Impact = lazy(() => import("@/pages/Impact"));
 const Academy = lazy(() => import("@/pages/Academy"));
 const AcademyCatalog = lazy(() => import("@/pages/AcademyCatalog"));
 const AcademyCourseDetail = lazy(() => import("@/pages/AcademyCourseDetail"));
+const Blog = lazy(() => import("@/pages/Blog"));
+const BlogPost = lazy(() => import("@/pages/BlogPost"));
+const BlogCategory = lazy(() => import("@/pages/BlogCategory"));
 const Enterprise = lazy(() => import("@/pages/Enterprise"));
 const Referral = lazy(() => import("@/pages/Referral"));
 const Checkout = lazy(() => import("@/pages/Checkout"));
@@ -333,6 +336,9 @@ function Router() {
         <Route path="/academy" component={Academy} />
         <Route path="/academy/catalog" component={AcademyCatalog} />
         <Route path="/academy/:id" component={AcademyCourseDetail} />
+        <Route path="/blog" component={Blog} />
+        <Route path="/blog/category/:slug" component={BlogCategory} />
+        <Route path="/blog/:slug" component={BlogPost} />
         <Route path="/enterprise" component={Enterprise} />
         <Route path="/referral" component={Referral} />
         <Route path="/checkout" component={Checkout} />

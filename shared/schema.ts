@@ -30,3 +30,4 @@ export * from "./models/feature_flags";
 export * from "./models/roles";
 export * from "./models/compliance";
 export * from "./models/marketplace";
+export * from "./models/blog";

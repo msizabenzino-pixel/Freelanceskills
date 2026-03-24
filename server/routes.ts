@@ -6692,6 +6692,417 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
     });
 
     console.log("[routes] AI UPSKILLING ACADEMY — FreelanceSkills.net: /api/academy/* | 17 Production Courses (AI, Web Dev, Design, Copywriting, Data, Blockchain, Trades, Sales) · Lesson System · Quizzes · Certificates · Gamification · Marketplace Integration | Beats Coursera+Udemy+LinkedIn Learning until 2031!");
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // BLOG & CONTENT ENGINE — /api/blog/*
+    // 2 articles/day · 480 articles planned · SEO-optimised · Academy-linked
+    // ═══════════════════════════════════════════════════════════════════════
+
+    // Ensure blog tables exist
+    {
+      const { db: blogDb } = await import("./db");
+      const { sql: blogSql } = await import("drizzle-orm");
+      await blogDb.execute(blogSql`
+        CREATE TABLE IF NOT EXISTS blog_categories (
+          id SERIAL PRIMARY KEY,
+          name TEXT NOT NULL,
+          slug TEXT NOT NULL UNIQUE,
+          description TEXT,
+          color VARCHAR(20) DEFAULT 'emerald',
+          icon VARCHAR(50),
+          post_count INTEGER DEFAULT 0
+        )
+      `);
+      await blogDb.execute(blogSql`
+        CREATE TABLE IF NOT EXISTS blog_authors (
+          id SERIAL PRIMARY KEY,
+          name TEXT NOT NULL,
+          slug TEXT NOT NULL UNIQUE,
+          bio TEXT,
+          avatar TEXT,
+          role VARCHAR(100),
+          linkedin_url TEXT,
+          twitter_handle VARCHAR(100),
+          post_count INTEGER DEFAULT 0
+        )
+      `);
+      await blogDb.execute(blogSql`
+        CREATE TABLE IF NOT EXISTS blog_posts (
+          id SERIAL PRIMARY KEY,
+          title TEXT NOT NULL,
+          slug TEXT NOT NULL UNIQUE,
+          excerpt TEXT NOT NULL,
+          content TEXT NOT NULL,
+          cover_image TEXT,
+          cover_image_alt TEXT,
+          category_id INTEGER,
+          author_id INTEGER,
+          tags TEXT[] DEFAULT '{}',
+          target_keywords TEXT[] DEFAULT '{}',
+          meta_title TEXT,
+          meta_description TEXT,
+          og_image TEXT,
+          reading_time_minutes INTEGER DEFAULT 5,
+          view_count INTEGER DEFAULT 0,
+          status VARCHAR(20) DEFAULT 'published',
+          is_featured BOOLEAN DEFAULT false,
+          linked_course_ids INTEGER[] DEFAULT '{}',
+          linked_job_categories TEXT[] DEFAULT '{}',
+          related_post_ids INTEGER[] DEFAULT '{}',
+          structured_data JSONB,
+          published_at TIMESTAMP DEFAULT NOW(),
+          updated_at TIMESTAMP DEFAULT NOW()
+        )
+      `);
+    }
+
+    // Blog query helper using pg Pool directly
+    async function bq(sql: string, params: any[] = []): Promise<any[]> {
+      const { pool: blogPool } = await import("./db");
+      const result = await blogPool.query(sql, params);
+      return result.rows;
+    }
+
+    // GET /api/blog/categories
+    app.get("/api/blog/categories", async (req, res) => {
+      try {
+        const cats = await bq(`SELECT * FROM blog_categories ORDER BY post_count DESC, name ASC`);
+        res.json(cats || []);
+      } catch (err) {
+        res.status(500).json({ error: "Failed to fetch categories" });
+      }
+    });
+
+    // GET /api/blog/categories/:slug
+    app.get("/api/blog/categories/:slug", async (req, res) => {
+      try {
+        const [cat] = await bq(`SELECT * FROM blog_categories WHERE slug = $1`, [req.params.slug]);
+        if (!cat) return res.status(404).json({ error: "Category not found" });
+        res.json(cat);
+      } catch (err) {
+        res.status(500).json({ error: "Failed to fetch category" });
+      }
+    });
+
+    // GET /api/blog/posts
+    app.get("/api/blog/posts", async (req, res) => {
+      try {
+        const page = Math.max(1, parseInt(String(req.query.page || "1")));
+        const limit = Math.min(24, Math.max(1, parseInt(String(req.query.limit || "12"))));
+        const offset = (page - 1) * limit;
+        const category = req.query.category as string | undefined;
+
+        let where = `WHERE bp.status = 'published'`;
+        const params: any[] = [];
+        let paramIdx = 1;
+
+        if (category) {
+          params.push(category);
+          where += ` AND bc.slug = $${paramIdx++}`;
+        }
+
+        const posts = await bq(
+          `SELECT bp.id, bp.title, bp.slug, bp.excerpt, bp.cover_image, bp.cover_image_alt,
+                  bc.name as category_name, bc.slug as category_slug, bc.color as category_color,
+                  ba.name as author_name, bp.reading_time_minutes, bp.view_count,
+                  bp.tags, bp.is_featured, bp.published_at
+           FROM blog_posts bp
+           LEFT JOIN blog_categories bc ON bp.category_id = bc.id
+           LEFT JOIN blog_authors ba ON bp.author_id = ba.id
+           ${where}
+           ORDER BY bp.is_featured DESC, bp.published_at DESC
+           LIMIT $${paramIdx++} OFFSET $${paramIdx++}`,
+          [...params, limit, offset]
+        );
+
+        const totalRows = await bq(
+          `SELECT COUNT(*) as total FROM blog_posts bp
+           LEFT JOIN blog_categories bc ON bp.category_id = bc.id
+           ${where}`,
+          params
+        );
+        const total = totalRows[0]?.total ?? 0;
+
+        const featuredPosts = await bq(
+          `SELECT bp.id, bp.title, bp.slug, bp.excerpt, bp.cover_image, bp.cover_image_alt,
+                  bc.name as category_name, bc.slug as category_slug, bc.color as category_color,
+                  ba.name as author_name, bp.reading_time_minutes, bp.view_count,
+                  bp.tags, bp.is_featured, bp.published_at
+           FROM blog_posts bp
+           LEFT JOIN blog_categories bc ON bp.category_id = bc.id
+           LEFT JOIN blog_authors ba ON bp.author_id = ba.id
+           WHERE bp.status = 'published' AND bp.is_featured = true
+           ORDER BY bp.published_at DESC LIMIT 1`
+        );
+
+        res.json({ posts: posts || [], total: parseInt(total), featured: featuredPosts?.[0] || null });
+      } catch (err) {
+        console.error("Blog posts error:", err);
+        res.status(500).json({ error: "Failed to fetch posts" });
+      }
+    });
+
+    // GET /api/blog/posts/:slug
+    app.get("/api/blog/posts/:slug", async (req, res) => {
+      try {
+        const [post] = await bq(
+          `SELECT bp.*,
+                  bc.name as category_name, bc.slug as category_slug, bc.color as category_color,
+                  ba.name as author_name, ba.bio as author_bio, ba.avatar as author_avatar, ba.role as author_role
+           FROM blog_posts bp
+           LEFT JOIN blog_categories bc ON bp.category_id = bc.id
+           LEFT JOIN blog_authors ba ON bp.author_id = ba.id
+           WHERE bp.slug = $1 AND bp.status = 'published'`,
+          [req.params.slug]
+        );
+        if (!post) return res.status(404).json({ error: "Post not found" });
+
+        // Fetch related posts
+        const relatedPosts = post.related_post_ids?.length > 0
+          ? await bq(
+              `SELECT bp.id, bp.title, bp.slug, bp.excerpt, bp.reading_time_minutes,
+                      bc.name as category_name, bc.color as category_color
+               FROM blog_posts bp
+               LEFT JOIN blog_categories bc ON bp.category_id = bc.id
+               WHERE bp.id = ANY($1::int[]) AND bp.status = 'published'`,
+              [post.related_post_ids]
+            )
+          : await bq(
+              `SELECT bp.id, bp.title, bp.slug, bp.excerpt, bp.reading_time_minutes,
+                      bc.name as category_name, bc.color as category_color
+               FROM blog_posts bp
+               LEFT JOIN blog_categories bc ON bp.category_id = bc.id
+               WHERE bp.category_id = $1 AND bp.id != $2 AND bp.status = 'published'
+               ORDER BY bp.published_at DESC LIMIT 3`,
+              [post.category_id, post.id]
+            );
+
+        // Fetch linked courses
+        const linkedCourses = post.linked_course_ids?.length > 0
+          ? await bq(
+              `SELECT id, title, category, earnings_lift_pct, is_free
+               FROM courses WHERE id = ANY($1::int[]) AND status = 'live'`,
+              [post.linked_course_ids]
+            )
+          : await bq(
+              `SELECT id, title, category, earnings_lift_pct, is_free FROM courses WHERE status = 'live' LIMIT 2`
+            );
+
+        res.json({ ...post, relatedPosts: relatedPosts || [], linkedCourses: linkedCourses || [] });
+      } catch (err) {
+        console.error("Blog post error:", err);
+        res.status(500).json({ error: "Failed to fetch post" });
+      }
+    });
+
+    // POST /api/blog/posts/:slug/view
+    app.post("/api/blog/posts/:slug/view", async (req, res) => {
+      try {
+        await bq(`UPDATE blog_posts SET view_count = view_count + 1 WHERE slug = $1`, [req.params.slug]);
+        res.json({ ok: true });
+      } catch (err) {
+        res.json({ ok: false });
+      }
+    });
+
+    // GET /api/blog/search
+    app.get("/api/blog/search", async (req, res) => {
+      try {
+        const q = String(req.query.q || "").trim();
+        if (!q || q.length < 2) return res.json({ posts: [] });
+        const searchTerm = `%${q}%`;
+        const posts = await bq(
+          `SELECT bp.id, bp.title, bp.slug, bp.excerpt, bp.reading_time_minutes, bp.view_count,
+                  bc.name as category_name, bc.slug as category_slug, bc.color as category_color,
+                  ba.name as author_name, bp.published_at, bp.tags
+           FROM blog_posts bp
+           LEFT JOIN blog_categories bc ON bp.category_id = bc.id
+           LEFT JOIN blog_authors ba ON bp.author_id = ba.id
+           WHERE bp.status = 'published'
+             AND (bp.title ILIKE $1 OR bp.excerpt ILIKE $1 OR bp.content ILIKE $1
+                  OR $2 = ANY(bp.tags) OR $2 = ANY(bp.target_keywords))
+           ORDER BY bp.view_count DESC, bp.published_at DESC LIMIT 20`,
+          [searchTerm, q]
+        );
+        res.json({ posts: posts || [] });
+      } catch (err) {
+        res.status(500).json({ error: "Search failed" });
+      }
+    });
+
+    // GET /api/blog/rss — RSS 2.0 Feed
+    app.get("/api/blog/rss", async (req, res) => {
+      try {
+        const posts = await bq(
+          `SELECT bp.id, bp.title, bp.slug, bp.excerpt, bp.published_at,
+                  bc.name as category_name, ba.name as author_name
+           FROM blog_posts bp
+           LEFT JOIN blog_categories bc ON bp.category_id = bc.id
+           LEFT JOIN blog_authors ba ON bp.author_id = ba.id
+           WHERE bp.status = 'published'
+           ORDER BY bp.published_at DESC LIMIT 50`
+        );
+        const baseUrl = "https://freelanceskills.net";
+        const items = (posts || []).map((p: any) => `
+    <item>
+      <title><![CDATA[${p.title}]]></title>
+      <link>${baseUrl}/blog/${p.slug}</link>
+      <guid isPermaLink="true">${baseUrl}/blog/${p.slug}</guid>
+      <description><![CDATA[${p.excerpt}]]></description>
+      <pubDate>${new Date(p.published_at).toUTCString()}</pubDate>
+      ${p.category_name ? `<category><![CDATA[${p.category_name}]]></category>` : ""}
+      ${p.author_name ? `<author>${p.author_name}</author>` : ""}
+    </item>`).join("");
+
+        const rss = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>FreelanceSkills.net Blog — SA Freelance Intelligence</title>
+    <link>${baseUrl}/blog</link>
+    <atom:link href="${baseUrl}/api/blog/rss" rel="self" type="application/rss+xml" />
+    <description>2 new articles daily — AI tools, SA tax, government tenders, high-income skills, success stories, and freelance fundamentals for South African freelancers.</description>
+    <language>en-ZA</language>
+    <copyright>Copyright 2026 FreelanceSkills.net (CIPC 2026/070509/09)</copyright>
+    <managingEditor>blog@freelanceskills.net (Bernet Labuschagne)</managingEditor>
+    <webMaster>tech@freelanceskills.net</webMaster>
+    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+    <ttl>720</ttl>${items}
+  </channel>
+</rss>`;
+
+        res.setHeader("Content-Type", "application/rss+xml; charset=utf-8");
+        res.send(rss);
+      } catch (err) {
+        res.status(500).send("Failed to generate RSS feed");
+      }
+    });
+
+    // GET /api/blog/sitemap — XML Sitemap
+    app.get("/api/blog/sitemap", async (req, res) => {
+      try {
+        const posts = await bq(
+          `SELECT slug, updated_at FROM blog_posts WHERE status = 'published' ORDER BY updated_at DESC`
+        );
+        const cats = await bq(`SELECT slug FROM blog_categories`);
+        const baseUrl = "https://freelanceskills.net";
+
+        const postUrls = (posts || []).map((p: any) => `
+  <url>
+    <loc>${baseUrl}/blog/${p.slug}</loc>
+    <lastmod>${new Date(p.updated_at).toISOString().split("T")[0]}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>`).join("");
+
+        const catUrls = (cats || []).map((c: any) => `
+  <url>
+    <loc>${baseUrl}/blog/category/${c.slug}</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>`).join("");
+
+        const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${baseUrl}/blog</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>${catUrls}${postUrls}
+</urlset>`;
+
+        res.setHeader("Content-Type", "application/xml; charset=utf-8");
+        res.send(sitemap);
+      } catch (err) {
+        res.status(500).send("Failed to generate sitemap");
+      }
+    });
+
+    // POST /api/blog/seed — Admin: seed blog categories, authors, and 7 launch articles
+    app.post("/api/blog/seed", async (req, res) => {
+      try {
+        const { BLOG_CATEGORIES, BLOG_AUTHORS, SEED_BLOG_POSTS } = await import("./blog-seed-data");
+        let catCount = 0, authorCount = 0, postCount = 0;
+
+        // Seed categories
+        for (const cat of BLOG_CATEGORIES) {
+          const existing = await bq(`SELECT id FROM blog_categories WHERE slug = $1`, [cat.slug]);
+          if (!existing || existing.length === 0) {
+            await bq(
+              `INSERT INTO blog_categories (name, slug, description, color, icon) VALUES ($1, $2, $3, $4, $5)`,
+              [cat.name, cat.slug, cat.description, cat.color, cat.icon]
+            );
+            catCount++;
+          }
+        }
+
+        // Seed authors
+        for (const author of BLOG_AUTHORS) {
+          const existing = await bq(`SELECT id FROM blog_authors WHERE slug = $1`, [author.slug]);
+          if (!existing || existing.length === 0) {
+            await bq(
+              `INSERT INTO blog_authors (name, slug, bio, role, twitter_handle) VALUES ($1, $2, $3, $4, $5)`,
+              [author.name, author.slug, author.bio, author.role, author.twitterHandle || null]
+            );
+            authorCount++;
+          }
+        }
+
+        // Get category and author IDs
+        const categories = await bq(`SELECT id, slug FROM blog_categories`);
+        const authors = await bq(`SELECT id, slug FROM blog_authors`);
+        const catMap: Record<string, number> = {};
+        const authorMap: Record<string, number> = {};
+        (categories || []).forEach((c: any) => { catMap[c.slug] = c.id; });
+        (authors || []).forEach((a: any) => { authorMap[a.slug] = a.id; });
+
+        // Seed posts
+        for (let i = 0; i < SEED_BLOG_POSTS.length; i++) {
+          const post = SEED_BLOG_POSTS[i];
+          const existing = await bq(`SELECT id FROM blog_posts WHERE slug = $1`, [post.slug]);
+          if (!existing || existing.length === 0) {
+            const catId = catMap[post.category] || null;
+            const authorId = authorMap["bernet-labuschagne"] || null;
+            // Spread articles over past 7 days
+            const publishedAt = new Date(Date.now() - (SEED_BLOG_POSTS.length - i) * 12 * 60 * 60 * 1000);
+            await bq(
+              `INSERT INTO blog_posts (
+                title, slug, excerpt, content, category_id, author_id,
+                tags, target_keywords, meta_title, meta_description,
+                reading_time_minutes, is_featured, status, published_at, updated_at
+              ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, 'published', $13, $13)`,
+              [
+                post.title, post.slug, post.excerpt, post.content,
+                catId, authorId,
+                post.tags, post.targetKeywords,
+                post.metaTitle, post.metaDescription,
+                post.readingTimeMinutes,
+                post.isFeatured || false,
+                publishedAt,
+              ]
+            );
+            // Update category post count
+            if (catId) {
+              await bq(`UPDATE blog_categories SET post_count = post_count + 1 WHERE id = $1`, [catId]);
+            }
+            postCount++;
+          }
+        }
+
+        // Update author post counts
+        await bq(`
+          UPDATE blog_authors ba SET post_count = (
+            SELECT COUNT(*) FROM blog_posts WHERE author_id = ba.id AND status = 'published'
+          )
+        `);
+
+        res.json({ success: true, categoriesAdded: catCount, authorsAdded: authorCount, postsAdded: postCount });
+      } catch (err) {
+        console.error("Blog seed error:", err);
+        res.status(500).json({ error: String(err) });
+      }
+    });
+
+    console.log("[routes] BLOG ENGINE — FreelanceSkills.net: 2 articles/day · 480 planned · SEO-optimised · SA-focused · Academy-integrated · Categories: AI Tools, SA Tax, Tenders, High-Income Skills, Success Stories, Blue-Collar, Fundamentals");
   }
 
   return httpServer;
