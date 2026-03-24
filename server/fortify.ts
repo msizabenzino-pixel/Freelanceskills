@@ -691,7 +691,11 @@ export function prometheusTextFormat() {
 // ============================================================
 export function securityHeaders(req: Request, res: Response, next: NextFunction) {
   res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("X-Frame-Options", "SAMEORIGIN");
+  // X-Frame-Options intentionally omitted — CSP frame-ancestors below is the
+  // correct mechanism and takes precedence in all modern browsers. Keeping
+  // X-Frame-Options alongside a permissive frame-ancestors causes some
+  // browser/proxy combinations to apply the stricter of the two, blocking the
+  // Replit preview pane. CSP alone gives us full control.
   res.setHeader("X-XSS-Protection", "0");
   res.setHeader("X-DNS-Prefetch-Control", "off");
   res.setHeader("X-Download-Options", "noopen");
@@ -711,7 +715,7 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
     "img-src 'self' data: https: blob:; " +
     `connect-src 'self' https: ${isDev ? "ws: wss:" : "wss:"}; ` +
     "frame-src 'self' https://www.payfast.co.za https://sandbox.payfast.co.za; " +
-    "frame-ancestors 'self' https://*.replit.dev https://*.replit.app; " +
+    "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.replit.com; " +
     "base-uri 'self'; " +
     "form-action 'self' https://www.payfast.co.za https://sandbox.payfast.co.za;"
   );
