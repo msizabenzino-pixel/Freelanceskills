@@ -166,14 +166,14 @@ export function SupportChat() {
         text.toLowerCase().includes("support");
 
       let content = data.message;
-      if (needsHandoff && !content.includes("https://wa.me/272324636")) {
-        content += "\n\nChat with our team on WhatsApp for instant help: https://wa.me/272324636";
+      if (needsHandoff && !content.includes("https://wa.me/27722324636")) {
+        content += "\n\nChat with our team on WhatsApp for instant help: https://wa.me/27722324636";
       }
 
       addBotMessage(content);
     } catch (error) {
       console.error("Support chat error:", error);
-      addBotMessage("I'm sorry, I'm having trouble connecting. Please try again or chat with our team on WhatsApp: https://wa.me/272324636");
+      addBotMessage("I'm sorry, I'm having trouble connecting. Please try again or chat with our team on WhatsApp: https://wa.me/27722324636");
     } finally {
       setIsTyping(false);
     }
@@ -273,7 +273,7 @@ export function SupportChat() {
                 <div className="pt-4 border-t">
                   <p className="text-xs text-center text-muted-foreground mb-2">Or contact us directly:</p>
                   <a 
-                    href="https://wa.me/272324636" 
+                    href="https://wa.me/27722324636" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2 w-full p-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"

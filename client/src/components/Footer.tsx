@@ -86,7 +86,7 @@ export function Footer() {
               </a>
             </div>
             <div className="flex gap-4 text-sm text-muted-foreground mt-4">
-              <a href="https://wa.me/272324636" className="flex items-center gap-1 hover:text-primary" data-testid="link-whatsapp">
+              <a href="https://wa.me/27722324636" className="flex items-center gap-1 hover:text-primary" data-testid="link-whatsapp">
                 <Phone className="w-4 h-4" />
                 WhatsApp
               </a>
