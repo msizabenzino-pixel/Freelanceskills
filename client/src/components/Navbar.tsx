@@ -2,7 +2,7 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Menu, X, Zap, LogOut, HelpCircle, Users, Briefcase, ChevronDown, Sparkles, Moon, Sun, Mic } from "lucide-react";
+import { Menu, X, Zap, LogOut, HelpCircle, Users, Briefcase, ChevronDown, Sparkles, Moon, Sun, Mic, GraduationCap } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useDarkMode } from "@/hooks/use-dark-mode";
 import { VoiceSearch } from "./VoiceSearch";
@@ -47,6 +47,7 @@ export function Navbar() {
     { name: "Explore", href: "/explore", highlight: true },
     { name: "Vuma AI", href: "/vuma", icon: Sparkles, highlight: true },
     { name: "Services", href: "/services" },
+    { name: "Academy", href: "/academy", icon: GraduationCap },
     { name: "Blog", href: "/blog" },
     { name: "Pricing", href: "/pricing" },
     { name: "About", href: "/about" },

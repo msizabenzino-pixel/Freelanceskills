@@ -26,6 +26,26 @@ The platform prioritizes a mobile-first, PWA-enabled design with strong accessib
 ### System Design Choices
 The architecture is designed for scalability and maintainability, with clear separation of concerns between frontend, backend, and data layers. The modular design supports the integration of advanced features such as the 2031 Vision Modules, which include blockchain credentials, NFT certifications, green impact scoring, DAO governance, and AI-driven insights. Edge case handlers are robustly implemented to manage complex scenarios like account deletion mid-escrow, high concurrent application queues, and dispute escalations. An admin platform provides comprehensive control and analytics over all aspects of the marketplace.
 
+## Recent Platform Upgrades (March 2026)
+
+### Homepage Nuclear Upgrade
+- **LiveActivityTicker**: Animated social proof ticker cycling through 10 real-time-style platform events every 4 seconds (above main content, below hero)
+- **TrustStrip**: 6 trust signals across the page (POPIA Compliant, Escrow Protected, 14-Day Money-Back, CIPC Registered, ID Verified Talent, 48h Dispute Resolution)
+- **PressLogosSA**: "As featured in South African media" section with 6 SA media outlet logos (TechCabal, Daily Maverick, Fin24, MyBroadband, Business Insider SA, ITWeb) — positioned after success stories section
+- **Newsletter Section**: Full email capture section before footer with POPIA-compliant copy and success/error states
+- **Dynamic Blog Teaser**: Blog teaser now fetches live articles from `/api/blog/posts?limit=3&featured=true` with fallback to hardcoded content
+
+### Newsletter System
+- **DB Table**: `newsletter_subscribers` table created (id, email, first_name, source, tags, subscribed, confirmed_at, created_at)
+- **API Endpoints**: `POST /api/newsletter/subscribe` (upsert logic), `GET /api/newsletter/count` (subscriber count)
+- **Schema**: Added to `shared/models/marketing.ts`
+
+### Navbar
+- **Academy link**: Added "Academy" with GraduationCap icon to main desktop navigation between "Services" and "Blog"
+
+### Footer
+- **Trust Badges Row**: Added 5-badge trust strip at top of footer (POPIA, Escrow, 14-Day Money-Back, CIPC, ID Verified) with color-coded icons
+
 ## External Dependencies
 
 -   **Database**: PostgreSQL

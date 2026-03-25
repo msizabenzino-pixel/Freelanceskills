@@ -351,3 +351,20 @@ export type AffiliateProgram = typeof affiliatePrograms.$inferSelect;
 export type GrowthMetric = typeof growthMetrics.$inferSelect;
 export type LoyaltyTier = typeof loyaltyTiers.$inferSelect;
 export type PredictiveMetric = typeof predictiveMetrics.$inferSelect;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// NEWSLETTER SUBSCRIBERS — Email capture for growth
+// ═══════════════════════════════════════════════════════════════════════════
+export const newsletterSubscribers = pgTable("newsletter_subscribers", {
+  id: serial("id").primaryKey(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  firstName: varchar("first_name", { length: 100 }),
+  source: varchar("source", { length: 50 }).default("homepage"), // homepage, blog, academy, popup
+  tags: jsonb("tags").default(sql`'[]'::jsonb`), // ["freelancer","cape-town","developer"]
+  subscribed: boolean("subscribed").notNull().default(true),
+  confirmedAt: timestamp("confirmed_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type NewsletterSubscriber = typeof newsletterSubscribers.$inferSelect;
+export type NewsletterSubscriberInsert = typeof newsletterSubscribers.$inferInsert;

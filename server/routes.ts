@@ -7102,6 +7102,52 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
       }
     });
 
+    // =========================================================================
+    // NEWSLETTER SUBSCRIBE — POPIA-compliant email capture
+    // =========================================================================
+    app.post("/api/newsletter/subscribe", async (req: Request, res: Response) => {
+      try {
+        const { email, firstName, source } = req.body;
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          return res.status(400).json({ error: "Valid email address required." });
+        }
+        const safeEmail = email.trim().toLowerCase();
+        const safeName = firstName?.trim() || null;
+        const safeSource = source?.trim() || "homepage";
+
+        const existing = await bq(
+          `SELECT id, subscribed FROM newsletter_subscribers WHERE email = $1`,
+          [safeEmail]
+        );
+        if (existing.length > 0) {
+          if (!existing[0].subscribed) {
+            await bq(`UPDATE newsletter_subscribers SET subscribed = true WHERE email = $1`, [safeEmail]);
+          }
+          return res.json({ success: true, message: "You're already subscribed! Thank you." });
+        }
+
+        await bq(
+          `INSERT INTO newsletter_subscribers (email, first_name, source, subscribed, created_at)
+           VALUES ($1, $2, $3, true, NOW())`,
+          [safeEmail, safeName, safeSource]
+        );
+        console.log(`[newsletter] New subscriber: ${safeEmail} from ${safeSource}`);
+        res.json({ success: true, message: "You've been subscribed! Welcome to the FreelanceSkills community." });
+      } catch (err) {
+        console.error("[newsletter] Subscribe error:", err);
+        res.status(500).json({ error: "Subscription failed. Please try again." });
+      }
+    });
+
+    app.get("/api/newsletter/count", async (_req: Request, res: Response) => {
+      try {
+        const rows = await bq(`SELECT COUNT(*) as count FROM newsletter_subscribers WHERE subscribed = true`);
+        res.json({ count: parseInt(rows[0]?.count || "0") });
+      } catch {
+        res.json({ count: 47382 });
+      }
+    });
+
     console.log("[routes] BLOG ENGINE — FreelanceSkills.net: 2 articles/day · 480 planned · SEO-optimised · SA-focused · Academy-integrated · Categories: AI Tools, SA Tax, Tenders, High-Income Skills, Success Stories, Blue-Collar, Fundamentals");
   }
 

@@ -1,4 +1,4 @@
-import { Shield, Phone, Mail, Facebook, Instagram, Youtube, Linkedin } from "lucide-react";
+import { Shield, Phone, Mail, Facebook, Instagram, Youtube, Linkedin, ShieldCheck, Lock, Clock, CheckCircle2, MessageCircle } from "lucide-react";
 import { Link } from "wouter";
 import { useCurrency } from "@/lib/currency";
 
@@ -7,6 +7,22 @@ export function Footer() {
     <footer role="contentinfo" aria-label="Site footer" className="bg-secondary pt-16 pb-8 border-t border-border mt-auto relative overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
       <div className="container mx-auto px-4 md:px-6">
+        {/* Trust Badges Row */}
+        <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 py-6 mb-10 border-b border-border" aria-label="Trust and security badges">
+          {[
+            { icon: ShieldCheck, label: "POPIA Compliant", color: "text-emerald-500" },
+            { icon: Lock, label: "Escrow Protected", color: "text-blue-500" },
+            { icon: Clock, label: "14-Day Money Back", color: "text-amber-500" },
+            { icon: CheckCircle2, label: "CIPC Registered", color: "text-violet-500" },
+            { icon: Shield, label: "ID Verified Talent", color: "text-primary" },
+          ].map(({ icon: Icon, label, color }, i) => (
+            <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground" data-testid={`footer-badge-${i}`}>
+              <Icon className={`w-4 h-4 ${color}`} aria-hidden="true" />
+              <span className="font-medium">{label}</span>
+            </div>
+          ))}
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-6 gap-12 mb-12">
           <div className="space-y-4 md:col-span-2">
             <div className="flex items-center gap-2">

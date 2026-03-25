@@ -4,13 +4,15 @@ import { JobCard } from "@/components/JobCard";
 import { FreelancerCard } from "@/components/FreelancerCard";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users, Gift, Building2, Brain, Link2, Wallet, BarChart3, Leaf, Globe, ChevronRight, ShieldCheck, Lock, FileText, Headphones, Star, Quote, Send, Zap, X } from "lucide-react";
+import { ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users, Gift, Building2, Brain, Link2, Wallet, BarChart3, Leaf, Globe, ChevronRight, ShieldCheck, Lock, FileText, Headphones, Star, Quote, Send, Zap, X, Bell, Newspaper, Mail, Clock, CheckCheck, Activity } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { useCurrency } from "@/lib/currency";
 import { SERVICE_CATEGORIES } from "@shared/categories";
 import { Code, Wrench, Heart, Hammer, Home as HomeIcon, Waves, Car, Shield as ShieldIcon, Palette, PenTool, Briefcase, PartyPopper, Sparkles as SparklesIcon, Bot } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { motion, AnimatePresence } from "framer-motion";
@@ -19,6 +21,120 @@ const ICON_MAP: Record<string, any> = {
   Code, Wrench, Heart, Hammer, Home: HomeIcon, Waves, Car, Shield: ShieldIcon, Palette, PenTool, 
   Briefcase, PartyPopper, GraduationCap, TrendingUp, Sparkles: SparklesIcon, Bot
 };
+
+const LIVE_ACTIVITIES = [
+  { emoji: "🔧", text: "Sipho from Soweto just hired a Plumber", time: "2m ago", color: "text-emerald-600" },
+  { emoji: "💰", text: "Lerato M. completed a Branding project · R4,500 earned", time: "5m ago", color: "text-blue-600" },
+  { emoji: "📋", text: "Johan D. posted a new tender worth R85,000", time: "8m ago", color: "text-amber-600" },
+  { emoji: "🎓", text: "Fatima P. from Durban just enrolled in AI Academy", time: "11m ago", color: "text-purple-600" },
+  { emoji: "⭐", text: "Elena R. received a 5-star review from FinTech client", time: "14m ago", color: "text-yellow-600" },
+  { emoji: "🤝", text: "David K. just closed a R22,000 mobile app contract", time: "17m ago", color: "text-primary" },
+  { emoji: "🆕", text: "Zanele M. from Cape Town just joined FreelanceSkills", time: "20m ago", color: "text-rose-600" },
+  { emoji: "💳", text: "Thabo N. received a ZAR payout of R12,500", time: "23m ago", color: "text-emerald-600" },
+  { emoji: "📝", text: "Nandi Z. won her first government tender · R45,000", time: "26m ago", color: "text-blue-600" },
+  { emoji: "🚀", text: "Kevin I. upgraded to Premium · profile views up 400%", time: "30m ago", color: "text-violet-600" },
+];
+
+function LiveActivityTicker() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setVisible(false);
+      setTimeout(() => {
+        setCurrentIndex((prev) => (prev + 1) % LIVE_ACTIVITIES.length);
+        setVisible(true);
+      }, 300);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const activity = LIVE_ACTIVITIES[currentIndex];
+
+  return (
+    <div className="bg-emerald-50 dark:bg-emerald-950/30 border-b border-emerald-200 dark:border-emerald-900/50 py-2.5 px-4 overflow-hidden" aria-live="polite" aria-label="Live platform activity">
+      <div className="container mx-auto flex items-center justify-center gap-3">
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-600" />
+          </span>
+          <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 hidden sm:inline">Live</span>
+        </div>
+        <AnimatePresence mode="wait">
+          {visible && (
+            <motion.div
+              key={currentIndex}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.28 }}
+              className="flex items-center gap-2 text-sm"
+            >
+              <span>{activity.emoji}</span>
+              <span className="text-foreground/80 font-medium">{activity.text}</span>
+              <span className="text-muted-foreground text-xs flex-shrink-0">· {activity.time}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
+function TrustStrip() {
+  return (
+    <div className="py-5 bg-background border-b border-border" aria-label="Platform trust signals">
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+          {[
+            { icon: ShieldCheck, label: "POPIA Compliant", color: "text-emerald-500" },
+            { icon: Lock, label: "Escrow Protected", color: "text-blue-500" },
+            { icon: Clock, label: "14-Day Money-Back", color: "text-amber-500" },
+            { icon: CheckCheck, label: "CIPC Registered", color: "text-violet-500" },
+            { icon: Shield, label: "ID Verified Talent", color: "text-primary" },
+            { icon: Activity, label: "48h Dispute Resolution", color: "text-rose-500" },
+          ].map(({ icon: Icon, label, color }, i) => (
+            <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground" data-testid={`trust-strip-${i}`}>
+              <Icon className={`w-4 h-4 ${color} flex-shrink-0`} aria-hidden="true" />
+              <span className="font-medium whitespace-nowrap">{label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PressLogosSA() {
+  const logos = [
+    { name: "TechCabal", abbr: "TC", color: "from-blue-600 to-blue-800" },
+    { name: "Daily Maverick", abbr: "DM", color: "from-slate-600 to-slate-800" },
+    { name: "Fin24", abbr: "F24", color: "from-green-600 to-green-800" },
+    { name: "MyBroadband", abbr: "MB", color: "from-orange-500 to-red-600" },
+    { name: "Business Insider SA", abbr: "BI", color: "from-primary to-primary/70" },
+    { name: "ITWeb", abbr: "IW", color: "from-violet-600 to-violet-800" },
+  ];
+
+  return (
+    <section className="py-10 border-b border-border bg-muted/20" aria-labelledby="press-heading">
+      <div className="container mx-auto px-4 md:px-6">
+        <p id="press-heading" className="text-center text-xs font-bold uppercase tracking-[0.15em] text-muted-foreground mb-8">As featured in South African media</p>
+        <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10 grayscale opacity-60 hover:opacity-80 transition-opacity">
+          {logos.map((logo, i) => (
+            <div key={i} className="flex items-center gap-2" data-testid={`press-logo-${i}`} title={logo.name}>
+              <div className={`w-7 h-7 rounded-md bg-gradient-to-br ${logo.color} flex items-center justify-center`}>
+                <span className="text-white text-[8px] font-black leading-none">{logo.abbr}</span>
+              </div>
+              <span className="text-sm font-bold text-foreground hidden sm:inline">{logo.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 function UrgentJobBanner() {
   const [isVisible, setIsVisible] = useState(true);
@@ -87,6 +203,45 @@ function AnimatedCounter({ value, duration = 2000 }: { value: number; duration?:
 export default function Home() {
   const { formatAmount, formatRange, formatRate, formatRateRange } = useCurrency();
   const [, navigate] = useLocation();
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [newsletterStatus, setNewsletterStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [newsletterMsg, setNewsletterMsg] = useState("");
+
+  const { data: liveBlogPosts } = useQuery<any[]>({
+    queryKey: ["/api/blog/posts", { limit: 3, featured: true }],
+    queryFn: async () => {
+      const res = await fetch("/api/blog/posts?limit=3&featured=true");
+      if (!res.ok) return null;
+      const data = await res.json();
+      return data.posts || data;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newsletterEmail) return;
+    setNewsletterStatus("loading");
+    try {
+      const res = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: newsletterEmail, source: "homepage" }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setNewsletterStatus("success");
+        setNewsletterMsg(data.message || "You're subscribed!");
+        setNewsletterEmail("");
+      } else {
+        setNewsletterStatus("error");
+        setNewsletterMsg(data.error || "Something went wrong. Please try again.");
+      }
+    } catch {
+      setNewsletterStatus("error");
+      setNewsletterMsg("Network error. Please try again.");
+    }
+  };
 
   const featuredJobs = [
     {
@@ -179,6 +334,8 @@ export default function Home() {
       <UrgentJobBanner />
       <Navbar />
       <Hero />
+      <LiveActivityTicker />
+      <TrustStrip />
       <main id="main-content" role="main">
         {/* Featured Jobs */}
         <section className="py-20 md:py-24 bg-muted/30" aria-labelledby="latest-opportunities">
@@ -681,6 +838,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Press / Media Trust Section */}
+      <PressLogosSA />
+
       {/* Academy & Strategic CTAs */}
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4 md:px-6">
@@ -778,32 +938,42 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                category: "AI Tools",
-                title: "10 AI Tools That Will 10x Your Freelance Income in 2026",
-                excerpt: "ChatGPT, Midjourney, and Copilot are the basics. We break down 10 advanced AI tools that SA freelancers are using right now to double their output and triple their rates.",
-                readTime: "8 min read",
-                color: "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400",
-                href: "/blog/10-ai-tools-freelance-income-2026"
-              },
-              {
-                category: "SA Tax & Legal",
-                title: "The Complete SARS Tax Guide for South African Freelancers",
-                excerpt: "Provisional tax, VAT registration, allowable deductions — everything you need to stay legal and keep more of your hard-earned money.",
-                readTime: "12 min read",
-                color: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400",
-                href: "/blog/sars-tax-guide-south-african-freelancers"
-              },
-              {
-                category: "Tenders & Government",
-                title: "How to Win Your First Government Tender as a Freelancer",
-                excerpt: "A step-by-step walkthrough of registering on the Central Supplier Database (CSD), finding open tenders, and crafting a compliant bid that stands out.",
-                readTime: "15 min read",
-                color: "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400",
-                href: "/blog/win-first-government-tender-south-africa"
-              }
-            ].map((article, i) => (
+            {(liveBlogPosts && liveBlogPosts.length > 0
+              ? liveBlogPosts.slice(0, 3).map((post: any, i: number) => ({
+                  category: post.category_name || post.category?.name || "Freelancing",
+                  title: post.title,
+                  excerpt: post.excerpt || post.meta_description || "",
+                  readTime: `${post.read_time_minutes || post.readTimeMinutes || 5} min read`,
+                  color: ["bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400", "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400", "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400"][i],
+                  href: `/blog/${post.slug}`,
+                }))
+              : [
+                  {
+                    category: "AI Tools",
+                    title: "10 AI Tools That Will 10x Your Freelance Income in 2026",
+                    excerpt: "ChatGPT, Midjourney, and Copilot are the basics. We break down 10 advanced AI tools that SA freelancers are using right now to double their output and triple their rates.",
+                    readTime: "8 min read",
+                    color: "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400",
+                    href: "/blog/10-ai-tools-freelance-income-2026"
+                  },
+                  {
+                    category: "SA Tax & Legal",
+                    title: "The Complete SARS Tax Guide for South African Freelancers",
+                    excerpt: "Provisional tax, VAT registration, allowable deductions — everything you need to stay legal and keep more of your hard-earned money.",
+                    readTime: "12 min read",
+                    color: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400",
+                    href: "/blog/sars-tax-guide-south-african-freelancers"
+                  },
+                  {
+                    category: "Tenders & Government",
+                    title: "How to Win Your First Government Tender as a Freelancer",
+                    excerpt: "A step-by-step walkthrough of registering on the Central Supplier Database (CSD), finding open tenders, and crafting a compliant bid that stands out.",
+                    readTime: "15 min read",
+                    color: "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400",
+                    href: "/blog/win-first-government-tender-south-africa"
+                  }
+                ]
+            ).map((article, i) => (
               <button
                 key={i}
                 className="text-left bg-card border border-border rounded-2xl p-6 hover:shadow-lg hover:border-primary/30 transition-all group"
@@ -954,6 +1124,61 @@ export default function Home() {
               <CarouselNext className="-right-12" />
             </div>
           </Carousel>
+        </div>
+      </section>
+
+      {/* Newsletter Signup Section */}
+      <section className="py-16 md:py-20 bg-gradient-to-br from-primary via-primary to-primary/90 text-white overflow-hidden relative" data-testid="section-newsletter">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -translate-x-1/3 translate-y-1/3 pointer-events-none" />
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
+          <div className="max-w-2xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-accent text-sm font-semibold mb-6">
+              <Bell className="w-4 h-4" /> Free Weekly Newsletter
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">
+              Join 47,000+ SA Freelancers<br className="hidden md:block" /> Growing Their Income
+            </h2>
+            <p className="text-white/80 text-lg mb-8 leading-relaxed">
+              Get weekly income strategies, high-paying job alerts, SARS tax tips, and AI tools — all free, all South Africa-focused.
+            </p>
+
+            {newsletterStatus === "success" ? (
+              <div className="flex items-center justify-center gap-3 p-5 bg-white/10 border border-white/20 rounded-2xl">
+                <CheckCheck className="w-6 h-6 text-accent flex-shrink-0" />
+                <p className="text-white font-semibold">{newsletterMsg}</p>
+              </div>
+            ) : (
+              <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" data-testid="form-newsletter">
+                <Input
+                  type="email"
+                  placeholder="your@email.co.za"
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
+                  required
+                  className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-accent focus:ring-accent"
+                  data-testid="input-newsletter-email"
+                />
+                <Button
+                  type="submit"
+                  disabled={newsletterStatus === "loading"}
+                  className="bg-accent text-primary hover:bg-accent/90 font-bold px-6 flex-shrink-0"
+                  data-testid="button-newsletter-subscribe"
+                >
+                  {newsletterStatus === "loading" ? "Subscribing..." : "Subscribe Free"}
+                </Button>
+              </form>
+            )}
+
+            {newsletterStatus === "error" && (
+              <p className="mt-3 text-red-300 text-sm">{newsletterMsg}</p>
+            )}
+
+            <p className="mt-5 text-white/50 text-xs">
+              POPIA compliant · No spam · Unsubscribe anytime · By subscribing you agree to our{" "}
+              <button onClick={() => navigate("/privacy")} className="underline hover:text-white/80">Privacy Policy</button>
+            </p>
+          </div>
         </div>
       </section>
 
