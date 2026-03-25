@@ -3,6 +3,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { useCountry } from "@/components/CountrySelector";
 import { 
   Check, 
@@ -95,6 +96,15 @@ export default function Pricing() {
   const { country, formatPrice } = useCountry();
   const currencySymbol = country.currency.symbol;
 
+  const { data: currentUser } = useQuery<{ id: string } | null>({
+    queryKey: ["/api/auth/user"],
+    queryFn: async () => {
+      const res = await fetch("/api/auth/user", { credentials: "include" });
+      if (!res.ok) return null;
+      return res.json();
+    },
+  });
+
   const exampleJob = 500000; // 5000 ZAR in cents
   const freeEarnings = exampleJob * 0.9;
   const proEarnings = exampleJob * 0.95;
@@ -181,7 +191,7 @@ export default function Pricing() {
               </ul>
             </div>
             <div className="p-8 bg-muted/30 border-t border-border">
-              <Button variant="outline" className="w-full font-bold" data-testid="button-get-started-free" onClick={() => navigate("/auth")}>Get Started Free</Button>
+              <Button variant="outline" className="w-full font-bold" data-testid="button-get-started-free" onClick={() => navigate(currentUser?.id ? "/dashboard" : "/auth")}>{currentUser?.id ? "Go to Dashboard" : "Get Started Free"}</Button>
             </div>
           </div>
 

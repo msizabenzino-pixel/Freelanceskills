@@ -244,7 +244,7 @@ export function SupportChat() {
           <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
             {showCategories ? (
               <div className="space-y-4">
-                <div className="bg-white p-3 rounded-lg shadow-sm">
+                <div className="bg-white text-foreground p-3 rounded-lg shadow-sm">
                   <p className="text-sm">
                     👋 Hi there! I'm your AI assistant. How can I help you today?
                   </p>
@@ -291,7 +291,7 @@ export function SupportChat() {
                     <div className={`max-w-[85%] ${
                       msg.type === "user" 
                         ? "bg-primary text-white rounded-2xl rounded-br-sm" 
-                        : "bg-white shadow-sm rounded-2xl rounded-bl-sm"
+                        : "bg-white text-foreground shadow-sm rounded-2xl rounded-bl-sm"
                     } p-3`}>
                       <p className="text-sm whitespace-pre-line">{msg.content}</p>
                       {msg.options && (

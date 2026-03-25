@@ -209,7 +209,7 @@ export default function Services() {
                     data-testid="input-location-services"
                   />
                 </div>
-                <Button size="lg" className="h-14 px-8 bg-accent hover:bg-accent/90 text-white shadow-lg" data-testid="button-search-services">
+                <Button size="lg" className="h-14 px-8 bg-accent hover:bg-accent/90 text-white shadow-lg" type="button" onClick={() => { /* real-time filter already active */ }} data-testid="button-search-services">
                   <Search className="w-5 h-5 mr-2" />
                   Search
                 </Button>

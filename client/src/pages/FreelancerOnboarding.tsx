@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -43,6 +43,8 @@ function FreelancerOnboardingContent() {
   const [bio, setBio] = useState("");
   const [location, setLocation] = useState("");
   const [phone, setPhone] = useState("");
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [category, setCategory] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
@@ -99,7 +101,22 @@ function FreelancerOnboardingContent() {
     return true;
   };
 
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => setPhotoPreview(ev.target?.result as string);
+    reader.readAsDataURL(file);
+  };
+
   const handleNext = () => {
+    if (step === 0) {
+      if (!displayName.trim()) { setApiError("Display name is required."); return; }
+      if (!professionalTitle.trim()) { setApiError("Professional title is required."); return; }
+      if (bio.trim().length < 50) { setApiError("Bio must be at least 50 characters."); return; }
+      if (!location.trim()) { setApiError("Location is required."); return; }
+    }
+    setApiError(null);
     if (step < 3) setStep(step + 1);
   };
 
@@ -205,13 +222,25 @@ function FreelancerOnboardingContent() {
 
                 <div className="flex flex-col items-center gap-3 mb-6">
                   <div
-                    className="w-24 h-24 rounded-full bg-muted flex items-center justify-center text-2xl font-bold text-muted-foreground border-2 border-border"
+                    className="w-24 h-24 rounded-full bg-muted flex items-center justify-center text-2xl font-bold text-muted-foreground border-2 border-border overflow-hidden"
                     data-testid="avatar-placeholder"
                   >
-                    {getInitials()}
+                    {photoPreview ? (
+                      <img src={photoPreview} alt="Profile preview" className="w-full h-full object-cover" />
+                    ) : (
+                      getInitials()
+                    )}
                   </div>
-                  <Button variant="outline" size="sm" data-testid="button-upload-photo">
-                    <Camera className="w-4 h-4 mr-2" /> Upload Photo
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handlePhotoChange}
+                    data-testid="input-file-photo"
+                  />
+                  <Button variant="outline" size="sm" type="button" onClick={() => fileInputRef.current?.click()} data-testid="button-upload-photo">
+                    <Camera className="w-4 h-4 mr-2" /> {photoPreview ? "Change Photo" : "Upload Photo"}
                   </Button>
                 </div>
 

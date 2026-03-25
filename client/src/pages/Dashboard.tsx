@@ -486,7 +486,7 @@ export default function Dashboard() {
                   </div>
                 )}
               </div>
-            ) : activeNav === "My Services" ? (
+            ) : activeNav === "My Services" || activeNav === "My Jobs" ? (
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -720,6 +720,152 @@ export default function Dashboard() {
                     </CardContent>
                   </Card>
                 ) : null}
+              </div>
+            ) : activeNav === "Messages" ? (
+              <div className="space-y-6" data-testid="section-messages">
+                <div>
+                  <h2 className="text-xl font-bold text-primary">Messages</h2>
+                  <p className="text-sm text-muted-foreground">Your conversations with clients and freelancers</p>
+                </div>
+                <Card className="border border-dashed border-border">
+                  <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                    <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                      <MessageSquare className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                    <h3 className="font-bold text-lg text-primary mb-1">No messages yet</h3>
+                    <p className="text-muted-foreground text-sm max-w-xs mx-auto mb-4">
+                      When you start working with clients or freelancers, your conversations will appear here.
+                    </p>
+                    <div className="flex gap-3">
+                      <Link href="/explore">
+                        <Button data-testid="button-find-freelancers">
+                          <Users className="w-4 h-4 mr-2" /> Find Freelancers
+                        </Button>
+                      </Link>
+                      <Link href="/jobs">
+                        <Button variant="outline" data-testid="button-browse-jobs">
+                          <Briefcase className="w-4 h-4 mr-2" /> Browse Jobs
+                        </Button>
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            ) : activeNav === "Payments" ? (
+              <div className="space-y-6" data-testid="section-payments">
+                <div>
+                  <h2 className="text-xl font-bold text-primary">Payments</h2>
+                  <p className="text-sm text-muted-foreground">Your earnings, withdrawals, and transaction history</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Card className="border-none bg-primary/5 p-6" data-testid="card-total-balance">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                        <Wallet className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground font-medium">Available Balance</p>
+                        <h3 className="text-2xl font-bold text-primary">{formatAmount(0)}</h3>
+                      </div>
+                    </div>
+                  </Card>
+                  <Card className="border-none bg-accent/5 p-6" data-testid="card-pending-payments">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
+                        <Clock className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground font-medium">Pending Payments</p>
+                        <h3 className="text-2xl font-bold text-primary">{formatAmount(0)}</h3>
+                      </div>
+                    </div>
+                  </Card>
+                  <Card className="border-none bg-secondary/5 p-6" data-testid="card-total-earned">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary">
+                        <TrendingUp className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground font-medium">Total Earned</p>
+                        <h3 className="text-2xl font-bold text-primary">{formatAmount(0)}</h3>
+                      </div>
+                    </div>
+                  </Card>
+                </div>
+                <Card className="border border-dashed border-border">
+                  <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                    <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                      <Wallet className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                    <h3 className="font-bold text-lg text-primary mb-1">No transactions yet</h3>
+                    <p className="text-muted-foreground text-sm max-w-xs mx-auto mb-4">
+                      Complete your first job or purchase to see your transaction history here.
+                    </p>
+                    <Link href="/services">
+                      <Button data-testid="button-browse-services-payments">
+                        <Award className="w-4 h-4 mr-2" /> Browse Services
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              </div>
+            ) : activeNav === "Settings" ? (
+              <div className="space-y-6" data-testid="section-settings">
+                <div>
+                  <h2 className="text-xl font-bold text-primary">Account Settings</h2>
+                  <p className="text-sm text-muted-foreground">Manage your profile and preferences</p>
+                </div>
+                <Card className="border border-border">
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Settings className="w-4 h-4 text-primary" /> Profile Information
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="settings-display-name">Display Name</Label>
+                        <Input id="settings-display-name" data-testid="input-settings-display-name" placeholder="Your full name" defaultValue={userRes ? "My Account" : ""} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="settings-location">Location</Label>
+                        <Input id="settings-location" data-testid="input-settings-location" placeholder="e.g. Cape Town, South Africa" />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="settings-bio">Bio</Label>
+                      <Textarea id="settings-bio" data-testid="textarea-settings-bio" placeholder="Tell clients a bit about yourself..." className="min-h-[100px] resize-none" />
+                    </div>
+                    <div className="pt-2">
+                      <Button data-testid="button-save-settings">
+                        <CheckCircle2 className="w-4 h-4 mr-2" /> Save Changes
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="border border-border">
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Award className="w-4 h-4 text-primary" /> Notifications
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {[
+                      { label: "New messages", description: "Get notified when someone messages you", id: "notif-messages" },
+                      { label: "Job applications", description: "Updates on jobs you've applied to", id: "notif-jobs" },
+                      { label: "Payment received", description: "When a client pays for your service", id: "notif-payments" },
+                      { label: "Platform updates", description: "New features and announcements", id: "notif-updates" },
+                    ].map((notif) => (
+                      <div key={notif.id} className="flex items-center justify-between py-1" data-testid={`row-${notif.id}`}>
+                        <div>
+                          <p className="text-sm font-medium text-foreground">{notif.label}</p>
+                          <p className="text-xs text-muted-foreground">{notif.description}</p>
+                        </div>
+                        <input type="checkbox" defaultChecked className="w-4 h-4 accent-primary cursor-pointer" data-testid={`checkbox-${notif.id}`} />
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-20 text-center">

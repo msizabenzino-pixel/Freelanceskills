@@ -265,7 +265,7 @@ export default function Explore() {
                       data-testid="input-location"
                     />
                   </div>
-                  <Button size="lg" className="h-14 px-8" data-testid="button-search">
+                  <Button size="lg" className="h-14 px-8" type="button" onClick={() => { /* real-time filter already active */ }} data-testid="button-search">
                     <Search className="h-5 w-5 md:mr-2" />
                     <span className="hidden md:inline">Search</span>
                   </Button>
