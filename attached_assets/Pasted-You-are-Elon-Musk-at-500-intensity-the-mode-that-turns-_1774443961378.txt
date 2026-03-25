@@ -1,0 +1,47 @@
+You are Elon Musk at 500% intensity — the mode that turns a simple website into the reason an entire industry changes forever.
+
+We own freelanceskills.net. This is the FINAL and MOST IMPORTANT prompt. The output of this single prompt will determine whether the site is rated 6.8/10 or becomes a 10/10 world-class platform that crushes Upwork, Fiverr, LinkedIn, and every competitor globally.
+
+Your one job: Perform a complete A-Z audit of the entire current freelanceskills.net platform and then deliver the complete, production-ready, world-beating version of the site.
+
+First, do a brutal full-site audit (list every page and every weakness):
+- Homepage
+- Job listings & search
+- About / Team / Founder story page
+- AI Upskilling Academy
+- Blog / Content section
+- Transparency / Legal / Policies page
+- Footer, header, navigation, pricing, careers, contact, legal pages, etc.
+
+Then integrate and perfect EVERYTHING we have already built from previous prompts:
+- The world-class Founder Story page with Ben Msiza’s full CV, professional office photo, Eskom-to-businessman journey, Camps Bay Cape Town offices, and visionary leadership
+- The full AI Upskilling Academy with 50+ courses, AI tutor, certificates, and marketplace integration
+- The Blog engine with 480+ articles (2 per day for 8 months), editorial calendar, SEO, and traffic-driving system
+- The Transparency & Polish system with advanced AI filters/search, strongest Money-Back Guarantee, fastest Dispute Resolution policy, and escrow trust signals
+
+Now rebuild the ENTIRE site to be the best freelance platform on Earth:
+- Lightning-fast Next.js 15 + Tailwind + Supabase architecture
+- Mobile-first, dark/light mode, blazing performance (Core Web Vitals 100/100)
+- World-class navigation, mega search bar, saved searches, AI job matching
+- Beautiful, modern, premium design that screams trust and professionalism
+- Every page must have consistent trust signals (founder photo, badges, testimonials, live stats, South African flag accents)
+- Full SEO (meta tags, sitemap, Open Graph, schema, blog RSS)
+- ZAR payments via PayFast, SARS invoicing, POPIA compliance
+- Escrow, 14-day money-back, 48-hour dispute resolution everywhere
+- Verified ID, ratings, portfolio requirements, response-time filters
+- Academy-to-jobs funnel, Blog-to-Academy-to-Jobs funnel
+- Footer with all legal links, social proof, office address (Camps Bay, Cape Town)
+- Careers / “Join the movement” section
+- Live counters and dynamic data where possible
+
+Tone throughout the site: Direct, confident, visionary, no corporate fluff — like Elon writing Tesla’s website. Every word must make visitors feel: “This is the real deal. This is where I belong.”
+
+Output:
+1. Complete production-ready code for the entire platform (all routes, components, pages)
+2. Full integration of all previous sections
+3. Final polished text for every policy, headline, CTA, and page
+4. Exact deployment instructions for Replit / Vercel
+
+Title the output: “FREELANCESKILLS.NET — COMPLETE A-Z WORLD-CLASS PLATFORM REBUILD — FINAL NUCLEAR UPGRADE (10/10 RATED)”
+
+Do not stop. Do not hold back anything. Audit brutally first, then ship the greatest freelance platform ever built. This is the version the world will judge us on. Make it legendary.
