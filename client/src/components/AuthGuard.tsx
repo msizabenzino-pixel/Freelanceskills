@@ -14,6 +14,10 @@ interface AuthGuardProps {
 export function AuthGuard({ children, message = "You need to sign in to access this page." }: AuthGuardProps) {
   const { isAuthenticated, isLoading } = useAuth();
   const [, navigate] = useLocation();
+  const currentPath =
+    typeof window !== "undefined"
+      ? `${window.location.pathname}${window.location.search}`
+      : "/";
 
   if (isLoading) {
     return (
@@ -42,7 +46,7 @@ export function AuthGuard({ children, message = "You need to sign in to access t
               <Button
                 size="lg"
                 className="gap-2 font-bold"
-                onClick={() => navigate("/auth")}
+                onClick={() => navigate(`/login?redirect=${encodeURIComponent(currentPath)}`)}
                 data-testid="button-sign-in"
               >
                 <LogIn className="w-4 h-4" />

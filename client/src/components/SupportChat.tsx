@@ -1,218 +1,134 @@
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { 
-  MessageCircle, 
-  X, 
-  Send, 
-  Bot, 
-  User, 
+import { useAuth } from "@/hooks/use-auth";
+import {
+  getOrCreateSupportChat,
+  sendSupportMessage,
+  subscribeSupportMessages,
+  type ChatMessage,
+} from "@/lib/firebaseAppData";
+import {
+  MessageCircle,
+  X,
+  Send,
+  Bot,
   Phone,
-  HelpCircle,
-  FileText,
-  AlertCircle,
-  ChevronRight,
   Loader2,
-  ExternalLink
+  ExternalLink,
+  AlertCircle,
 } from "lucide-react";
 
-interface Message {
-  id: string;
-  type: "user" | "bot" | "system";
-  content: string;
-  options?: { label: string; value: string; icon?: any }[];
-}
-
-const SUPPORT_CATEGORIES = [
-  { 
-    id: "profile", 
-    label: "Profile & Account Help", 
-    icon: FileText,
-    description: "Creating or updating your profile",
-    color: "bg-blue-500"
+const BOT_FALLBACKS: Array<{ when: RegExp; reply: string }> = [
+  {
+    when: /price|fee|commission/i,
+    reply:
+      "Free plan has no monthly fee and 10% commission. Premium reduces commission and adds visibility benefits.",
   },
-  { 
-    id: "query", 
-    label: "General Questions", 
-    icon: HelpCircle,
-    description: "How things work, pricing, etc.",
-    color: "bg-green-500"
+  {
+    when: /book|tasker|service/i,
+    reply:
+      "Open Services, choose a category, and click Book Tasker. Your booking and request will be saved instantly.",
   },
-  { 
-    id: "complaint", 
-    label: "Report a Problem", 
-    icon: AlertCircle,
-    description: "Issues with orders, payments, or users",
-    color: "bg-amber-500"
+  {
+    when: /profile|onboarding|photo|skills/i,
+    reply:
+      "Go to Freelancer Onboarding to complete profile steps, upload photo, and save skills and expertise.",
   },
 ];
 
-const AI_RESPONSES: Record<string, { message: string; followUp?: string[] }> = {
-  profile: {
-    message: "I can help you with your profile! Here are some common questions:",
-    followUp: [
-      "How do I create a profile?",
-      "How do I upload my CV?",
-      "How do I get verified?",
-      "I need help from a human"
-    ]
-  },
-  query: {
-    message: "Happy to answer your questions! What would you like to know?",
-    followUp: [
-      "How does payment work?",
-      "What are the fees?",
-      "How do I book a tasker?",
-      "Talk to support team"
-    ]
-  },
-  complaint: {
-    message: "I'm sorry you're experiencing an issue. Let me help you:",
-    followUp: [
-      "Problem with a freelancer",
-      "Payment issue",
-      "Someone asked for off-platform payment",
-      "Speak to a human now"
-    ]
-  },
-  "How do I create a profile?": {
-    message: "Creating a profile is easy! You can:\n\n1. **Sign up** using the button at the top right\n2. **Upload your CV** and our AI will create your profile automatically\n3. **Or fill it out manually** - add your skills, experience, and a photo\n\nWould you like me to guide you through the AI profile builder?"
-  },
-  "How do I upload my CV?": {
-    message: "Great question! To use our AI Profile Builder:\n\n1. Go to **Dashboard > Create Profile**\n2. Click **\"Upload CV\"** button\n3. Select your CV (PDF or Word)\n4. Our AI reads it and creates your profile\n5. Review and approve or edit\n\nIt takes about 30 seconds!"
-  },
-  "How do I get verified?": {
-    message: "Getting verified builds trust with clients! Here's how:\n\n**Basic Verification** (Free):\n- Verify your email and phone\n\n**Full Verification** (Recommended):\n- Upload your ID document\n- Add qualifications/certificates\n- Professional body registration (if applicable)\n\nVerified profiles get 3x more bookings!"
-  },
-  "How does payment work?": {
-    message: "We use a secure **escrow system** to protect both parties:\n\n1. Client pays when booking\n2. Money is held safely by us\n3. Freelancer completes the work\n4. Client approves the work\n5. Payment released to freelancer\n\nNo one can run off with the money!"
-  },
-  "What are the fees?": {
-    message: "Our pricing is simple:\n\n**Free Plan:**\n- No monthly fees\n- 10% commission on completed jobs\n\n**Pro Plan:**\n- Only 5% commission\n- Priority in search results\n- Pro badge on profile\n\nYou only pay when you earn!"
-  },
-  "How do I book a tasker?": {
-    message: "Booking is quick and easy:\n\n1. Browse **Services** or search for what you need\n2. View profiles and reviews\n3. Click **Book Now** on a service package\n4. Choose date/time and pay securely\n5. Get confirmation and chat with your tasker\n\nNeed same-day service? Filter by 'Available Today'!"
-  },
-};
+function getBotReply(text: string) {
+  const matched = BOT_FALLBACKS.find((item) => item.when.test(text));
+  if (matched) return matched.reply;
+  return "Thanks for your message. Our support team can also help on WhatsApp: https://wa.me/27601234567";
+}
+
+function formatTime(date?: Date | null) {
+  if (!date) return "";
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
 
 export function SupportChat() {
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-  const [showCategories, setShowCategories] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [chatId, setChatId] = useState<string | null>(null);
+  const [isBootstrapping, setIsBootstrapping] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [chatError, setChatError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  const welcomeText = useMemo(() => {
+    if (!user?.id) {
+      return "Sign in to start a saved support conversation.";
+    }
+    return "Hi! Ask anything about jobs, services, plans, or your account.";
+  }, [user?.id]);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isOpen]);
 
-  const [messageCount, setMessageCount] = useState(0);
+  useEffect(() => {
+    if (!isOpen || !user?.id) return;
 
-  const addBotMessage = (content: string, options?: Message["options"]) => {
-    setMessages(prev => [...prev, {
-      id: Date.now().toString(),
-      type: "bot",
-      content,
-      options
-    }]);
-    setIsTyping(false);
-  };
+    let unsubscribe: (() => void) | null = null;
+    setIsBootstrapping(true);
+    setChatError(null);
 
-  const handleCategorySelect = (categoryId: string) => {
-    setSelectedCategory(categoryId);
-    setShowCategories(false);
-    
-    const category = SUPPORT_CATEGORIES.find(c => c.id === categoryId);
-    const userMsg: Message = {
-      id: Date.now().toString(),
-      type: "user",
-      content: category?.label || categoryId
-    };
-    setMessages([userMsg]);
-    setMessageCount(1);
-    
-    // Call AI for the category selection too
-    handleAISupport(userMsg.content, []);
-  };
-
-  const handleAISupport = async (text: string, currentMessages: Message[]) => {
-    setIsTyping(true);
-    try {
-      const history = currentMessages.map(m => ({
-        role: m.type === "user" ? "user" : "assistant",
-        content: m.content
-      }));
-
-      const response = await fetch("/api/ai/support-chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, history }),
+    getOrCreateSupportChat(user.id)
+      .then((id) => {
+        setChatId(id);
+        unsubscribe = subscribeSupportMessages(id, (nextMessages) => {
+          setMessages(nextMessages);
+        });
+      })
+      .catch((error: unknown) => {
+        const message = error instanceof Error ? error.message : "Failed to load support chat.";
+        setChatError(message);
+      })
+      .finally(() => {
+        setIsBootstrapping(false);
       });
 
-      if (!response.ok) throw new Error("Failed to get AI response");
-
-      const data = await response.json();
-      
-      // Check for human handoff trigger
-      const needsHandoff = messageCount >= 2 || 
-        text.toLowerCase().includes("human") || 
-        text.toLowerCase().includes("agent") || 
-        text.toLowerCase().includes("support");
-
-      let content = data.message;
-      if (needsHandoff && !content.includes("https://wa.me/27722324636")) {
-        content += "\n\nChat with our team on WhatsApp for instant help: https://wa.me/27722324636";
-      }
-
-      addBotMessage(content);
-    } catch (error) {
-      console.error("Support chat error:", error);
-      addBotMessage("I'm sorry, I'm having trouble connecting. Please try again or chat with our team on WhatsApp: https://wa.me/27722324636");
-    } finally {
-      setIsTyping(false);
-    }
-  };
-
-  const handleOptionClick = (value: string) => {
-    const userMsg: Message = { id: Date.now().toString(), type: "user", content: value };
-    setMessages(prev => [...prev, userMsg]);
-    setMessageCount(prev => prev + 1);
-    handleAISupport(value, [...messages, userMsg]);
-  };
-
-  const handleSend = () => {
-    if (!inputValue.trim()) return;
-    
-    const userMsg: Message = {
-      id: Date.now().toString(),
-      type: "user",
-      content: inputValue
+    return () => {
+      if (unsubscribe) unsubscribe();
     };
-    
-    const newMessages = [...messages, userMsg];
-    setMessages(newMessages);
-    setMessageCount(prev => prev + 1);
-    setInputValue("");
+  }, [isOpen, user?.id]);
 
-    handleAISupport(inputValue, newMessages);
-  };
+  const handleSend = async () => {
+    const trimmed = inputValue.trim();
+    if (!trimmed || !chatId || !user?.id || isSending) return;
 
-  const resetChat = () => {
-    setMessages([]);
-    setShowCategories(true);
-    setSelectedCategory(null);
-    setMessageCount(0);
+    setIsSending(true);
+    setChatError(null);
+
+    try {
+      setInputValue("");
+      await sendSupportMessage({
+        chatId,
+        senderType: "user",
+        senderId: user.id,
+        content: trimmed,
+      });
+
+      const botReply = getBotReply(trimmed);
+      await sendSupportMessage({
+        chatId,
+        senderType: "support",
+        content: botReply,
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to send message.";
+      setChatError(message);
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
     <>
-      {/* Chat Button */}
       <button
         onClick={() => setIsOpen(true)}
         className="fixed bottom-24 right-6 w-14 h-14 bg-gradient-to-br from-primary to-primary/80 text-white rounded-full shadow-xl hover:scale-110 hover:shadow-2xl transition-all duration-300 flex items-center justify-center z-50 border border-white/10"
@@ -221,10 +137,8 @@ export function SupportChat() {
         <MessageCircle className="h-6 w-6" />
       </button>
 
-      {/* Chat Window */}
       {isOpen && (
         <div className="fixed bottom-24 right-6 w-[calc(100vw-3rem)] max-w-96 h-[32rem] bg-background rounded-2xl shadow-2xl flex flex-col z-[55] overflow-hidden border border-border/50 md:w-96">
-          {/* Header */}
           <div className="bg-gradient-to-r from-primary to-primary/90 text-white p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
@@ -232,7 +146,7 @@ export function SupportChat() {
               </div>
               <div>
                 <h3 className="font-semibold">FreelanceSkills Support</h3>
-                <p className="text-xs text-white/80">We typically reply instantly</p>
+                <p className="text-xs text-white/80">Realtime chat</p>
               </div>
             </div>
             <button onClick={() => setIsOpen(false)} className="hover:bg-white/10 p-1 rounded">
@@ -240,114 +154,104 @@ export function SupportChat() {
             </button>
           </div>
 
-          {/* Messages Area */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
-            {showCategories ? (
-              <div className="space-y-4">
-                <div className="bg-white text-foreground p-3 rounded-lg shadow-sm">
-                  <p className="text-sm">
-                    👋 Hi there! I'm your AI assistant. How can I help you today?
-                  </p>
-                </div>
-                <p className="text-xs text-muted-foreground text-center">Choose a category:</p>
-                <div className="space-y-2">
-                  {SUPPORT_CATEGORIES.map((cat) => (
-                    <button
-                      key={cat.id}
-                      onClick={() => handleCategorySelect(cat.id)}
-                      className="w-full p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow flex items-center gap-3 text-left"
-                      data-testid={`button-category-${cat.id}`}
+            <div className="bg-white border border-slate-200 rounded-xl p-3 text-sm text-slate-700">
+              {welcomeText}
+            </div>
+
+            {isBootstrapping && (
+              <div className="py-8 flex items-center justify-center text-slate-600">
+                <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                Loading conversation...
+              </div>
+            )}
+
+            {!isBootstrapping && chatError && (
+              <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 flex gap-2">
+                <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+                {chatError}
+              </div>
+            )}
+
+            {!isBootstrapping && !chatError && messages.length === 0 && user?.id && (
+              <div className="py-8 text-center text-sm text-slate-500">No messages yet. Start the conversation below.</div>
+            )}
+
+            {!isBootstrapping &&
+              !chatError &&
+              messages.map((msg) => {
+                const isUser = msg.senderType === "user";
+                return (
+                  <div key={msg.id} className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
+                    <div
+                      className={`max-w-[85%] rounded-2xl p-3 ${
+                        isUser
+                          ? "bg-primary text-white rounded-br-sm"
+                          : "bg-white text-slate-800 border border-slate-200 rounded-bl-sm"
+                      }`}
                     >
-                      <div className={`w-10 h-10 ${cat.color} rounded-full flex items-center justify-center text-white`}>
-                        <cat.icon className="h-5 w-5" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-medium text-sm">{cat.label}</p>
-                        <p className="text-xs text-muted-foreground">{cat.description}</p>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    </button>
-                  ))}
+                      <p className="text-sm whitespace-pre-line leading-relaxed">{msg.content}</p>
+                      <p className={`mt-1 text-[10px] ${isUser ? "text-white/80" : "text-slate-400"}`}>
+                        {formatTime(msg.createdAt)}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+
+            {isSending && (
+              <div className="flex justify-start">
+                <div className="bg-white border border-slate-200 rounded-2xl rounded-bl-sm p-3 flex items-center gap-2 text-slate-500">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span className="text-sm">Sending...</span>
                 </div>
-                
-                <div className="pt-4 border-t">
-                  <p className="text-xs text-center text-muted-foreground mb-2">Or contact us directly:</p>
-                  <a 
-                    href="https://wa.me/27722324636" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 w-full p-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
-                  >
-                    <Phone className="h-4 w-4" />
-                    <span className="font-medium">WhatsApp Us</span>
-                    <ExternalLink className="h-3 w-3" />
-                  </a>
-                </div>
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
+          </div>
+
+          <div className="p-3 border-t bg-white">
+            {!user?.id ? (
+              <div className="space-y-2">
+                <p className="text-xs text-muted-foreground">Please sign in to send messages.</p>
+                <Button className="w-full" onClick={() => (window.location.href = "/login?redirect=/dashboard")}>Sign in</Button>
               </div>
             ) : (
               <>
-                {messages.map((msg) => (
-                  <div key={msg.id} className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}>
-                    <div className={`max-w-[85%] ${
-                      msg.type === "user" 
-                        ? "bg-primary text-white rounded-2xl rounded-br-sm" 
-                        : "bg-white text-foreground shadow-sm rounded-2xl rounded-bl-sm"
-                    } p-3`}>
-                      <p className="text-sm whitespace-pre-line">{msg.content}</p>
-                      {msg.options && (
-                        <div className="mt-3 space-y-2">
-                          {msg.options.map((opt, i) => (
-                            <button
-                              key={i}
-                              onClick={() => handleOptionClick(opt.value)}
-                              className="w-full text-left text-sm px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
-                            >
-                              {opt.label}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-                {isTyping && (
-                  <div className="flex justify-start">
-                    <div className="bg-white shadow-sm rounded-2xl rounded-bl-sm p-3 flex items-center gap-2">
-                      <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">Typing...</span>
-                    </div>
-                  </div>
-                )}
-                <div ref={messagesEndRef} />
+                <div className="flex gap-2">
+                  <Input
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleSend();
+                      }
+                    }}
+                    placeholder="Type your message..."
+                    className="flex-1 text-foreground"
+                    disabled={!chatId || isSending}
+                  />
+                  <Button size="icon" onClick={handleSend} disabled={!inputValue.trim() || !chatId || isSending}>
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="mt-2 text-center">
+                  <a
+                    href="https://wa.me/27601234567"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-primary inline-flex items-center gap-1 hover:underline"
+                  >
+                    <Phone className="h-3 w-3" />
+                    WhatsApp Support
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                </div>
               </>
             )}
           </div>
-
-          {/* Input Area */}
-          {!showCategories && (
-            <div className="p-3 border-t bg-white">
-              <div className="flex items-center gap-2 mb-2">
-                <button 
-                  onClick={resetChat}
-                  className="text-xs text-muted-foreground hover:text-primary"
-                >
-                  ← Start over
-                </button>
-              </div>
-              <div className="flex gap-2">
-                <Input
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && handleSend()}
-                  placeholder="Type your message..."
-                  className="flex-1"
-                />
-                <Button size="icon" onClick={handleSend}>
-                  <Send className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          )}
         </div>
       )}
     </>

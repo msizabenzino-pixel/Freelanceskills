@@ -18,9 +18,10 @@ interface JobCardProps {
   description: string;
   onApply?: () => void;
   onSave?: () => void;
+  onClick?: () => void;
 }
 
-export const JobCard = memo(({ id, title, company, type, budget, location, postedAt, tags, description, onApply, onSave }: JobCardProps) => {
+export const JobCard = memo(({ id, title, company, type, budget, location, postedAt, tags, description, onApply, onSave, onClick }: JobCardProps) => {
   const { isAuthenticated } = useAuth();
   const isUrgent = type.toLowerCase() === "urgent";
 
@@ -95,6 +96,7 @@ export const JobCard = memo(({ id, title, company, type, budget, location, poste
           transition: isSwiping ? 'none' : 'transform 0.3s ease-out'
         }}
         className="relative z-10 group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-accent/30 overflow-hidden cursor-pointer"
+        onClick={onClick}
       >
         <CardHeader className="space-y-4">
           <div className="flex justify-between items-start">

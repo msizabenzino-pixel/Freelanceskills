@@ -15,12 +15,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export function Navbar() {
+type NavbarProps = {
+  topOffset?: number;
+};
+
+export function Navbar({ topOffset = 0 }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showVoiceSearch, setShowVoiceSearch] = useState(false);
   const [location, navigate] = useLocation();
-  const { user, isLoading, isAuthenticated } = useAuth();
+  const { user, isLoading, isAuthenticated, logout } = useAuth();
   const { isDark, toggle: toggleDarkMode } = useDarkMode();
   const [highContrast, setHighContrast] = useState(() => localStorage.getItem("high-contrast") === "true");
 
@@ -190,8 +194,9 @@ export function Navbar() {
     <nav
       role="navigation"
       aria-label="Main navigation"
+      style={{ top: `${topOffset}px` }}
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-transparent",
+        "fixed left-0 right-0 z-50 transition-all duration-300 border-b border-transparent",
         isScrolled || location !== "/"
           ? "bg-background/95 backdrop-blur-md border-border py-3 shadow-sm"
           : "bg-transparent py-5 text-white"
@@ -331,19 +336,6 @@ export function Navbar() {
                   {user?.firstName || "User"}
                 </span>
               </div>
-              {user?.id === "user_2Pz69BfA5yS3R8M" && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  data-testid="link-admin-dashboard"
-                  className={cn(
-                    "font-semibold text-violet-600 hover:text-violet-700 hover:bg-violet-50 dark:hover:bg-violet-950",
-                  )}
-                  onClick={() => navigate("/admin")}
-                >
-                  Admin
-                </Button>
-              )}
               <Button 
                   variant="ghost" 
                   size="sm"
@@ -352,18 +344,14 @@ export function Navbar() {
                     isScrolled || location !== "/" ? "text-muted-foreground" : "text-white/80"
                   )}
                   data-testid="button-logout"
-                  onClick={() => {
-                    fetch("/api/auth/logout", { method: "POST", credentials: "include" }).then(() => {
-                      window.location.href = "/";
-                    });
-                  }}
+                  onClick={logout}
                 >
                   <LogOut className="w-4 h-4" />
                 </Button>
             </div>
           ) : (
             <>
-              <Link href="/auth">
+              <Link href="/login">
                 <Button 
                   variant="ghost"
                   className={cn(
@@ -376,7 +364,7 @@ export function Navbar() {
                   Log In
                 </Button>
               </Link>
-              <Link href="/auth">
+              <Link href="/signup">
                 <Button 
                   className={cn(
                     "font-semibold shadow-lg transition-all hover:scale-105 active:scale-95",
@@ -470,20 +458,16 @@ export function Navbar() {
           <div className="h-px bg-border my-2" />
           {isAuthenticated ? (
               <Button variant="outline" className="w-full justify-center text-red-500 border-red-200 hover:bg-red-50" data-testid="button-mobile-logout"
-                onClick={() => {
-                  fetch("/api/auth/logout", { method: "POST", credentials: "include" }).then(() => {
-                    window.location.href = "/";
-                  });
-                }}
+                onClick={logout}
               >
                 <LogOut className="w-4 h-4 mr-2" /> Log Out
               </Button>
           ) : (
             <>
-              <Link href="/auth">
+              <Link href="/login">
                 <Button variant="outline" className="w-full justify-center" data-testid="button-mobile-login">Log In</Button>
               </Link>
-              <Link href="/auth">
+              <Link href="/signup">
                 <Button className="w-full justify-center bg-primary text-white" data-testid="button-mobile-signup">Sign Up</Button>
               </Link>
             </>

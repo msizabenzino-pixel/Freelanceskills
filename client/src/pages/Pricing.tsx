@@ -1,10 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
-import { useQuery } from "@tanstack/react-query";
 import { useCountry } from "@/components/CountrySelector";
+import { useAuth } from "@/hooks/use-auth";
+import { useMutation } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+import { activateFreePlan } from "@/lib/firebaseAppData";
+import { savePendingAuthRedirect, savePendingPlanSelection } from "@/lib/authRedirect";
 import { 
   Check, 
   Shield, 
@@ -94,16 +98,9 @@ export default function Pricing() {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
   const [, navigate] = useLocation();
   const { country, formatPrice } = useCountry();
+  const { user } = useAuth();
+  const { toast } = useToast();
   const currencySymbol = country.currency.symbol;
-
-  const { data: currentUser } = useQuery<{ id: string } | null>({
-    queryKey: ["/api/auth/user"],
-    queryFn: async () => {
-      const res = await fetch("/api/auth/user", { credentials: "include" });
-      if (!res.ok) return null;
-      return res.json();
-    },
-  });
 
   const exampleJob = 500000; // 5000 ZAR in cents
   const freeEarnings = exampleJob * 0.9;
@@ -122,6 +119,49 @@ export default function Pricing() {
     ...method,
     minAmount: formatPrice(method.minAmountZar * 100)
   }));
+
+  const activateFreeMutation = useMutation({
+    mutationFn: async () => {
+      if (!user?.id) throw new Error("Please sign in to activate your plan.");
+      await activateFreePlan(user.id);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Free plan activated",
+        description: "Your account is now on the Free plan.",
+      });
+      navigate("/dashboard");
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Activation failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleFreePlanStart = () => {
+    if (!user?.id) {
+      savePendingPlanSelection({
+        planType: "free",
+        selectedAt: new Date().toISOString(),
+      });
+      const redirectTo = "/pricing?activate=free";
+      savePendingAuthRedirect(redirectTo);
+      navigate(`/login?redirect=${encodeURIComponent(redirectTo)}&plan=free`);
+      return;
+    }
+    activateFreeMutation.mutate();
+  };
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !user?.id) return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("activate") === "free" && !activateFreeMutation.isPending) {
+      activateFreeMutation.mutate();
+    }
+  }, [user?.id]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -191,7 +231,15 @@ export default function Pricing() {
               </ul>
             </div>
             <div className="p-8 bg-muted/30 border-t border-border">
-              <Button variant="outline" className="w-full font-bold" data-testid="button-get-started-free" onClick={() => navigate(currentUser?.id ? "/dashboard" : "/auth")}>{currentUser?.id ? "Go to Dashboard" : "Get Started Free"}</Button>
+              <Button
+                variant="outline"
+                className="w-full font-bold"
+                data-testid="button-get-started-free"
+                onClick={handleFreePlanStart}
+                disabled={activateFreeMutation.isPending}
+              >
+                {activateFreeMutation.isPending ? "Activating..." : "Get Started Free"}
+              </Button>
             </div>
           </div>
 

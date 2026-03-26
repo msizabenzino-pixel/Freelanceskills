@@ -13,12 +13,14 @@ import { OfflineScreen } from "@/components/OfflineScreen";
 import { AuthGuard } from "@/components/AuthGuard";
 import { FloatingActionButton } from "@/components/FloatingActionButton";
 import NotFound from "@/pages/not-found";
-import AdminLayout from "@/components/AdminLayout";
 import GlobalAiAssistant from "@/components/GlobalAiAssistant";
+import { RequireAdmin } from "@/components/admin/RequireAdmin";
+import { AdminShell } from "@/components/admin/layout/AdminShell";
 
 // ── Public Pages ──────────────────────────────────────────────────────────────
 const Home = lazy(() => import("@/pages/Home"));
 const Jobs = lazy(() => import("@/pages/Jobs"));
+const JobDetails = lazy(() => import("@/pages/JobDetails"));
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const Pricing = lazy(() => import("@/pages/Pricing"));
 const FindTalent = lazy(() => import("@/pages/FindTalent"));
@@ -172,6 +174,38 @@ const GeoHotSpots = lazy(() => import("@/pages/GeoHotSpots"));
 const AmbassadorProgram = lazy(() => import("@/pages/AmbassadorProgram"));
 const EliteClub = lazy(() => import("@/pages/EliteClub"));
 const VumaAdmin = lazy(() => import("@/pages/VumaAdmin"));
+const AdminOverview = lazy(() => import("@/pages/admin/Overview"));
+const AdminUsers = lazy(() => import("@/pages/admin/Users"));
+const AdminFreelancers = lazy(() => import("@/pages/admin/Freelancers"));
+const AdminClients = lazy(() => import("@/pages/admin/Clients"));
+const AdminJobs = lazy(() => import("@/pages/admin/Jobs"));
+const AdminJobApplications = lazy(() => import("@/pages/admin/JobApplications"));
+const AdminServices = lazy(() => import("@/pages/admin/Services"));
+const AdminTaskers = lazy(() => import("@/pages/admin/Taskers"));
+const AdminBookings = lazy(() => import("@/pages/admin/Bookings"));
+const AdminServiceRequests = lazy(() => import("@/pages/admin/ServiceRequests"));
+const AdminPayments = lazy(() => import("@/pages/admin/Payments"));
+const AdminSubscriptions = lazy(() => import("@/pages/admin/Subscriptions"));
+const AdminMessages = lazy(() => import("@/pages/admin/Messages"));
+const AdminSupport = lazy(() => import("@/pages/admin/Support"));
+const AdminReports = lazy(() => import("@/pages/admin/Reports"));
+const AdminModeration = lazy(() => import("@/pages/admin/Moderation"));
+const AdminDisputes = lazy(() => import("@/pages/admin/Disputes"));
+const AdminFraud = lazy(() => import("@/pages/admin/Fraud"));
+const AdminNotifications = lazy(() => import("@/pages/admin/Notifications"));
+const AdminCategories = lazy(() => import("@/pages/admin/Categories"));
+const AdminPromotions = lazy(() => import("@/pages/admin/Promotions"));
+const AdminCms = lazy(() => import("@/pages/admin/Cms"));
+const AdminAnalytics = lazy(() => import("@/pages/admin/Analytics"));
+const AdminFeatureFlags = lazy(() => import("@/pages/admin/FeatureFlags"));
+const AdminRoles = lazy(() => import("@/pages/admin/Roles"));
+const AdminAdminUsers = lazy(() => import("@/pages/admin/AdminUsers"));
+const AdminAuditLogs = lazy(() => import("@/pages/admin/AuditLogs"));
+const AdminSecurity = lazy(() => import("@/pages/admin/Security"));
+const AdminSystemSettings = lazy(() => import("@/pages/admin/SystemSettings"));
+const AdminMonitoring = lazy(() => import("@/pages/admin/Monitoring"));
+const AdminAiTools = lazy(() => import("@/pages/admin/AiTools"));
+const AdminMissionControl = lazy(() => import("@/pages/admin/MissionControl"));
 
 function PageLoader() {
   return (
@@ -183,12 +217,48 @@ function PageLoader() {
 
 function AdminRouter() {
   return (
-    <AdminLayout>
-      <GlobalAiAssistant />
-      <Suspense fallback={<PageLoader />}>
-        <Switch>
+    <RequireAdmin>
+      <AdminShell>
+        <GlobalAiAssistant />
+        <Suspense fallback={<PageLoader />}>
+          <Switch>
+            {/* Admin Core (Firebase-first + hybrid adapters) */}
+            <Route path="/admin" component={AdminOverview} />
+            <Route path="/admin/overview" component={AdminOverview} />
+            <Route path="/admin/users" component={AdminUsers} />
+            <Route path="/admin/freelancers" component={AdminFreelancers} />
+            <Route path="/admin/clients" component={AdminClients} />
+            <Route path="/admin/jobs" component={AdminJobs} />
+            <Route path="/admin/job-applications" component={AdminJobApplications} />
+            <Route path="/admin/services" component={AdminServices} />
+            <Route path="/admin/taskers" component={AdminTaskers} />
+            <Route path="/admin/bookings" component={AdminBookings} />
+            <Route path="/admin/service-requests" component={AdminServiceRequests} />
+            <Route path="/admin/payments" component={AdminPayments} />
+            <Route path="/admin/subscriptions" component={AdminSubscriptions} />
+            <Route path="/admin/messages" component={AdminMessages} />
+            <Route path="/admin/support" component={AdminSupport} />
+            <Route path="/admin/reports" component={AdminReports} />
+            <Route path="/admin/moderation" component={AdminModeration} />
+            <Route path="/admin/disputes" component={AdminDisputes} />
+            <Route path="/admin/fraud" component={AdminFraud} />
+            <Route path="/admin/notifications" component={AdminNotifications} />
+            <Route path="/admin/categories" component={AdminCategories} />
+            <Route path="/admin/promotions" component={AdminPromotions} />
+            <Route path="/admin/cms" component={AdminCms} />
+            <Route path="/admin/analytics" component={AdminAnalytics} />
+            <Route path="/admin/feature-flags" component={AdminFeatureFlags} />
+            <Route path="/admin/roles" component={AdminRoles} />
+            <Route path="/admin/admin-users" component={AdminAdminUsers} />
+            <Route path="/admin/audit-logs" component={AdminAuditLogs} />
+            <Route path="/admin/security" component={AdminSecurity} />
+            <Route path="/admin/system-settings" component={AdminSystemSettings} />
+            <Route path="/admin/monitoring" component={AdminMonitoring} />
+            <Route path="/admin/ai-tools" component={AdminAiTools} />
+            <Route path="/admin/mission-control" component={AdminMissionControl} />
+
           {/* S1–S50 */}
-          <Route path="/admin/mission-control" component={MissionControl} />
+          <Route path="/admin/legacy/mission-control" component={MissionControl} />
           <Route path="/admin/fraud"><AuthGuard><FraudDashboard /></AuthGuard></Route>
           <Route path="/admin/freelancers"><AuthGuard><FreelancerManagement /></AuthGuard></Route>
           <Route path="/admin/clients"><AuthGuard><ClientManagement /></AuthGuard></Route>
@@ -294,11 +364,13 @@ function AdminRouter() {
           <Route path="/admin/ambassadors"><AuthGuard><AmbassadorProgram /></AuthGuard></Route>
           <Route path="/admin/elite-club"><AuthGuard><EliteClub /></AuthGuard></Route>
 
-          {/* Default admin dashboard */}
-          <Route path="/admin"><AuthGuard><AdminDashboard /></AuthGuard></Route>
-        </Switch>
-      </Suspense>
-    </AdminLayout>
+          {/* Legacy fallback */}
+          <Route path="/admin/legacy"><AuthGuard><AdminDashboard /></AuthGuard></Route>
+          <Route component={AdminOverview} />
+          </Switch>
+        </Suspense>
+      </AdminShell>
+    </RequireAdmin>
   );
 }
 
@@ -308,8 +380,11 @@ function Router() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/auth" component={Auth} />
+        <Route path="/signup" component={Auth} />
+        <Route path="/login" component={Auth} />
         <Route path="/reset-password/:token" component={ResetPassword} />
         <Route path="/jobs" component={Jobs} />
+        <Route path="/jobs/:id" component={JobDetails} />
         <Route path="/dashboard">
           <AuthGuard>
             <Dashboard />
@@ -369,6 +444,7 @@ function Router() {
         <Route path="/vuma" component={Vuma} />
         <Route path="/vuma-admin" component={VumaAdmin} />
         <Route path="/vuma-live" component={VumaLive} />
+        <Route path="/admin" component={AdminRouter} />
         <Route path="/admin/:rest*" component={AdminRouter} />
         <Route component={NotFound} />
       </Switch>

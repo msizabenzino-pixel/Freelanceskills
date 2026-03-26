@@ -1,51 +1,45 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import type { User } from "@shared/models/auth";
-
-async function fetchUser(): Promise<User | null> {
-  const response = await fetch("/api/auth/user", {
-    credentials: "include",
-  });
-
-  if (response.status === 401) {
-    return null;
-  }
-
-  if (!response.ok) {
-    throw new Error(`${response.status}: ${response.statusText}`);
-  }
-
-  return response.json();
-}
-
-async function logoutUser(): Promise<void> {
-  await fetch("/api/auth/logout", {
-    method: "POST",
-    credentials: "include",
-  });
-}
+import { onAuthStateChanged } from "firebase/auth";
+import { firebaseAuth, isFirebaseConfigured } from "@/lib/firebase";
+import { logoutFirebaseUser, mapFirebaseUserOrNull } from "@/lib/firebaseAuth";
 
 export function useAuth() {
-  const queryClient = useQueryClient();
-  const { data: user, isLoading } = useQuery<User | null>({
-    queryKey: ["/api/auth/user"],
-    queryFn: fetchUser,
-    retry: false,
-    staleTime: 1000 * 60 * 5,
-  });
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const logoutMutation = useMutation({
-    mutationFn: logoutUser,
-    onSuccess: () => {
-      queryClient.setQueryData(["/api/auth/user"], null);
+  useEffect(() => {
+    if (!isFirebaseConfigured || !firebaseAuth) {
+      setUser(null);
+      setIsLoading(false);
+      return;
+    }
+
+    const unsubscribe = onAuthStateChanged(firebaseAuth, (firebaseUser) => {
+      setUser(mapFirebaseUserOrNull(firebaseUser));
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const logout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await logoutFirebaseUser();
+      setUser(null);
       window.location.href = "/";
-    },
-  });
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   return {
     user,
     isLoading,
-    isAuthenticated: !!user,
-    logout: logoutMutation.mutate,
-    isLoggingOut: logoutMutation.isPending,
+    isAuthenticated: Boolean(user),
+    logout,
+    isLoggingOut,
   };
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
@@ -9,42 +9,96 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Loader2, Shield, Zap, Globe } from "lucide-react";
+import {
+  loginWithApple,
+  loginWithEmail,
+  loginWithGoogle,
+  registerWithEmail,
+  sendFirebaseResetEmail,
+} from "@/lib/firebaseAuth";
+import { isFirebaseConfigured, trackFirebaseEvent } from "@/lib/firebase";
+import { upsertJobApplicationProfile } from "@/lib/firebaseProfiles";
+import {
+  clearPendingPlanSelection,
+  consumePendingAuthRedirect,
+  readPendingPlanSelection,
+  savePendingAuthRedirect,
+} from "@/lib/authRedirect";
+import { activateFreePlan } from "@/lib/firebaseAppData";
 
 export default function Auth() {
-  const [, navigate] = useLocation();
+  const [location, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [isLogin, setIsLogin] = useState(true);
+
+  const detectAuthMode = (): boolean => {
+    if (typeof window === "undefined") return true;
+    const params = new URLSearchParams(window.location.search);
+    const mode = (params.get("mode") || "").toLowerCase();
+    const path = window.location.pathname.toLowerCase();
+    if (path === "/signup") return false;
+    if (path === "/login") return true;
+    if (mode === "register" || mode === "signup") return false;
+    if (mode === "login") return true;
+    return true;
+  };
+
+  const [isLogin, setIsLogin] = useState(detectAuthMode);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     firstName: "",
     lastName: "",
+    userType: "freelancer" as "client" | "freelancer" | "both",
+    phoneNumber: "",
+    country: "South Africa",
+    location: "",
+    title: "",
+    skills: "",
+    yearsExperience: "",
+    bio: "",
   });
 
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [resetLink, setResetLink] = useState("");
 
+  const resolvePostAuthDestination = () => {
+    if (typeof window === "undefined") return "/dashboard";
+    const params = new URLSearchParams(window.location.search);
+    const fromQuery = params.get("redirect");
+    const fromStorage = consumePendingAuthRedirect();
+    return fromQuery || fromStorage || "/dashboard";
+  };
+
+  const continuePendingPlanIfNeeded = async (userId: string) => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const queryPlan = params.get("plan");
+    const pendingPlan = readPendingPlanSelection();
+    const shouldActivateFreePlan =
+      queryPlan === "free" || pendingPlan?.planType === "free";
+
+    if (shouldActivateFreePlan) {
+      await activateFreePlan(userId);
+      clearPendingPlanSelection();
+    }
+  };
+
+  const completeAuthSuccess = async (user: { id: string; email: string | null }) => {
+    await continuePendingPlanIfNeeded(user.id);
+    const destination = resolvePostAuthDestination();
+    toast({ title: "Signed in", description: `Welcome, ${user.email || "user"}` });
+    navigate(destination);
+  };
+
   const loginMutation = useMutation({
-    mutationFn: async (data: { email: string; password: string }) => {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.message || "Login failed");
-      }
-      return res.json();
-    },
-    onSuccess: (user) => {
+    mutationFn: loginWithEmail,
+    onSuccess: async (user) => {
+      trackFirebaseEvent("login", { method: "password" }).catch(() => {});
       queryClient.setQueryData(["/api/auth/user"], user);
-      toast({ title: "Welcome back!", description: `Signed in as ${user.email}` });
-      navigate("/dashboard");
+      await completeAuthSuccess(user);
     },
     onError: (error: Error) => {
       toast({ title: "Login failed", description: error.message, variant: "destructive" });
@@ -52,23 +106,32 @@ export default function Auth() {
   });
 
   const registerMutation = useMutation({
-    mutationFn: async (data: { email: string; password: string; firstName: string; lastName: string }) => {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(data),
+    mutationFn: registerWithEmail,
+    onSuccess: async (user) => {
+      const skillList = formData.skills
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+      await upsertJobApplicationProfile({
+        userId: user.id,
+        email: user.email,
+        firstName: formData.firstName || null,
+        lastName: formData.lastName || null,
+        userType: formData.userType,
+        phoneNumber: formData.phoneNumber.trim(),
+        country: formData.country.trim(),
+        location: formData.location.trim(),
+        title: formData.title.trim(),
+        bio: formData.bio.trim(),
+        skills: skillList,
+        yearsExperience: Number(formData.yearsExperience),
       });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.message || "Registration failed");
-      }
-      return res.json();
-    },
-    onSuccess: (user) => {
+
+      trackFirebaseEvent("sign_up", { method: "password" }).catch(() => {});
       queryClient.setQueryData(["/api/auth/user"], user);
-      toast({ title: "Account created!", description: "Welcome to FreelanceSkills" });
-      navigate("/dashboard");
+      toast({ title: "Account created!", description: "Profile saved and ready for job applications." });
+      await completeAuthSuccess(user);
     },
     onError: (error: Error) => {
       toast({ title: "Registration failed", description: error.message, variant: "destructive" });
@@ -76,23 +139,12 @@ export default function Auth() {
   });
 
   const forgotPasswordMutation = useMutation({
-    mutationFn: async (email: string) => {
-      const res = await fetch("/api/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.message || "Request failed");
-      }
-      return res.json();
-    },
-    onSuccess: (data) => {
-      setResetLink(data.resetLink);
+    mutationFn: sendFirebaseResetEmail,
+    onSuccess: () => {
+      setResetLink("Check your email inbox for the reset link.");
       toast({ 
-        title: "Reset link generated", 
-        description: "Your password reset link is ready. (In production, this would be emailed)." 
+        title: "Reset email sent",
+        description: "If this email exists, Firebase has sent a password reset link."
       });
     },
     onError: (error: Error) => {
@@ -100,18 +152,116 @@ export default function Auth() {
     },
   });
 
+  const validateSignupProfile = (): boolean => {
+    const skillsCount = formData.skills
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean).length;
+    const years = Number(formData.yearsExperience);
+
+    if (!formData.firstName.trim() || !formData.lastName.trim()) {
+      toast({ title: "Missing details", description: "First and last name are required.", variant: "destructive" });
+      return false;
+    }
+    if (!formData.phoneNumber.trim()) {
+      toast({ title: "Missing details", description: "Phone number is required.", variant: "destructive" });
+      return false;
+    }
+    if (!formData.location.trim()) {
+      toast({ title: "Missing details", description: "Location is required.", variant: "destructive" });
+      return false;
+    }
+    if (!formData.title.trim()) {
+      toast({ title: "Missing details", description: "Professional title is required.", variant: "destructive" });
+      return false;
+    }
+    if (skillsCount < 2) {
+      toast({ title: "Missing details", description: "Add at least 2 skills (comma separated).", variant: "destructive" });
+      return false;
+    }
+    if (Number.isNaN(years) || years < 0 || years > 50) {
+      toast({ title: "Invalid value", description: "Years of experience must be between 0 and 50.", variant: "destructive" });
+      return false;
+    }
+    if (formData.bio.trim().length < 40) {
+      toast({ title: "Missing details", description: "Bio must be at least 40 characters for job applications.", variant: "destructive" });
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isFirebaseConfigured) {
+      toast({
+        title: "Firebase not configured",
+        description: "Please set VITE_FIREBASE_* values and restart the dev server.",
+        variant: "destructive",
+      });
+      return;
+    }
     if (isForgotPassword) {
       forgotPasswordMutation.mutate(resetEmail);
     } else if (isLogin) {
       loginMutation.mutate({ email: formData.email, password: formData.password });
     } else {
+      if (!validateSignupProfile()) return;
       registerMutation.mutate(formData);
     }
   };
 
   const isLoading = loginMutation.isPending || registerMutation.isPending || forgotPasswordMutation.isPending;
+
+  const socialAuthMutation = useMutation({
+    mutationFn: async (provider: "google" | "apple") => {
+      if (provider === "google") return loginWithGoogle();
+      return loginWithApple();
+    },
+    onSuccess: async (user) => {
+      if (!isLogin) {
+        const skillList = formData.skills
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean);
+        upsertJobApplicationProfile({
+          userId: user.id,
+          email: user.email,
+          firstName: formData.firstName || null,
+          lastName: formData.lastName || null,
+          userType: formData.userType,
+          phoneNumber: formData.phoneNumber.trim(),
+          country: formData.country.trim(),
+          location: formData.location.trim(),
+          title: formData.title.trim(),
+          bio: formData.bio.trim(),
+          skills: skillList,
+          yearsExperience: Number(formData.yearsExperience),
+        }).catch(() => {});
+        trackFirebaseEvent("sign_up", { method: "social" }).catch(() => {});
+      } else {
+        trackFirebaseEvent("login", { method: "social" }).catch(() => {});
+      }
+      queryClient.setQueryData(["/api/auth/user"], user);
+      await completeAuthSuccess(user);
+    },
+    onError: (error: Error) => {
+      toast({ title: "Social sign-in failed", description: error.message, variant: "destructive" });
+    },
+  });
+
+  useEffect(() => {
+    setIsLogin(detectAuthMode());
+    setIsForgotPassword(false);
+  }, [location]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const redirect = params.get("redirect");
+    if (redirect) {
+      savePendingAuthRedirect(redirect);
+    }
+  }, [location]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex flex-col">
@@ -198,14 +348,9 @@ export default function Auth() {
 
                   {resetLink && (
                     <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg space-y-2">
-                      <p className="text-sm text-blue-800 font-medium">Your reset link:</p>
-                      <a 
-                        href={resetLink} 
-                        className="text-sm text-blue-600 break-all hover:underline"
-                        data-testid="link-reset-password"
-                      >
+                      <p className="text-sm text-blue-800 font-medium" data-testid="link-reset-password">
                         {resetLink}
-                      </a>
+                      </p>
                     </div>
                   )}
 
@@ -253,6 +398,7 @@ export default function Auth() {
                             value={formData.firstName}
                             onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                             className="pl-10"
+                            required
                             data-testid="input-first-name"
                           />
                         </div>
@@ -267,11 +413,125 @@ export default function Auth() {
                             value={formData.lastName}
                             onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                             className="pl-10"
+                            required
                             data-testid="input-last-name"
                           />
                         </div>
                       </div>
                     </div>
+                  )}
+
+                  {!isLogin && (
+                    <>
+                      <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+                        Application Profile (required): this information is saved for job applications.
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <Label htmlFor="userType" className="text-sm font-medium text-slate-700">Account Type</Label>
+                          <select
+                            id="userType"
+                            value={formData.userType}
+                            onChange={(e) => setFormData({ ...formData, userType: e.target.value as "client" | "freelancer" | "both" })}
+                            className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                            data-testid="select-user-type"
+                          >
+                            <option value="freelancer">Freelancer</option>
+                            <option value="client">Client</option>
+                            <option value="both">Both</option>
+                          </select>
+                        </div>
+                        <div>
+                          <Label htmlFor="phoneNumber" className="text-sm font-medium text-slate-700">Phone Number</Label>
+                          <Input
+                            id="phoneNumber"
+                            placeholder="+27..."
+                            value={formData.phoneNumber}
+                            onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                            required
+                            data-testid="input-phone-number"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <Label htmlFor="country" className="text-sm font-medium text-slate-700">Country</Label>
+                          <Input
+                            id="country"
+                            placeholder="South Africa"
+                            value={formData.country}
+                            onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                            required
+                            data-testid="input-country"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="location" className="text-sm font-medium text-slate-700">City / Location</Label>
+                          <Input
+                            id="location"
+                            placeholder="Cape Town"
+                            value={formData.location}
+                            onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                            required
+                            data-testid="input-location"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <Label htmlFor="title" className="text-sm font-medium text-slate-700">Professional Title</Label>
+                          <Input
+                            id="title"
+                            placeholder="React Developer"
+                            value={formData.title}
+                            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                            required
+                            data-testid="input-title"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="yearsExperience" className="text-sm font-medium text-slate-700">Years of Experience</Label>
+                          <Input
+                            id="yearsExperience"
+                            type="number"
+                            min={0}
+                            max={50}
+                            placeholder="3"
+                            value={formData.yearsExperience}
+                            onChange={(e) => setFormData({ ...formData, yearsExperience: e.target.value })}
+                            required
+                            data-testid="input-years-experience"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="skills" className="text-sm font-medium text-slate-700">Key Skills</Label>
+                        <Input
+                          id="skills"
+                          placeholder="React, TypeScript, Node.js"
+                          value={formData.skills}
+                          onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
+                          required
+                          data-testid="input-skills"
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="bio" className="text-sm font-medium text-slate-700">Short Bio</Label>
+                        <textarea
+                          id="bio"
+                          placeholder="Tell clients about your experience, strengths, and what kind of jobs you are looking for."
+                          value={formData.bio}
+                          onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                          className="mt-1 min-h-20 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                          required
+                          data-testid="input-bio"
+                        />
+                      </div>
+                    </>
                   )}
 
                   <div>
@@ -344,6 +604,66 @@ export default function Auth() {
                       </>
                     )}
                   </Button>
+
+                  <div className="relative py-1">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t border-slate-200" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase tracking-wide">
+                      <span className="bg-white px-2 text-slate-400">Or continue with</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="h-11 rounded-xl font-medium"
+                      onClick={() => {
+                        if (!isFirebaseConfigured) {
+                          toast({
+                            title: "Firebase not configured",
+                            description: "Please set VITE_FIREBASE_* values and restart the dev server.",
+                            variant: "destructive",
+                          });
+                          return;
+                        }
+                        if (!isLogin && !validateSignupProfile()) return;
+                        socialAuthMutation.mutate("google");
+                      }}
+                      disabled={socialAuthMutation.isPending}
+                      data-testid="button-auth-google"
+                    >
+                      <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white border border-slate-300 text-[11px] font-bold text-slate-700">
+                        G
+                      </span>
+                      Google
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="h-11 rounded-xl font-medium"
+                      onClick={() => {
+                        if (!isFirebaseConfigured) {
+                          toast({
+                            title: "Firebase not configured",
+                            description: "Please set VITE_FIREBASE_* values and restart the dev server.",
+                            variant: "destructive",
+                          });
+                          return;
+                        }
+                        if (!isLogin && !validateSignupProfile()) return;
+                        socialAuthMutation.mutate("apple");
+                      }}
+                      disabled={socialAuthMutation.isPending}
+                      data-testid="button-auth-apple"
+                    >
+                      <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-black text-[11px] font-bold text-white">
+                        A
+                      </span>
+                      Apple
+                    </Button>
+                  </div>
                 </form>
               )}
 

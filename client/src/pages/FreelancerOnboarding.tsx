@@ -1,4 +1,5 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
+import { useLocation } from "wouter";
 import { useMutation } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -12,9 +13,9 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { useCurrency } from "@/lib/currency";
-import { apiRequest } from "@/lib/queryClient";
 import { SERVICE_CATEGORIES } from "@shared/categories";
+import { useAuth } from "@/hooks/use-auth";
+import { saveFreelancerProfile, uploadProfilePhoto } from "@/lib/firebaseAppData";
 import {
   CheckCircle2,
   ChevronRight,
@@ -28,53 +29,98 @@ import {
   ShieldCheck,
   X,
   AlertCircle,
+  Loader2,
 } from "lucide-react";
 
 const STEPS = ["Basic Info", "Skills & Expertise", "Portfolio & Verification", "Review & Submit"];
 
 function FreelancerOnboardingContent() {
-  const { formatAmount } = useCurrency();
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const [displayName, setDisplayName] = useState("");
   const [professionalTitle, setProfessionalTitle] = useState("");
   const [bio, setBio] = useState("");
   const [location, setLocation] = useState("");
   const [phone, setPhone] = useState("");
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState("");
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [category, setCategory] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
+  const [expertise, setExpertise] = useState<string[]>([]);
   const [experienceLevel, setExperienceLevel] = useState("");
   const [hourlyRate, setHourlyRate] = useState("");
   const [availability, setAvailability] = useState("");
 
   const [portfolioDescription, setPortfolioDescription] = useState("");
+  const [portfolioLinksInput, setPortfolioLinksInput] = useState("");
   const [yearsOfExperience, setYearsOfExperience] = useState("");
   const [certifications, setCertifications] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
-  const createProfileMutation = useMutation({
+  const { user } = useAuth();
+  const [, navigate] = useLocation();
+
+  const uploadPhotoMutation = useMutation({
+    mutationFn: async (file: File) => {
+      if (!user?.id) throw new Error("Please sign in first.");
+      return uploadProfilePhoto(user.id, file, setUploadProgress);
+    },
+    onSuccess: (url) => {
+      setProfilePhotoUrl(url);
+      setUploadProgress(100);
+      setApiError(null);
+    },
+    onError: (error: Error) => {
+      setApiError(error.message);
+      setUploadProgress(0);
+    },
+  });
+
+  const saveProfileMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest("POST", "/api/profile", {
-        userType: "freelancer",
-        bio,
-        title: professionalTitle,
+      if (!user?.id) throw new Error("Please sign in first.");
+      const fullName = displayName.trim();
+      const portfolioLinks = portfolioLinksInput
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean);
+      const certificationsList = certifications
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean);
+
+      await saveFreelancerProfile({
+        userId: user.id,
+        fullName,
+        profilePhotoUrl,
+        bio: bio.trim(),
+        title: professionalTitle.trim(),
         skills,
-        hourlyRate: hourlyRate ? Number(hourlyRate) * 100 : 0,
-        location,
+        expertise,
+        categories: [category],
+        hourlyRate: Number(hourlyRate || 0),
+        location: location.trim(),
+        portfolioLinks,
+        experienceLevel,
+        availability,
+        role: "freelancer",
+        onboardingCompleted: true,
       });
-      return response.json();
+
+      if (certificationsList.length > 0 || yearsOfExperience) {
+        // Extended onboarding details can be added in a dedicated profile details doc later.
+      }
     },
     onSuccess: () => {
       setSubmitted(true);
       setApiError(null);
     },
-    onError: (error) => {
-      setApiError(error instanceof Error ? error.message : "Failed to create profile. Please try again.");
+    onError: (error: Error) => {
+      setApiError(error.message);
     },
   });
 
@@ -90,10 +136,10 @@ function FreelancerOnboardingContent() {
 
   const canProceed = () => {
     if (step === 0) {
-      return displayName.trim() && professionalTitle.trim() && bio.trim().length >= 50 && location.trim();
+      return Boolean(displayName.trim() && professionalTitle.trim() && bio.trim().length >= 50 && location.trim());
     }
     if (step === 1) {
-      return category && skills.length > 0 && experienceLevel && hourlyRate;
+      return Boolean(category && skills.length > 0 && expertise.length > 0 && experienceLevel && Number(hourlyRate) > 0 && availability);
     }
     if (step === 2) {
       return agreedToTerms;
@@ -101,26 +147,17 @@ function FreelancerOnboardingContent() {
     return true;
   };
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => setPhotoPreview(ev.target?.result as string);
-    reader.readAsDataURL(file);
-  };
-
   const handleNext = () => {
-    if (step === 0) {
-      if (!displayName.trim()) { setApiError("Display name is required."); return; }
-      if (!professionalTitle.trim()) { setApiError("Professional title is required."); return; }
-      if (bio.trim().length < 50) { setApiError("Bio must be at least 50 characters."); return; }
-      if (!location.trim()) { setApiError("Location is required."); return; }
-    }
     setApiError(null);
+    if (!canProceed()) {
+      setApiError("Please complete all required fields before continuing.");
+      return;
+    }
     if (step < 3) setStep(step + 1);
   };
 
   const handleBack = () => {
+    setApiError(null);
     if (step > 0) setStep(step - 1);
   };
 
@@ -129,11 +166,25 @@ function FreelancerOnboardingContent() {
       setApiError("You must agree to the terms to complete registration.");
       return;
     }
-    createProfileMutation.mutate();
+    saveProfileMutation.mutate();
+  };
+
+  const handlePhotoSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setApiError("Please select a valid image file.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (ev) => setPhotoPreview((ev.target?.result as string) || null);
+    reader.readAsDataURL(file);
+
+    uploadPhotoMutation.mutate(file);
   };
 
   const categoryName = SERVICE_CATEGORIES.find((c) => c.id === category)?.name || category;
-
   const stepIcons = [User, Briefcase, FileCheck, ClipboardCheck];
 
   if (submitted) {
@@ -145,15 +196,15 @@ function FreelancerOnboardingContent() {
             <div className="w-20 h-20 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle2 className="w-10 h-10 text-emerald-600" />
             </div>
-            <h2 className="text-3xl font-bold text-foreground mb-3" data-testid="text-success-title">Profile Created!</h2>
+            <h2 className="text-3xl font-bold text-foreground mb-3" data-testid="text-success-title">Profile Created</h2>
             <p className="text-muted-foreground text-lg mb-8" data-testid="text-success-message">
-              You're now listed on FreelanceSkills. Clients can find and book you.
+              Your freelancer profile is live. You can now apply for jobs and receive bookings.
             </p>
             <div className="flex gap-4 justify-center">
-              <Button onClick={() => window.location.href = "/dashboard"} data-testid="button-go-dashboard">
+              <Button onClick={() => navigate("/dashboard")} data-testid="button-go-dashboard">
                 Go to Dashboard
               </Button>
-              <Button variant="outline" onClick={() => window.location.href = "/services"} data-testid="button-browse-services">
+              <Button variant="outline" onClick={() => navigate("/services")} data-testid="button-browse-services">
                 Browse Services
               </Button>
             </div>
@@ -183,21 +234,12 @@ function FreelancerOnboardingContent() {
                   <div
                     className={cn(
                       "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors",
-                      i < step
-                        ? "bg-primary text-white"
-                        : i === step
-                        ? "bg-primary text-white"
-                        : "bg-muted text-muted-foreground"
+                      i <= step ? "bg-primary text-white" : "bg-muted text-muted-foreground"
                     )}
                   >
                     {i < step ? <CheckCircle2 className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
                   </div>
-                  <span
-                    className={cn(
-                      "text-sm font-medium hidden sm:inline",
-                      i <= step ? "text-primary" : "text-muted-foreground"
-                    )}
-                  >
+                  <span className={cn("text-sm font-medium hidden sm:inline", i <= step ? "text-primary" : "text-muted-foreground")}>
                     {label}
                   </span>
                   {i < STEPS.length - 1 && <ChevronRight className="w-4 h-4 text-muted-foreground" />}
@@ -221,86 +263,52 @@ function FreelancerOnboardingContent() {
                 <h2 className="text-xl font-bold text-foreground mb-4">Basic Information</h2>
 
                 <div className="flex flex-col items-center gap-3 mb-6">
-                  <div
-                    className="w-24 h-24 rounded-full bg-muted flex items-center justify-center text-2xl font-bold text-muted-foreground border-2 border-border overflow-hidden"
-                    data-testid="avatar-placeholder"
-                  >
-                    {photoPreview ? (
-                      <img src={photoPreview} alt="Profile preview" className="w-full h-full object-cover" />
-                    ) : (
-                      getInitials()
-                    )}
-                  </div>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handlePhotoChange}
-                    data-testid="input-file-photo"
-                  />
-                  <Button variant="outline" size="sm" type="button" onClick={() => fileInputRef.current?.click()} data-testid="button-upload-photo">
-                    <Camera className="w-4 h-4 mr-2" /> {photoPreview ? "Change Photo" : "Upload Photo"}
-                  </Button>
+                  {photoPreview || profilePhotoUrl ? (
+                    <img
+                      src={photoPreview || profilePhotoUrl}
+                      alt="Profile"
+                      className="w-24 h-24 rounded-full object-cover border"
+                    />
+                  ) : (
+                    <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center text-2xl font-bold text-muted-foreground border-2 border-border" data-testid="avatar-placeholder">
+                      {getInitials()}
+                    </div>
+                  )}
+                  <Label htmlFor="photo-upload" className="cursor-pointer">
+                    <Button type="button" variant="outline" size="sm" data-testid="button-upload-photo" asChild>
+                      <span><Camera className="w-4 h-4 mr-2" /> {profilePhotoUrl ? "Change Photo" : "Upload Photo"}</span>
+                    </Button>
+                  </Label>
+                  <input id="photo-upload" type="file" accept="image/*" className="hidden" onChange={handlePhotoSelect} />
+                  {uploadPhotoMutation.isPending && (
+                    <p className="text-xs text-muted-foreground">Uploading... {uploadProgress}%</p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="displayName">Display Name *</Label>
-                  <Input
-                    id="displayName"
-                    placeholder="e.g. John Doe"
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    data-testid="input-display-name"
-                  />
+                  <Input id="displayName" placeholder="e.g. John Doe" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="professionalTitle">Professional Title *</Label>
-                  <Input
-                    id="professionalTitle"
-                    placeholder='e.g. "Senior Plumber", "React Developer"'
-                    value={professionalTitle}
-                    onChange={(e) => setProfessionalTitle(e.target.value)}
-                    data-testid="input-professional-title"
-                  />
+                  <Input id="professionalTitle" placeholder="Senior Plumber" value={professionalTitle} onChange={(e) => setProfessionalTitle(e.target.value)} />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="bio">Bio / About Me * (min 50 characters)</Label>
-                  <Textarea
-                    id="bio"
-                    placeholder="Tell clients about yourself, your experience, and what makes you stand out..."
-                    className="min-h-[120px] resize-none"
-                    value={bio}
-                    onChange={(e) => setBio(e.target.value)}
-                    data-testid="textarea-bio"
-                  />
-                  <p className={cn("text-xs", bio.length >= 50 ? "text-muted-foreground" : "text-destructive")}>
-                    {bio.length}/50 characters minimum
-                  </p>
+                  <Textarea id="bio" className="min-h-[120px] resize-none" value={bio} onChange={(e) => setBio(e.target.value)} />
+                  <p className={cn("text-xs", bio.length >= 50 ? "text-muted-foreground" : "text-destructive")}>{bio.length}/50 characters minimum</p>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="location">Location *</Label>
-                  <Input
-                    id="location"
-                    placeholder="e.g. Cape Town"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    data-testid="input-location"
-                  />
+                  <Input id="location" placeholder="Cape Town" value={location} onChange={(e) => setLocation(e.target.value)} />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone Number (optional)</Label>
-                  <Input
-                    id="phone"
-                    placeholder="e.g. +27 82 123 4567"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    data-testid="input-phone"
-                  />
+                  <Input id="phone" placeholder="+27 82 123 4567" value={phone} onChange={(e) => setPhone(e.target.value)} />
                 </div>
               </div>
             )}
@@ -312,14 +320,10 @@ function FreelancerOnboardingContent() {
                 <div className="space-y-2">
                   <Label htmlFor="category">Primary Category *</Label>
                   <Select value={category} onValueChange={setCategory}>
-                    <SelectTrigger className="h-12" data-testid="select-category">
-                      <SelectValue placeholder="Select your primary category" />
-                    </SelectTrigger>
+                    <SelectTrigger className="h-12"><SelectValue placeholder="Select your primary category" /></SelectTrigger>
                     <SelectContent>
                       {SERVICE_CATEGORIES.map((cat) => (
-                        <SelectItem key={cat.id} value={cat.id}>
-                          {cat.name}
-                        </SelectItem>
+                        <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -328,30 +332,46 @@ function FreelancerOnboardingContent() {
                 <div className="space-y-2">
                   <Label>Skills *</Label>
                   <Input
-                    placeholder="Type a skill and press Enter (e.g. Plumbing)"
-                    className="h-12"
-                    data-testid="input-skills"
+                    placeholder="Type a skill and press Enter"
                     onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        const value = (e.target as HTMLInputElement).value.trim();
-                        if (value && !skills.includes(value)) {
-                          setSkills([...skills, value]);
-                          (e.target as HTMLInputElement).value = "";
-                        }
-                      }
+                      if (e.key !== "Enter") return;
+                      e.preventDefault();
+                      const value = (e.target as HTMLInputElement).value.trim();
+                      if (!value || skills.includes(value)) return;
+                      setSkills((prev) => [...prev, value]);
+                      (e.target as HTMLInputElement).value = "";
                     }}
                   />
-                  <div className="flex flex-wrap gap-2 pt-2" data-testid="skills-list">
+                  <div className="flex flex-wrap gap-2 pt-2">
                     {skills.map((skill, i) => (
                       <Badge key={i} variant="secondary" className="flex items-center gap-1 px-3 py-1">
                         {skill}
-                        <button
-                          type="button"
-                          className="hover:text-destructive ml-1"
-                          onClick={() => setSkills(skills.filter((_, idx) => idx !== i))}
-                          data-testid={`button-remove-skill-${i}`}
-                        >
+                        <button type="button" className="hover:text-destructive ml-1" onClick={() => setSkills(skills.filter((_, idx) => idx !== i))}>
+                          <X className="w-3 h-3" />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Expertise Areas *</Label>
+                  <Input
+                    placeholder="Type expertise and press Enter"
+                    onKeyDown={(e) => {
+                      if (e.key !== "Enter") return;
+                      e.preventDefault();
+                      const value = (e.target as HTMLInputElement).value.trim();
+                      if (!value || expertise.includes(value)) return;
+                      setExpertise((prev) => [...prev, value]);
+                      (e.target as HTMLInputElement).value = "";
+                    }}
+                  />
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    {expertise.map((item, i) => (
+                      <Badge key={i} variant="outline" className="flex items-center gap-1 px-3 py-1">
+                        {item}
+                        <button type="button" className="hover:text-destructive ml-1" onClick={() => setExpertise(expertise.filter((_, idx) => idx !== i))}>
                           <X className="w-3 h-3" />
                         </button>
                       </Badge>
@@ -362,9 +382,7 @@ function FreelancerOnboardingContent() {
                 <div className="space-y-2">
                   <Label htmlFor="experienceLevel">Experience Level *</Label>
                   <Select value={experienceLevel} onValueChange={setExperienceLevel}>
-                    <SelectTrigger className="h-12" data-testid="select-experience-level">
-                      <SelectValue placeholder="Select experience level" />
-                    </SelectTrigger>
+                    <SelectTrigger className="h-12"><SelectValue placeholder="Select experience level" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="entry">Entry Level</SelectItem>
                       <SelectItem value="intermediate">Intermediate</SelectItem>
@@ -375,27 +393,13 @@ function FreelancerOnboardingContent() {
 
                 <div className="space-y-2">
                   <Label htmlFor="hourlyRate">Hourly Rate (ZAR) *</Label>
-                  <Input
-                    id="hourlyRate"
-                    type="number"
-                    placeholder="e.g. 350"
-                    value={hourlyRate}
-                    onChange={(e) => setHourlyRate(e.target.value)}
-                    data-testid="input-hourly-rate"
-                  />
-                  {hourlyRate && (
-                    <p className="text-xs text-muted-foreground">
-                      {formatAmount(Number(hourlyRate))} per hour
-                    </p>
-                  )}
+                  <Input id="hourlyRate" type="number" placeholder="350" value={hourlyRate} onChange={(e) => setHourlyRate(e.target.value)} />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="availability">Availability</Label>
+                  <Label htmlFor="availability">Availability *</Label>
                   <Select value={availability} onValueChange={setAvailability}>
-                    <SelectTrigger className="h-12" data-testid="select-availability">
-                      <SelectValue placeholder="Select your availability" />
-                    </SelectTrigger>
+                    <SelectTrigger className="h-12"><SelectValue placeholder="Select your availability" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="full-time">Full-time</SelectItem>
                       <SelectItem value="part-time">Part-time</SelectItem>
@@ -413,56 +417,34 @@ function FreelancerOnboardingContent() {
 
                 <div className="space-y-2">
                   <Label htmlFor="portfolioDescription">Portfolio Description</Label>
-                  <Textarea
-                    id="portfolioDescription"
-                    placeholder="Describe your past work, notable projects, and achievements..."
-                    className="min-h-[150px] resize-none"
-                    value={portfolioDescription}
-                    onChange={(e) => setPortfolioDescription(e.target.value)}
-                    data-testid="textarea-portfolio"
-                  />
+                  <Textarea id="portfolioDescription" className="min-h-[150px] resize-none" value={portfolioDescription} onChange={(e) => setPortfolioDescription(e.target.value)} />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="portfolioLinks">Portfolio Links (comma separated)</Label>
+                  <Input id="portfolioLinks" placeholder="https://site.com, https://github.com/me" value={portfolioLinksInput} onChange={(e) => setPortfolioLinksInput(e.target.value)} />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="yearsOfExperience">Years of Experience</Label>
-                  <Input
-                    id="yearsOfExperience"
-                    type="number"
-                    placeholder="e.g. 5"
-                    value={yearsOfExperience}
-                    onChange={(e) => setYearsOfExperience(e.target.value)}
-                    data-testid="input-years-experience"
-                  />
+                  <Input id="yearsOfExperience" type="number" placeholder="5" value={yearsOfExperience} onChange={(e) => setYearsOfExperience(e.target.value)} />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="certifications">Certifications (comma separated)</Label>
-                  <Input
-                    id="certifications"
-                    placeholder="e.g. AWS Certified, PMP, SHEQ"
-                    value={certifications}
-                    onChange={(e) => setCertifications(e.target.value)}
-                    data-testid="input-certifications"
-                  />
+                  <Input id="certifications" placeholder="AWS, PMP, SHEQ" value={certifications} onChange={(e) => setCertifications(e.target.value)} />
                 </div>
 
                 <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4 flex gap-3">
                   <ShieldCheck className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
                   <div className="text-sm text-blue-800 dark:text-blue-300">
                     <p className="font-bold mb-1">ID Verification</p>
-                    <p data-testid="text-id-verification">
-                      Your identity will be verified via our secure process after submission
-                    </p>
+                    <p>Your identity can be verified after submission.</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3 pt-2">
-                  <Checkbox
-                    id="terms"
-                    checked={agreedToTerms}
-                    onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
-                    data-testid="checkbox-terms"
-                  />
+                  <Checkbox id="terms" checked={agreedToTerms} onCheckedChange={(checked) => setAgreedToTerms(checked === true)} />
                   <Label htmlFor="terms" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
                     I agree to FreelanceSkills Terms of Service
                   </Label>
@@ -476,94 +458,26 @@ function FreelancerOnboardingContent() {
 
                 <div className="space-y-6">
                   <div className="bg-muted/50 rounded-lg p-4 border border-border">
-                    <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                      <User className="w-4 h-4 text-primary" /> Basic Information
-                    </h3>
+                    <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2"><User className="w-4 h-4 text-primary" /> Basic Information</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                      <div>
-                        <span className="text-muted-foreground">Display Name:</span>{" "}
-                        <span className="font-medium text-foreground" data-testid="review-display-name">{displayName}</span>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">Title:</span>{" "}
-                        <span className="font-medium text-foreground" data-testid="review-title">{professionalTitle}</span>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">Location:</span>{" "}
-                        <span className="font-medium text-foreground" data-testid="review-location">{location}</span>
-                      </div>
-                      {phone && (
-                        <div>
-                          <span className="text-muted-foreground">Phone:</span>{" "}
-                          <span className="font-medium text-foreground" data-testid="review-phone">{phone}</span>
-                        </div>
-                      )}
-                      <div className="sm:col-span-2">
-                        <span className="text-muted-foreground">Bio:</span>{" "}
-                        <span className="font-medium text-foreground" data-testid="review-bio">{bio}</span>
-                      </div>
+                      <div><span className="text-muted-foreground">Display Name:</span> <span className="font-medium text-foreground">{displayName}</span></div>
+                      <div><span className="text-muted-foreground">Title:</span> <span className="font-medium text-foreground">{professionalTitle}</span></div>
+                      <div><span className="text-muted-foreground">Location:</span> <span className="font-medium text-foreground">{location}</span></div>
+                      <div className="sm:col-span-2"><span className="text-muted-foreground">Bio:</span> <span className="font-medium text-foreground">{bio}</span></div>
                     </div>
                   </div>
 
                   <div className="bg-muted/50 rounded-lg p-4 border border-border">
-                    <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                      <Briefcase className="w-4 h-4 text-primary" /> Skills & Expertise
-                    </h3>
+                    <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2"><Briefcase className="w-4 h-4 text-primary" /> Skills & Expertise</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                      <div>
-                        <span className="text-muted-foreground">Category:</span>{" "}
-                        <span className="font-medium text-foreground" data-testid="review-category">{categoryName}</span>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">Experience:</span>{" "}
-                        <span className="font-medium text-foreground capitalize" data-testid="review-experience">{experienceLevel}</span>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">Hourly Rate:</span>{" "}
-                        <span className="font-medium text-foreground" data-testid="review-rate">{formatAmount(Number(hourlyRate))}/hr</span>
-                      </div>
-                      {availability && (
-                        <div>
-                          <span className="text-muted-foreground">Availability:</span>{" "}
-                          <span className="font-medium text-foreground capitalize" data-testid="review-availability">{availability.replace("-", " ")}</span>
-                        </div>
-                      )}
+                      <div><span className="text-muted-foreground">Category:</span> <span className="font-medium text-foreground">{categoryName}</span></div>
+                      <div><span className="text-muted-foreground">Experience:</span> <span className="font-medium text-foreground capitalize">{experienceLevel}</span></div>
+                      <div><span className="text-muted-foreground">Hourly Rate:</span> <span className="font-medium text-foreground">R{hourlyRate || "0"}/hr</span></div>
+                      <div><span className="text-muted-foreground">Availability:</span> <span className="font-medium text-foreground capitalize">{availability.replace("-", " ")}</span></div>
                       <div className="sm:col-span-2">
-                        <span className="text-muted-foreground">Skills:</span>{" "}
-                        <div className="flex flex-wrap gap-1.5 mt-1" data-testid="review-skills">
-                          {skills.map((skill, i) => (
-                            <Badge key={i} variant="secondary" className="text-xs">
-                              {skill}
-                            </Badge>
-                          ))}
-                        </div>
+                        <span className="text-muted-foreground">Skills:</span>
+                        <div className="flex flex-wrap gap-1.5 mt-1">{skills.map((skill, i) => <Badge key={i} variant="secondary" className="text-xs">{skill}</Badge>)}</div>
                       </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-muted/50 rounded-lg p-4 border border-border">
-                    <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                      <FileCheck className="w-4 h-4 text-primary" /> Portfolio & Verification
-                    </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                      {yearsOfExperience && (
-                        <div>
-                          <span className="text-muted-foreground">Years of Experience:</span>{" "}
-                          <span className="font-medium text-foreground" data-testid="review-years">{yearsOfExperience}</span>
-                        </div>
-                      )}
-                      {certifications && (
-                        <div>
-                          <span className="text-muted-foreground">Certifications:</span>{" "}
-                          <span className="font-medium text-foreground" data-testid="review-certifications">{certifications}</span>
-                        </div>
-                      )}
-                      {portfolioDescription && (
-                        <div className="sm:col-span-2">
-                          <span className="text-muted-foreground">Portfolio:</span>{" "}
-                          <span className="font-medium text-foreground" data-testid="review-portfolio">{portfolioDescription}</span>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -572,34 +486,19 @@ function FreelancerOnboardingContent() {
 
             <div className="pt-6 border-t border-border mt-8 flex justify-between">
               {step > 0 ? (
-                <Button variant="outline" onClick={handleBack} className="h-12 px-6" data-testid="button-back">
-                  <ArrowLeft className="w-4 h-4 mr-2" /> Back
-                </Button>
+                <Button variant="outline" onClick={handleBack} className="h-12 px-6"><ArrowLeft className="w-4 h-4 mr-2" /> Back</Button>
               ) : (
                 <div />
               )}
 
               {step < 3 ? (
-                <Button
-                  onClick={handleNext}
-                  disabled={!canProceed()}
-                  className="h-12 px-8 bg-primary text-white hover:bg-primary/90 font-bold shadow-lg"
-                  data-testid="button-next"
-                >
+                <Button onClick={handleNext} disabled={!canProceed()} className="h-12 px-8 bg-primary text-white hover:bg-primary/90 font-bold shadow-lg">
                   Next <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               ) : (
-                <Button
-                  onClick={handleSubmit}
-                  disabled={createProfileMutation.isPending}
-                  className="h-12 px-8 bg-primary text-white hover:bg-primary/90 font-bold shadow-lg"
-                  data-testid="button-complete-registration"
-                >
-                  {createProfileMutation.isPending ? (
-                    <>
-                      <span className="inline-block w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Submitting...
-                    </>
+                <Button onClick={handleSubmit} disabled={saveProfileMutation.isPending} className="h-12 px-8 bg-primary text-white hover:bg-primary/90 font-bold shadow-lg">
+                  {saveProfileMutation.isPending ? (
+                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Saving...</>
                   ) : (
                     <>
                       Complete Registration <CheckCircle2 className="w-4 h-4 ml-2" />

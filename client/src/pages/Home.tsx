@@ -9,7 +9,7 @@ import { useLocation, Link } from "wouter";
 import { useCurrency } from "@/lib/currency";
 import { SERVICE_CATEGORIES } from "@shared/categories";
 import { Code, Wrench, Heart, Hammer, Home as HomeIcon, Waves, Car, Shield as ShieldIcon, Palette, PenTool, Briefcase, PartyPopper, Sparkles as SparklesIcon, Bot } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -136,9 +136,14 @@ function PressLogosSA() {
   );
 }
 
-function UrgentJobBanner() {
-  const [isVisible, setIsVisible] = useState(true);
-  const urgentCount = 3; // Mocking as per requirements
+function UrgentJobBannerControlled({
+  isVisible,
+  onDismiss,
+}: {
+  isVisible: boolean;
+  onDismiss: () => void;
+}) {
+  const urgentCount = 3;
 
   if (!isVisible) return null;
 
@@ -147,7 +152,7 @@ function UrgentJobBanner() {
       initial={{ height: 0, opacity: 0 }}
       animate={{ height: "auto", opacity: 1 }}
       exit={{ height: 0, opacity: 0 }}
-      className="fixed top-0 left-0 right-0 z-50 bg-red-600 text-white px-4 py-1.5 shadow-lg"
+      className="fixed top-0 left-0 right-0 z-[60] bg-red-600 text-white px-4 py-1.5 shadow-lg"
       data-testid="banner-urgent-jobs"
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 text-xs sm:text-sm">
@@ -161,7 +166,7 @@ function UrgentJobBanner() {
           </a>
         </Link>
         <button
-          onClick={() => setIsVisible(false)}
+          onClick={onDismiss}
           className="text-white/70 hover:text-white transition-colors flex-shrink-0 ml-2"
           aria-label="Dismiss"
           data-testid="button-dismiss-urgent-banner"
@@ -203,6 +208,7 @@ function AnimatedCounter({ value, duration = 2000 }: { value: number; duration?:
 export default function Home() {
   const { formatAmount, formatRange, formatRate, formatRateRange } = useCurrency();
   const [, navigate] = useLocation();
+  const [showUrgentBanner, setShowUrgentBanner] = useState(true);
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterStatus, setNewsletterStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [newsletterMsg, setNewsletterMsg] = useState("");
@@ -218,7 +224,7 @@ export default function Home() {
     staleTime: 5 * 60 * 1000,
   });
 
-  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+  const handleNewsletterSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!newsletterEmail) return;
     setNewsletterStatus("loading");
@@ -331,8 +337,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background font-sans flex flex-col overflow-x-hidden pt-[42px]">
-      <UrgentJobBanner />
-      <Navbar />
+      <UrgentJobBannerControlled
+        isVisible={showUrgentBanner}
+        onDismiss={() => setShowUrgentBanner(false)}
+      />
+      <Navbar topOffset={showUrgentBanner ? 36 : 0} />
       <Hero />
       <LiveActivityTicker />
       <TrustStrip />
