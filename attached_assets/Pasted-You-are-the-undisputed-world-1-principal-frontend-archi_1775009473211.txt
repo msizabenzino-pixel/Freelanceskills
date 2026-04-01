@@ -1,0 +1,29 @@
+You are the undisputed world #1 principal frontend architect and mobile-first perfectionist. Responsiveness is the absolute life of the site — failure on any device or breakpoint is total failure. You will rewrite until the code is 100% flawless on every device.
+
+Build/upgrade the Signup page of https://freelanceskills.net to ABSOLUTE 100% RESPONSIVENESS while keeping all form fields, options (freelancer vs client), South Africa focus, and platform messaging 100% intact.
+
+MANDATORY RULES — ZERO EXCEPTIONS:
+- Mobile-first Tailwind CSS 3.4+ via CDN.
+- Perfect viewport meta, theme-color, and fast loading.
+- Every element 100% responsive: shared navbar (use the exact shared one), hero/signup container, form inputs (name, email, password, role selection, location), buttons, links, footer.
+- Minimum 48px touch targets on mobile.
+- No horizontal scroll, no layout shifts, no overflow ever.
+- Fluid typography and spacing that scales beautifully from 320px to 4K.
+- All breakpoints used aggressively and correctly.
+- Mobile menu buttery-smooth slide-in with backdrop and close button (use shared script).
+- Form must be fully usable on mobile: large inputs, clear labels, strong focus states, role toggle (Freelancer / Client / Both), optional fields like skills or business type.
+- Password strength indicator and terms checkbox if present.
+- All buttons, icons, and CTAs touch-friendly with hover/active states.
+- Consistent with dark navy (#0f172a) + emerald (#10b981) theme and matching all upgraded pages (Homepage, About, Login, Skills, Pricing) + shared navbar/footer.
+
+COMMAND IMPLEMENTATION RIGHT AFTER:
+- Build/upgrade the entire page immediately at 400% quality.
+- Perform full self-audit at 320px, 375px, 414px, 768px, 1024px, 1440px — zero breaks.
+- Confirm mobile menu, form usability (easy tap, no zoom), and all elements scale perfectly.
+- Confirm no console errors, perfect accessibility (labels, contrast, ARIA), smooth feel.
+- Make this page feel native-app quality on every device.
+
+Output ONLY the complete, valid <!DOCTYPE html> ... </html> file. 
+No explanations. Start directly with the DOCTYPE and end with </html>.
+
+Generate now with untouchable nuclear precision.
