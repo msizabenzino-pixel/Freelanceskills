@@ -77,12 +77,12 @@ export default function Login() {
       <Navbar />
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-8" data-testid="section-login">
+      <section className="relative min-h-[calc(100vh-64px)] flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 py-12" data-testid="section-login">
         <div className="w-full max-w-7xl grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           
           {/* Left Panel - Value Proposition */}
           <div className="hidden lg:flex flex-col justify-center relative" data-testid="panel-value-prop">
-            <div className="absolute -z-10 inset-0 opacity-10">
+            <div className="absolute -z-10 inset-0 opacity-[0.08]">
               <svg viewBox="0 0 100 100" className="w-full h-full">
                 <defs>
                   <pattern id="geo-login" patternUnits="userSpaceOnUse" width="20" height="20">
@@ -97,24 +97,36 @@ export default function Login() {
               Welcome back to the future of skilled work in Africa
             </h1>
             
-            <p className="text-lg text-slate-300 mb-10 leading-relaxed" data-testid="text-subheadline">
+            <p className="text-lg text-slate-300 mb-12 leading-relaxed" data-testid="text-subheadline">
               Log in to connect verified talent with high-value opportunities — locally and globally.
             </p>
 
             {/* Trust Benefits */}
-            <div className="space-y-4 mb-8">
-              {[
-                { icon: Verified, text: "Verified ID & skills-vetted professionals" },
-                { icon: Shield, text: "Secure escrow & instant ZAR payouts" },
-                { icon: Zap, text: "AI smart matching + transparent 10% fees" },
-                { icon: Lock, text: "POPIA compliant & 24/7 local SA support" },
-                { icon: CheckCircle, text: "Part of the platform empowering 1 million Africans" },
-              ].map((item, idx) => (
-                <div key={idx} className="flex items-start gap-4" data-testid={`benefit-${idx + 1}`}>
-                  <item.icon className="w-6 h-6 text-emerald-500 flex-shrink-0 mt-1" />
-                  <span className="text-slate-300">{item.text}</span>
-                </div>
-              ))}
+            <div className="space-y-5 mb-10">
+              <div className="flex items-start gap-4" data-testid="benefit-1">
+                <Verified className="w-6 h-6 text-emerald-500 flex-shrink-0 mt-1" />
+                <span className="text-slate-300">Verified ID & skills-vetted professionals</span>
+              </div>
+
+              <div className="flex items-start gap-4" data-testid="benefit-2">
+                <CheckCircle className="w-6 h-6 text-emerald-500 flex-shrink-0 mt-1" />
+                <span className="text-slate-300">Secure escrow & instant ZAR payouts</span>
+              </div>
+
+              <div className="flex items-start gap-4" data-testid="benefit-3">
+                <Zap className="w-6 h-6 text-emerald-500 flex-shrink-0 mt-1" />
+                <span className="text-slate-300">AI smart matching + transparent 10% fees</span>
+              </div>
+
+              <div className="flex items-start gap-4" data-testid="benefit-4">
+                <Lock className="w-6 h-6 text-emerald-500 flex-shrink-0 mt-1" />
+                <span className="text-slate-300">POPIA compliant & 24/7 local SA support</span>
+              </div>
+
+              <div className="flex items-start gap-4" data-testid="benefit-5">
+                <ArrowRight className="w-6 h-6 text-emerald-500 flex-shrink-0 mt-1" />
+                <span className="text-slate-300">Part of the platform empowering 1 million Africans</span>
+              </div>
             </div>
 
             <p className="text-sm text-slate-400 italic" data-testid="trust-line">
@@ -135,7 +147,7 @@ export default function Login() {
                 {socialButtons.map((btn, idx) => (
                   <button
                     key={idx}
-                    className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-slate-700 hover:bg-slate-700 transition-colors text-slate-100 font-medium"
+                    className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-slate-700 hover:bg-slate-700 transition-colors text-slate-100 font-medium hover:translate-y-[-2px] active:translate-y-0"
                     data-testid={`button-social-${btn.name.toLowerCase()}`}
                   >
                     <span className="text-lg font-semibold">{btn.icon}</span>
@@ -168,7 +180,7 @@ export default function Login() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
-                    className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-slate-50 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-colors"
+                    className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-slate-50 placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-colors"
                     data-testid="input-email"
                     required
                   />
@@ -186,7 +198,7 @@ export default function Login() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-slate-50 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-colors"
+                      className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-slate-50 placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-colors"
                       data-testid="input-password"
                       required
                     />
@@ -224,7 +236,7 @@ export default function Login() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 disabled:bg-emerald-600 disabled:cursor-not-allowed transition-colors mt-6"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 disabled:bg-emerald-600 disabled:cursor-not-allowed transition-all hover:translate-y-[-2px] active:translate-y-0 shadow-lg shadow-emerald-500/25 mt-6"
                   data-testid="button-login"
                 >
                   {isLoading ? "Logging in..." : "Log in"}
@@ -234,20 +246,20 @@ export default function Login() {
 
               {/* PWA Install Promotion */}
               {showInstallPrompt && !installedAsApp && (
-                <div className="mt-8 pt-8 border-t border-slate-700" data-testid="pwa-install-section">
-                  <div className="bg-gradient-to-r from-emerald-500/10 to-slate-900 border border-emerald-500/30 rounded-lg p-5" data-testid="pwa-install-card">
+                <div className="mt-8 pt-8 border-t border-slate-700 animate-in fade-in slide-in-from-top-2 duration-300" data-testid="pwa-install-section">
+                  <div className="bg-gradient-to-r from-emerald-500/10 to-slate-900 border border-emerald-500/30 rounded-lg p-5">
                     <div className="flex items-start gap-4">
                       <Download className="w-6 h-6 text-emerald-500 flex-shrink-0 mt-0.5" />
                       <div className="flex-1">
                         <h3 className="font-semibold text-slate-50 mb-2" data-testid="heading-install">
-                          For the best experience, install FreelanceSkills as an app on your phone
+                          For the best experience, install as an app on your phone
                         </h3>
                         <p className="text-sm text-slate-400 mb-4" data-testid="text-install-desc">
                           Get home-screen access, faster loading, offline job browsing, instant match notifications, and quick apply — feels exactly like a native app.
                         </p>
                         <button
                           onClick={handleInstallClick}
-                          className="w-full px-4 py-2 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-colors text-sm"
+                          className="w-full px-4 py-2 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/25 text-sm hover:translate-y-[-2px] active:translate-y-0"
                           data-testid="button-install-app"
                         >
                           Install as App
@@ -275,7 +287,7 @@ export default function Login() {
                   <Link href="/join/freelancer" asChild>
                     <Button
                       variant="outline"
-                      className="flex-1 border-emerald-500 text-emerald-400 hover:bg-emerald-500/10"
+                      className="flex-1 border-emerald-500 text-emerald-400 hover:bg-emerald-500/10 hover:translate-y-[-2px] active:translate-y-0"
                       data-testid="button-join-freelancer"
                     >
                       Join as Freelancer
@@ -284,7 +296,7 @@ export default function Login() {
                   <Link href="/join/client" asChild>
                     <Button
                       variant="outline"
-                      className="flex-1 border-emerald-500 text-emerald-400 hover:bg-emerald-500/10"
+                      className="flex-1 border-emerald-500 text-emerald-400 hover:bg-emerald-500/10 hover:translate-y-[-2px] active:translate-y-0"
                       data-testid="button-join-client"
                     >
                       Join as Client
@@ -296,69 +308,21 @@ export default function Login() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* PWA Fallback Modal */}
-      {showFallbackModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" data-testid="modal-pwa-fallback">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-8 shadow-2xl">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-2xl font-bold" data-testid="heading-fallback-modal">Install FreelanceSkills</h3>
-              <button
-                onClick={() => setShowFallbackModal(false)}
-                className="text-slate-400 hover:text-slate-300 transition-colors"
-                data-testid="button-close-fallback"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            <p className="text-slate-300 mb-6" data-testid="text-fallback-intro">
-              Get the best experience with our app. Here's how to install on your device:
-            </p>
-
-            {/* Chrome/Android Instructions */}
-            <div className="mb-6" data-testid="instructions-chrome">
-              <h4 className="font-semibold text-emerald-400 mb-2">Chrome on Android</h4>
-              <ol className="text-slate-400 text-sm space-y-1 ml-4 list-decimal">
-                <li>Tap the menu (three dots) in the top-right corner</li>
-                <li>Select "Install app" and confirm</li>
-              </ol>
-            </div>
-
-            {/* Safari/iOS Instructions */}
-            <div className="mb-6" data-testid="instructions-safari">
-              <h4 className="font-semibold text-emerald-400 mb-2">Safari on iPhone/iPad</h4>
-              <ol className="text-slate-400 text-sm space-y-1 ml-4 list-decimal">
-                <li>Tap the Share button (square with arrow)</li>
-                <li>Tap "Add to Home Screen"</li>
-              </ol>
-            </div>
-
-            <button
-              onClick={() => setShowFallbackModal(false)}
-              className="w-full px-4 py-3 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-colors"
-              data-testid="button-got-it"
-            >
-              Got it, thanks!
-            </button>
-          </div>
-        </div>
-      )}
+      </section>
 
       {/* Trust Bar */}
       <div className="border-t border-slate-800 bg-slate-900/30 px-4 sm:px-6 lg:px-8 py-6" data-testid="section-trust-bar">
         <div className="max-w-7xl mx-auto">
           <p className="text-sm text-slate-400 text-center lg:text-left" data-testid="text-trust-bar">
-            <span className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-center lg:items-start flex-wrap justify-center lg:justify-start">
-              <span className="flex items-center gap-1">
-                <Shield className="w-4 h-4 text-emerald-500" />
+            <span className="flex flex-col lg:flex-row gap-2 lg:gap-6 items-center lg:items-center flex-wrap justify-center lg:justify-start">
+              <span className="flex items-center gap-2">
+                <Shield className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                 Secure login
               </span>
               <span className="hidden lg:inline text-slate-600">•</span>
               <span>POPIA compliant</span>
               <span className="hidden lg:inline text-slate-600">•</span>
-              <span>PayFast Escrow</span>
+              <span>PayFast escrow protection</span>
               <span className="hidden lg:inline text-slate-600">•</span>
               <span>Industry-leading encryption</span>
               <span className="hidden lg:inline text-slate-600">•</span>
@@ -369,6 +333,72 @@ export default function Login() {
       </div>
 
       <Footer />
+
+      {/* PWA Fallback Modal */}
+      {showFallbackModal && (
+        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300" data-testid="modal-pwa-fallback">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-8 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold" data-testid="heading-fallback-modal">Install FreelanceSkills</h3>
+              <button
+                onClick={() => setShowFallbackModal(false)}
+                className="text-slate-400 hover:text-slate-300 transition-colors"
+                data-testid="button-close-fallback"
+                aria-label="Close modal"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <p className="text-slate-300 mb-8" data-testid="text-fallback-intro">
+              Get the best experience with our app. Here's how to install on your device:
+            </p>
+
+            {/* Chrome/Android Instructions */}
+            <div className="mb-6" data-testid="instructions-chrome">
+              <h4 className="font-semibold text-emerald-400 mb-3 text-sm">Chrome on Android</h4>
+              <ol className="text-slate-400 text-sm space-y-2 ml-4 list-decimal">
+                <li>Tap the menu <strong className="text-slate-300">(three dots)</strong> in the top-right corner</li>
+                <li>Select <strong className="text-slate-300">"Install app"</strong> and confirm</li>
+              </ol>
+            </div>
+
+            {/* Safari/iOS Instructions */}
+            <div className="mb-6" data-testid="instructions-safari">
+              <h4 className="font-semibold text-emerald-400 mb-3 text-sm">Safari on iPhone/iPad</h4>
+              <ol className="text-slate-400 text-sm space-y-2 ml-4 list-decimal">
+                <li>Tap the <strong className="text-slate-300">Share button</strong> (square with arrow)</li>
+                <li>Tap <strong className="text-slate-300">"Add to Home Screen"</strong></li>
+              </ol>
+            </div>
+
+            <button
+              onClick={() => setShowFallbackModal(false)}
+              className="w-full px-6 py-3 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all hover:translate-y-[-2px] active:translate-y-0 shadow-lg shadow-emerald-500/25"
+              data-testid="button-got-it"
+            >
+              Got it, thanks!
+            </button>
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .animate-fade-in-up {
+          animation: fadeInUp 0.6s ease-out;
+        }
+      `}</style>
     </div>
   );
 }

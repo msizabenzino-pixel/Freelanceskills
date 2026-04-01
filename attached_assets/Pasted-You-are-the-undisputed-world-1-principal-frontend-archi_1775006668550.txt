@@ -1,0 +1,39 @@
+You are the undisputed world #1 principal frontend architect and conversion engineer with 15+ years shipping top 0.1% global marketplaces. Your standards are merciless, untouchable, and non-negotiable. Anything less than absolute perfection is immediate failure. You rewrite until the code is pixel-perfect, production-ready, and ready for instant live deployment on freelanceskills.net.
+
+Task: Completely rebuild the homepage of https://freelanceskills.net from scratch as a single production-ready HTML file.
+
+MANDATORY RULES — ZERO EXCEPTIONS:
+- 100% platform-first and mission-driven. DELETE EVERY TRACE of founder content: no Ben Msiza, no Eskom, no personal photo, no "11 years", no GCC, no individual bio, no "I resigned", no personal story, no CIPC tied to a person. Replace with pure platform narrative only.
+- Premium dark theme: deep navy/slate base (#0f172a), emerald accent (#10b981) — exactly matching the upgraded About and Login pages.
+- Use Tailwind CSS 3.4+ via CDN.
+- Fully responsive, semantic HTML5, perfect accessibility, lightning fast.
+- Consistent sticky navbar and footer with the new About/Login pages.
+
+EXACT HOMEPAGE STRUCTURE YOU MUST FOLLOW:
+1. Sticky navbar: Logo "FreelanceSkills", links (Home, Browse Talent, Post a Job, About, How it Works, Academy, Pricing). "Post a Job" and "Join Free" buttons. FULLY WORKING slide-in mobile menu with backdrop (same as Login page).
+2. Hero Section: Full viewport, powerful gradient + subtle geometric pattern.
+   Headline: "The Future of Skilled Work in Africa and Beyond"
+   Subheadline: "FreelanceSkills is the trusted, skills-first AI-powered marketplace connecting verified African talent with businesses locally and globally — delivering quality, security, and real opportunity."
+   Two prominent CTAs: "Browse Verified Talent" + "Post a Project"
+3. Trust Bar (subtle, right below hero): "2,500+ Verified Professionals • R50M+ Earnings Facilitated • POPIA Compliant • PayFast Escrow • Cape Town, South Africa"
+4. Why FreelanceSkills (6-card grid, matching About page style).
+5. How It Works (clean 3-4 step section with icons).
+6. Categories / Popular Skills (grid or horizontal scroll).
+7. Impact Stats (large animated-style numbers matching About).
+8. Success Stories (anonymized or real client/freelancer quotes — no personal founder).
+9. Premium PWA Promotion section: "For the best experience, install as an app on your phone" + benefits + fully functional "Install FreelanceSkills App" button (beforeinstallprompt + smart fallback modal).
+10. Final strong CTA section.
+11. Minimal footer (exact same as the upgraded About/Login pages).
+
+COMMAND IMPLEMENTATION RIGHT AFTER GENERATION:
+- Implement every single requirement immediately.
+- Make the code 100% ready for live deployment on freelanceskills.net — no additional changes needed.
+- Perform a full self-audit: mobile menu works, PWA button triggers correctly with fallback modal, all hover/focus states perfect, no console errors, fully responsive on desktop and mobile.
+- Ensure the page feels like a 2026 market-dominating platform.
+
+Output ONLY the complete, valid <!DOCTYPE html> ... </html> file. 
+No explanations. No comments. No intro text. Start directly with the DOCTYPE and end with </html>.
+
+This must be untouchable quality — the kind that makes visitors instantly trust and convert.
+
+Generate now with nuclear precision.
