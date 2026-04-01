@@ -186,14 +186,17 @@
 </head>
 <body class="bg-slate-950 text-slate-50">
   <!-- Navbar -->
-  <nav class="sticky top-0 z-40 bg-slate-950/90 backdrop-blur border-b border-slate-800/50" role="navigation" aria-label="Main navigation">
+  <nav class="sticky top-0 z-50 bg-slate-950/95 backdrop-blur border-b border-emerald-500/20" role="navigation" aria-label="Main navigation">
     <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-14 sm:h-16">
+      <div class="flex items-center justify-between h-14 sm:h-16">
         <a href="/" class="flex items-center gap-2 sm:gap-3 group flex-shrink-0" aria-label="FreelanceSkills home">
-          <div class="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-emerald-500/50 transition-shadow duration-300 flex-shrink-0">
+          <div class="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-emerald-500/50 transition-all duration-300 flex-shrink-0">
             <span class="text-slate-950 font-bold text-xs sm:text-sm">FS</span>
           </div>
-          <span class="font-bold text-sm sm:text-lg hidden xs:inline">FreelanceSkills</span>
+          <div class="hidden xs:flex items-baseline gap-0.5">
+            <span class="font-bold text-sm sm:text-base text-emerald-400">freelance</span>
+            <span class="font-bold text-sm sm:text-base text-slate-50">skills</span>
+          </div>
         </a>
 
         <div class="hidden lg:flex items-center gap-0 lg:gap-1">
@@ -207,12 +210,12 @@
         </div>
 
         <div class="hidden lg:flex items-center gap-2 flex-shrink-0">
-          <a href="/" class="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg hover:bg-slate-800 transition-colors btn-transition">Post a Job</a>
-          <a href="/login-standalone.html" class="px-3 sm:px-4 py-2 text-xs sm:text-sm bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-colors btn-transition whitespace-nowrap">Join Free</a>
+          <a href="/" class="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg hover:bg-slate-800 transition-all duration-200 btn-transition min-h-12 flex items-center justify-center">Post a Job</a>
+          <a href="/login-standalone.html" class="px-4 sm:px-6 py-2 text-xs sm:text-sm bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 font-semibold rounded-lg hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 btn-transition min-h-12 flex items-center justify-center whitespace-nowrap">Join Free</a>
         </div>
 
-        <button id="mobile-menu-btn" class="lg:hidden p-2.5 rounded-lg hover:bg-slate-800 transition-colors min-h-12 min-w-12 flex items-center justify-center" aria-label="Open navigation menu" aria-expanded="false">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button id="mobile-menu-btn" class="lg:hidden p-2.5 rounded-lg hover:bg-slate-800 transition-all duration-200 min-h-12 min-w-12 flex items-center justify-center" aria-label="Open navigation menu" aria-expanded="false">
+          <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
           </svg>
         </button>
@@ -225,21 +228,21 @@
       <div id="mobile-menu-panel" class="hidden fixed right-0 top-14 sm:top-16 bottom-0 w-full max-w-xs bg-slate-950 border-l border-slate-800 z-50 mobile-menu flex flex-col">
         <div class="flex-1 overflow-y-auto p-4 space-y-1">
           <nav class="space-y-0">
-            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Home</a>
-            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Browse Talent</a>
-            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Post a Job</a>
-            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium min-h-12 flex items-center" onclick="closeMobileMenu()">About</a>
-            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">How it Works</a>
-            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Academy</a>
-            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Pricing</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Home</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Browse Talent</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Post a Job</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm font-medium min-h-12 flex items-center" onclick="closeMobileMenu()">About</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">How it Works</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Academy</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Pricing</a>
           </nav>
         </div>
         <div class="border-t border-slate-800 p-4 space-y-2">
-          <a href="/" class="block px-4 py-3 text-center rounded-lg hover:bg-slate-800 transition-colors text-sm min-h-12 flex items-center justify-center" onclick="closeMobileMenu()">Post a Job</a>
-          <a href="/login-standalone.html" class="block px-4 py-3 text-center bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-colors text-sm min-h-12 flex items-center justify-center" onclick="closeMobileMenu()">Join Free</a>
+          <a href="/" class="block px-4 py-3 text-center rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center justify-center" onclick="closeMobileMenu()">Post a Job</a>
+          <a href="/login-standalone.html" class="block px-4 py-3 text-center bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 rounded-lg font-semibold hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 text-sm min-h-12 flex items-center justify-center" onclick="closeMobileMenu()">Join Free</a>
         </div>
-        <button id="close-mobile-btn" class="absolute top-3 sm:top-4 right-3 sm:right-4 p-2.5 hover:bg-slate-800 rounded-lg transition-colors min-h-12 min-w-12 flex items-center justify-center" aria-label="Close menu">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button id="close-mobile-btn" class="absolute top-3 sm:top-4 right-3 sm:right-4 p-2.5 hover:bg-slate-800 rounded-lg transition-all duration-200 min-h-12 min-w-12 flex items-center justify-center" aria-label="Close menu">
+          <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
           </svg>
         </button>
