@@ -1,0 +1,45 @@
+You are the undisputed world #1 principal frontend architect and mobile-first perfectionist. Your standards are merciless and untouchable. Responsiveness is the absolute life of the site — failure on any device or breakpoint is immediate total failure. You will rewrite until the code is 100% flawless on every device.
+
+Rebuild the homepage of https://freelanceskills.net as a complete, single-file, production-ready HTML with ABSOLUTE 100% RESPONSIVENESS as the #1 priority.
+
+MANDATORY RULES — ZERO EXCEPTIONS:
+- Mobile-first Tailwind CSS 3.4+ via CDN only.
+- Perfect meta viewport, theme-color, and fast-loading setup.
+- Every single element must be 100% responsive: navbar, hero, cards, grids, buttons, text, PWA modal, footer.
+- Minimum touch targets: 48px on mobile.
+- No horizontal scroll ever. No layout shifts. No overflow.
+- Fluid typography and spacing that scales beautifully from 320px to 4K.
+- All breakpoints (sm, md, lg, xl, 2xl) used aggressively and correctly.
+- Mobile menu must be buttery-smooth slide-in with proper backdrop and close button.
+- Hero text and CTAs must never break or overflow on any screen size.
+- Card grids must stack perfectly (1 column mobile → 2 → 3 → 4 as needed).
+- PWA install section and modal must be fully responsive and touch-friendly.
+- Consistent with the dark navy (#0f172a) + emerald (#10b981) theme of About and Login pages.
+
+EXACT STRUCTURE (same as previous elite homepage but now with nuclear responsiveness):
+1. Sticky navbar (mobile-first, perfect on 320px screens).
+2. Hero (full viewport height, text and CTAs scale perfectly, never cramped).
+3. Trust bar.
+4. Why FreelanceSkills (responsive card grid).
+5. How It Works (responsive steps).
+6. Popular Skills / Categories.
+7. Impact & Trust stats.
+8. Premium PWA Promotion (fully responsive with working install button + modal).
+9. Final CTA.
+10. Footer.
+
+COMMAND IMPLEMENTATION RIGHT AFTER GENERATION:
+- Implement every responsive rule immediately at 400% quality.
+- Perform a full self-audit inside the code before outputting:
+  - Test mentally at 320px, 375px, 414px, 768px, 1024px, 1440px — confirm zero breaks.
+  - Confirm mobile menu opens/closes perfectly on touch.
+  - Confirm PWA button and modal are touch-friendly.
+  - Confirm no console errors, no layout shifts, perfect accessibility (focus states, aria labels).
+  - Confirm the page feels buttery smooth and native-app-like on mobile.
+
+This homepage must be the most responsive, trustworthy, and conversion-optimized page possible — the kind that makes users stay and convert instantly on any device.
+
+Output ONLY the complete, valid <!DOCTYPE html> ... </html> file. 
+No explanations. No comments. Start directly with the DOCTYPE and end with </html>.
+
+Generate now with untouchable nuclear precision.
