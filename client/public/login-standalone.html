@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Log in to FreelanceSkills.net — the skills-first freelance marketplace connecting verified African talent with businesses globally.">
+  <meta name="theme-color" content="#0f172a">
+  <title>Log In — FreelanceSkills</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    
+    * {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+
+    .geo-pattern {
+      position: absolute;
+      opacity: 0.05;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+
+    .btn-transition {
+      transition: all 0.2s ease;
+    }
+
+    .btn-transition:hover {
+      transform: translateY(-1px);
+    }
+
+    input:focus,
+    button:focus {
+      outline: none;
+    }
+
+    .pwa-install {
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-backdrop {
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-50">
+  <div class="min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <nav class="sticky top-0 z-50 bg-slate-950/95 backdrop-blur border-b border-slate-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-emerald-500 rounded-lg"></div>
+            <span class="font-semibold text-lg">FreelanceSkills</span>
+          </div>
+
+          <!-- Desktop Menu -->
+          <div class="hidden md:flex items-center gap-8">
+            <a href="/" class="hover:text-emerald-400 transition-colors text-sm">Home</a>
+            <a href="/" class="hover:text-emerald-400 transition-colors text-sm">Browse Talent</a>
+            <a href="/" class="hover:text-emerald-400 transition-colors text-sm">Post a Job</a>
+            <a href="/" class="hover:text-emerald-400 transition-colors text-sm">About</a>
+            <a href="/" class="hover:text-emerald-400 transition-colors text-sm">How it Works</a>
+            <a href="/" class="hover:text-emerald-400 transition-colors text-sm">Academy</a>
+          </div>
+
+          <!-- Desktop CTA -->
+          <div class="hidden md:flex items-center gap-3">
+            <a href="/" class="px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors text-sm">Post a Job</a>
+            <a href="/" class="px-4 py-2 bg-emerald-500 text-slate-950 rounded-lg font-medium hover:bg-emerald-400 transition-colors text-sm">Join Free</a>
+          </div>
+
+          <!-- Mobile Menu Button -->
+          <button id="mobile-menu-btn" class="md:hidden p-2" aria-label="Toggle menu">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-8">
+      <div class="w-full max-w-7xl grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+        
+        <!-- Left Panel -->
+        <div class="hidden lg:flex flex-col justify-center relative">
+          <div class="geo-pattern">
+            <svg viewBox="0 0 100 100" class="w-full h-full">
+              <defs>
+                <pattern id="geo" patternUnits="userSpaceOnUse" width="20" height="20">
+                  <path d="M0,10 L10,0 L20,10 L10,20 Z" fill="none" stroke="currentColor" stroke-width="0.5" class="text-emerald-500"/>
+                </pattern>
+              </defs>
+              <rect width="100" height="100" fill="url(#geo)"/>
+            </svg>
+          </div>
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight">
+            Welcome back to the future of skilled work in Africa
+          </h1>
+          
+          <p class="text-lg text-slate-300 mb-10 leading-relaxed">
+            Log in to connect verified talent with high-value opportunities — locally and globally.
+          </p>
+
+          <div class="space-y-4 mb-8">
+            <!-- Benefit 1 -->
+            <div class="flex items-start gap-4">
+              <svg class="w-6 h-6 text-emerald-500 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              <span class="text-slate-300">Verified ID & skills-vetted professionals</span>
+            </div>
+
+            <!-- Benefit 2 -->
+            <div class="flex items-start gap-4">
+              <svg class="w-6 h-6 text-emerald-500 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 6H6.28l-.31-1.243A1 1 0 005 4H3z"/>
+                <path d="M16 16a2 2 0 11-4 0 2 2 0 014 0zM4 12a2 2 0 11-4 0 2 2 0 014 0z"/>
+              </svg>
+              <span class="text-slate-300">Secure escrow & instant ZAR payouts</span>
+            </div>
+
+            <!-- Benefit 3 -->
+            <div class="flex items-start gap-4">
+              <svg class="w-6 h-6 text-emerald-500 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 17v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd"/>
+              </svg>
+              <span class="text-slate-300">AI smart matching + transparent 10% fees</span>
+            </div>
+
+            <!-- Benefit 4 -->
+            <div class="flex items-start gap-4">
+              <svg class="w-6 h-6 text-emerald-500 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+              </svg>
+              <span class="text-slate-300">POPIA compliant & 24/7 local SA support</span>
+            </div>
+
+            <!-- Benefit 5 -->
+            <div class="flex items-start gap-4">
+              <svg class="w-6 h-6 text-emerald-500 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v4h8v-4zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/>
+              </svg>
+              <span class="text-slate-300">Part of the platform empowering 1 million Africans</span>
+            </div>
+          </div>
+
+          <p class="text-sm text-slate-400 italic">
+            Trusted by thousands across Johannesburg, Cape Town, Durban & beyond
+          </p>
+        </div>
+
+        <!-- Right Panel - Form -->
+        <div class="w-full">
+          <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 sm:p-10 shadow-2xl">
+            
+            <h2 class="text-3xl font-bold mb-8 text-center">
+              Log in to your account
+            </h2>
+
+            <!-- Social Login -->
+            <div class="space-y-3 mb-8">
+              <button class="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-slate-700 hover:bg-slate-700 transition-colors text-slate-100 font-medium btn-transition">
+                <span class="text-lg font-semibold">G</span>
+                Continue with Google
+              </button>
+              <button class="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-slate-700 hover:bg-slate-700 transition-colors text-slate-100 font-medium btn-transition">
+                <span class="text-lg font-semibold">⌘</span>
+                Continue with Apple
+              </button>
+              <button class="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-slate-700 hover:bg-slate-700 transition-colors text-slate-100 font-medium btn-transition">
+                <span class="text-lg font-semibold">in</span>
+                Continue with LinkedIn
+              </button>
+            </div>
+
+            <!-- Divider -->
+            <div class="relative mb-8">
+              <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-slate-700"></div>
+              </div>
+              <div class="relative flex justify-center text-sm">
+                <span class="px-2 bg-slate-900/50 text-slate-400">or continue with email</span>
+              </div>
+            </div>
+
+            <!-- Form -->
+            <form id="login-form" class="space-y-4">
+              
+              <div>
+                <label for="email" class="block text-sm font-medium mb-2 text-slate-300">
+                  Email address
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-slate-50 placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-colors"
+                  required
+                />
+              </div>
+
+              <div>
+                <label for="password" class="block text-sm font-medium mb-2 text-slate-300">
+                  Password
+                </label>
+                <div class="relative">
+                  <input
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-slate-50 placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-colors"
+                    required
+                  />
+                  <button
+                    type="button"
+                    id="toggle-password"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-300 transition-colors"
+                    aria-label="Toggle password visibility"
+                  >
+                    <svg id="eye-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                      <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    id="remember"
+                    class="w-4 h-4 rounded bg-slate-800 border border-slate-700 text-emerald-500 cursor-pointer"
+                  />
+                  <span class="text-sm text-slate-400">Remember me</span>
+                </label>
+                <a href="/" class="text-sm text-emerald-400 hover:text-emerald-300 transition-colors">
+                  Forgot password?
+                </a>
+              </div>
+
+              <button
+                type="submit"
+                id="login-btn"
+                class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 disabled:bg-emerald-600 disabled:cursor-not-allowed transition-colors mt-6 btn-transition"
+              >
+                Log in
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                </svg>
+              </button>
+            </form>
+
+            <!-- PWA Install Section -->
+            <div id="pwa-install-section" class="mt-8 pt-8 border-t border-slate-700 pwa-install hidden">
+              <div class="bg-gradient-to-r from-emerald-500/10 to-slate-900 border border-emerald-500/30 rounded-lg p-5">
+                <div class="flex items-start gap-4">
+                  <svg class="w-6 h-6 text-emerald-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M2 9.5A3.5 3.5 0 005.5 6H10V2.25A2.25 2.25 0 0012.25 0h5.5A2.25 2.25 0 0120 2.25v5.5A2.25 2.25 0 0117.75 10H14v4.5A3.5 3.5 0 0110.5 18H5.5A3.5 3.5 0 012 14.5V9.5zM5.5 8a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
+                  </svg>
+                  <div class="flex-1">
+                    <h3 class="font-semibold text-slate-50 mb-2">
+                      For the best experience, install FreelanceSkills as an app on your phone
+                    </h3>
+                    <p class="text-sm text-slate-400 mb-4">
+                      Get home-screen access, faster loading, offline job browsing, instant match notifications, and quick apply — feels exactly like a native app.
+                    </p>
+                    <button
+                      id="install-app-btn"
+                      class="w-full px-4 py-2 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-colors text-sm btn-transition"
+                    >
+                      Install as App
+                    </button>
+                  </div>
+                  <button
+                    id="close-install-btn"
+                    class="text-slate-400 hover:text-slate-300 transition-colors flex-shrink-0"
+                    aria-label="Close install prompt"
+                  >
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sign Up -->
+            <div class="mt-8 pt-6 border-t border-slate-800 text-center">
+              <p class="text-slate-400 mb-4 text-sm">
+                Don't have an account?
+              </p>
+              <div class="flex flex-col sm:flex-row gap-3">
+                <a href="/" class="flex-1 px-4 py-2 border border-emerald-500 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-500/10 transition-colors text-sm text-center btn-transition">
+                  Join as Freelancer
+                </a>
+                <a href="/" class="flex-1 px-4 py-2 border border-emerald-500 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-500/10 transition-colors text-sm text-center btn-transition">
+                  Join as Client
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trust Bar -->
+    <div class="border-t border-slate-800 bg-slate-900/30 px-4 sm:px-6 lg:px-8 py-6">
+      <div class="max-w-7xl mx-auto">
+        <p class="text-sm text-slate-400 text-center lg:text-left">
+          <span class="flex flex-col lg:flex-row gap-2 lg:gap-4 items-center lg:items-start flex-wrap justify-center lg:justify-start">
+            <span class="flex items-center gap-1">
+              <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+              </svg>
+              Secure login
+            </span>
+            <span class="hidden lg:inline text-slate-600">•</span>
+            <span>POPIA compliant</span>
+            <span class="hidden lg:inline text-slate-600">•</span>
+            <span>PayFast Escrow</span>
+            <span class="hidden lg:inline text-slate-600">•</span>
+            <span>Industry-leading encryption</span>
+            <span class="hidden lg:inline text-slate-600">•</span>
+            <span>Cape Town, South Africa</span>
+          </span>
+        </p>
+      </div>
+    </div>
+
+    <!-- PWA Fallback Modal -->
+    <div id="pwa-fallback-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-8 shadow-2xl">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-2xl font-bold">Install FreelanceSkills</h3>
+          <button
+            id="close-modal-btn"
+            class="text-slate-400 hover:text-slate-300 transition-colors"
+          >
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+            </svg>
+          </button>
+        </div>
+
+        <p class="text-slate-300 mb-6">
+          Get the best experience with our app. Here's how to install on your device:
+        </p>
+
+        <div class="mb-6">
+          <h4 class="font-semibold text-emerald-400 mb-2">Chrome on Android</h4>
+          <ol class="text-slate-400 text-sm space-y-1 ml-4 list-decimal">
+            <li>Tap the menu (three dots) in the top-right corner</li>
+            <li>Select "Install app" and confirm</li>
+          </ol>
+        </div>
+
+        <div class="mb-6">
+          <h4 class="font-semibold text-emerald-400 mb-2">Safari on iPhone/iPad</h4>
+          <ol class="text-slate-400 text-sm space-y-1 ml-4 list-decimal">
+            <li>Tap the Share button (square with arrow)</li>
+            <li>Tap "Add to Home Screen"</li>
+          </ol>
+        </div>
+
+        <button
+          id="modal-got-it-btn"
+          class="w-full px-4 py-3 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-colors btn-transition"
+        >
+          Got it, thanks!
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // PWA Install Handling
+    let deferredPrompt = null;
+    const pwaInstallSection = document.getElementById('pwa-install-section');
+    const pwaFallbackModal = document.getElementById('pwa-fallback-modal');
+    const installAppBtn = document.getElementById('install-app-btn');
+    const closeInstallBtn = document.getElementById('close-install-btn');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const modalGotItBtn = document.getElementById('modal-got-it-btn');
+
+    // Detect if app is already installed
+    const isInstalled = window.matchMedia("(display-mode: standalone)").matches ||
+      (window.navigator as any).standalone === true;
+
+    // Listen for beforeinstallprompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      pwaInstallSection.classList.remove('hidden');
+    });
+
+    // Listen for app installed
+    window.addEventListener('appinstalled', () => {
+      deferredPrompt = null;
+      pwaInstallSection.classList.add('hidden');
+    });
+
+    // Install button handler
+    installAppBtn?.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        await deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          deferredPrompt = null;
+          pwaInstallSection.classList.add('hidden');
+        }
+      } else {
+        pwaFallbackModal.classList.remove('hidden');
+      }
+    });
+
+    // Close handlers
+    closeInstallBtn?.addEventListener('click', () => {
+      pwaInstallSection.classList.add('hidden');
+    });
+
+    closeModalBtn?.addEventListener('click', () => {
+      pwaFallbackModal.classList.add('hidden');
+    });
+
+    modalGotItBtn?.addEventListener('click', () => {
+      pwaFallbackModal.classList.add('hidden');
+    });
+
+    // Password toggle
+    const togglePasswordBtn = document.getElementById('toggle-password');
+    const passwordInput = document.getElementById('password');
+    const eyeIcon = document.getElementById('eye-icon');
+
+    togglePasswordBtn?.addEventListener('click', () => {
+      const isPassword = passwordInput.type === 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
+      eyeIcon.innerHTML = isPassword 
+        ? '<path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>'
+        : '<path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>';
+    });
+
+    // Form submission
+    const loginForm = document.getElementById('login-form');
+    const loginBtn = document.getElementById('login-btn');
+
+    loginForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Logging in...';
+      setTimeout(() => {
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Log in';
+      }, 1000);
+    });
+
+    // Mobile menu toggle
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    mobileMenuBtn?.addEventListener('click', () => {
+      alert('Mobile menu would expand here');
+    });
+  </script>
+</body>
+</html>
