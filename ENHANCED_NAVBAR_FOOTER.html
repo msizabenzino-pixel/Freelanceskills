@@ -1,0 +1,245 @@
+<!-- ENHANCED SHARED NAVBAR (paste right after <body> opening tag) -->
+<nav class="sticky top-0 z-50 bg-slate-950/95 backdrop-blur border-b border-emerald-500/20" role="navigation" aria-label="Main navigation">
+  <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-14 sm:h-16">
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-2 sm:gap-3 group flex-shrink-0" aria-label="FreelanceSkills home">
+        <div class="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-emerald-500/50 transition-all duration-300 flex-shrink-0">
+          <span class="text-slate-950 font-bold text-xs sm:text-sm">FS</span>
+        </div>
+        <div class="hidden xs:flex items-baseline gap-0.5">
+          <span class="font-bold text-sm sm:text-base text-emerald-400">freelance</span>
+          <span class="font-bold text-sm sm:text-base text-slate-50">skills</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <div class="hidden lg:flex items-center gap-0 lg:gap-1">
+        <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Home</a>
+        <a href="/about" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">About</a>
+        <a href="/skills" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Skills</a>
+        <a href="/pricing" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Pricing</a>
+      </div>
+
+      <!-- Desktop Auth Buttons -->
+      <div class="hidden lg:flex items-center gap-2 flex-shrink-0">
+        <a href="/login" class="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg hover:bg-slate-800 transition-all duration-200 btn-transition min-h-12 flex items-center justify-center">
+          Log in
+        </a>
+        <a href="/signup" class="px-4 sm:px-6 py-2 text-xs sm:text-sm bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 font-semibold rounded-lg hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 btn-transition min-h-12 flex items-center justify-center whitespace-nowrap">
+          Get started free
+        </a>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button id="mobile-menu-btn" class="lg:hidden p-2.5 rounded-lg hover:bg-slate-800 transition-all duration-200 min-h-12 min-w-12 flex items-center justify-center" aria-label="Open navigation menu" aria-expanded="false">
+        <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="hidden lg:hidden">
+    <div id="mobile-backdrop" class="hidden fixed inset-0 bg-black/60 z-40 backdrop-blur-sm"></div>
+    <div id="mobile-menu-panel" class="hidden fixed right-0 top-14 sm:top-16 bottom-0 w-full max-w-xs bg-slate-950 border-l border-slate-800 z-50 flex flex-col">
+      <div class="flex-1 overflow-y-auto p-4 space-y-1">
+        <nav class="space-y-0">
+          <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Home</a>
+          <a href="/about" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">About</a>
+          <a href="/skills" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Skills</a>
+          <a href="/pricing" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Pricing</a>
+        </nav>
+      </div>
+      <div class="border-t border-slate-800 p-4 space-y-2">
+        <a href="/login" class="block px-4 py-3 text-center rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center justify-center" onclick="closeMobileMenu()">Log in</a>
+        <a href="/signup" class="block px-4 py-3 text-center bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 rounded-lg font-semibold hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 text-sm min-h-12 flex items-center justify-center" onclick="closeMobileMenu()">Get started free</a>
+      </div>
+      <button id="close-mobile-btn" class="absolute top-3 sm:top-4 right-3 sm:right-4 p-2.5 hover:bg-slate-800 rounded-lg transition-all duration-200 min-h-12 min-w-12 flex items-center justify-center" aria-label="Close menu">
+        <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ENHANCED SHARED FOOTER (paste right before </body> closing tag) -->
+<footer class="border-t border-slate-800 bg-slate-950">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8 sm:mb-12">
+      <!-- Brand -->
+      <div>
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center">
+            <span class="text-slate-950 font-bold text-xs">FS</span>
+          </div>
+          <div class="flex items-baseline gap-0.5">
+            <span class="font-bold text-sm sm:text-base text-emerald-400">freelance</span>
+            <span class="font-bold text-sm sm:text-base text-slate-50">skills</span>
+          </div>
+        </div>
+        <p class="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-xs">
+          The trusted, skills-first marketplace connecting verified African talent with businesses globally.
+        </p>
+      </div>
+
+      <!-- Platform Links -->
+      <div>
+        <h4 class="font-semibold mb-3 sm:mb-4 text-xs sm:text-sm text-slate-50">Platform</h4>
+        <nav class="space-y-2 text-slate-400 text-xs sm:text-sm">
+          <a href="/about" class="block hover:text-emerald-400 transition-colors duration-200">About Us</a>
+          <a href="/skills" class="block hover:text-emerald-400 transition-colors duration-200">Browse Skills</a>
+          <a href="/pricing" class="block hover:text-emerald-400 transition-colors duration-200">Pricing</a>
+          <a href="/blog" class="block hover:text-emerald-400 transition-colors duration-200">Blog</a>
+        </nav>
+      </div>
+
+      <!-- Resources -->
+      <div>
+        <h4 class="font-semibold mb-3 sm:mb-4 text-xs sm:text-sm text-slate-50">Resources</h4>
+        <nav class="space-y-2 text-slate-400 text-xs sm:text-sm">
+          <a href="/help" class="block hover:text-emerald-400 transition-colors duration-200">Help Center</a>
+          <a href="/community" class="block hover:text-emerald-400 transition-colors duration-200">Community</a>
+          <a href="/academy" class="block hover:text-emerald-400 transition-colors duration-200">Academy</a>
+          <a href="/contact" class="block hover:text-emerald-400 transition-colors duration-200">Contact</a>
+        </nav>
+      </div>
+
+      <!-- Legal -->
+      <div>
+        <h4 class="font-semibold mb-3 sm:mb-4 text-xs sm:text-sm text-slate-50">Company</h4>
+        <nav class="space-y-2 text-slate-400 text-xs sm:text-sm">
+          <a href="/terms" class="block hover:text-emerald-400 transition-colors duration-200">Terms of Service</a>
+          <a href="/privacy" class="block hover:text-emerald-400 transition-colors duration-200">Privacy Policy</a>
+          <a href="/cookies" class="block hover:text-emerald-400 transition-colors duration-200">Cookie Policy</a>
+          <a href="/compliance" class="block hover:text-emerald-400 transition-colors duration-200">POPIA Compliance</a>
+        </nav>
+      </div>
+    </div>
+
+    <div class="border-t border-slate-800 pt-6 sm:pt-8">
+      <p class="text-slate-500 text-xs text-center">© 2026 FreelanceSkills.net. CIPC Registered • POPIA Compliant • PayFast Secure • All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Enhanced Mobile Menu Script (add before </body>) -->
+<style>
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideOutRight {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .mobile-menu-open #mobile-menu-panel {
+    animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .mobile-menu-closing #mobile-menu-panel {
+    animation: slideOutRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  #mobile-backdrop {
+    animation: fadeIn 0.3s ease;
+  }
+
+  .btn-transition {
+    transition: all 0.2s ease;
+  }
+
+  .btn-transition:hover {
+    transform: translateY(-2px);
+  }
+
+  .btn-transition:active {
+    transform: translateY(0);
+  }
+
+  button:focus-visible,
+  a:focus-visible {
+    outline: 2px solid #10b981;
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 640px) {
+    body {
+      overflow-x: hidden;
+    }
+  }
+</style>
+
+<script>
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenuPanel = document.getElementById('mobile-menu-panel');
+  const mobileBackdrop = document.getElementById('mobile-backdrop');
+  const closeMobileBtn = document.getElementById('close-mobile-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  function openMobileMenu() {
+    mobileMenuPanel.classList.remove('hidden');
+    mobileBackdrop.classList.remove('hidden');
+    mobileMenu.classList.add('mobile-menu-open');
+    mobileMenuBtn.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMobileMenu() {
+    mobileMenu.classList.remove('mobile-menu-open');
+    mobileMenu.classList.add('mobile-menu-closing');
+    
+    setTimeout(() => {
+      mobileMenuPanel.classList.add('hidden');
+      mobileBackdrop.classList.add('hidden');
+      mobileMenu.classList.remove('mobile-menu-closing');
+      mobileMenuBtn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }, 300);
+  }
+
+  mobileMenuBtn.addEventListener('click', openMobileMenu);
+  closeMobileBtn.addEventListener('click', closeMobileMenu);
+  mobileBackdrop.addEventListener('click', closeMobileMenu);
+
+  window.closeMobileMenu = closeMobileMenu;
+
+  // Close menu with Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !mobileMenuPanel.classList.contains('hidden')) {
+      closeMobileMenu();
+    }
+  });
+
+  // Prevent body scroll when menu is open
+  document.addEventListener('touchmove', (e) => {
+    if (!mobileMenuPanel.classList.contains('hidden')) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+</script>
