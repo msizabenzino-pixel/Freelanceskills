@@ -1,0 +1,60 @@
+You are a world-class principal frontend engineer and elite conversion UX writer who has designed login flows for multi-million-user marketplaces.
+
+Create a complete, single-file, production-ready Login page for Freelance Skills — the skills-first freelance marketplace (domain: freelanceskills.net). Focus is on verified African talent, especially South Africa, connecting securely with businesses worldwide.
+
+MANDATORY RULES — zero exceptions:
+- NEVER mention any founder or personal story. Everything is platform-first and mission-driven.
+- Extremely clean, modern, minimalist, premium design. No clutter.
+- Use Tailwind CSS 3.4+ via CDN (include the script tag).
+- Fully responsive (mobile-first). On desktop use beautiful split-screen layout. On mobile stack cleanly.
+- Professional dark theme: deep navy/slate base (#0f172a), emerald accent (#10b981) for trust + growth, white/gray text.
+- Perfect accessibility, semantic HTML5, fast loading.
+- Zero messy code. Perfect indentation. Only minimal necessary comments.
+
+Exact page structure (follow strictly):
+
+1. **Minimal Sticky Navbar** (top): Logo "Freelance Skills" (text or simple SVG), links (Home, Browse Talent, Post a Job, About), "Post a Job" button. Clean mobile hamburger.
+
+2. **Main Login Section – Split-Screen (best-of-the-best hybrid)**:
+   - LEFT PANEL (40-50% width on desktop, hidden or minimized on mobile): 
+     - Big confident headline: "Welcome back to the future of skilled work"
+     - Subheadline: "Log in to connect with verified talent and opportunities across Africa and the world."
+     - 4 trust/benefit bullets with Lucide icons:
+       - Verified skills-first professionals
+       - Secure escrow & milestone payments
+       - Transparent fees & POPIA compliant
+       - Growing the African freelance economy
+     - Subtle abstract gradient background with faint geometric/African-inspired tech pattern (no people photos).
+
+   - RIGHT PANEL (clean white/near-white card on dark background):
+     - Centered form card with subtle shadow.
+     - Headline inside card: "Log in to your account"
+     - Prominent SOCIAL LOGIN buttons FIRST (PeoplePerHour style – largest and most visible):
+       - Continue with Google (full width, icon + text)
+       - Continue with Apple
+       - Continue with LinkedIn
+       - (Use Lucide or Heroicons via CDN for icons)
+     - OR divider
+     - Traditional form (email-first for 2026):
+       - Email address field
+       - Password field (with show/hide toggle)
+       - "Remember me" checkbox + "Forgot password?" link (right-aligned)
+       - Big emerald "Log in" button
+     - Below form: "Don't have an account? Join as a Freelancer or Client" → two clear links.
+
+3. **Trust Bar** (below form on desktop, or subtle footer on mobile):
+   - "Secure login • POPIA compliant • Protected by industry-leading encryption • Trusted by thousands of South African professionals"
+
+4. **Footer** (minimal): Logo, quick links (Terms, Privacy, Trust & Safety), "Cape Town, South Africa" for legitimacy, copyright 2026.
+
+Design & copy requirements:
+- Typography: Clean system + Inter-like sans via Tailwind.
+- High contrast, readable, premium feel.
+- Smooth hover/focus states and micro-animations (Tailwind + minimal JS for form interactions).
+- Strong emphasis on security, verification, and opportunity.
+- Copy must feel confident, professional, and exciting — like a 2026 market leader.
+- Include a subtle "Magic link" option under traditional login for modern UX.
+
+Output ONLY the complete valid HTML document. Start directly with <!DOCTYPE html> and end with </html>. Make this the most beautiful, trustworthy, frictionless, and conversion-optimized login page possible — the kind that instantly removes doubt and makes users excited to log in or sign up.
+
+Generate it now.
