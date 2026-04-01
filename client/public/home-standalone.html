@@ -45,14 +45,6 @@
       border-radius: 1px;
     }
 
-    .mobile-menu {
-      animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .mobile-menu.closing {
-      animation: slideOutRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
     @keyframes slideInRight {
       from {
         transform: translateX(100%);
@@ -84,21 +76,10 @@
       }
     }
 
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
     @keyframes fadeInUp {
       from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(20px);
       }
       to {
         opacity: 1;
@@ -109,7 +90,7 @@
     @keyframes countUp {
       from {
         opacity: 0;
-        transform: scale(0.8);
+        transform: scale(0.9);
       }
       to {
         opacity: 1;
@@ -121,8 +102,24 @@
       animation: fadeIn 0.3s ease;
     }
 
-    .pwa-slide {
-      animation: slideUp 0.3s ease;
+    .mobile-menu-slide {
+      animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mobile-menu-slide.closing {
+      animation: slideOutRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .hero-animate {
+      animation: fadeInUp 0.8s ease-out 0.1s both;
+    }
+
+    .hero-animate-delay {
+      animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+
+    .stat-animate {
+      animation: countUp 0.6s ease-out;
     }
 
     .btn-transition {
@@ -137,16 +134,13 @@
       transform: translateY(0);
     }
 
-    .card-shadow {
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+    .card-hover {
+      transition: all 0.3s ease;
     }
 
-    .hero-animate {
-      animation: fadeInUp 0.8s ease-out 0.2s both;
-    }
-
-    .stat-animate {
-      animation: countUp 0.6s ease-out;
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgba(16, 185, 129, 0.15);
     }
 
     button:focus-visible,
@@ -200,18 +194,18 @@
         </a>
 
         <div class="hidden lg:flex items-center gap-0 lg:gap-1">
-          <a href="/" class="nav-link active text-xs sm:text-sm px-2 sm:px-4 py-2 rounded hover:text-emerald-400 transition-colors">Home</a>
-          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded hover:text-emerald-400 transition-colors">Browse</a>
-          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded hover:text-emerald-400 transition-colors">Post</a>
-          <a href="/about-standalone.html" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded hover:text-emerald-400 transition-colors">About</a>
-          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded hover:text-emerald-400 transition-colors">How it Works</a>
-          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded hover:text-emerald-400 transition-colors">Academy</a>
-          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded hover:text-emerald-400 transition-colors">Pricing</a>
+          <a href="/" class="nav-link active text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Home</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Browse</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Post</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">About</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">How it Works</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Academy</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Pricing</a>
         </div>
 
         <div class="hidden lg:flex items-center gap-2 flex-shrink-0">
           <a href="/" class="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg hover:bg-slate-800 transition-all duration-200 btn-transition min-h-12 flex items-center justify-center">Post a Job</a>
-          <a href="/login-standalone.html" class="px-4 sm:px-6 py-2 text-xs sm:text-sm bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 font-semibold rounded-lg hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 btn-transition min-h-12 flex items-center justify-center whitespace-nowrap">Join Free</a>
+          <a href="/" class="px-4 sm:px-6 py-2 text-xs sm:text-sm bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 font-semibold rounded-lg hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 btn-transition min-h-12 flex items-center justify-center whitespace-nowrap">Join Free</a>
         </div>
 
         <button id="mobile-menu-btn" class="lg:hidden p-2.5 rounded-lg hover:bg-slate-800 transition-all duration-200 min-h-12 min-w-12 flex items-center justify-center" aria-label="Open navigation menu" aria-expanded="false">
@@ -224,14 +218,14 @@
 
     <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden lg:hidden">
-      <div id="mobile-backdrop" class="hidden fixed inset-0 bg-black/50 z-40 backdrop-fade"></div>
-      <div id="mobile-menu-panel" class="hidden fixed right-0 top-14 sm:top-16 bottom-0 w-full max-w-xs bg-slate-950 border-l border-slate-800 z-50 mobile-menu flex flex-col">
+      <div id="mobile-backdrop" class="hidden fixed inset-0 bg-black/60 z-40 backdrop-blur-sm backdrop-fade"></div>
+      <div id="mobile-menu-panel" class="hidden fixed right-0 top-14 sm:top-16 bottom-0 w-full max-w-xs bg-slate-950 border-l border-slate-800 z-50 mobile-menu-slide flex flex-col">
         <div class="flex-1 overflow-y-auto p-4 space-y-1">
           <nav class="space-y-0">
-            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm font-medium min-h-12 flex items-center" onclick="closeMobileMenu()">Home</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center font-medium" onclick="closeMobileMenu()">Home</a>
             <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Browse Talent</a>
             <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Post a Job</a>
-            <a href="/about-standalone.html" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">About</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">About</a>
             <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">How it Works</a>
             <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Academy</a>
             <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Pricing</a>
@@ -239,7 +233,7 @@
         </div>
         <div class="border-t border-slate-800 p-4 space-y-2">
           <a href="/" class="block px-4 py-3 text-center rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center justify-center" onclick="closeMobileMenu()">Post a Job</a>
-          <a href="/login-standalone.html" class="block px-4 py-3 text-center bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 rounded-lg font-semibold hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 text-sm min-h-12 flex items-center justify-center" onclick="closeMobileMenu()">Join Free</a>
+          <a href="/" class="block px-4 py-3 text-center bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 rounded-lg font-semibold hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 text-sm min-h-12 flex items-center justify-center" onclick="closeMobileMenu()">Join Free</a>
         </div>
         <button id="close-mobile-btn" class="absolute top-3 sm:top-4 right-3 sm:right-4 p-2.5 hover:bg-slate-800 rounded-lg transition-all duration-200 min-h-12 min-w-12 flex items-center justify-center" aria-label="Close menu">
           <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -251,7 +245,7 @@
   </nav>
 
   <!-- Hero Section -->
-  <section class="relative min-h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+  <section class="relative min-h-[100dvh] sm:min-h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
     <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900">
       <div class="absolute inset-0 opacity-[0.08]">
         <svg viewBox="0 0 100 100" class="w-full h-full">
@@ -267,20 +261,20 @@
     </div>
 
     <div class="relative z-10 w-full max-w-4xl mx-auto text-center">
-      <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6 leading-tight hero-animate px-1">
+      <h1 class="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-4 sm:mb-6 leading-tight hero-animate px-1 break-words">
         The Future of Skilled Work in Africa and Beyond
       </h1>
-      <p class="text-base sm:text-lg md:text-xl text-slate-300 mb-8 sm:mb-12 leading-relaxed max-w-3xl mx-auto hero-animate px-1">
+      <p class="text-xs sm:text-base md:text-lg lg:text-xl text-slate-300 mb-8 sm:mb-12 leading-relaxed max-w-3xl mx-auto hero-animate-delay px-1">
         FreelanceSkills is the trusted, skills-first AI-powered marketplace connecting verified African talent with businesses locally and globally — delivering quality, security, and real opportunity.
       </p>
-      <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center hero-animate px-1 w-full">
-        <a href="/" class="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 btn-transition min-h-12 sm:min-h-14 text-sm sm:text-base whitespace-nowrap">
+      <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center hero-animate-delay px-1 w-full">
+        <a href="/" class="inline-flex items-center justify-center gap-2 px-5 sm:px-8 py-3 sm:py-4 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 btn-transition min-h-12 sm:min-h-14 text-xs sm:text-base whitespace-nowrap">
           Browse Talent
           <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
           </svg>
         </a>
-        <a href="/" class="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 border-2 border-emerald-500 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-500/10 transition-all btn-transition min-h-12 sm:min-h-14 text-sm sm:text-base whitespace-nowrap">
+        <a href="/" class="inline-flex items-center justify-center gap-2 px-5 sm:px-8 py-3 sm:py-4 border-2 border-emerald-500 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-500/10 transition-all btn-transition min-h-12 sm:min-h-14 text-xs sm:text-base whitespace-nowrap">
           Post a Project
           <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
@@ -295,13 +289,13 @@
     <div class="max-w-7xl mx-auto">
       <p class="text-xs sm:text-sm text-slate-400 text-center">
         <span class="flex flex-col sm:flex-row gap-2 sm:gap-4 items-center justify-center flex-wrap">
-          <span>2,500+ Verified</span>
+          <span class="whitespace-nowrap">2,500+ Verified</span>
           <span class="hidden sm:inline text-slate-600">•</span>
-          <span>R50M+ Earnings</span>
+          <span class="whitespace-nowrap">R50M+ Earnings</span>
           <span class="hidden sm:inline text-slate-600">•</span>
-          <span>POPIA Compliant</span>
+          <span class="whitespace-nowrap">POPIA Compliant</span>
           <span class="hidden sm:inline text-slate-600">•</span>
-          <span>PayFast Secure</span>
+          <span class="whitespace-nowrap">PayFast Secure</span>
         </span>
       </p>
     </div>
@@ -310,67 +304,67 @@
   <!-- Why FreelanceSkills -->
   <section class="py-12 sm:py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8">
     <div class="max-w-6xl mx-auto w-full">
-      <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-12 md:mb-20 text-center">Why Choose FreelanceSkills</h2>
+      <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-12 md:mb-20 text-center px-2">Why Choose FreelanceSkills</h2>
       
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-        <div class="p-5 sm:p-6 md:p-8 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all hover:-translate-y-1">
-          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+        <div class="p-5 sm:p-6 md:p-8 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all card-hover min-h-full">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-3 sm:mb-4 flex-shrink-0">
             <svg class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
           </div>
-          <h3 class="text-base sm:text-lg font-semibold mb-1 sm:mb-2">Rigorous Verification</h3>
-          <p class="text-slate-400 text-xs sm:text-sm">Every profile is vetted. Every skill is tested. Quality assured from day one.</p>
+          <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 leading-tight">Rigorous Verification</h3>
+          <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">Every profile is vetted. Every skill is tested. Quality assured from day one.</p>
         </div>
 
-        <div class="p-5 sm:p-6 md:p-8 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all hover:-translate-y-1">
-          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+        <div class="p-5 sm:p-6 md:p-8 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all card-hover min-h-full">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-3 sm:mb-4 flex-shrink-0">
             <svg class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
             </svg>
           </div>
-          <h3 class="text-base sm:text-lg font-semibold mb-1 sm:mb-2">Secure Escrow</h3>
-          <p class="text-slate-400 text-xs sm:text-sm">Protected transactions with instant ZAR payouts. Peace of mind guaranteed.</p>
+          <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 leading-tight">Secure Escrow</h3>
+          <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">Protected transactions with instant ZAR payouts. Peace of mind guaranteed.</p>
         </div>
 
-        <div class="p-5 sm:p-6 md:p-8 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all hover:-translate-y-1">
-          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+        <div class="p-5 sm:p-6 md:p-8 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all card-hover min-h-full">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-3 sm:mb-4 flex-shrink-0">
             <svg class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
             </svg>
           </div>
-          <h3 class="text-base sm:text-lg font-semibold mb-1 sm:mb-2">Transparent Pricing</h3>
-          <p class="text-slate-400 text-xs sm:text-sm">10% fees, no hidden charges. Industry-leading rates for all.</p>
+          <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 leading-tight">Transparent Pricing</h3>
+          <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">10% fees, no hidden charges. Industry-leading rates for all.</p>
         </div>
 
-        <div class="p-5 sm:p-6 md:p-8 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all hover:-translate-y-1">
-          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+        <div class="p-5 sm:p-6 md:p-8 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all card-hover min-h-full">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-3 sm:mb-4 flex-shrink-0">
             <svg class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 17v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd"/>
             </svg>
           </div>
-          <h3 class="text-base sm:text-lg font-semibold mb-1 sm:mb-2">AI-Powered Matching</h3>
-          <p class="text-slate-400 text-xs sm:text-sm">Intelligent algorithms find perfect matches for skills and projects.</p>
+          <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 leading-tight">AI-Powered Matching</h3>
+          <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">Intelligent algorithms find perfect matches for skills and projects.</p>
         </div>
 
-        <div class="p-5 sm:p-6 md:p-8 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all hover:-translate-y-1">
-          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+        <div class="p-5 sm:p-6 md:p-8 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all card-hover min-h-full">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-3 sm:mb-4 flex-shrink-0">
             <svg class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
               <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v4h8v-4zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/>
             </svg>
           </div>
-          <h3 class="text-base sm:text-lg font-semibold mb-1 sm:mb-2">Local + Global</h3>
-          <p class="text-slate-400 text-xs sm:text-sm">Built for Africa, with worldwide reach. Your local advantage globally.</p>
+          <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 leading-tight">Local + Global</h3>
+          <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">Built for Africa, with worldwide reach. Your local advantage globally.</p>
         </div>
 
-        <div class="p-5 sm:p-6 md:p-8 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all hover:-translate-y-1">
-          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+        <div class="p-5 sm:p-6 md:p-8 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all card-hover min-h-full">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-3 sm:mb-4 flex-shrink-0">
             <svg class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M1 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H2a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM15 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" clip-rule="evenodd"/>
             </svg>
           </div>
-          <h3 class="text-base sm:text-lg font-semibold mb-1 sm:mb-2">Long-Term Focus</h3>
-          <p class="text-slate-400 text-xs sm:text-sm">Building careers and lasting relationships, not just transactions.</p>
+          <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 leading-tight">Long-Term Focus</h3>
+          <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">Building careers and lasting relationships, not just transactions.</p>
         </div>
       </div>
     </div>
@@ -379,7 +373,7 @@
   <!-- How It Works -->
   <section class="py-12 sm:py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-slate-900/50">
     <div class="max-w-6xl mx-auto w-full">
-      <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-12 md:mb-20 text-center">How It Works</h2>
+      <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-12 md:mb-20 text-center px-2">How It Works</h2>
       
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-4">
         <div class="relative">
@@ -387,10 +381,10 @@
             <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mb-4 sm:mb-6 shadow-lg shadow-emerald-500/25 flex-shrink-0">
               <span class="text-xl sm:text-2xl font-bold text-slate-950">1</span>
             </div>
-            <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3">Create Profile</h3>
+            <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 leading-tight">Create Profile</h3>
             <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">Sign up, verify your identity, showcase your skills or needs.</p>
           </div>
-          <div class="hidden md:block absolute top-1/3 -right-3 w-6 h-0.5 bg-gradient-to-r from-emerald-500 to-transparent"></div>
+          <div class="hidden lg:block absolute top-1/3 -right-2 w-4 h-0.5 bg-gradient-to-r from-emerald-500 to-transparent"></div>
         </div>
 
         <div class="relative">
@@ -398,10 +392,10 @@
             <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mb-4 sm:mb-6 shadow-lg shadow-emerald-500/25 flex-shrink-0">
               <span class="text-xl sm:text-2xl font-bold text-slate-950">2</span>
             </div>
-            <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3">AI Matches</h3>
+            <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 leading-tight">AI Matches</h3>
             <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">Our algorithm finds perfect matches based on skills and needs.</p>
           </div>
-          <div class="hidden md:block absolute top-1/3 -right-3 w-6 h-0.5 bg-gradient-to-r from-emerald-500 to-transparent"></div>
+          <div class="hidden lg:block absolute top-1/3 -right-2 w-4 h-0.5 bg-gradient-to-r from-emerald-500 to-transparent"></div>
         </div>
 
         <div class="relative">
@@ -409,17 +403,17 @@
             <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mb-4 sm:mb-6 shadow-lg shadow-emerald-500/25 flex-shrink-0">
               <span class="text-xl sm:text-2xl font-bold text-slate-950">3</span>
             </div>
-            <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3">Collaborate</h3>
+            <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 leading-tight">Collaborate</h3>
             <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">Work securely with escrow protection and direct communication.</p>
           </div>
-          <div class="hidden md:block absolute top-1/3 -right-3 w-6 h-0.5 bg-gradient-to-r from-emerald-500 to-transparent"></div>
+          <div class="hidden lg:block absolute top-1/3 -right-2 w-4 h-0.5 bg-gradient-to-r from-emerald-500 to-transparent"></div>
         </div>
 
         <div class="flex flex-col items-center text-center">
           <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mb-4 sm:mb-6 shadow-lg shadow-emerald-500/25 flex-shrink-0">
             <span class="text-xl sm:text-2xl font-bold text-slate-950">4</span>
           </div>
-          <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3">Get Paid & Grow</h3>
+          <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 leading-tight">Get Paid & Grow</h3>
           <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">Instant ZAR payouts, build reputation, unlock better opportunities.</p>
         </div>
       </div>
@@ -429,39 +423,39 @@
   <!-- Popular Skills -->
   <section class="py-12 sm:py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8">
     <div class="max-w-6xl mx-auto w-full">
-      <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-12 md:mb-20 text-center">Popular Skills in Demand</h2>
+      <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-12 md:mb-20 text-center px-2">Popular Skills in Demand</h2>
       
       <div class="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer">
-          <div class="font-semibold text-sm sm:text-base mb-1">Web Development</div>
+        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer min-h-fit">
+          <div class="font-semibold text-sm sm:text-base mb-1 leading-tight">Web Development</div>
           <p class="text-xs sm:text-sm text-slate-400">React, Node, Full-Stack</p>
         </div>
-        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer">
-          <div class="font-semibold text-sm sm:text-base mb-1">Mobile Dev</div>
+        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer min-h-fit">
+          <div class="font-semibold text-sm sm:text-base mb-1 leading-tight">Mobile Dev</div>
           <p class="text-xs sm:text-sm text-slate-400">iOS, Android, Flutter</p>
         </div>
-        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer">
-          <div class="font-semibold text-sm sm:text-base mb-1">UI/UX Design</div>
+        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer min-h-fit">
+          <div class="font-semibold text-sm sm:text-base mb-1 leading-tight">UI/UX Design</div>
           <p class="text-xs sm:text-sm text-slate-400">Product, Web, Mobile</p>
         </div>
-        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer">
-          <div class="font-semibold text-sm sm:text-base mb-1">Data Science</div>
+        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer min-h-fit">
+          <div class="font-semibold text-sm sm:text-base mb-1 leading-tight">Data Science</div>
           <p class="text-xs sm:text-sm text-slate-400">ML, Analytics, Python</p>
         </div>
-        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer">
-          <div class="font-semibold text-sm sm:text-base mb-1">Cloud Infra</div>
+        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer min-h-fit">
+          <div class="font-semibold text-sm sm:text-base mb-1 leading-tight">Cloud Infra</div>
           <p class="text-xs sm:text-sm text-slate-400">AWS, GCP, DevOps</p>
         </div>
-        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer">
-          <div class="font-semibold text-sm sm:text-base mb-1">Content</div>
+        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer min-h-fit">
+          <div class="font-semibold text-sm sm:text-base mb-1 leading-tight">Content</div>
           <p class="text-xs sm:text-sm text-slate-400">SEO, Blogs, Marketing</p>
         </div>
-        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer">
-          <div class="font-semibold text-sm sm:text-base mb-1">Digital Marketing</div>
+        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer min-h-fit">
+          <div class="font-semibold text-sm sm:text-base mb-1 leading-tight">Digital Marketing</div>
           <p class="text-xs sm:text-sm text-slate-400">Social, Ads, Strategy</p>
         </div>
-        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer">
-          <div class="font-semibold text-sm sm:text-base mb-1">Video Production</div>
+        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer min-h-fit">
+          <div class="font-semibold text-sm sm:text-base mb-1 leading-tight">Video Production</div>
           <p class="text-xs sm:text-sm text-slate-400">Editing, Animation, Ads</p>
         </div>
       </div>
@@ -471,23 +465,23 @@
   <!-- Impact & Trust -->
   <section class="py-12 sm:py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-emerald-600/15 via-slate-950 to-slate-950">
     <div class="max-w-6xl mx-auto w-full">
-      <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-12 md:mb-20 text-center">Our Impact & Trust</h2>
+      <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-12 md:mb-20 text-center px-2">Our Impact & Trust</h2>
       
       <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-8 sm:mb-12 md:mb-16">
         <div class="text-center p-4 sm:p-6 md:p-8 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg stat-animate">
-          <div class="text-3xl sm:text-4xl md:text-5xl font-bold text-emerald-400 mb-2 sm:mb-3">2.5K+</div>
+          <div class="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold text-emerald-400 mb-2 sm:mb-3 leading-tight">2.5K+</div>
           <div class="text-slate-400 text-xs sm:text-sm font-medium">Verified Pros</div>
         </div>
         <div class="text-center p-4 sm:p-6 md:p-8 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg stat-animate" style="animation-delay: 0.1s;">
-          <div class="text-3xl sm:text-4xl md:text-5xl font-bold text-emerald-400 mb-2 sm:mb-3">1.2K+</div>
+          <div class="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold text-emerald-400 mb-2 sm:mb-3 leading-tight">1.2K+</div>
           <div class="text-slate-400 text-xs sm:text-sm font-medium">Projects</div>
         </div>
         <div class="text-center p-4 sm:p-6 md:p-8 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg stat-animate" style="animation-delay: 0.2s;">
-          <div class="text-3xl sm:text-4xl md:text-5xl font-bold text-emerald-400 mb-2 sm:mb-3">R50M+</div>
+          <div class="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold text-emerald-400 mb-2 sm:mb-3 leading-tight">R50M+</div>
           <div class="text-slate-400 text-xs sm:text-sm font-medium">Earnings</div>
         </div>
         <div class="text-center p-4 sm:p-6 md:p-8 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg stat-animate" style="animation-delay: 0.3s;">
-          <div class="text-3xl sm:text-4xl md:text-5xl font-bold text-emerald-400 mb-2 sm:mb-3">100%</div>
+          <div class="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold text-emerald-400 mb-2 sm:mb-3 leading-tight">100%</div>
           <div class="text-slate-400 text-xs sm:text-sm font-medium">POPIA</div>
         </div>
       </div>
@@ -521,39 +515,20 @@
     </div>
   </section>
 
-  <!-- PWA Section -->
+  <!-- Final CTA Section -->
   <section class="py-12 sm:py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-4xl mx-auto w-full">
-      <div class="text-center mb-8 sm:mb-12">
-        <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-6">For the Best Experience</h2>
-        <p class="text-base sm:text-lg text-slate-300">Install FreelanceSkills as an app on your phone</p>
-      </div>
+    <div class="max-w-3xl mx-auto w-full">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 sm:mb-8 text-center px-2 leading-tight">Ready to Shape the Future of Work?</h2>
+      <p class="text-base sm:text-lg text-slate-300 mb-8 sm:mb-12 text-center px-2">Join thousands of skilled professionals and forward-thinking businesses building the new economy.</p>
       
-      <div id="pwa-install-section" class="hidden mb-6 sm:mb-8 p-4 sm:p-6 bg-gradient-to-r from-emerald-500/10 to-slate-900 border border-emerald-500/30 rounded-lg sm:rounded-lg shadow-lg pwa-slide">
-        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-start">
-          <svg class="w-6 h-6 sm:w-8 sm:h-8 text-emerald-400 flex-shrink-0 mt-0.5 sm:mt-1" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M2 9.5A3.5 3.5 0 015.5 6H10V2.25A2.25 2.25 0 0112.25 0h5.5A2.25 2.25 0 0120 2.25v5.5A2.25 2.25 0 0117.75 10H14v4.5A3.5 3.5 0 0110.5 18H5.5A3.5 3.5 0 012 14.5V9.5zM5.5 8a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
-          </svg>
-          <div class="flex-1 w-full">
-            <h3 class="font-semibold text-slate-50 mb-2 text-sm sm:text-base">Get home-screen access, faster loading, and instant notifications</h3>
-            <button id="install-app-btn" class="w-full px-4 sm:px-6 py-2.5 sm:py-3 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/25 btn-transition min-h-12 text-sm sm:text-base">
-              Install as App
-            </button>
-          </div>
-          <button id="close-install-btn" class="text-slate-400 hover:text-slate-300 transition-colors flex-shrink-0 p-1.5 min-h-10 min-w-10 flex items-center justify-center">
-            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
-            </svg>
-          </button>
-        </div>
+      <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-2">
+        <a href="/" class="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 btn-transition min-h-12 sm:min-h-14 text-xs sm:text-base whitespace-nowrap">
+          Join as a Freelancer
+        </a>
+        <a href="/" class="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 border-2 border-emerald-500 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-500/10 transition-all btn-transition min-h-12 sm:min-h-14 text-xs sm:text-base whitespace-nowrap">
+          Hire Talent Now
+        </a>
       </div>
-
-      <a href="/login-standalone.html" class="w-full flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 btn-transition min-h-12 sm:min-h-14 text-sm sm:text-base">
-        Ready to Shape the Future of Work?
-        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-        </svg>
-      </a>
     </div>
   </section>
 
@@ -566,23 +541,26 @@
             <div class="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center">
               <span class="text-slate-950 font-bold text-xs">FS</span>
             </div>
-            <span class="font-bold text-sm sm:text-base">FreelanceSkills</span>
+            <div class="flex items-baseline gap-0.5">
+              <span class="font-bold text-sm sm:text-base text-emerald-400">freelance</span>
+              <span class="font-bold text-sm sm:text-base text-slate-50">skills</span>
+            </div>
           </div>
-          <p class="text-slate-400 text-xs sm:text-sm">The trusted, skills-first marketplace for Africa and beyond.</p>
+          <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">The trusted, skills-first marketplace for Africa and beyond.</p>
         </div>
 
         <div>
-          <h4 class="font-semibold mb-3 sm:mb-4 text-xs sm:text-sm">Company</h4>
+          <h4 class="font-semibold mb-3 sm:mb-4 text-xs sm:text-sm text-slate-50">Company</h4>
           <ul class="space-y-2 text-slate-400 text-xs sm:text-sm">
             <li><a href="/" class="hover:text-emerald-400 transition-colors">Home</a></li>
-            <li><a href="/about-standalone.html" class="hover:text-emerald-400 transition-colors">About</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">About</a></li>
             <li><a href="/" class="hover:text-emerald-400 transition-colors">How it Works</a></li>
             <li><a href="/" class="hover:text-emerald-400 transition-colors">Blog</a></li>
           </ul>
         </div>
 
         <div>
-          <h4 class="font-semibold mb-3 sm:mb-4 text-xs sm:text-sm">Legal</h4>
+          <h4 class="font-semibold mb-3 sm:mb-4 text-xs sm:text-sm text-slate-50">Legal</h4>
           <ul class="space-y-2 text-slate-400 text-xs sm:text-sm">
             <li><a href="/" class="hover:text-emerald-400 transition-colors">Terms of Service</a></li>
             <li><a href="/" class="hover:text-emerald-400 transition-colors">Privacy Policy</a></li>
@@ -591,7 +569,7 @@
         </div>
 
         <div>
-          <h4 class="font-semibold mb-3 sm:mb-4 text-xs sm:text-sm">Contact</h4>
+          <h4 class="font-semibold mb-3 sm:mb-4 text-xs sm:text-sm text-slate-50">Contact</h4>
           <p class="text-slate-400 text-xs sm:text-sm">Camps Bay, Cape Town, South Africa</p>
           <p class="text-slate-400 text-xs sm:text-sm mt-2"><a href="mailto:support@freelanceskills.net" class="hover:text-emerald-400 transition-colors">support@freelanceskills.net</a></p>
         </div>
@@ -603,50 +581,12 @@
     </div>
   </footer>
 
-  <!-- PWA Fallback Modal -->
-  <div id="pwa-fallback-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-fade overflow-y-auto">
-    <div class="bg-slate-900 border border-slate-800 rounded-xl sm:rounded-2xl max-w-lg w-full p-6 sm:p-8 card-shadow my-4">
-      <div class="flex items-center justify-between mb-4 sm:mb-6">
-        <h3 class="text-xl sm:text-2xl font-bold">Install FreelanceSkills</h3>
-        <button id="pwa-modal-close" class="text-slate-400 hover:text-slate-200 transition-colors p-1.5 min-h-10 min-w-10 flex items-center justify-center flex-shrink-0">
-          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
-      </div>
-
-      <p class="text-slate-300 mb-6 sm:mb-8 text-sm sm:text-base">Get the best experience. Here's how to install on your device:</p>
-
-      <div class="space-y-6 sm:space-y-8">
-        <div>
-          <h4 class="font-semibold text-emerald-400 mb-2 sm:mb-3 text-sm">Chrome on Android</h4>
-          <ol class="text-slate-400 text-xs sm:text-sm space-y-1 sm:space-y-2 ml-4 list-decimal">
-            <li>Tap the menu <strong class="text-slate-300">(three dots)</strong> top-right</li>
-            <li>Select <strong class="text-slate-300">"Install app"</strong> and confirm</li>
-          </ol>
-        </div>
-
-        <div>
-          <h4 class="font-semibold text-emerald-400 mb-2 sm:mb-3 text-sm">Safari on iPhone/iPad</h4>
-          <ol class="text-slate-400 text-xs sm:text-sm space-y-1 sm:space-y-2 ml-4 list-decimal">
-            <li>Tap the <strong class="text-slate-300">Share button</strong> (square with arrow)</li>
-            <li>Tap <strong class="text-slate-300">"Add to Home Screen"</strong></li>
-          </ol>
-        </div>
-      </div>
-
-      <button id="pwa-modal-confirm" class="w-full mt-6 sm:mt-8 px-6 py-2.5 sm:py-3 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-colors btn-transition min-h-12 text-sm sm:text-base">
-        Got it, thanks!
-      </button>
-    </div>
-  </div>
-
   <script>
-    // Mobile Menu
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const mobileMenuPanel = document.getElementById('mobile-menu-panel');
     const mobileBackdrop = document.getElementById('mobile-backdrop');
     const closeMobileBtn = document.getElementById('close-mobile-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
 
     function openMobileMenu() {
       mobileMenuPanel.classList.remove('hidden');
@@ -672,63 +612,17 @@
 
     window.closeMobileMenu = closeMobileMenu;
 
-    // PWA Install
-    let deferredPrompt;
-    const pwaInstallSection = document.getElementById('pwa-install-section');
-    const pwaInstallBtn = document.getElementById('install-app-btn');
-    const pwaCloseBtn = document.getElementById('close-install-btn');
-    const pwaFallbackModal = document.getElementById('pwa-fallback-modal');
-    const pwaModalClose = document.getElementById('pwa-modal-close');
-    const pwaModalConfirm = document.getElementById('pwa-modal-confirm');
-
-    const isInstalled = window.matchMedia('(display-mode: standalone)').matches ||
-      (window.navigator as any).standalone === true;
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      if (!isInstalled) {
-        pwaInstallSection.classList.remove('hidden');
-      }
-    });
-
-    window.addEventListener('appinstalled', () => {
-      deferredPrompt = null;
-      pwaInstallSection.classList.add('hidden');
-    });
-
-    pwaInstallBtn.addEventListener('click', async () => {
-      if (deferredPrompt) {
-        await deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-          deferredPrompt = null;
-          pwaInstallSection.classList.add('hidden');
-        }
-      } else {
-        pwaFallbackModal.classList.remove('hidden');
-      }
-    });
-
-    pwaCloseBtn.addEventListener('click', () => {
-      pwaInstallSection.classList.add('hidden');
-    });
-
-    pwaModalClose.addEventListener('click', () => {
-      pwaFallbackModal.classList.add('hidden');
-    });
-
-    pwaModalConfirm.addEventListener('click', () => {
-      pwaFallbackModal.classList.add('hidden');
-    });
-
-    // Close Modals with Escape
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
+      if (e.key === 'Escape' && !mobileMenuPanel.classList.contains('hidden')) {
         closeMobileMenu();
-        pwaFallbackModal.classList.add('hidden');
       }
     });
+
+    document.addEventListener('touchmove', (e) => {
+      if (!mobileMenuPanel.classList.contains('hidden')) {
+        e.preventDefault();
+      }
+    }, { passive: false });
   </script>
 </body>
 </html>
