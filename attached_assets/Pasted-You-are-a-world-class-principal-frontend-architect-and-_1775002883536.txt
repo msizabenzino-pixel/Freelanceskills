@@ -1,0 +1,63 @@
+You are a world-class principal frontend architect and elite conversion UX writer who has designed login + PWA flows for the top 1% marketplaces in 2026 (Upwork, Fiverr, Toptal, PeoplePerHour, Spotify, Pinterest).
+
+Create a complete, single-file, production-ready Login page for FreelanceSkills.net — South Africa’s leading skills-first, AI-powered freelance marketplace. Platform focus: verified African talent (tech + trades + professionals), secure escrow (PayFast), POPIA compliant, local 24/7 support, AI smart matching, transparent 10% fees, vision to empower 1 million Africans by 2031. Everything must be platform-first and mission-driven.
+
+MANDATORY RULES — zero exceptions:
+- NEVER mention any founder, person, or personal story. 
+- No App Store or Play Store links ever.
+- Use Tailwind CSS 3.4+ via CDN (include script tag).
+- Fully responsive split-screen (desktop) that stacks beautifully on mobile.
+- Professional premium dark theme: deep navy/slate base (#0f172a), emerald accent (#10b981) for growth + trust.
+- Zero messy code. Perfect indentation. Semantic HTML5. Excellent accessibility. Fast loading.
+
+Exact page structure (follow strictly):
+
+1. Minimal sticky navbar: Logo "FreelanceSkills" (text + subtle icon), links (Home, Browse Talent, Post a Job, About, How it Works, Academy), "Post a Job" primary button, "Join Free" secondary button. Clean mobile hamburger.
+
+2. Main Login Section – Beautiful Split-Screen (Fiverr + PeoplePerHour best hybrid):
+   - LEFT PANEL (45% on desktop, inspiring gradient background with subtle geometric African-tech pattern, no people photos):
+     - Headline: "Welcome back to the future of skilled work in Africa"
+     - Subheadline: "Log in to connect verified talent with high-value opportunities — locally and globally."
+     - 5 powerful benefit bullets with Lucide icons:
+       - Verified ID & skills-vetted professionals
+       - Secure escrow & instant ZAR payouts
+       - AI smart matching + transparent 10% fees
+       - POPIA compliant & 24/7 local SA support
+       - Part of the platform empowering 1 million Africans
+     - Subtle trust line: "Trusted by thousands across Johannesburg, Cape Town, Durban & beyond"
+
+   - RIGHT PANEL (clean, elevated card with soft shadow):
+     - "Log in to your account"
+     - SOCIAL LOGIN FIRST (large, full-width, PeoplePerHour style):
+       - Continue with Google
+       - Continue with Apple
+       - Continue with LinkedIn
+     - Clean OR divider
+     - Email address field
+     - Password field with show/hide toggle
+     - "Remember me" checkbox + "Forgot password?" link
+     - Big emerald "Log in" button
+     - Below form: "Don’t have an account? Join as Freelancer or Client" (two clear links)
+     - **Premium PWA Install Promotion** (elegant, non-pushy section right below form — Spotify/Pinterest level polish):
+       - Small emerald-bordered box with app icon
+       - Headline: "For the best experience, install FreelanceSkills as an app on your phone"
+       - Sub: "Get home-screen access, faster loading, offline job browsing, instant match notifications, and quick apply — feels exactly like a native app."
+       - Prominent button: "Install as App"
+       - Full JavaScript: detect beforeinstallprompt, show button only when supported, fallback modal with crystal-clear 2-step instructions (Chrome/Android instant + Safari “Share → Add to Home Screen”).
+
+3. Trust & Security Bar (subtle, below card):
+   - "Secure login • POPIA compliant • PayFast Escrow • Industry-leading encryption • Cape Town, South Africa"
+
+4. Minimal Footer:
+   - Logo + short platform-first tagline
+   - Quick links (About, How it Works, Trust & Safety, Blog, Academy)
+   - Legal: Terms, Privacy, Cookie Policy
+   - CIPC Registered • Cape Town, South Africa • © 2026 FreelanceSkills.net
+
+Additional requirements:
+- Full functional JavaScript for PWA install (beforeinstallprompt + smart fallback modal).
+- Subtle hover/focus animations and micro-interactions.
+- Copy must feel confident, premium, and future-leading — exactly like a 2026 market dominator.
+- Make this the most beautiful, trustworthy, frictionless, and conversion-optimized login page in the entire freelance sector.
+
+Output ONLY the complete valid HTML document. Start directly with <!DOCTYPE html> and end with </html>. Generate it now.
