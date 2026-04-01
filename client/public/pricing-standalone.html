@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Simple, transparent pricing for freelancers and businesses on FreelanceSkills. Choose the perfect plan for your needs. Pay-as-you-go or subscription options available.">
+  <meta name="theme-color" content="#10b981">
+  <meta property="og:title" content="Pricing — FreelanceSkills">
+  <meta property="og:description" content="Affordable pricing plans for African freelancers and businesses. Transparent, flexible, and fair. Find the plan that works for you.">
+  <meta name="twitter:title" content="Pricing — FreelanceSkills">
+  <meta name="twitter:description" content="Simple, transparent pricing. No hidden fees. Get started with FreelanceSkills today.">
+  <title>Pricing — FreelanceSkills</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    
+    * {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #0f172a;
+      color: #f1f5f9;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .nav-link {
+      position: relative;
+      transition: color 0.2s ease;
+    }
+
+    .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #10b981;
+      border-radius: 1px;
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOutRight {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .backdrop-fade {
+      animation: fadeIn 0.3s ease;
+    }
+
+    .mobile-menu-slide {
+      animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mobile-menu-slide.closing {
+      animation: slideOutRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .hero-animate {
+      animation: fadeInUp 0.6s ease-out 0.1s both;
+    }
+
+    .hero-animate-delay {
+      animation: fadeInUp 0.6s ease-out 0.2s both;
+    }
+
+    .btn-transition {
+      transition: all 0.2s ease;
+    }
+
+    .btn-transition:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-transition:active {
+      transform: translateY(0);
+    }
+
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgba(16, 185, 129, 0.15);
+    }
+
+    .pricing-card-featured {
+      transform: scale(1.02);
+    }
+
+    @media (max-width: 768px) {
+      .pricing-card-featured {
+        transform: scale(1);
+      }
+    }
+
+    .feature-list li::before {
+      content: '✓';
+      display: inline-block;
+      margin-right: 10px;
+      color: #10b981;
+      font-weight: bold;
+    }
+
+    .accordion-btn {
+      transition: all 0.3s ease;
+    }
+
+    .accordion-btn[aria-expanded="true"] {
+      background-color: rgba(16, 185, 129, 0.1);
+      border-color: #10b981;
+    }
+
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .accordion-content.open {
+      max-height: 500px;
+    }
+
+    button:focus-visible,
+    a:focus-visible {
+      outline: 2px solid #10b981;
+      outline-offset: 2px;
+    }
+
+    input:focus-visible {
+      outline: 2px solid #10b981;
+      outline-offset: 2px;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        overflow-x: hidden;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-50">
+  <!-- Navbar -->
+  <nav class="sticky top-0 z-50 bg-slate-950/95 backdrop-blur border-b border-emerald-500/20" role="navigation" aria-label="Main navigation">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-14 sm:h-16">
+        <a href="/" class="flex items-center gap-2 sm:gap-3 group flex-shrink-0" aria-label="FreelanceSkills home">
+          <div class="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-emerald-500/50 transition-all duration-300 flex-shrink-0">
+            <span class="text-slate-950 font-bold text-xs sm:text-sm">FS</span>
+          </div>
+          <div class="hidden xs:flex items-baseline gap-0.5">
+            <span class="font-bold text-sm sm:text-base text-emerald-400">freelance</span>
+            <span class="font-bold text-sm sm:text-base text-slate-50">skills</span>
+          </div>
+        </a>
+
+        <div class="hidden lg:flex items-center gap-0 lg:gap-1">
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Home</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Browse</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Post</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">About</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">How it Works</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Academy</a>
+          <a href="/" class="nav-link active text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Pricing</a>
+        </div>
+
+        <div class="hidden lg:flex items-center gap-2 flex-shrink-0">
+          <a href="/" class="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg hover:bg-slate-800 transition-all duration-200 btn-transition min-h-12 flex items-center justify-center">Post a Job</a>
+          <a href="/" class="px-4 sm:px-6 py-2 text-xs sm:text-sm bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 font-semibold rounded-lg hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 btn-transition min-h-12 flex items-center justify-center whitespace-nowrap">Join Free</a>
+        </div>
+
+        <button id="mobile-menu-btn" class="lg:hidden p-2.5 rounded-lg hover:bg-slate-800 transition-all duration-200 min-h-12 min-w-12 flex items-center justify-center" aria-label="Open navigation menu" aria-expanded="false">
+          <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden lg:hidden">
+      <div id="mobile-backdrop" class="hidden fixed inset-0 bg-black/60 z-40 backdrop-blur-sm backdrop-fade"></div>
+      <div id="mobile-menu-panel" class="hidden fixed right-0 top-14 sm:top-16 bottom-0 w-full max-w-xs bg-slate-950 border-l border-slate-800 z-50 mobile-menu-slide flex flex-col">
+        <div class="flex-1 overflow-y-auto p-4 space-y-1">
+          <nav class="space-y-0">
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Home</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Browse Talent</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Post a Job</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">About</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">How it Works</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Academy</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center font-medium" onclick="closeMobileMenu()">Pricing</a>
+          </nav>
+        </div>
+        <div class="border-t border-slate-800 p-4 space-y-2">
+          <a href="/" class="block px-4 py-3 text-center rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center justify-center" onclick="closeMobileMenu()">Post a Job</a>
+          <a href="/" class="block px-4 py-3 text-center bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 rounded-lg font-semibold hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 text-sm min-h-12 flex items-center justify-center" onclick="closeMobileMenu()">Join Free</a>
+        </div>
+        <button id="close-mobile-btn" class="absolute top-3 sm:top-4 right-3 sm:right-4 p-2.5 hover:bg-slate-800 rounded-lg transition-all duration-200 min-h-12 min-w-12 flex items-center justify-center" aria-label="Close menu">
+          <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="relative py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-950">
+    <div class="max-w-4xl mx-auto w-full text-center">
+      <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 hero-animate px-2">Transparent Pricing for Everyone</h1>
+      <p class="text-base sm:text-lg md:text-xl text-slate-300 mb-8 sm:mb-10 hero-animate-delay max-w-3xl mx-auto px-2">Choose the plan that fits your needs. Scale as you grow. No hidden fees. Cancel anytime.</p>
+      
+      <div class="flex flex-col sm:flex-row justify-center gap-4 hero-animate-delay px-2">
+        <button class="px-5 sm:px-7 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg border border-emerald-500 text-emerald-400 font-semibold hover:bg-emerald-500/10 transition-all btn-transition min-h-12 sm:min-h-14">For Freelancers</button>
+        <button class="px-5 sm:px-7 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg bg-emerald-500 text-slate-950 font-semibold hover:bg-emerald-400 transition-all btn-transition min-h-12 sm:min-h-14">For Businesses</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Tiers -->
+  <section class="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto w-full">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 mb-12 sm:mb-16">
+        <!-- Starter Plan -->
+        <div class="p-6 sm:p-8 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl card-hover flex flex-col">
+          <div class="mb-6 sm:mb-8">
+            <h3 class="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Freelancer Starter</h3>
+            <p class="text-sm sm:text-base text-slate-400 mb-6 sm:mb-8">Perfect for getting started</p>
+            <div class="flex items-baseline gap-1">
+              <span class="text-4xl sm:text-5xl font-bold">Free</span>
+              <span class="text-slate-400 text-sm sm:text-base">/forever</span>
+            </div>
+          </div>
+
+          <button class="w-full px-5 py-3 sm:py-4 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all btn-transition min-h-12 sm:min-h-14 text-sm sm:text-base mb-8 sm:mb-10">Get Started</button>
+
+          <div class="space-y-3 sm:space-y-4 flex-1">
+            <p class="text-xs sm:text-sm font-semibold text-emerald-400 uppercase tracking-wide">What's Included</p>
+            <ul class="space-y-2 sm:space-y-3 text-xs sm:text-sm text-slate-400 feature-list">
+              <li>Create profile</li>
+              <li>Browse opportunities</li>
+              <li>Apply to jobs</li>
+              <li>Basic messaging</li>
+              <li>Portfolio showcase</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Professional Plan (Featured) -->
+        <div class="p-6 sm:p-8 bg-gradient-to-br from-slate-800 to-slate-900 border border-emerald-500/50 rounded-lg sm:rounded-xl card-hover flex flex-col ring-1 ring-emerald-500/25 pricing-card-featured">
+          <div class="mb-2">
+            <span class="inline-block px-3 py-1 text-xs font-semibold bg-emerald-500 text-slate-950 rounded-full mb-4 sm:mb-6">MOST POPULAR</span>
+          </div>
+          
+          <div class="mb-6 sm:mb-8">
+            <h3 class="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Professional</h3>
+            <p class="text-sm sm:text-base text-slate-300 mb-6 sm:mb-8">For established freelancers</p>
+            <div class="flex items-baseline gap-1">
+              <span class="text-4xl sm:text-5xl font-bold">R299</span>
+              <span class="text-slate-300 text-sm sm:text-base">/month</span>
+            </div>
+          </div>
+
+          <button class="w-full px-5 py-3 sm:py-4 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all btn-transition min-h-12 sm:min-h-14 text-sm sm:text-base mb-8 sm:mb-10">Start Free Trial</button>
+
+          <div class="space-y-3 sm:space-y-4 flex-1">
+            <p class="text-xs sm:text-sm font-semibold text-emerald-400 uppercase tracking-wide">Everything in Starter, plus:</p>
+            <ul class="space-y-2 sm:space-y-3 text-xs sm:text-sm text-slate-300 feature-list">
+              <li>Priority job matching</li>
+              <li>Advanced analytics</li>
+              <li>Featured profile badge</li>
+              <li>Dedicated support</li>
+              <li>Custom hours availability</li>
+              <li>Rate visibility control</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Enterprise Plan -->
+        <div class="p-6 sm:p-8 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl card-hover flex flex-col">
+          <div class="mb-6 sm:mb-8">
+            <h3 class="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Enterprise</h3>
+            <p class="text-sm sm:text-base text-slate-400 mb-6 sm:mb-8">Tailored solutions</p>
+            <div class="flex items-baseline gap-1">
+              <span class="text-4xl sm:text-5xl font-bold">Custom</span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-400 mt-2">Contact sales for pricing</p>
+          </div>
+
+          <button class="w-full px-5 py-3 sm:py-4 bg-slate-700 text-slate-50 rounded-lg font-semibold hover:bg-slate-600 transition-all btn-transition min-h-12 sm:min-h-14 text-sm sm:text-base mb-8 sm:mb-10">Contact Sales</button>
+
+          <div class="space-y-3 sm:space-y-4 flex-1">
+            <p class="text-xs sm:text-sm font-semibold text-emerald-400 uppercase tracking-wide">Everything in Professional, plus:</p>
+            <ul class="space-y-2 sm:space-y-3 text-xs sm:text-sm text-slate-400 feature-list">
+              <li>Account manager</li>
+              <li>Team management tools</li>
+              <li>Custom integrations</li>
+              <li>Bulk operations</li>
+              <li>Priority 24/7 support</li>
+              <li>SLA guarantees</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Platform Fee Info -->
+      <div class="bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-lg p-6 sm:p-8 text-center">
+        <p class="text-sm sm:text-base text-slate-300 mb-2">Plus our transparent <span class="font-semibold text-emerald-400">10% platform fee</span> on projects</p>
+        <p class="text-xs sm:text-sm text-slate-400">No setup fees. No hidden charges. Cancel anytime.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature Comparison Table -->
+  <section class="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-slate-900/50 border-y border-slate-800">
+    <div class="max-w-6xl mx-auto w-full">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-12 text-center px-2">Feature Comparison</h2>
+      
+      <div class="overflow-x-auto -mx-4 sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full px-4 sm:px-6 lg:px-8">
+          <table class="w-full text-sm sm:text-base">
+            <thead>
+              <tr class="border-b border-slate-700">
+                <th class="py-4 px-3 sm:px-4 text-left font-semibold text-slate-300 text-xs sm:text-sm">Feature</th>
+                <th class="py-4 px-3 sm:px-4 text-center font-semibold text-slate-300 text-xs sm:text-sm">Freelancer</th>
+                <th class="py-4 px-3 sm:px-4 text-center font-semibold text-slate-300 text-xs sm:text-sm">Professional</th>
+                <th class="py-4 px-3 sm:px-4 text-center font-semibold text-slate-300 text-xs sm:text-sm">Enterprise</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-slate-800 hover:bg-slate-800/30 transition-colors">
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-slate-300 text-xs sm:text-sm">Job Applications</td>
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-center text-emerald-400">Unlimited</td>
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-center text-emerald-400">Unlimited</td>
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-center text-emerald-400">Unlimited</td>
+              </tr>
+              <tr class="border-b border-slate-800 hover:bg-slate-800/30 transition-colors">
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-slate-300 text-xs sm:text-sm">Profile Visibility</td>
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-center text-emerald-400">Basic</td>
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-center text-emerald-400">Featured</td>
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-center text-emerald-400">Premium</td>
+              </tr>
+              <tr class="border-b border-slate-800 hover:bg-slate-800/30 transition-colors">
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-slate-300 text-xs sm:text-sm">Messaging Support</td>
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-center text-slate-500">Limited</td>
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-center text-emerald-400">Priority</td>
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-center text-emerald-400">24/7</td>
+              </tr>
+              <tr class="border-b border-slate-800 hover:bg-slate-800/30 transition-colors">
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-slate-300 text-xs sm:text-sm">Analytics Dashboard</td>
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-center text-slate-500">—</td>
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-center text-emerald-400">Advanced</td>
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-center text-emerald-400">Advanced</td>
+              </tr>
+              <tr class="border-b border-slate-800 hover:bg-slate-800/30 transition-colors">
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-slate-300 text-xs sm:text-sm">Custom Rates</td>
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-center text-slate-500">—</td>
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-center text-emerald-400">✓</td>
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-center text-emerald-400">✓</td>
+              </tr>
+              <tr class="border-b border-slate-800 hover:bg-slate-800/30 transition-colors">
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-slate-300 text-xs sm:text-sm">Tax Documents</td>
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-center text-slate-500">—</td>
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-center text-emerald-400">✓</td>
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-center text-emerald-400">✓</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30 transition-colors">
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-slate-300 text-xs sm:text-sm">Dedicated Account Manager</td>
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-center text-slate-500">—</td>
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-center text-slate-500">—</td>
+                <td class="py-3 sm:py-4 px-3 sm:px-4 text-center text-emerald-400">✓</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto w-full">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-12 text-center px-2">Frequently Asked Questions</h2>
+      
+      <div class="space-y-4 sm:space-y-6">
+        <!-- FAQ 1 -->
+        <div class="border border-slate-800 rounded-lg sm:rounded-lg overflow-hidden">
+          <button class="w-full p-4 sm:p-6 flex items-start sm:items-center justify-between gap-4 bg-slate-900/50 hover:bg-slate-800/50 transition-colors accordion-btn" aria-expanded="false" onclick="toggleAccordion(this)">
+            <span class="text-left text-sm sm:text-base font-semibold pr-2">Is there a setup fee?</span>
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-emerald-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+          </button>
+          <div class="accordion-content bg-slate-950 border-t border-slate-800">
+            <div class="p-4 sm:p-6 text-xs sm:text-sm text-slate-400">
+              No. We don't charge any setup fees or hidden charges. You only pay our 10% platform fee on successful projects. Completely transparent.
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ 2 -->
+        <div class="border border-slate-800 rounded-lg sm:rounded-lg overflow-hidden">
+          <button class="w-full p-4 sm:p-6 flex items-start sm:items-center justify-between gap-4 bg-slate-900/50 hover:bg-slate-800/50 transition-colors accordion-btn" aria-expanded="false" onclick="toggleAccordion(this)">
+            <span class="text-left text-sm sm:text-base font-semibold pr-2">Can I cancel anytime?</span>
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-emerald-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+          </button>
+          <div class="accordion-content bg-slate-950 border-t border-slate-800">
+            <div class="p-4 sm:p-6 text-xs sm:text-sm text-slate-400">
+              Yes, absolutely. You can cancel your subscription at any time with no questions asked. You won't be charged for the next billing cycle.
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ 3 -->
+        <div class="border border-slate-800 rounded-lg sm:rounded-lg overflow-hidden">
+          <button class="w-full p-4 sm:p-6 flex items-start sm:items-center justify-between gap-4 bg-slate-900/50 hover:bg-slate-800/50 transition-colors accordion-btn" aria-expanded="false" onclick="toggleAccordion(this)">
+            <span class="text-left text-sm sm:text-base font-semibold pr-2">What payment methods do you accept?</span>
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-emerald-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+          </button>
+          <div class="accordion-content bg-slate-950 border-t border-slate-800">
+            <div class="p-4 sm:p-6 text-xs sm:text-sm text-slate-400">
+              We accept all major credit cards, PayPal, PayFast, and mobile money options across Africa. Secure and encrypted payments every time.
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ 4 -->
+        <div class="border border-slate-800 rounded-lg sm:rounded-lg overflow-hidden">
+          <button class="w-full p-4 sm:p-6 flex items-start sm:items-center justify-between gap-4 bg-slate-900/50 hover:bg-slate-800/50 transition-colors accordion-btn" aria-expanded="false" onclick="toggleAccordion(this)">
+            <span class="text-left text-sm sm:text-base font-semibold pr-2">Do I need a featured badge?</span>
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-emerald-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+          </button>
+          <div class="accordion-content bg-slate-950 border-t border-slate-800">
+            <div class="p-4 sm:p-6 text-xs sm:text-sm text-slate-400">
+              No, it's optional. Our free plan works great for many freelancers. The Professional plan's featured badge helps you stand out and get more opportunities.
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ 5 -->
+        <div class="border border-slate-800 rounded-lg sm:rounded-lg overflow-hidden">
+          <button class="w-full p-4 sm:p-6 flex items-start sm:items-center justify-between gap-4 bg-slate-900/50 hover:bg-slate-800/50 transition-colors accordion-btn" aria-expanded="false" onclick="toggleAccordion(this)">
+            <span class="text-left text-sm sm:text-base font-semibold pr-2">Is there a free trial for paid plans?</span>
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-emerald-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+          </button>
+          <div class="accordion-content bg-slate-950 border-t border-slate-800">
+            <div class="p-4 sm:p-6 text-xs sm:text-sm text-slate-400">
+              Yes! Get 7 days free with the Professional plan. No credit card required to start. Cancel anytime during or after the trial.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-emerald-600/15 via-slate-950 to-slate-950 border-t border-emerald-500/20">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 px-2">Start Your Freelance Journey Today</h2>
+      <p class="text-base sm:text-lg text-slate-300 mb-8 sm:mb-10 px-2">Join thousands of African freelancers and businesses building careers and businesses on FreelanceSkills.</p>
+      
+      <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-2">
+        <a href="/" class="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 btn-transition min-h-12 sm:min-h-14 text-xs sm:text-base whitespace-nowrap">
+          Create Free Account
+        </a>
+        <a href="/" class="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 border-2 border-emerald-500 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-500/10 transition-all btn-transition min-h-12 sm:min-h-14 text-xs sm:text-base whitespace-nowrap">
+          View All Features
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 bg-slate-950">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8 sm:mb-12">
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center">
+              <span class="text-slate-950 font-bold text-xs">FS</span>
+            </div>
+            <div class="flex items-baseline gap-0.5">
+              <span class="font-bold text-sm sm:text-base text-emerald-400">freelance</span>
+              <span class="font-bold text-sm sm:text-base text-slate-50">skills</span>
+            </div>
+          </div>
+          <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">The trusted, skills-first marketplace for Africa and beyond.</p>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-3 sm:mb-4 text-xs sm:text-sm text-slate-50">Company</h4>
+          <ul class="space-y-2 text-slate-400 text-xs sm:text-sm">
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Home</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">About</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">How it Works</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Blog</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-3 sm:mb-4 text-xs sm:text-sm text-slate-50">Legal</h4>
+          <ul class="space-y-2 text-slate-400 text-xs sm:text-sm">
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Terms of Service</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Privacy Policy</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Cookie Policy</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-3 sm:mb-4 text-xs sm:text-sm text-slate-50">Contact</h4>
+          <p class="text-slate-400 text-xs sm:text-sm">Camps Bay, Cape Town, South Africa</p>
+          <p class="text-slate-400 text-xs sm:text-sm mt-2"><a href="mailto:support@freelanceskills.net" class="hover:text-emerald-400 transition-colors">support@freelanceskills.net</a></p>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-800 pt-6 sm:pt-8">
+        <p class="text-slate-500 text-xs text-center">© 2026 FreelanceSkills.net. CIPC Registered • POPIA Compliant • All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenuPanel = document.getElementById('mobile-menu-panel');
+    const mobileBackdrop = document.getElementById('mobile-backdrop');
+    const closeMobileBtn = document.getElementById('close-mobile-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    function openMobileMenu() {
+      mobileMenuPanel.classList.remove('hidden');
+      mobileBackdrop.classList.remove('hidden');
+      mobileMenuBtn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileMenu() {
+      mobileMenuPanel.classList.add('closing');
+      setTimeout(() => {
+        mobileMenuPanel.classList.add('hidden');
+        mobileMenuPanel.classList.remove('closing');
+        mobileBackdrop.classList.add('hidden');
+        mobileMenuBtn.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }, 300);
+    }
+
+    mobileMenuBtn.addEventListener('click', openMobileMenu);
+    closeMobileBtn.addEventListener('click', closeMobileMenu);
+    mobileBackdrop.addEventListener('click', closeMobileMenu);
+
+    window.closeMobileMenu = closeMobileMenu;
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !mobileMenuPanel.classList.contains('hidden')) {
+        closeMobileMenu();
+      }
+    });
+
+    document.addEventListener('touchmove', (e) => {
+      if (!mobileMenuPanel.classList.contains('hidden')) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    // Accordion functionality
+    function toggleAccordion(button) {
+      const isOpen = button.getAttribute('aria-expanded') === 'true';
+      button.setAttribute('aria-expanded', !isOpen);
+      const content = button.nextElementSibling;
+      content.classList.toggle('open');
+      const svg = button.querySelector('svg');
+      svg.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+    }
+  </script>
+</body>
+</html>
