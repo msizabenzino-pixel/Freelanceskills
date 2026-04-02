@@ -51,6 +51,8 @@ function FreelancerOnboardingContent() {
   const [category, setCategory] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
   const [expertise, setExpertise] = useState<string[]>([]);
+  const [skillsInput, setSkillsInput] = useState("");
+  const [expertiseInput, setExpertiseInput] = useState("");
   const [experienceLevel, setExperienceLevel] = useState("");
   const [hourlyRate, setHourlyRate] = useState("");
   const [availability, setAvailability] = useState("");
@@ -139,7 +141,15 @@ function FreelancerOnboardingContent() {
       return Boolean(displayName.trim() && professionalTitle.trim() && bio.trim().length >= 50 && location.trim());
     }
     if (step === 1) {
-      return Boolean(category && skills.length > 0 && expertise.length > 0 && experienceLevel && Number(hourlyRate) > 0 && availability);
+      const skillsCombined = [
+        ...skills,
+        ...skillsInput.split(",").map((item) => item.trim()).filter(Boolean),
+      ];
+      const expertiseCombined = [
+        ...expertise,
+        ...expertiseInput.split(",").map((item) => item.trim()).filter(Boolean),
+      ];
+      return Boolean(category && skillsCombined.length > 0 && expertiseCombined.length > 0 && experienceLevel && Number(hourlyRate) > 0 && availability);
     }
     if (step === 2) {
       return agreedToTerms;
@@ -152,6 +162,20 @@ function FreelancerOnboardingContent() {
     if (!canProceed()) {
       setApiError("Please complete all required fields before continuing.");
       return;
+    }
+    if (step === 1) {
+      if (skillsInput.trim()) {
+        setSkills((prev) =>
+          Array.from(new Set([...prev, ...skillsInput.split(",").map((item) => item.trim()).filter(Boolean)]))
+        );
+        setSkillsInput("");
+      }
+      if (expertiseInput.trim()) {
+        setExpertise((prev) =>
+          Array.from(new Set([...prev, ...expertiseInput.split(",").map((item) => item.trim()).filter(Boolean)]))
+        );
+        setExpertiseInput("");
+      }
     }
     if (step < 3) setStep(step + 1);
   };
@@ -333,13 +357,21 @@ function FreelancerOnboardingContent() {
                   <Label>Skills *</Label>
                   <Input
                     placeholder="Type a skill and press Enter"
+                    value={skillsInput}
+                    onChange={(e) => setSkillsInput(e.target.value)}
                     onKeyDown={(e) => {
-                      if (e.key !== "Enter") return;
+                      if (e.key !== "Enter" && e.key !== ",") return;
                       e.preventDefault();
-                      const value = (e.target as HTMLInputElement).value.trim();
+                      const value = skillsInput.trim();
                       if (!value || skills.includes(value)) return;
                       setSkills((prev) => [...prev, value]);
-                      (e.target as HTMLInputElement).value = "";
+                      setSkillsInput("");
+                    }}
+                    onBlur={() => {
+                      const candidates = skillsInput.split(",").map((item) => item.trim()).filter(Boolean);
+                      if (!candidates.length) return;
+                      setSkills((prev) => Array.from(new Set([...prev, ...candidates])));
+                      setSkillsInput("");
                     }}
                   />
                   <div className="flex flex-wrap gap-2 pt-2">
@@ -358,13 +390,21 @@ function FreelancerOnboardingContent() {
                   <Label>Expertise Areas *</Label>
                   <Input
                     placeholder="Type expertise and press Enter"
+                    value={expertiseInput}
+                    onChange={(e) => setExpertiseInput(e.target.value)}
                     onKeyDown={(e) => {
-                      if (e.key !== "Enter") return;
+                      if (e.key !== "Enter" && e.key !== ",") return;
                       e.preventDefault();
-                      const value = (e.target as HTMLInputElement).value.trim();
+                      const value = expertiseInput.trim();
                       if (!value || expertise.includes(value)) return;
                       setExpertise((prev) => [...prev, value]);
-                      (e.target as HTMLInputElement).value = "";
+                      setExpertiseInput("");
+                    }}
+                    onBlur={() => {
+                      const candidates = expertiseInput.split(",").map((item) => item.trim()).filter(Boolean);
+                      if (!candidates.length) return;
+                      setExpertise((prev) => Array.from(new Set([...prev, ...candidates])));
+                      setExpertiseInput("");
                     }}
                   />
                   <div className="flex flex-wrap gap-2 pt-2">

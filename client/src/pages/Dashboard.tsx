@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
@@ -13,13 +13,17 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
 import { useCurrency } from "@/lib/currency";
 import {
+  fetchFreelancerProfile,
   fetchApplicationsForFreelancer,
   fetchJobsByClient,
   fetchJobsByIds,
   fetchSupportChatsForUser,
   fetchUserPayments,
   fetchUserSettings,
+  saveFreelancerProfile,
+  uploadProfilePhoto,
   updateUserSettings,
+  type FreelancerProfile,
   type Job,
   type JobApplication,
 } from "@/lib/firebaseAppData";
@@ -32,6 +36,7 @@ import {
   AlertCircle,
   ChevronRight,
   Save,
+  Camera,
 } from "lucide-react";
 
 type NavSection = "Overview" | "My Jobs" | "Messages" | "Payments" | "Settings";
@@ -45,9 +50,16 @@ export default function Dashboard() {
   const [activeNav, setActiveNav] = useState<NavSection>("Overview");
   const [settingsDraft, setSettingsDraft] = useState({
     displayName: "",
+    title: "",
     location: "",
     bio: "",
+    hourlyRate: "",
+    skills: "",
+    expertise: "",
+    availability: "",
+    profilePhotoUrl: "",
   });
+  const [uploadProgress, setUploadProgress] = useState(0);
   const { user } = useAuth();
   const { formatAmount } = useCurrency();
   const queryClient = useQueryClient();
@@ -91,13 +103,76 @@ export default function Dashboard() {
     enabled: Boolean(user?.id),
   });
 
+  const freelancerProfileQuery = useQuery({
+    queryKey: ["firebase", "freelancer-profile-dashboard", user?.id],
+    queryFn: () => fetchFreelancerProfile(user!.id),
+    enabled: Boolean(user?.id),
+  });
+
+  useEffect(() => {
+    const profile = freelancerProfileQuery.data;
+    if (!profile) return;
+    setSettingsDraft((prev) => ({
+      ...prev,
+      displayName: prev.displayName || profile.fullName || "",
+      title: prev.title || profile.title || "",
+      location: prev.location || profile.location || "",
+      bio: prev.bio || profile.bio || "",
+      hourlyRate: prev.hourlyRate || String(profile.hourlyRate || ""),
+      skills: prev.skills || (profile.skills || []).join(", "),
+      expertise: prev.expertise || (profile.expertise || []).join(", "),
+      availability: prev.availability || profile.availability || "",
+      profilePhotoUrl: prev.profilePhotoUrl || profile.profilePhotoUrl || "",
+    }));
+  }, [freelancerProfileQuery.data]);
+
   const saveSettingsMutation = useMutation({
     mutationFn: async () => {
       if (!user?.id) return;
-      await updateUserSettings(user.id, settingsDraft);
+      await updateUserSettings(user.id, {
+        displayName: settingsDraft.displayName,
+        location: settingsDraft.location,
+        bio: settingsDraft.bio,
+      });
+
+      const toList = (value: string) =>
+        value
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean);
+
+      const payload: FreelancerProfile = {
+        userId: user.id,
+        fullName: settingsDraft.displayName.trim() || "Freelancer",
+        profilePhotoUrl: settingsDraft.profilePhotoUrl.trim(),
+        bio: settingsDraft.bio.trim(),
+        title: settingsDraft.title.trim(),
+        skills: toList(settingsDraft.skills),
+        expertise: toList(settingsDraft.expertise),
+        categories: freelancerProfileQuery.data?.categories || [],
+        hourlyRate: Number(settingsDraft.hourlyRate || 0),
+        location: settingsDraft.location.trim(),
+        portfolioLinks: freelancerProfileQuery.data?.portfolioLinks || [],
+        experienceLevel: freelancerProfileQuery.data?.experienceLevel || "",
+        availability: settingsDraft.availability.trim(),
+        role: "freelancer",
+        onboardingCompleted: true,
+      };
+      await saveFreelancerProfile(payload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["firebase", "settings", user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["firebase", "freelancer-profile-dashboard", user?.id] });
+    },
+  });
+
+  const uploadPhotoMutation = useMutation({
+    mutationFn: async (file: File) => {
+      if (!user?.id) throw new Error("Please sign in.");
+      return uploadProfilePhoto(user.id, file, setUploadProgress);
+    },
+    onSuccess: (url) => {
+      setSettingsDraft((prev) => ({ ...prev, profilePhotoUrl: url }));
     },
   });
 
@@ -111,7 +186,8 @@ export default function Dashboard() {
     chatsQuery.isLoading ||
     paymentsQuery.isLoading ||
     settingsQuery.isLoading ||
-    applicationJobsQuery.isLoading;
+    applicationJobsQuery.isLoading ||
+    freelancerProfileQuery.isLoading;
 
   const hasError =
     jobsQuery.isError ||
@@ -119,7 +195,8 @@ export default function Dashboard() {
     chatsQuery.isError ||
     paymentsQuery.isError ||
     settingsQuery.isError ||
-    applicationJobsQuery.isError;
+    applicationJobsQuery.isError ||
+    freelancerProfileQuery.isError;
 
   const navItems: Array<{ key: NavSection; icon: any; count?: number }> = [
     { key: "Overview", icon: Briefcase },
@@ -286,8 +363,14 @@ export default function Dashboard() {
     const settings = settingsQuery.data || {};
     const data = {
       displayName: settingsDraft.displayName || settings.displayName || "",
+      title: settingsDraft.title || freelancerProfileQuery.data?.title || "",
       location: settingsDraft.location || settings.location || "",
       bio: settingsDraft.bio || settings.bio || "",
+      hourlyRate: settingsDraft.hourlyRate || String(freelancerProfileQuery.data?.hourlyRate || ""),
+      skills: settingsDraft.skills || (freelancerProfileQuery.data?.skills || []).join(", "),
+      expertise: settingsDraft.expertise || (freelancerProfileQuery.data?.expertise || []).join(", "),
+      availability: settingsDraft.availability || freelancerProfileQuery.data?.availability || "",
+      profilePhotoUrl: settingsDraft.profilePhotoUrl || freelancerProfileQuery.data?.profilePhotoUrl || "",
     };
 
     return (
@@ -295,22 +378,70 @@ export default function Dashboard() {
         <h3 className="text-lg font-semibold">Settings</h3>
         <Card>
           <CardContent className="py-6 space-y-4">
+            <div className="flex items-center gap-4">
+              <img
+                src={data.profilePhotoUrl || "https://avatar.iran.liara.run/public/boy?username=freelancer"}
+                alt="Profile"
+                className="w-16 h-16 rounded-full object-cover border"
+              />
+              <div className="space-y-2">
+                <Label htmlFor="dashboard-photo-upload">Profile Photo</Label>
+                <Input
+                  id="dashboard-photo-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) uploadPhotoMutation.mutate(file);
+                  }}
+                />
+                {uploadPhotoMutation.isPending && (
+                  <p className="text-xs text-muted-foreground">Uploading... {uploadProgress}%</p>
+                )}
+              </div>
+            </div>
             <div>
-              <Label>Display Name</Label>
+              <Label>Full Name</Label>
               <Input value={data.displayName} onChange={(e) => setSettingsDraft((s) => ({ ...s, displayName: e.target.value }))} />
+            </div>
+            <div>
+              <Label>Professional Title</Label>
+              <Input value={data.title} onChange={(e) => setSettingsDraft((s) => ({ ...s, title: e.target.value }))} />
             </div>
             <div>
               <Label>Location</Label>
               <Input value={data.location} onChange={(e) => setSettingsDraft((s) => ({ ...s, location: e.target.value }))} />
             </div>
             <div>
+              <Label>Hourly Rate (ZAR)</Label>
+              <Input type="number" value={data.hourlyRate} onChange={(e) => setSettingsDraft((s) => ({ ...s, hourlyRate: e.target.value }))} />
+            </div>
+            <div>
               <Label>Bio</Label>
               <Textarea value={data.bio} onChange={(e) => setSettingsDraft((s) => ({ ...s, bio: e.target.value }))} />
+            </div>
+            <div>
+              <Label>Skills (comma separated)</Label>
+              <Input value={data.skills} onChange={(e) => setSettingsDraft((s) => ({ ...s, skills: e.target.value }))} />
+            </div>
+            <div>
+              <Label>Expertise (comma separated)</Label>
+              <Input value={data.expertise} onChange={(e) => setSettingsDraft((s) => ({ ...s, expertise: e.target.value }))} />
+            </div>
+            <div>
+              <Label>Availability</Label>
+              <Input value={data.availability} onChange={(e) => setSettingsDraft((s) => ({ ...s, availability: e.target.value }))} />
             </div>
             <Button onClick={() => saveSettingsMutation.mutate()} disabled={saveSettingsMutation.isPending}>
               {saveSettingsMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
               Save Settings
             </Button>
+            {user?.id && (
+              <Button variant="outline" onClick={() => navigate(`/profile/${user.id}`)}>
+                <Camera className="w-4 h-4 mr-2" />
+                View Public Profile
+              </Button>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -332,13 +463,6 @@ export default function Dashboard() {
               <div className="py-16 flex items-center justify-center">
                 <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
               </div>
-            ) : hasError ? (
-              <Card>
-                <CardContent className="py-10 text-center">
-                  <AlertCircle className="w-8 h-8 text-destructive mx-auto mb-3" />
-                  <p className="font-semibold text-destructive">Failed to load dashboard data.</p>
-                </CardContent>
-              </Card>
             ) : (
               <div className="grid lg:grid-cols-4 gap-8">
                 <div className="lg:col-span-1">
@@ -368,6 +492,30 @@ export default function Dashboard() {
                 </div>
 
                 <div className="lg:col-span-3 space-y-6">
+                  {hasError && (
+                    <Card>
+                      <CardContent className="py-4 flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-2 text-sm text-amber-700">
+                          <AlertCircle className="w-4 h-4" />
+                          Some dashboard data could not be loaded. Showing available data.
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            jobsQuery.refetch();
+                            applicationsQuery.refetch();
+                            chatsQuery.refetch();
+                            paymentsQuery.refetch();
+                            settingsQuery.refetch();
+                            applicationJobsQuery.refetch();
+                          }}
+                        >
+                          Retry
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  )}
                   {activeNav === "Overview" && renderOverview()}
                   {activeNav === "My Jobs" && renderMyJobs()}
                   {activeNav === "Messages" && renderMessages()}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -98,7 +98,7 @@ export default function Pricing() {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
   const [, navigate] = useLocation();
   const { country, formatPrice } = useCountry();
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
   const currencySymbol = country.currency.symbol;
 
@@ -140,8 +140,10 @@ export default function Pricing() {
       });
     },
   });
+  const autoActivatedRef = useRef(false);
 
   const handleFreePlanStart = () => {
+    if (authLoading) return;
     if (!user?.id) {
       savePendingPlanSelection({
         planType: "free",
@@ -158,10 +160,11 @@ export default function Pricing() {
   useEffect(() => {
     if (typeof window === "undefined" || !user?.id) return;
     const params = new URLSearchParams(window.location.search);
-    if (params.get("activate") === "free" && !activateFreeMutation.isPending) {
+    if (params.get("activate") === "free" && !activateFreeMutation.isPending && !autoActivatedRef.current) {
+      autoActivatedRef.current = true;
       activateFreeMutation.mutate();
     }
-  }, [user?.id]);
+  }, [user?.id, activateFreeMutation.isPending]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -236,9 +239,9 @@ export default function Pricing() {
                 className="w-full font-bold"
                 data-testid="button-get-started-free"
                 onClick={handleFreePlanStart}
-                disabled={activateFreeMutation.isPending}
+                disabled={activateFreeMutation.isPending || authLoading}
               >
-                {activateFreeMutation.isPending ? "Activating..." : "Get Started Free"}
+                {activateFreeMutation.isPending ? "Activating..." : authLoading ? "Checking account..." : "Get Started Free"}
               </Button>
             </div>
           </div>

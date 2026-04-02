@@ -54,7 +54,6 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
     { name: "Academy", href: "/academy", icon: GraduationCap },
     { name: "Blog", href: "/blog" },
     { name: "Pricing", href: "/pricing" },
-    { name: "About", href: "/about" },
     ...(isAuthenticated ? [
       { name: "Messages", href: "/messages" },
       { name: "Dashboard", href: "/dashboard" },

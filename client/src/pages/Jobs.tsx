@@ -147,6 +147,10 @@ export default function Jobs() {
                   description={job.description}
                   onClick={() => navigate(`/jobs/${job.id}`)}
                   onApply={() => {
+                    if (appliedJobIds.has(job.id)) {
+                      setStatusText("You already applied to this job.");
+                      return;
+                    }
                     if (!user?.id) {
                       navigate(`/login?redirect=${encodeURIComponent(`/jobs/${job.id}`)}`);
                       return;

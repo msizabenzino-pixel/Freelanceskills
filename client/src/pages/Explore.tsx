@@ -186,7 +186,14 @@ export default function Explore() {
                 />
               </div>
               <div className="md:col-span-3 flex justify-end">
-                <Button type="button" onClick={() => setStatusText(null)} data-testid="explore-button-search">
+                <Button
+                  type="button"
+                  onClick={() => {
+                    setDebouncedQuery(filters.query);
+                    setStatusText(`Showing ${filteredJobs.length} matching jobs.`);
+                  }}
+                  data-testid="explore-button-search"
+                >
                   <Search className="h-4 w-4 mr-2" />
                   Search
                 </Button>
