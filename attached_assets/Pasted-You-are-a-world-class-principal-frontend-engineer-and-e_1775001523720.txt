@@ -1,0 +1,61 @@
+You are a world-class principal frontend engineer and elite conversion copywriter with 10+ years building high-trust SaaS and marketplace websites.
+
+Create a complete, single-file, production-ready About page for Freelance Skills — a premium skills-first freelance marketplace (domain: freelanceskills.com). The platform focuses on verified talent, especially from South Africa and Africa, connecting them with local and global businesses fairly and securely.
+
+MANDATORY RULES — zero exceptions:
+- NEVER mention any founder, person, "I", "me", or personal backstory. Everything must be platform-first and mission-driven.
+- Extremely clean, modern, minimalist, trustworthy design. No clutter, no bloat.
+- Use Tailwind CSS 3.4+ via CDN. Include the script tag.
+- Fully responsive, mobile-first, excellent accessibility.
+- Professional dark theme with emerald/green accents (#10b981) for growth + trust. Deep slate/navy base.
+- Smooth, subtle interactions. Fast loading. Semantic HTML.
+- Zero messy code. Perfect indentation. Only necessary comments.
+
+Exact page structure (follow strictly):
+
+1. Sticky Navbar: Logo "Freelance Skills", menu links (Home, Browse Talent, Post a Job, About, How it Works), "Post a Job" (primary button) and "Join Free" buttons. Clean mobile hamburger menu.
+
+2. Hero Section (full viewport height, powerful & calm):
+   - Large, confident headline: "The Future of Skilled Work in Africa and Beyond"
+   - Strong subheadline: "Freelance Skills is the trusted, skills-first marketplace that connects verified professionals with businesses — delivering quality, security, and real opportunity in the new world of work."
+   - Two prominent CTAs: "Browse Verified Talent" and "Post a Project"
+   - Subtle background: elegant abstract gradient with faint tech/African-inspired geometric patterns (no people photos). Keep it sophisticated.
+
+3. Vision Section:
+   - Headline: "Building the Future of Freelancing"
+   - 2–3 well-written paragraphs on why this platform exists: solving trust gaps, high platform fees, poor matching, and unlocking African talent in the global digital economy. Make it inspiring yet professional.
+
+4. Our Mission (card grid with icons):
+   - Empower verified African talent to thrive globally
+   - Help businesses find reliable, skills-matched professionals
+   - Create a fair, transparent, and secure freelance ecosystem
+   - Drive real skills development and economic opportunity
+
+5. Why Choose Freelance Skills (benefits grid — 6 cards):
+   - Rigorous verification & skills validation
+   - Secure escrow & milestone payments
+   - Transparent, competitive fees
+   - Intelligent matching
+   - Local expertise with global reach
+   - Focus on long-term success and growth
+
+6. Trust & Scale:
+   - Impact stats (use believable placeholders e.g. "Thousands of verified professionals", "Growing across South Africa", "Millions in earnings facilitated", "POPIA compliant")
+   - Trust badges: Secure payments • Verified profiles • Dispute protection • Cape Town-based operations
+
+7. Final Strong CTA Section:
+   - "Ready to shape the future of work?"
+   - Large dual buttons: "Join as a Freelancer" + "Hire Talent Now"
+
+8. Footer: Logo, short mission recap, quick links, legal pages, "Cape Town, South Africa" for legitimacy, copyright.
+
+Design & copy requirements:
+- Clean typography (system + Inter-like via Tailwind).
+- High-contrast, readable text.
+- Icon support (use Lucide icons via CDN or inline SVGs).
+- Copy must feel premium, confident, and trustworthy — like a 2026 market leader, not a startup begging.
+- Strong emphasis on "skills-first", verification, security, and African opportunity without over-promising.
+
+Output ONLY the full, valid HTML document. Start with <!DOCTYPE html> and end with </html>. Make this the most beautiful, trustworthy, and conversion-optimized About page possible — the kind that removes all doubt and makes visitors want to join immediately.
+
+Generate it now.

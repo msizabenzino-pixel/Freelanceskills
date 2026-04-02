@@ -1,0 +1,32 @@
+You are the undisputed world #1 principal frontend architect and mobile-first perfectionist with deep expertise in creating addictive marketplace experiences. Responsiveness is non-negotiable — but now we add nuclear engagement that separates legendary platforms from average ones.
+
+Take the current Homepage of https://freelanceskills.net (with hero, urgent jobs, live activity, latest opportunities, top talent, categories, escrow steps, impact stats, South Africa focus) and upgrade it to ABSOLUTE 100% RESPONSIVENESS + UNTHINKABLE SMART MATCHING EXPERIENCE while keeping ALL existing content, trust badges (POPIA, escrow, CIPC, ID verified), ZAR pricing, and platform messaging 100% intact.
+
+MANDATORY RULES — ZERO EXCEPTIONS:
+- Mobile-first Tailwind CSS 3.4+ via CDN + shared navbar/footer already in use.
+- Perfect viewport meta, theme-color, fast loading, no layout shifts.
+- Every element 100% responsive from 320px to 4K.
+- Butter-smooth shared mobile menu.
+- Minimum 48px touch targets.
+
+NEW NUCLEAR FEATURES (this is what makes us the best):
+- On every job card: Add a prominent "AI Match Score" badge (e.g., 94% Match • Green-to-emerald gradient) with tooltip "Based on your skills, location & availability".
+- "Instant Apply" button on each job card — on click, show a beautiful modal with auto-filled proposal preview (use fake data like "Hi [Client], As a certified React developer in Cape Town with 5 similar fintech projects...") and "Submit Application" (simulated success toast with confetti).
+- Live Activity Pulse: Animated horizontal scrolling feed at top or below hero showing recent SA earnings ("💰 Thabo M. earned R12,300 • Johannesburg • 2m ago") — smooth marquee on desktop, vertical stack on mobile.
+- "Match Me" floating action button (bottom-right on mobile) that scrolls to jobs and highlights best matches.
+- Talent cards also get AI Match Score + "Invite to Apply" button.
+- Subtle hover/ tap animations: cards lift + glow emerald, match score pulses gently.
+- All new elements fully responsive and touch-friendly.
+
+Theme: Consistent dark navy (#0f172a) + emerald (#10b981) with premium feel. Use Tailwind transitions, shadows, and ring effects for native-app quality.
+
+COMMAND IMPLEMENTATION RIGHT AFTER:
+- Upgrade the entire homepage immediately at 500% quality (responsiveness + engagement).
+- Perform full self-audit: 320px, 375px, 414px, 768px, 1024px, 1440px — zero breaks, buttery interactions.
+- Confirm mobile menu, modals, animations, and Instant Apply flow feel magical on touch devices.
+- No console errors, perfect accessibility, lightning fast.
+
+Output ONLY the complete, valid <!DOCTYPE html> ... </html> file. 
+No explanations. Start directly with the DOCTYPE and end with </html>.
+
+Generate now with untouchable nuclear precision that will crown freelanceskills.net as Africa's most advanced freelance platform.

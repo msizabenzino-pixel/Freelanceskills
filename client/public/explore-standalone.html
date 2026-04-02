@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Browse verified South African freelancers and jobs. Developers, designers, plumbers, and more in Johannesburg, Cape Town, Durban and nationwide.">
+  <meta name="theme-color" content="#10b981">
+  <meta property="og:title" content="Browse Talent & Jobs - FreelanceSkills SA">
+  <meta property="og:description" content="Find verified freelancers and opportunities across South Africa. Secure. Transparent. Built for Africa.">
+  <meta name="twitter:title" content="FreelanceSkills - Explore SA Talent & Jobs">
+  <meta name="twitter:description" content="Connect with verified South African talent. Browse developers, designers, skilled professionals.">
+  <link rel="canonical" href="https://freelanceskills.net/explore">
+  <title>Browse Talent & Jobs - FreelanceSkills South Africa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    
+    * {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #0f172a;
+      color: #f1f5f9;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .nav-link {
+      position: relative;
+      transition: color 0.2s ease;
+    }
+
+    .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #10b981;
+      border-radius: 1px;
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOutRight {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .backdrop-fade {
+      animation: fadeIn 0.3s ease;
+    }
+
+    .mobile-menu-slide {
+      animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mobile-menu-slide.closing {
+      animation: slideOutRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .hero-animate {
+      animation: fadeInUp 0.6s ease-out 0.1s both;
+    }
+
+    .hero-animate-delay {
+      animation: fadeInUp 0.6s ease-out 0.2s both;
+    }
+
+    .btn-transition {
+      transition: all 0.2s ease;
+    }
+
+    .btn-transition:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-transition:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary {
+      padding: 0.875rem 2rem;
+      background-color: #10b981;
+      color: white;
+      font-weight: 600;
+      border-radius: 1rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-primary:hover {
+      background-color: #059669;
+      box-shadow: 0 15px 20px -3px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-primary:active {
+      background-color: #047857;
+      transform: scale(0.97);
+    }
+
+    .input-focus {
+      transition: all 0.2s ease;
+    }
+
+    .input-focus:focus {
+      ring: 2px solid #10b981;
+      border-color: #10b981;
+    }
+
+    .chip-active {
+      background-color: #10b981;
+      color: #0f172a;
+    }
+
+    .chip-inactive {
+      background-color: rgba(15, 23, 42, 0.5);
+      color: #cbd5e1;
+      border: 1px solid #334155;
+    }
+
+    .chip-transition {
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .chip-transition:hover {
+      background-color: rgba(16, 185, 129, 0.2);
+      border-color: #10b981;
+    }
+
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgba(16, 185, 129, 0.15);
+    }
+
+    .search-input {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid #334155;
+      transition: all 0.2s ease;
+    }
+
+    .search-input:focus {
+      background: rgba(30, 41, 59, 0.9);
+      border-color: #10b981;
+    }
+
+    button:focus-visible,
+    a:focus-visible {
+      outline: 2px solid #10b981;
+      outline-offset: 2px;
+    }
+
+    input:focus-visible {
+      outline: 2px solid #10b981;
+      outline-offset: 2px;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        overflow-x: hidden;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-50">
+  <!-- Navbar -->
+  <nav class="sticky top-0 z-50 bg-slate-950/95 backdrop-blur border-b border-emerald-500/20" role="navigation" aria-label="Main navigation">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-14 sm:h-16">
+        <a href="/" class="flex items-center gap-2 sm:gap-3 group flex-shrink-0" aria-label="FreelanceSkills home">
+          <div class="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-emerald-500/50 transition-all duration-300 flex-shrink-0">
+            <span class="text-slate-950 font-bold text-xs sm:text-sm">FS</span>
+          </div>
+          <div class="hidden xs:flex items-baseline gap-0.5">
+            <span class="font-bold text-sm sm:text-base text-emerald-400">freelance</span>
+            <span class="font-bold text-sm sm:text-base text-slate-50">skills</span>
+          </div>
+        </a>
+
+        <div class="hidden lg:flex items-center gap-0 lg:gap-1">
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Home</a>
+          <a href="/" class="nav-link active text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Browse</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Post</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">About</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">How it Works</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Academy</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Pricing</a>
+        </div>
+
+        <div class="hidden lg:flex items-center gap-2 flex-shrink-0">
+          <a href="/" class="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg hover:bg-slate-800 transition-all duration-200 btn-transition min-h-12 flex items-center justify-center">Post a Job</a>
+          <a href="/" class="px-4 sm:px-6 py-2 text-xs sm:text-sm bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 font-semibold rounded-lg hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 btn-transition min-h-12 flex items-center justify-center whitespace-nowrap">Join Free</a>
+        </div>
+
+        <button id="mobile-menu-btn" class="lg:hidden p-2.5 rounded-lg hover:bg-slate-800 transition-all duration-200 min-h-12 min-w-12 flex items-center justify-center" aria-label="Open navigation menu" aria-expanded="false">
+          <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden lg:hidden">
+      <div id="mobile-backdrop" class="hidden fixed inset-0 bg-black/60 z-40 backdrop-blur-sm backdrop-fade"></div>
+      <div id="mobile-menu-panel" class="hidden fixed right-0 top-14 sm:top-16 bottom-0 w-full max-w-xs bg-slate-950 border-l border-slate-800 z-50 mobile-menu-slide flex flex-col">
+        <div class="flex-1 overflow-y-auto p-4 space-y-1">
+          <nav class="space-y-0">
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Home</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center font-medium" onclick="closeMobileMenu()">Browse Talent</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Post a Job</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">About</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">How it Works</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Academy</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Pricing</a>
+          </nav>
+        </div>
+        <div class="border-t border-slate-800 p-4 space-y-2">
+          <a href="/" class="block px-4 py-3 text-center rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center justify-center" onclick="closeMobileMenu()">Post a Job</a>
+          <a href="/" class="block px-4 py-3 text-center bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 rounded-lg font-semibold hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 text-sm min-h-12 flex items-center justify-center" onclick="closeMobileMenu()">Join Free</a>
+        </div>
+        <button id="close-mobile-btn" class="absolute top-3 sm:top-4 right-3 sm:right-4 p-2.5 hover:bg-slate-800 rounded-lg transition-all duration-200 min-h-12 min-w-12 flex items-center justify-center" aria-label="Close menu">
+          <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero & Search Section -->
+  <section class="relative py-8 sm:py-12 md:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-950">
+    <div class="max-w-6xl mx-auto w-full">
+      <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 text-center hero-animate px-2">Find Verified Talent & Opportunities</h1>
+      <p class="text-sm sm:text-base md:text-lg text-slate-300 text-center mb-6 sm:mb-8 hero-animate-delay max-w-2xl mx-auto px-2">Browse thousands of skilled professionals and amazing projects across Africa and globally.</p>
+      
+      <div class="max-w-3xl mx-auto hero-animate-delay">
+        <div class="relative">
+          <input type="text" placeholder="Search skills, talents, or jobs..." class="w-full px-4 sm:px-5 py-3 sm:py-4 bg-slate-800/50 border border-slate-700 rounded-lg text-sm sm:text-base text-slate-50 placeholder-slate-400 search-input min-h-12" aria-label="Search skills">
+          <button class="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 p-2.5 hover:bg-slate-700 rounded-lg transition-all duration-200 min-h-10 min-w-10 flex items-center justify-center" aria-label="Search">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filters & Categories -->
+  <section class="border-b border-slate-800 bg-slate-900/50 px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <div class="max-w-6xl mx-auto w-full">
+      <h2 class="text-sm font-semibold text-emerald-400 mb-4 uppercase tracking-wide px-2">Filter by Category</h2>
+      
+      <div class="flex flex-wrap gap-2 sm:gap-3">
+        <button class="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium chip-active chip-transition min-h-10" aria-pressed="true">All Skills</button>
+        <button class="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium chip-inactive chip-transition min-h-10" aria-pressed="false">Web Development</button>
+        <button class="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium chip-inactive chip-transition min-h-10" aria-pressed="false">Mobile Dev</button>
+        <button class="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium chip-inactive chip-transition min-h-10" aria-pressed="false">Design</button>
+        <button class="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium chip-inactive chip-transition min-h-10" aria-pressed="false">Data Science</button>
+        <button class="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium chip-inactive chip-transition min-h-10" aria-pressed="false">Cloud Infra</button>
+        <button class="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium chip-inactive chip-transition min-h-10 hidden sm:inline-block" aria-pressed="false">Content</button>
+        <button class="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium chip-inactive chip-transition min-h-10 hidden sm:inline-block" aria-pressed="false">Marketing</button>
+        <button class="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium chip-inactive chip-transition min-h-10 hidden sm:inline-block" aria-pressed="false">More</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <section class="py-8 sm:py-12 md:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto w-full">
+      <!-- Talent Directory -->
+      <div class="mb-12 sm:mb-16 md:mb-20">
+        <h2 class="text-xl sm:text-2xl md:text-3xl font-bold mb-6 sm:mb-8 px-2">Featured Talent</h2>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+          <!-- Talent Card 1 -->
+          <div class="p-4 sm:p-6 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl card-hover">
+            <div class="flex items-start justify-between mb-3 sm:mb-4">
+              <div class="flex-1">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mb-2 sm:mb-3 flex-shrink-0">
+                  <span class="text-xs sm:text-sm font-bold text-slate-950">AI</span>
+                </div>
+                <h3 class="text-base sm:text-lg font-semibold leading-tight">Aisha Ibrahim</h3>
+                <p class="text-xs sm:text-sm text-emerald-400 font-medium">Full-Stack Developer</p>
+              </div>
+              <svg class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+              </svg>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-400 mb-3 sm:mb-4 line-clamp-2">React, Node.js, PostgreSQL specialist with 5+ years experience.</p>
+            <div class="flex flex-wrap gap-2 mb-4 sm:mb-5">
+              <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 rounded-full border border-emerald-500/20">React</span>
+              <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 rounded-full border border-emerald-500/20">Node.js</span>
+              <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 rounded-full border border-emerald-500/20">PostgreSQL</span>
+            </div>
+            <button class="w-full px-4 py-2.5 sm:py-3 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all duration-200 btn-transition min-h-12 text-xs sm:text-sm">View Profile</button>
+          </div>
+
+          <!-- Talent Card 2 -->
+          <div class="p-4 sm:p-6 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl card-hover">
+            <div class="flex items-start justify-between mb-3 sm:mb-4">
+              <div class="flex-1">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mb-2 sm:mb-3 flex-shrink-0">
+                  <span class="text-xs sm:text-sm font-bold text-slate-950">CK</span>
+                </div>
+                <h3 class="text-base sm:text-lg font-semibold leading-tight">Chidi Kapoor</h3>
+                <p class="text-xs sm:text-sm text-emerald-400 font-medium">Product Designer</p>
+              </div>
+              <svg class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+              </svg>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-400 mb-3 sm:mb-4 line-clamp-2">UI/UX design with focus on mobile-first and accessibility.</p>
+            <div class="flex flex-wrap gap-2 mb-4 sm:mb-5">
+              <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 rounded-full border border-emerald-500/20">Figma</span>
+              <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 rounded-full border border-emerald-500/20">UI/UX</span>
+            </div>
+            <button class="w-full px-4 py-2.5 sm:py-3 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all duration-200 btn-transition min-h-12 text-xs sm:text-sm">View Profile</button>
+          </div>
+
+          <!-- Talent Card 3 -->
+          <div class="p-4 sm:p-6 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl card-hover">
+            <div class="flex items-start justify-between mb-3 sm:mb-4">
+              <div class="flex-1">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mb-2 sm:mb-3 flex-shrink-0">
+                  <span class="text-xs sm:text-sm font-bold text-slate-950">NK</span>
+                </div>
+                <h3 class="text-base sm:text-lg font-semibold leading-tight">Nomsa Khumalo</h3>
+                <p class="text-xs sm:text-sm text-emerald-400 font-medium">Digital Marketing Specialist</p>
+              </div>
+              <svg class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+              </svg>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-400 mb-3 sm:mb-4 line-clamp-2">SEO, social media, and content strategy expert based in Johannesburg.</p>
+            <div class="flex flex-wrap gap-2 mb-4 sm:mb-5">
+              <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 rounded-full border border-emerald-500/20">SEO</span>
+              <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 rounded-full border border-emerald-500/20">Social Media</span>
+            </div>
+            <button class="w-full px-4 py-2.5 sm:py-3 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all duration-200 btn-transition min-h-12 text-xs sm:text-sm">View Profile</button>
+          </div>
+        </div>
+
+        <div class="mt-6 sm:mt-8 text-center">
+          <a href="/" class="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 border border-emerald-500 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-500/10 transition-all duration-200 btn-transition min-h-12 text-xs sm:text-sm">
+            View All Talent
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Job Listings -->
+      <div>
+        <h2 class="text-xl sm:text-2xl md:text-3xl font-bold mb-6 sm:mb-8 px-2">Latest Job Opportunities</h2>
+        
+        <div class="space-y-3 sm:space-y-4">
+          <!-- Job Card 1 -->
+          <div class="p-4 sm:p-6 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-lg hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all card-hover">
+            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
+              <div class="flex-1">
+                <h3 class="text-base sm:text-lg font-semibold mb-1 sm:mb-2 leading-tight">Senior React Developer Needed</h3>
+                <p class="text-xs sm:text-sm text-slate-400 mb-3 sm:mb-4">Build scalable web applications for growing fintech startup</p>
+                <div class="flex flex-wrap gap-2 mb-3 sm:mb-4">
+                  <span class="px-2.5 py-1 text-xs bg-slate-800 text-slate-300 rounded border border-slate-700">React</span>
+                  <span class="px-2.5 py-1 text-xs bg-slate-800 text-slate-300 rounded border border-slate-700">TypeScript</span>
+                  <span class="px-2.5 py-1 text-xs bg-slate-800 text-slate-300 rounded border border-slate-700">Remote</span>
+                </div>
+                <div class="flex flex-col xs:flex-row xs:items-center gap-2 text-xs sm:text-sm">
+                  <span class="font-semibold text-emerald-400">R40,000 - R65,000/month</span>
+                  <span class="hidden xs:inline text-slate-600">•</span>
+                  <span class="text-slate-400">Posted 2 days ago</span>
+                </div>
+              </div>
+              <button class="w-full xs:w-auto px-4 py-2.5 sm:py-3 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all duration-200 btn-transition min-h-12 text-xs sm:text-sm whitespace-nowrap">Apply Now</button>
+            </div>
+          </div>
+
+          <!-- Job Card 2 -->
+          <div class="p-4 sm:p-6 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-lg hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all card-hover">
+            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
+              <div class="flex-1">
+                <h3 class="text-base sm:text-lg font-semibold mb-1 sm:mb-2 leading-tight">Mobile App Developer - iOS/Android</h3>
+                <p class="text-xs sm:text-sm text-slate-400 mb-3 sm:mb-4">Develop health tracking application for African markets</p>
+                <div class="flex flex-wrap gap-2 mb-3 sm:mb-4">
+                  <span class="px-2.5 py-1 text-xs bg-slate-800 text-slate-300 rounded border border-slate-700">Flutter</span>
+                  <span class="px-2.5 py-1 text-xs bg-slate-800 text-slate-300 rounded border border-slate-700">Firebase</span>
+                  <span class="px-2.5 py-1 text-xs bg-slate-800 text-slate-300 rounded border border-slate-700">Cape Town</span>
+                </div>
+                <div class="flex flex-col xs:flex-row xs:items-center gap-2 text-xs sm:text-sm">
+                  <span class="font-semibold text-emerald-400">R35,000 - R55,000/month</span>
+                  <span class="hidden xs:inline text-slate-600">•</span>
+                  <span class="text-slate-400">Posted 1 day ago</span>
+                </div>
+              </div>
+              <button class="w-full xs:w-auto px-4 py-2.5 sm:py-3 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all duration-200 btn-transition min-h-12 text-xs sm:text-sm whitespace-nowrap">Apply Now</button>
+            </div>
+          </div>
+
+          <!-- Job Card 3 -->
+          <div class="p-4 sm:p-6 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-lg hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all card-hover">
+            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
+              <div class="flex-1">
+                <h3 class="text-base sm:text-lg font-semibold mb-1 sm:mb-2 leading-tight">Content Writer & SEO Strategist</h3>
+                <p class="text-xs sm:text-sm text-slate-400 mb-3 sm:mb-4">Create engaging content and drive organic traffic for tech blog</p>
+                <div class="flex flex-wrap gap-2 mb-3 sm:mb-4">
+                  <span class="px-2.5 py-1 text-xs bg-slate-800 text-slate-300 rounded border border-slate-700">Content Writing</span>
+                  <span class="px-2.5 py-1 text-xs bg-slate-800 text-slate-300 rounded border border-slate-700">SEO</span>
+                  <span class="px-2.5 py-1 text-xs bg-slate-800 text-slate-300 rounded border border-slate-700">Remote</span>
+                </div>
+                <div class="flex flex-col xs:flex-row xs:items-center gap-2 text-xs sm:text-sm">
+                  <span class="font-semibold text-emerald-400">R25,000 - R40,000/month</span>
+                  <span class="hidden xs:inline text-slate-600">•</span>
+                  <span class="text-slate-400">Posted 3 days ago</span>
+                </div>
+              </div>
+              <button class="w-full xs:w-auto px-4 py-2.5 sm:py-3 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all duration-200 btn-transition min-h-12 text-xs sm:text-sm whitespace-nowrap">Apply Now</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-8 sm:mt-12 flex justify-center gap-2">
+          <button class="px-3 sm:px-4 py-2 min-h-10 border border-slate-700 rounded-lg text-sm hover:bg-slate-800 transition-colors" aria-label="Previous page">← Prev</button>
+          <button class="px-3 sm:px-4 py-2 min-h-10 bg-emerald-500 text-slate-950 rounded-lg text-sm font-medium">1</button>
+          <button class="px-3 sm:px-4 py-2 min-h-10 border border-slate-700 rounded-lg text-sm hover:bg-slate-800 transition-colors">2</button>
+          <button class="px-3 sm:px-4 py-2 min-h-10 border border-slate-700 rounded-lg text-sm hover:bg-slate-800 transition-colors">3</button>
+          <button class="px-3 sm:px-4 py-2 min-h-10 border border-slate-700 rounded-lg text-sm hover:bg-slate-800 transition-colors">Next →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-emerald-600/15 via-slate-950 to-slate-950 border-t border-emerald-500/20">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 px-2">Ready to Get Started?</h2>
+      <p class="text-base sm:text-lg text-slate-300 mb-8 sm:mb-10 px-2">Join FreelanceSkills today and connect with amazing talent or opportunities.</p>
+      
+      <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-2">
+        <a href="/" class="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 btn-transition min-h-12 sm:min-h-14 text-xs sm:text-base whitespace-nowrap">
+          Create Account
+        </a>
+        <a href="/" class="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 border-2 border-emerald-500 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-500/10 transition-all btn-transition min-h-12 sm:min-h-14 text-xs sm:text-base whitespace-nowrap">
+          Learn More
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 bg-slate-950">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8 sm:mb-12">
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center">
+              <span class="text-slate-950 font-bold text-xs">FS</span>
+            </div>
+            <div class="flex items-baseline gap-0.5">
+              <span class="font-bold text-sm sm:text-base text-emerald-400">freelance</span>
+              <span class="font-bold text-sm sm:text-base text-slate-50">skills</span>
+            </div>
+          </div>
+          <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">The trusted, skills-first marketplace for Africa and beyond.</p>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-3 sm:mb-4 text-xs sm:text-sm text-slate-50">Company</h4>
+          <ul class="space-y-2 text-slate-400 text-xs sm:text-sm">
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Home</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">About</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">How it Works</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Blog</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-3 sm:mb-4 text-xs sm:text-sm text-slate-50">Legal</h4>
+          <ul class="space-y-2 text-slate-400 text-xs sm:text-sm">
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Terms of Service</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Privacy Policy</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Cookie Policy</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-3 sm:mb-4 text-xs sm:text-sm text-slate-50">Contact</h4>
+          <p class="text-slate-400 text-xs sm:text-sm">Camps Bay, Cape Town, South Africa</p>
+          <p class="text-slate-400 text-xs sm:text-sm mt-2"><a href="mailto:support@freelanceskills.net" class="hover:text-emerald-400 transition-colors">support@freelanceskills.net</a></p>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-800 pt-6 sm:pt-8">
+        <p class="text-slate-500 text-xs text-center">© 2026 FreelanceSkills.net. CIPC Registered • POPIA Compliant • All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenuPanel = document.getElementById('mobile-menu-panel');
+    const mobileBackdrop = document.getElementById('mobile-backdrop');
+    const closeMobileBtn = document.getElementById('close-mobile-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    function openMobileMenu() {
+      mobileMenuPanel.classList.remove('hidden');
+      mobileBackdrop.classList.remove('hidden');
+      mobileMenuBtn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileMenu() {
+      mobileMenuPanel.classList.add('closing');
+      setTimeout(() => {
+        mobileMenuPanel.classList.add('hidden');
+        mobileMenuPanel.classList.remove('closing');
+        mobileBackdrop.classList.add('hidden');
+        mobileMenuBtn.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }, 300);
+    }
+
+    mobileMenuBtn.addEventListener('click', openMobileMenu);
+    closeMobileBtn.addEventListener('click', closeMobileMenu);
+    mobileBackdrop.addEventListener('click', closeMobileMenu);
+
+    window.closeMobileMenu = closeMobileMenu;
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !mobileMenuPanel.classList.contains('hidden')) {
+        closeMobileMenu();
+      }
+    });
+
+    document.addEventListener('touchmove', (e) => {
+      if (!mobileMenuPanel.classList.contains('hidden')) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    // Category filter chips interaction
+    document.querySelectorAll('[aria-pressed]').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('[aria-pressed]').forEach(b => {
+          b.classList.add('chip-inactive');
+          b.classList.remove('chip-active');
+          b.setAttribute('aria-pressed', 'false');
+        });
+        this.classList.remove('chip-inactive');
+        this.classList.add('chip-active');
+        this.setAttribute('aria-pressed', 'true');
+      });
+    });
+  </script>
+</body>
+</html>

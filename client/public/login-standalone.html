@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Login to FreelanceSkills. Access your profile, messages, and SA freelance opportunities. Secure account access.">
+  <meta name="theme-color" content="#10b981">
+  <meta property="og:title" content="Login - FreelanceSkills SA">
+  <meta property="og:description" content="Connect with verified SA talent. Secure. Transparent. Built for Africa.">
+  <meta name="twitter:title" content="Login FreelanceSkills - South Africa">
+  <meta name="twitter:description" content="Secure login to your FreelanceSkills account. Access jobs and talent.">
+  <link rel="canonical" href="https://freelanceskills.net/login">
+  <title>Login - FreelanceSkills South Africa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    
+    * {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #0f172a;
+      color: #f1f5f9;
+    }
+
+    .geo-pattern {
+      opacity: 0.08;
+    }
+
+    .nav-link {
+      position: relative;
+      transition: color 0.2s ease;
+    }
+
+    .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #10b981;
+      border-radius: 1px;
+    }
+
+    .mobile-menu {
+      animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mobile-menu.closing {
+      animation: slideOutRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOutRight {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .backdrop-fade {
+      animation: fadeIn 0.3s ease;
+    }
+
+    .pwa-slide {
+      animation: slideUp 0.3s ease;
+    }
+
+    .btn-transition {
+      transition: all 0.2s ease;
+    }
+
+    .btn-transition:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-transition:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary {
+      padding: 0.875rem 2rem;
+      background-color: #10b981;
+      color: white;
+      font-weight: 600;
+      border-radius: 1rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-primary:hover {
+      background-color: #059669;
+      box-shadow: 0 15px 20px -3px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-primary:active {
+      background-color: #047857;
+      transform: scale(0.97);
+    }
+
+    .card-shadow {
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    .input-focus {
+      transition: all 0.2s ease;
+    }
+
+    .input-focus:focus {
+      ring: 2px solid #10b981;
+      border-color: #10b981;
+    }
+
+    button:focus-visible,
+    a:focus-visible {
+      outline: 2px solid #10b981;
+      outline-offset: 2px;
+    }
+
+    input:focus-visible {
+      outline: 2px solid #10b981;
+      outline-offset: 2px;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-50">
+  <!-- Navbar -->
+  <nav class="sticky top-0 z-50 bg-slate-950/95 backdrop-blur border-b border-emerald-500/20" role="navigation" aria-label="Main navigation">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-14 sm:h-16">
+        <!-- Logo -->
+        <a href="/" class="flex items-center gap-2 sm:gap-3 group flex-shrink-0" aria-label="FreelanceSkills home">
+          <div class="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-emerald-500/50 transition-all duration-300 flex-shrink-0">
+            <span class="text-slate-950 font-bold text-xs sm:text-sm">FS</span>
+          </div>
+          <div class="hidden xs:flex items-baseline gap-0.5">
+            <span class="font-bold text-sm sm:text-base text-emerald-400">freelance</span>
+            <span class="font-bold text-sm sm:text-base text-slate-50">skills</span>
+          </div>
+        </a>
+
+        <!-- Desktop Menu -->
+        <div class="hidden lg:flex items-center gap-1">
+          <a href="/" class="nav-link text-sm px-4 py-2 rounded hover:text-emerald-400 transition-colors">Home</a>
+          <a href="/" class="nav-link text-sm px-4 py-2 rounded hover:text-emerald-400 transition-colors">Browse Talent</a>
+          <a href="/" class="nav-link text-sm px-4 py-2 rounded hover:text-emerald-400 transition-colors">Post a Job</a>
+          <a href="/" class="nav-link text-sm px-4 py-2 rounded hover:text-emerald-400 transition-colors">About</a>
+          <a href="/" class="nav-link text-sm px-4 py-2 rounded hover:text-emerald-400 transition-colors">How it Works</a>
+          <a href="/" class="nav-link text-sm px-4 py-2 rounded hover:text-emerald-400 transition-colors">Academy</a>
+          <a href="/" class="nav-link text-sm px-4 py-2 rounded hover:text-emerald-400 transition-colors">Pricing</a>
+        </div>
+
+        <!-- Desktop Buttons -->
+        <div class="hidden lg:flex items-center gap-2 flex-shrink-0">
+          <a href="/" class="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg hover:bg-slate-800 transition-all duration-200 btn-transition min-h-12 flex items-center justify-center">Post a Job</a>
+          <a href="/" class="px-4 sm:px-6 py-2 text-xs sm:text-sm bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 font-semibold rounded-lg hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 btn-transition min-h-12 flex items-center justify-center whitespace-nowrap">Join Free</a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="lg:hidden p-2.5 rounded-lg hover:bg-slate-800 transition-all duration-200 min-h-12 min-w-12 flex items-center justify-center" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-menu">
+          <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden lg:hidden">
+      <div id="mobile-backdrop" class="hidden fixed inset-0 bg-black/50 z-40 backdrop-fade"></div>
+      <div id="mobile-menu-panel" class="hidden fixed right-0 top-16 bottom-0 w-full max-w-xs bg-slate-950 border-l border-slate-800 z-50 mobile-menu flex flex-col">
+        <div class="flex-1 overflow-y-auto p-4">
+          <nav class="space-y-2" role="navigation">
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Home</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Browse Talent</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Post a Job</a>
+            <a href="/about-standalone.html" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">About</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">How it Works</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Academy</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Pricing</a>
+          </nav>
+        </div>
+        <div class="border-t border-slate-800 p-4 space-y-2">
+          <a href="/" class="block px-4 py-3 text-center rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center justify-center" onclick="closeMobileMenu()">Post a Job</a>
+          <a href="/" class="block px-4 py-3 text-center bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 rounded-lg font-semibold hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 text-sm min-h-12 flex items-center justify-center" onclick="closeMobileMenu()">Join Free</a>
+        </div>
+        <button id="close-mobile-btn" class="absolute top-3 sm:top-4 right-3 sm:right-4 p-2.5 hover:bg-slate-800 rounded-lg transition-all duration-200 min-h-12 min-w-12 flex items-center justify-center" aria-label="Close menu">
+          <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Login Section -->
+  <section class="relative min-h-[calc(100vh-64px)] flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 py-12" id="login-section">
+    <div class="w-full max-w-7xl grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+      
+      <!-- Left Panel -->
+      <div class="hidden lg:flex flex-col justify-center relative">
+        <div class="absolute -z-10 inset-0 opacity-10">
+          <svg viewBox="0 0 100 100" class="w-full h-full">
+            <defs>
+              <pattern id="geo" patternUnits="userSpaceOnUse" width="20" height="20">
+                <path d="M0,10 L10,0 L20,10 L10,20 Z" fill="none" stroke="currentColor" stroke-width="0.5" class="text-emerald-500"/>
+              </pattern>
+            </defs>
+            <rect width="100" height="100" fill="url(#geo)"/>
+          </svg>
+        </div>
+
+        <h1 class="text-5xl font-bold mb-6 leading-tight">Welcome back to the future of skilled work in Africa</h1>
+        
+        <p class="text-lg text-slate-300 mb-12 leading-relaxed">Log in to connect verified talent with high-value opportunities — locally and globally.</p>
+
+        <div class="space-y-5 mb-10">
+          <div class="flex items-start gap-4">
+            <svg class="w-6 h-6 text-emerald-500 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span class="text-slate-300">Verified ID & skills-vetted professionals</span>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <svg class="w-6 h-6 text-emerald-500 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 6H6.28l-.31-1.243A1 1 0 005 4H3z"/>
+              <path d="M16 16a2 2 0 11-4 0 2 2 0 014 0zM4 12a2 2 0 11-4 0 2 2 0 014 0z"/>
+            </svg>
+            <span class="text-slate-300">Secure escrow & instant ZAR payouts</span>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <svg class="w-6 h-6 text-emerald-500 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 17v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd"/>
+            </svg>
+            <span class="text-slate-300">AI smart matching + transparent 10% fees</span>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <svg class="w-6 h-6 text-emerald-500 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+            </svg>
+            <span class="text-slate-300">POPIA compliant & 24/7 local SA support</span>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <svg class="w-6 h-6 text-emerald-500 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v4h8v-4zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/>
+            </svg>
+            <span class="text-slate-300">Part of the platform empowering 1 million Africans</span>
+          </div>
+        </div>
+
+        <p class="text-sm text-slate-400 italic">Trusted by thousands across Johannesburg, Cape Town, Durban & beyond</p>
+      </div>
+
+      <!-- Right Panel - Form -->
+      <div class="w-full">
+        <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 sm:p-10 card-shadow">
+          
+          <h2 class="text-3xl font-bold mb-8 text-center">Log in to your account</h2>
+
+          <!-- Social Login -->
+          <div class="space-y-3 mb-8">
+            <button class="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-slate-700 hover:bg-slate-700 transition-colors text-slate-100 font-medium btn-transition" aria-label="Continue with Google">
+              <span class="text-lg font-semibold">G</span>
+              Continue with Google
+            </button>
+            <button class="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-slate-700 hover:bg-slate-700 transition-colors text-slate-100 font-medium btn-transition" aria-label="Continue with Apple">
+              <span class="text-lg font-semibold">⌘</span>
+              Continue with Apple
+            </button>
+            <button class="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-slate-700 hover:bg-slate-700 transition-colors text-slate-100 font-medium btn-transition" aria-label="Continue with LinkedIn">
+              <span class="text-lg font-semibold">in</span>
+              Continue with LinkedIn
+            </button>
+          </div>
+
+          <!-- Divider -->
+          <div class="relative mb-8">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-slate-700"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+              <span class="px-2 bg-slate-900/50 text-slate-400">or continue with email</span>
+            </div>
+          </div>
+
+          <!-- Form -->
+          <form id="login-form" class="space-y-4">
+            
+            <div>
+              <label for="email" class="block text-sm font-medium mb-2 text-slate-300">Email address</label>
+              <input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-slate-50 placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-colors"
+                required
+              />
+            </div>
+
+            <div>
+              <label for="password" class="block text-sm font-medium mb-2 text-slate-300">Password</label>
+              <div class="relative">
+                <input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-slate-50 placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-colors"
+                  required
+                />
+                <button
+                  type="button"
+                  id="toggle-password"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-300 transition-colors"
+                  aria-label="Toggle password visibility"
+                >
+                  <svg id="eye-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="remember" class="w-4 h-4 rounded bg-slate-800 border border-slate-700 text-emerald-500 cursor-pointer" />
+                <span class="text-sm text-slate-400">Remember me</span>
+              </label>
+              <a href="/" class="text-sm text-emerald-400 hover:text-emerald-300 transition-colors">Forgot password?</a>
+            </div>
+
+            <button
+              type="submit"
+              id="login-btn"
+              class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 disabled:bg-emerald-600 disabled:cursor-not-allowed transition-colors mt-6 btn-transition shadow-lg shadow-emerald-500/25"
+            >
+              Log in
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+              </svg>
+            </button>
+          </form>
+
+          <!-- PWA Install Section -->
+          <div id="pwa-install-section" class="mt-8 pt-8 border-t border-slate-700 pwa-slide hidden">
+            <div class="bg-gradient-to-r from-emerald-500/10 to-slate-900 border border-emerald-500/30 rounded-lg p-5">
+              <div class="flex items-start gap-4">
+                <svg class="w-6 h-6 text-emerald-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M2 9.5A3.5 3.5 0 015.5 6H10V2.25A2.25 2.25 0 0112.25 0h5.5A2.25 2.25 0 0120 2.25v5.5A2.25 2.25 0 0117.75 10H14v4.5A3.5 3.5 0 0110.5 18H5.5A3.5 3.5 0 012 14.5V9.5zM5.5 8a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
+                </svg>
+                <div class="flex-1">
+                  <h3 class="font-semibold text-slate-50 mb-2">For the best experience, install as an app on your phone</h3>
+                  <p class="text-sm text-slate-400 mb-4">Get home-screen access, faster loading, offline job browsing, instant match notifications, and quick apply — feels exactly like a native app.</p>
+                  <button
+                    id="install-app-btn"
+                    class="w-full px-4 py-2 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-colors text-sm btn-transition"
+                  >
+                    Install as App
+                  </button>
+                </div>
+                <button
+                  id="close-install-btn"
+                  class="text-slate-400 hover:text-slate-300 transition-colors flex-shrink-0"
+                  aria-label="Close install prompt"
+                >
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sign Up Link -->
+          <div class="mt-8 pt-6 border-t border-slate-800 text-center">
+            <p class="text-slate-400 mb-4 text-sm">Don't have an account?</p>
+            <div class="flex flex-col sm:flex-row gap-3">
+              <a href="/" class="flex-1 px-4 py-2 border border-emerald-500 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-500/10 transition-colors text-sm text-center btn-transition">Join as Freelancer</a>
+              <a href="/" class="flex-1 px-4 py-2 border border-emerald-500 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-500/10 transition-colors text-sm text-center btn-transition">Join as Client</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust Bar -->
+  <div class="border-t border-slate-800 bg-slate-900/30 px-4 sm:px-6 lg:px-8 py-6">
+    <div class="max-w-7xl mx-auto">
+      <p class="text-sm text-slate-400 text-center lg:text-left">
+        <span class="flex flex-col lg:flex-row gap-2 lg:gap-6 items-center lg:items-center flex-wrap justify-center lg:justify-start">
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-emerald-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+            </svg>
+            Secure login
+          </span>
+          <span class="hidden lg:inline text-slate-600">•</span>
+          <span>POPIA compliant</span>
+          <span class="hidden lg:inline text-slate-600">•</span>
+          <span>PayFast escrow protection</span>
+          <span class="hidden lg:inline text-slate-600">•</span>
+          <span>Industry-leading encryption</span>
+          <span class="hidden lg:inline text-slate-600">•</span>
+          <span>Cape Town, South Africa</span>
+        </span>
+      </p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 bg-slate-950" role="contentinfo">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="grid md:grid-cols-4 gap-8 mb-12">
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center">
+              <span class="text-slate-950 font-bold text-xs">FS</span>
+            </div>
+            <span class="font-bold">FreelanceSkills</span>
+          </div>
+          <p class="text-slate-400 text-sm">The trusted, skills-first marketplace for Africa and beyond.</p>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-4 text-sm">Company</h4>
+          <ul class="space-y-2 text-slate-400 text-sm">
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Home</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">About</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">How it Works</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Blog</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-4 text-sm">Legal</h4>
+          <ul class="space-y-2 text-slate-400 text-sm">
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Terms of Service</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Privacy Policy</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Cookie Policy</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-4 text-sm">Contact</h4>
+          <p class="text-slate-400 text-sm">Camps Bay, Cape Town, South Africa</p>
+          <p class="text-slate-400 text-sm mt-2"><a href="mailto:support@freelanceskills.net" class="hover:text-emerald-400 transition-colors">support@freelanceskills.net</a></p>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-800 pt-8">
+        <p class="text-slate-500 text-xs text-center">© 2026 FreelanceSkills.net. CIPC Registered • POPIA Compliant • All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- PWA Fallback Modal -->
+  <div id="pwa-fallback-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-fade" role="dialog" aria-modal="true" aria-labelledby="pwa-modal-title">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-8 card-shadow">
+      <div class="flex items-center justify-between mb-6">
+        <h3 id="pwa-modal-title" class="text-2xl font-bold">Install FreelanceSkills</h3>
+        <button id="pwa-modal-close" class="text-slate-400 hover:text-slate-200 transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <p class="text-slate-300 mb-8">Get the best experience with our app. Here's how to install on your device:</p>
+
+      <div class="space-y-8">
+        <div>
+          <h4 class="font-semibold text-emerald-400 mb-3 text-sm">Chrome on Android</h4>
+          <ol class="text-slate-400 text-sm space-y-2 ml-4 list-decimal">
+            <li>Tap the menu <strong class="text-slate-300">(three dots)</strong> in the top-right corner</li>
+            <li>Select <strong class="text-slate-300">"Install app"</strong> and confirm</li>
+          </ol>
+        </div>
+
+        <div>
+          <h4 class="font-semibold text-emerald-400 mb-3 text-sm">Safari on iPhone/iPad</h4>
+          <ol class="text-slate-400 text-sm space-y-2 ml-4 list-decimal">
+            <li>Tap the <strong class="text-slate-300">Share button</strong> (square with arrow)</li>
+            <li>Tap <strong class="text-slate-300">"Add to Home Screen"</strong></li>
+          </ol>
+        </div>
+      </div>
+
+      <button id="pwa-modal-confirm" class="w-full mt-8 px-6 py-3 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-colors btn-transition">
+        Got it, thanks!
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Mobile Menu
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileMenuPanel = document.getElementById('mobile-menu-panel');
+    const mobileBackdrop = document.getElementById('mobile-backdrop');
+    const closeMobileBtn = document.getElementById('close-mobile-btn');
+
+    function openMobileMenu() {
+      mobileMenuPanel.classList.remove('hidden');
+      mobileBackdrop.classList.remove('hidden');
+      mobileMenuBtn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileMenu() {
+      mobileMenuPanel.classList.add('closing');
+      setTimeout(() => {
+        mobileMenuPanel.classList.add('hidden');
+        mobileMenuPanel.classList.remove('closing');
+        mobileBackdrop.classList.add('hidden');
+        mobileMenuBtn.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }, 300);
+    }
+
+    mobileMenuBtn.addEventListener('click', openMobileMenu);
+    closeMobileBtn.addEventListener('click', closeMobileMenu);
+    mobileBackdrop.addEventListener('click', closeMobileMenu);
+
+    window.closeMobileMenu = closeMobileMenu;
+
+    // PWA Install
+    let deferredPrompt;
+    const pwaInstallSection = document.getElementById('pwa-install-section');
+    const pwaInstallBtn = document.getElementById('install-app-btn');
+    const pwaCloseBtn = document.getElementById('close-install-btn');
+    const pwaFallbackModal = document.getElementById('pwa-fallback-modal');
+    const pwaModalClose = document.getElementById('pwa-modal-close');
+    const pwaModalConfirm = document.getElementById('pwa-modal-confirm');
+
+    const isInstalled = window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as any).standalone === true;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (!isInstalled) {
+        pwaInstallSection.classList.remove('hidden');
+      }
+    });
+
+    window.addEventListener('appinstalled', () => {
+      deferredPrompt = null;
+      pwaInstallSection.classList.add('hidden');
+    });
+
+    pwaInstallBtn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        await deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          deferredPrompt = null;
+          pwaInstallSection.classList.add('hidden');
+        }
+      } else {
+        pwaFallbackModal.classList.remove('hidden');
+      }
+    });
+
+    pwaCloseBtn.addEventListener('click', () => {
+      pwaInstallSection.classList.add('hidden');
+    });
+
+    pwaModalClose.addEventListener('click', () => {
+      pwaFallbackModal.classList.add('hidden');
+    });
+
+    pwaModalConfirm.addEventListener('click', () => {
+      pwaFallbackModal.classList.add('hidden');
+    });
+
+    // Password Toggle
+    const togglePasswordBtn = document.getElementById('toggle-password');
+    const passwordInput = document.getElementById('password');
+    const eyeIcon = document.getElementById('eye-icon');
+
+    togglePasswordBtn.addEventListener('click', () => {
+      const isPassword = passwordInput.type === 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
+      eyeIcon.innerHTML = isPassword 
+        ? '<path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>'
+        : '<path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>';
+    });
+
+    // Form Submission
+    const loginForm = document.getElementById('login-form');
+    const loginBtn = document.getElementById('login-btn');
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Logging in...';
+      setTimeout(() => {
+        loginBtn.disabled = false;
+        loginBtn.innerHTML = 'Log in<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>';
+      }, 1000);
+    });
+
+    // Close Modals with Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeMobileMenu();
+        pwaFallbackModal.classList.add('hidden');
+      }
+    });
+  </script>
+</body>
+</html>

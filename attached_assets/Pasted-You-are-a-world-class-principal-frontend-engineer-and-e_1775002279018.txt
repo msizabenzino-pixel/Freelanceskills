@@ -1,0 +1,58 @@
+You are a world-class principal frontend engineer and elite conversion UX writer who has designed login + PWA flows for multi-million-user marketplaces.
+
+Create a complete, single-file, production-ready Login page for Freelance Skills (domain: freelanceskills.net) — the skills-first freelance marketplace focused on verified African talent, especially South Africa.
+
+MANDATORY RULES — zero exceptions:
+- NEVER mention any founder, App Store, Play Store, or download links. Everything is platform-first and mission-driven.
+- Use Tailwind CSS 3.4+ via CDN.
+- Fully responsive split-screen (desktop) that stacks perfectly on mobile.
+- Professional dark theme: deep navy/slate (#0f172a), emerald accent (#10b981).
+- Include full PWA install promotion (the 2026 best-in-class method).
+
+Exact page structure (follow strictly):
+
+1. Minimal Sticky Navbar: Logo "Freelance Skills", links (Home, Browse Talent, Post a Job, About, How it Works), "Post a Job" button.
+
+2. Main Login Section – Split-Screen:
+   - LEFT PANEL (inspiring, 45% desktop):
+     - Headline: "Welcome back to the future of skilled work"
+     - Subheadline: "Log in to connect with verified talent and opportunities across Africa and the world."
+     - 4 benefit bullets with Lucide icons:
+       - Verified skills-first professionals
+       - Secure escrow & milestone payments
+       - Transparent fees & POPIA compliant
+       - Growing the African freelance economy
+     - Elegant abstract gradient background (no people).
+
+   - RIGHT PANEL (clean form card):
+     - "Log in to your account"
+     - SOCIAL LOGIN buttons FIRST (large, full-width):
+       - Continue with Google
+       - Continue with Apple
+       - Continue with LinkedIn
+     - OR divider
+     - Email + Password fields (show/hide toggle)
+     - Remember me + Forgot password?
+     - Emerald "Log in" button
+     - "Don't have an account? Join as Freelancer or Client"
+     - **PWA Install Promotion (premium & polished)** — placed elegantly below the form or as a subtle banner inside the card:
+       - Small emerald-outlined section with icon
+       - Headline: "For the best experience, install as an app on your phone"
+       - Sub: "Get home-screen access, faster loading, offline mode, and push notifications — just like a native app."
+       - Big button: "Install Freelance Skills App"
+       - On click: trigger beforeinstallprompt (with fallback modal showing clear 2-step instructions for Chrome/Android + Safari/iOS)
+       - Keep it confident and non-pushy.
+
+3. Trust Bar below form: "Secure login • POPIA compliant • Industry-leading encryption • Trusted across South Africa"
+
+4. Footer: minimal, with "Cape Town, South Africa" and legal links.
+
+Additional requirements:
+- Full JavaScript for PWA install: detect beforeinstallprompt, show button only when supported, fallback modal with exact steps for every browser.
+- Smooth micro-animations and perfect accessibility.
+- Copy must feel premium, trustworthy, and exciting — 2026 market-leader standard.
+- Zero messy code. Perfect indentation. Output ONLY the complete <!DOCTYPE html> ... </html> file.
+
+Generate the most beautiful, conversion-optimized, PWA-first login page possible — the kind that instantly builds trust and makes users want to install and log in.
+
+Begin now.

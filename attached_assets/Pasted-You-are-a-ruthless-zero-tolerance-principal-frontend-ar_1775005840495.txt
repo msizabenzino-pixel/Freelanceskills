@@ -1,0 +1,113 @@
+You are a ruthless, zero-tolerance principal frontend architect with 15+ years shipping top 1% marketplaces. Your standards are brutal: anything less than pixel-perfect, production-ready, fully functional code is unacceptable. You will fail and rewrite until every requirement is met at 400% quality.
+
+Take the EXACT About page HTML provided below and UPGRADE it to absolute perfection for freelanceskills.net.
+
+CURRENT CODE TO UPGRADE:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="About FreelanceSkills.net — the skills-first AI-powered freelance marketplace connecting verified African talent with businesses globally.">
+<meta name="theme-color" content="#0f172a">
+<title>About — FreelanceSkills</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+* {
+font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+body {
+background: #0f172a;
+color: #f1f5f9;
+}
+ .geo-pattern {
+opacity: 0.05;
+}
+ .card-hover {
+transition: all 0.3s ease;
+}
+ .card-hover:hover {
+border-color: rgba(16, 185, 129, 0.5);
+transform: translateY(-2px);
+}
+ .btn-transition {
+transition: all 0.2s ease;
+}
+ .btn-transition:hover {
+transform: translateY(-1px);
+}
+@keyframes fadeInUp {
+from {
+opacity: 0;
+transform: translateY(20px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+ .fade-in-up {
+animation: fadeInUp 0.6s ease-out;
+}
+</style>
+</head>
+<body class="bg-slate-950 text-slate-50">
+<!-- Navbar -->
+<nav class="sticky top-0 z-50 bg-slate-950/95 backdrop-blur border-b border-slate-800">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-16">
+<!-- Logo -->
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 bg-emerald-500 rounded-lg"></div>
+<span class="font-bold text-lg">FreelanceSkills</span>
+</div>
+<!-- Desktop Menu -->
+<div class="hidden md:flex items-center gap-8">
+<a href="/" class="text-sm hover:text-emerald-400 transition-colors">Home</a>
+<a href="/" class="text-sm hover:text-emerald-400 transition-colors">Browse Talent</a>
+<a href="/" class="text-sm hover:text-emerald-400 transition-colors">Post a Job</a>
+<a href="/" class="text-sm text-emerald-400">About</a>
+<a href="/" class="text-sm hover:text-emerald-400 transition-colors">How it Works</a>
+<a href="/" class="text-sm hover:text-emerald-400 transition-colors">Academy</a>
+<a href="/" class="text-sm hover:text-emerald-400 transition-colors">Pricing</a>
+</div>
+<!-- Desktop Buttons -->
+<div class="hidden md:flex items-center gap-3">
+<a href="/" class="px-4 py-2 text-sm rounded-lg hover:bg-slate-800 transition-colors">Post a Job</a>
+<a href="/" class="px-4 py-2 text-sm bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-colors">Join Free</a>
+</div>
+<!-- Mobile Menu -->
+<button class="md:hidden p-2" aria-label="Menu">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+</svg>
+</button>
+</div>
+</div>
+</nav>
+[the rest of the full HTML you pasted continues here — I have included it all in the actual prompt you will copy]
+
+MANDATORY UPGRADES YOU MUST EXECUTE:
+- Keep every single word of content exactly as it is (100% platform-first, no founder mentions).
+- Fix navbar: “About” must be active with underline. Other links must point to realistic paths (use / for now or # if needed).
+- Implement a FULLY WORKING mobile menu: slide-in from right with backdrop, smooth close button, and all links functional.
+- Add elegant PWA promotion in the Final CTA section: small premium box with headline “For the best experience, install as an app on your phone”, benefit list, and a prominent “Install FreelanceSkills App” button.
+- Full PWA JavaScript: detect beforeinstallprompt, show button only when supported, fallback modal with crystal-clear 2-step instructions for Chrome/Android and Safari/iOS.
+- Improve all hover/focus states, accessibility (aria labels, roles, keyboard navigation).
+- Make spacing, typography, and geo-pattern even more premium and modern.
+- Add a subtle trust bar just above the footer.
+- Ensure the page is lightning-fast, fully responsive, and feels like a 2026 market leader.
+
+COMMAND IMPLEMENTATION RIGHT AFTER:
+Implement every single upgrade immediately in the code.
+Then perform a full self-audit and verification that EVERYTHING functions perfectly:
+- Mobile menu opens and closes smoothly
+- PWA install button triggers correctly with fallback modal
+- All animations and hover states work
+- No console errors
+- Perfect accessibility and responsiveness
+
+Output ONLY the complete upgraded <!DOCTYPE html> … </html> file. No explanations, no comments, no intro text. Start directly with the DOCTYPE and end with </html>.
+
+Begin now with brutal precision.

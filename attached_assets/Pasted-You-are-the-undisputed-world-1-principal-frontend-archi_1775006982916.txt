@@ -1,0 +1,45 @@
+You are the undisputed world #1 principal frontend architect and conversion engineer. Your standards are merciless and untouchable. Deliver absolute perfection or rewrite until it is flawless.
+
+Rebuild the homepage of https://freelanceskills.net as a complete, single-file, production-ready HTML. This must feel like a 2026 market-dominating platform.
+
+MANDATORY RULES — ZERO EXCEPTIONS:
+- 100% platform-first. ZERO founder mentions, personal stories, photos, or bios.
+- Premium consistent dark theme: deep navy/slate (#0f172a), emerald accent (#10b981) — matching the upgraded About and Login pages exactly.
+- Tailwind CSS 3.4+ via CDN.
+- Fully responsive, semantic, accessible, lightning-fast.
+- Consistent sticky navbar and footer from previous upgraded pages.
+
+EXACT STRUCTURE (2026 best-in-class):
+1. Sticky navbar: Logo "FreelanceSkills", full menu (Home active, Browse Talent, Post a Job, About, How it Works, Academy, Pricing). "Post a Job" primary + "Join Free" buttons. FULLY WORKING slide-in mobile menu with backdrop and smooth close.
+
+2. Hero (full viewport, powerful gradient + elegant subtle geometric African-tech pattern):
+   - Headline: "The Future of Skilled Work in Africa and Beyond"
+   - Subheadline: "FreelanceSkills is the trusted, skills-first AI-powered marketplace connecting verified African talent with businesses locally and globally — delivering quality, security, and real opportunity."
+   - Two big CTAs: "Browse Verified Talent" and "Post a Project"
+   - Subtle trust line below: "2,500+ Verified Professionals • R50M+ Earnings • POPIA Compliant • PayFast Secure"
+
+3. Why FreelanceSkills (6 premium card grid with icons, matching About style).
+
+4. How It Works (clean 4-step horizontal or vertical with icons and numbers).
+
+5. Popular Skills / Categories (beautiful grid or scrollable chips).
+
+6. Impact & Trust (large stats row + badges: POPIA, Cape Town-Based, Secure Escrow, AI Matching).
+
+7. Premium PWA Promotion (elegant, non-pushy section — Spotify/Pinterest level):
+   - Headline: "For the best experience, install FreelanceSkills as an app on your phone"
+   - Benefits: Home-screen access • Faster loading • Offline browsing • Instant match notifications
+   - Prominent "Install as App" button with FULL JavaScript (beforeinstallprompt + smart fallback modal with clear 2-step instructions for all browsers).
+
+8. Final CTA: "Ready to shape the future of work?" with dual buttons.
+
+9. Minimal footer (identical to upgraded About/Login).
+
+COMMAND IMPLEMENTATION RIGHT AFTER:
+- Implement everything immediately at maximum quality.
+- Self-audit: mobile menu fully functional, PWA button triggers perfectly with fallback, all animations/hovers perfect, no console errors, flawless on desktop + mobile.
+- Make this the most beautiful, trustworthy, and conversion-optimized homepage possible — the kind that instantly removes doubt and makes visitors want to join.
+
+Output ONLY the complete <!DOCTYPE html> ... </html> file. No explanations. Start directly with DOCTYPE and end with </html>.
+
+Generate now with untouchable nuclear precision.

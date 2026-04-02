@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Join South Africa's #1 freelance platform. Sign up for free. Verified talent, secure escrow, ZAR payments. Start earning or hiring today.">
+  <meta name="theme-color" content="#10b981">
+  <meta property="og:title" content="Sign Up - FreelanceSkills SA">
+  <meta property="og:description" content="Connect with verified SA talent. Secure. Transparent. Built for Africa.">
+  <meta name="twitter:title" content="Join FreelanceSkills - South Africa">
+  <meta name="twitter:description" content="Sign up free. Start freelancing or hiring verified talent in SA.">
+  <link rel="canonical" href="https://freelanceskills.net/signup">
+  <title>Sign Up Free - FreelanceSkills South Africa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    
+    * {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #0f172a;
+      color: #f1f5f9;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .nav-link {
+      position: relative;
+      transition: color 0.2s ease;
+    }
+
+    .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #10b981;
+      border-radius: 1px;
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOutRight {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .backdrop-fade {
+      animation: fadeIn 0.3s ease;
+    }
+
+    .mobile-menu-slide {
+      animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mobile-menu-slide.closing {
+      animation: slideOutRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .hero-animate {
+      animation: fadeInUp 0.6s ease-out 0.1s both;
+    }
+
+    .hero-animate-delay {
+      animation: fadeInUp 0.6s ease-out 0.2s both;
+    }
+
+    .btn-transition {
+      transition: all 0.2s ease;
+    }
+
+    .btn-transition:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-transition:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary {
+      padding: 0.875rem 2rem;
+      background-color: #10b981;
+      color: white;
+      font-weight: 600;
+      border-radius: 1rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-primary:hover {
+      background-color: #059669;
+      box-shadow: 0 15px 20px -3px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-primary:active {
+      background-color: #047857;
+      transform: scale(0.97);
+    }
+
+    .form-input {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid #334155;
+      transition: all 0.2s ease;
+    }
+
+    .form-input:focus {
+      background: rgba(30, 41, 59, 0.9);
+      border-color: #10b981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: #94a3b8;
+    }
+
+    .input-focus {
+      transition: all 0.2s ease;
+    }
+
+    .input-focus:focus {
+      ring: 2px solid #10b981;
+      border-color: #10b981;
+    }
+
+    .role-option {
+      position: relative;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .role-option input {
+      appearance: none;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      cursor: pointer;
+      opacity: 0;
+    }
+
+    .role-option-content {
+      padding: 1rem;
+      border: 1px solid #334155;
+      border-radius: 0.5rem;
+      text-align: center;
+      transition: all 0.2s ease;
+      background: rgba(15, 23, 42, 0.5);
+    }
+
+    .role-option input:checked ~ .role-option-content {
+      background: #10b981;
+      border-color: #10b981;
+      color: #0f172a;
+      font-weight: 600;
+    }
+
+    .role-option input:focus ~ .role-option-content {
+      outline: 2px solid #10b981;
+      outline-offset: 2px;
+    }
+
+    .password-strength {
+      height: 4px;
+      background: #334155;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .password-strength-bar {
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease, background-color 0.3s ease;
+      border-radius: 2px;
+    }
+
+    .password-strength-bar.weak {
+      width: 33%;
+      background-color: #ef4444;
+    }
+
+    .password-strength-bar.medium {
+      width: 66%;
+      background-color: #f59e0b;
+    }
+
+    .password-strength-bar.strong {
+      width: 100%;
+      background-color: #10b981;
+    }
+
+    .checkbox-custom {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
+      min-height: 20px;
+      border: 1px solid #334155;
+      border-radius: 4px;
+      background: rgba(30, 41, 59, 0.5);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .checkbox-custom:checked {
+      background: #10b981;
+      border-color: #10b981;
+    }
+
+    .checkbox-custom:focus {
+      outline: 2px solid #10b981;
+      outline-offset: 2px;
+    }
+
+    button:focus-visible,
+    a:focus-visible {
+      outline: 2px solid #10b981;
+      outline-offset: 2px;
+    }
+
+    input:focus-visible {
+      outline: none;
+    }
+
+    select:focus-visible {
+      outline: 2px solid #10b981;
+      outline-offset: 2px;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        overflow-x: hidden;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-50">
+  <!-- Navbar -->
+  <nav class="sticky top-0 z-50 bg-slate-950/95 backdrop-blur border-b border-emerald-500/20" role="navigation" aria-label="Main navigation">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-14 sm:h-16">
+        <a href="/" class="flex items-center gap-2 sm:gap-3 group flex-shrink-0" aria-label="FreelanceSkills home">
+          <div class="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-emerald-500/50 transition-all duration-300 flex-shrink-0">
+            <span class="text-slate-950 font-bold text-xs sm:text-sm">FS</span>
+          </div>
+          <div class="hidden xs:flex items-baseline gap-0.5">
+            <span class="font-bold text-sm sm:text-base text-emerald-400">freelance</span>
+            <span class="font-bold text-sm sm:text-base text-slate-50">skills</span>
+          </div>
+        </a>
+
+        <div class="hidden lg:flex items-center gap-0 lg:gap-1">
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Home</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Browse</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">About</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Pricing</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">How it Works</a>
+        </div>
+
+        <div class="hidden lg:flex items-center gap-2 flex-shrink-0">
+          <a href="/" class="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg hover:bg-slate-800 transition-all duration-200 btn-transition min-h-12 flex items-center justify-center">Login</a>
+          <a href="/" class="px-4 sm:px-6 py-2 text-xs sm:text-sm bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 font-semibold rounded-lg hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 btn-transition min-h-12 flex items-center justify-center whitespace-nowrap">Get Started</a>
+        </div>
+
+        <button id="mobile-menu-btn" class="lg:hidden p-2.5 rounded-lg hover:bg-slate-800 transition-all duration-200 min-h-12 min-w-12 flex items-center justify-center" aria-label="Open navigation menu" aria-expanded="false">
+          <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden lg:hidden">
+      <div id="mobile-backdrop" class="hidden fixed inset-0 bg-black/60 z-40 backdrop-blur-sm backdrop-fade"></div>
+      <div id="mobile-menu-panel" class="hidden fixed right-0 top-14 sm:top-16 bottom-0 w-full max-w-xs bg-slate-950 border-l border-slate-800 z-50 mobile-menu-slide flex flex-col">
+        <div class="flex-1 overflow-y-auto p-4 space-y-1">
+          <nav class="space-y-0">
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Home</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Browse Talent</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">About</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Pricing</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">How it Works</a>
+          </nav>
+        </div>
+        <div class="border-t border-slate-800 p-4 space-y-2">
+          <a href="/" class="block px-4 py-3 text-center rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center justify-center" onclick="closeMobileMenu()">Login</a>
+          <a href="/" class="block px-4 py-3 text-center bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 rounded-lg font-semibold hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 text-sm min-h-12 flex items-center justify-center" onclick="closeMobileMenu()">Get Started</a>
+        </div>
+        <button id="close-mobile-btn" class="absolute top-3 sm:top-4 right-3 sm:right-4 p-2.5 hover:bg-slate-800 rounded-lg transition-all duration-200 min-h-12 min-w-12 flex items-center justify-center" aria-label="Close menu">
+          <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="min-h-[100dvh] flex flex-col">
+    <div class="flex-1 flex items-center justify-center py-8 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8">
+      <div class="w-full max-w-md">
+        <!-- Hero Section -->
+        <div class="mb-8 sm:mb-10 text-center hero-animate">
+          <h1 class="text-3xl sm:text-4xl font-bold mb-3 sm:mb-4">Create Your Account</h1>
+          <p class="text-sm sm:text-base text-slate-400">Join FreelanceSkills and start your journey today</p>
+        </div>
+
+        <!-- Signup Form -->
+        <form class="space-y-5 sm:space-y-6 hero-animate-delay" onsubmit="handleSignup(event)">
+          <!-- Full Name -->
+          <div>
+            <label for="fullname" class="block text-xs sm:text-sm font-semibold mb-2 text-slate-300">Full Name</label>
+            <input 
+              type="text" 
+              id="fullname"
+              name="fullname"
+              placeholder="Aisha Ibrahim" 
+              required
+              class="w-full px-4 py-3 sm:py-4 rounded-lg form-input text-sm sm:text-base min-h-12 sm:min-h-14"
+              aria-label="Full name"
+            >
+          </div>
+
+          <!-- Email Address -->
+          <div>
+            <label for="email" class="block text-xs sm:text-sm font-semibold mb-2 text-slate-300">Email Address</label>
+            <input 
+              type="email" 
+              id="email"
+              name="email"
+              placeholder="you@example.com" 
+              required
+              class="w-full px-4 py-3 sm:py-4 rounded-lg form-input text-sm sm:text-base min-h-12 sm:min-h-14"
+              aria-label="Email address"
+            >
+            <p class="text-xs text-slate-500 mt-2">We'll send a verification link to this email</p>
+          </div>
+
+          <!-- Role Selection -->
+          <div>
+            <label class="block text-xs sm:text-sm font-semibold mb-3 text-slate-300">I am a...</label>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-2">
+              <label class="role-option">
+                <input type="radio" name="role" value="freelancer" required>
+                <div class="role-option-content cursor-pointer">
+                  <p class="text-xs sm:text-sm font-medium">Freelancer</p>
+                </div>
+              </label>
+              <label class="role-option">
+                <input type="radio" name="role" value="client" required>
+                <div class="role-option-content cursor-pointer">
+                  <p class="text-xs sm:text-sm font-medium">Business</p>
+                </div>
+              </label>
+              <label class="role-option">
+                <input type="radio" name="role" value="both" required>
+                <div class="role-option-content cursor-pointer">
+                  <p class="text-xs sm:text-sm font-medium">Both</p>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Location -->
+          <div>
+            <label for="location" class="block text-xs sm:text-sm font-semibold mb-2 text-slate-300">Location</label>
+            <select 
+              id="location"
+              name="location"
+              required
+              class="w-full px-4 py-3 sm:py-4 rounded-lg form-input text-sm sm:text-base min-h-12 sm:min-h-14 bg-slate-800/50 border border-slate-700"
+              aria-label="Location"
+            >
+              <option value="" disabled selected>Select your location...</option>
+              <optgroup label="South Africa">
+                <option value="johannesburg">Johannesburg</option>
+                <option value="cape-town">Cape Town</option>
+                <option value="durban">Durban</option>
+                <option value="pretoria">Pretoria</option>
+                <option value="port-elizabeth">Port Elizabeth</option>
+                <option value="bloemfontein">Bloemfontein</option>
+                <option value="other-sa">Other (South Africa)</option>
+              </optgroup>
+              <optgroup label="Africa">
+                <option value="nairobi">Nairobi, Kenya</option>
+                <option value="lagos">Lagos, Nigeria</option>
+                <option value="accra">Accra, Ghana</option>
+                <option value="cairo">Cairo, Egypt</option>
+                <option value="other-africa">Other (Africa)</option>
+              </optgroup>
+              <optgroup label="International">
+                <option value="other-intl">Other (International)</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <!-- Password -->
+          <div>
+            <label for="password" class="block text-xs sm:text-sm font-semibold mb-2 text-slate-300">Password</label>
+            <input 
+              type="password" 
+              id="password"
+              name="password"
+              placeholder="At least 8 characters" 
+              required
+              minlength="8"
+              class="w-full px-4 py-3 sm:py-4 rounded-lg form-input text-sm sm:text-base min-h-12 sm:min-h-14"
+              aria-label="Password"
+              oninput="checkPasswordStrength(this.value)"
+            >
+            <div class="password-strength">
+              <div id="password-strength-bar" class="password-strength-bar"></div>
+            </div>
+            <p id="password-strength-text" class="text-xs text-slate-400 mt-2">At least 8 characters</p>
+          </div>
+
+          <!-- Confirm Password -->
+          <div>
+            <label for="confirm-password" class="block text-xs sm:text-sm font-semibold mb-2 text-slate-300">Confirm Password</label>
+            <input 
+              type="password" 
+              id="confirm-password"
+              name="confirm-password"
+              placeholder="Confirm your password" 
+              required
+              class="w-full px-4 py-3 sm:py-4 rounded-lg form-input text-sm sm:text-base min-h-12 sm:min-h-14"
+              aria-label="Confirm password"
+            >
+          </div>
+
+          <!-- Terms & Conditions -->
+          <div class="flex items-start gap-3 py-2">
+            <input 
+              type="checkbox" 
+              id="terms"
+              name="terms"
+              required
+              class="checkbox-custom mt-1 flex-shrink-0"
+              aria-label="Agree to terms and conditions"
+            >
+            <label for="terms" class="text-xs sm:text-sm text-slate-400 flex-1">
+              I agree to the <a href="/" class="text-emerald-400 hover:text-emerald-300 transition-colors">Terms of Service</a> and <a href="/" class="text-emerald-400 hover:text-emerald-300 transition-colors">Privacy Policy</a>
+            </label>
+          </div>
+
+          <!-- Signup Button -->
+          <button 
+            type="submit" 
+            class="w-full px-5 py-3 sm:py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 rounded-lg font-semibold hover:shadow-lg hover:shadow-emerald-500/30 transition-all btn-transition min-h-12 sm:min-h-14 text-sm sm:text-base"
+            aria-label="Create account"
+          >
+            Create Account
+          </button>
+
+          <!-- Login Link -->
+          <p class="text-center text-xs sm:text-sm text-slate-400">
+            Already have an account? <a href="/" class="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors">Login here</a>
+          </p>
+        </form>
+
+        <!-- Trust Badge -->
+        <div class="mt-8 sm:mt-10 p-4 sm:p-6 bg-slate-900/50 border border-slate-800 rounded-lg text-center">
+          <p class="text-xs sm:text-sm text-slate-400">🔒 Your data is secure and encrypted. POPIA Compliant.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 bg-slate-950">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
+        <div>
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-7 h-7 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center">
+              <span class="text-slate-950 font-bold text-xs">FS</span>
+            </div>
+            <div class="flex items-baseline gap-0.5">
+              <span class="font-bold text-xs sm:text-sm text-emerald-400">freelance</span>
+              <span class="font-bold text-xs sm:text-sm text-slate-50">skills</span>
+            </div>
+          </div>
+          <p class="text-slate-400 text-xs leading-relaxed">Africa's #1 skills marketplace.</p>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-2 sm:mb-3 text-xs sm:text-sm text-slate-50">Company</h4>
+          <ul class="space-y-1 sm:space-y-2 text-slate-400 text-xs sm:text-sm">
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Home</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">About</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Blog</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-2 sm:mb-3 text-xs sm:text-sm text-slate-50">Legal</h4>
+          <ul class="space-y-1 sm:space-y-2 text-slate-400 text-xs sm:text-sm">
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Terms</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Privacy</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-2 sm:mb-3 text-xs sm:text-sm text-slate-50">Contact</h4>
+          <p class="text-slate-400 text-xs">Camps Bay, Cape Town</p>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-800 pt-6 sm:pt-8">
+        <p class="text-slate-500 text-xs text-center">© 2026 FreelanceSkills.net. CIPC Registered • POPIA Compliant.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenuPanel = document.getElementById('mobile-menu-panel');
+    const mobileBackdrop = document.getElementById('mobile-backdrop');
+    const closeMobileBtn = document.getElementById('close-mobile-btn');
+
+    function openMobileMenu() {
+      mobileMenuPanel.classList.remove('hidden');
+      mobileBackdrop.classList.remove('hidden');
+      mobileMenuBtn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileMenu() {
+      mobileMenuPanel.classList.add('closing');
+      setTimeout(() => {
+        mobileMenuPanel.classList.add('hidden');
+        mobileMenuPanel.classList.remove('closing');
+        mobileBackdrop.classList.add('hidden');
+        mobileMenuBtn.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }, 300);
+    }
+
+    mobileMenuBtn.addEventListener('click', openMobileMenu);
+    closeMobileBtn.addEventListener('click', closeMobileMenu);
+    mobileBackdrop.addEventListener('click', closeMobileMenu);
+
+    window.closeMobileMenu = closeMobileMenu;
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !mobileMenuPanel.classList.contains('hidden')) {
+        closeMobileMenu();
+      }
+    });
+
+    document.addEventListener('touchmove', (e) => {
+      if (!mobileMenuPanel.classList.contains('hidden')) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    // Password strength checker
+    function checkPasswordStrength(password) {
+      const strengthBar = document.getElementById('password-strength-bar');
+      const strengthText = document.getElementById('password-strength-text');
+      
+      let strength = 0;
+      if (password.length >= 8) strength++;
+      if (password.length >= 12) strength++;
+      if (/[A-Z]/.test(password) && /[a-z]/.test(password)) strength++;
+      if (/[0-9]/.test(password)) strength++;
+      if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+      strengthBar.classList.remove('weak', 'medium', 'strong');
+      
+      if (strength <= 2) {
+        strengthBar.classList.add('weak');
+        strengthText.textContent = '⚠️ Weak password';
+      } else if (strength <= 3) {
+        strengthBar.classList.add('medium');
+        strengthText.textContent = '✓ Medium strength';
+      } else {
+        strengthBar.classList.add('strong');
+        strengthText.textContent = '✓ Strong password';
+      }
+    }
+
+    // Form submission handler
+    function handleSignup(e) {
+      e.preventDefault();
+      
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+      
+      if (password !== confirmPassword) {
+        alert('Passwords do not match. Please try again.');
+        return;
+      }
+
+      // Simulate signup (in real app, this would call an API)
+      alert('Welcome to FreelanceSkills! Check your email to verify your account.');
+      
+      // Reset form
+      e.target.reset();
+      document.getElementById('password-strength-bar').classList.remove('weak', 'medium', 'strong');
+      document.getElementById('password-strength-text').textContent = 'At least 8 characters';
+    }
+  </script>
+</body>
+</html>

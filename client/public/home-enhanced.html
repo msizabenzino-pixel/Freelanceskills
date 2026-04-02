@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="South Africa's #1 skills-first freelance platform. Verified local talent, secure escrow, ZAR payments. Hire developers, plumbers, designers in Johannesburg, Cape Town & beyond.">
+  <meta name="theme-color" content="#10b981">
+  <meta property="og:title" content="FreelanceSkills - South Africa Freelance Jobs">
+  <meta property="og:description" content="Connect with verified SA talent. Secure. Transparent. Built for Africa.">
+  <meta name="twitter:title" content="FreelanceSkills — South Africa Freelance Marketplace">
+  <meta name="twitter:description" content="Verified freelancers and jobs in South Africa. Secure escrow, ZAR payments, local support.">
+  <link rel="canonical" href="https://freelanceskills.net">
+  <title>FreelanceSkills — South Africa Freelance Jobs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    
+    * {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #0f172a;
+      color: #f1f5f9;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .nav-link {
+      position: relative;
+      transition: color 0.2s ease;
+    }
+
+    .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #10b981;
+      border-radius: 1px;
+    }
+
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes slideOutRight {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes countUp {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes pulse-match {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    @keyframes marquee {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    @keyframes float-up {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .backdrop-fade {
+      animation: fadeIn 0.3s ease;
+    }
+
+    .mobile-menu-slide {
+      animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mobile-menu-slide.closing {
+      animation: slideOutRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .hero-animate {
+      animation: fadeInUp 0.6s ease-out 0.1s both;
+    }
+
+    .hero-animate-delay {
+      animation: fadeInUp 0.6s ease-out 0.2s both;
+    }
+
+    .stat-animate {
+      animation: countUp 0.6s ease-out;
+    }
+
+    .match-score-pulse {
+      animation: pulse-match 2s ease-in-out infinite;
+    }
+
+    .marquee-container {
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .marquee {
+      display: flex;
+      animation: marquee 30s linear infinite;
+      white-space: nowrap;
+    }
+
+    .marquee-item {
+      flex-shrink: 0;
+      padding: 0 2rem;
+      min-width: max-content;
+    }
+
+    .match-fab {
+      position: fixed;
+      bottom: 2rem;
+      right: 1rem;
+      z-index: 40;
+      animation: float-up 3s ease-in-out infinite;
+    }
+
+    .btn-transition {
+      transition: all 0.2s ease;
+    }
+
+    .btn-transition:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-transition:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary {
+      padding: 0.875rem 2rem;
+      background-color: #10b981;
+      color: white;
+      font-weight: 600;
+      border-radius: 1rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-primary:hover {
+      background-color: #059669;
+      box-shadow: 0 15px 20px -3px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-primary:active {
+      background-color: #047857;
+      transform: scale(0.97);
+    }
+
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgba(16, 185, 129, 0.15);
+    }
+
+    .match-badge {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: white;
+    }
+
+    .match-badge.high {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .match-badge.medium {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+
+    .match-badge.low {
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+      background: #1e293b;
+      border-radius: 1rem;
+      padding: 2rem;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y-auto;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 200px;
+      background-color: #10b981;
+      color: #0f172a;
+      text-align: center;
+      padding: 0.5rem;
+      border-radius: 0.25rem;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -100px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .input-focus {
+      transition: all 0.2s ease;
+    }
+
+    .input-focus:focus {
+      ring: 2px solid #10b981;
+      border-color: #10b981;
+    }
+
+    button:focus-visible,
+    a:focus-visible {
+      outline: 2px solid #10b981;
+      outline-offset: 2px;
+    }
+
+    input:focus-visible {
+      outline: none;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        overflow-x: hidden;
+      }
+
+      .marquee {
+        animation: none;
+      }
+
+      .marquee-item {
+        padding: 0 1rem;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-50">
+  <!-- Navbar -->
+  <nav class="sticky top-0 z-50 bg-slate-950/95 backdrop-blur border-b border-emerald-500/20" role="navigation" aria-label="Main navigation">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-14 sm:h-16">
+        <a href="/" class="flex items-center gap-2 sm:gap-3 group flex-shrink-0" aria-label="FreelanceSkills home">
+          <div class="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-emerald-500/50 transition-all duration-300 flex-shrink-0">
+            <span class="text-slate-950 font-bold text-xs sm:text-sm">FS</span>
+          </div>
+          <div class="hidden xs:flex items-baseline gap-0.5">
+            <span class="font-bold text-sm sm:text-base text-emerald-400">freelance</span>
+            <span class="font-bold text-sm sm:text-base text-slate-50">skills</span>
+          </div>
+        </a>
+
+        <div class="hidden lg:flex items-center gap-0 lg:gap-1">
+          <a href="/" class="nav-link active text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Home</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Browse</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Post</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">About</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">How it Works</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Academy</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Pricing</a>
+        </div>
+
+        <div class="hidden lg:flex items-center gap-2 flex-shrink-0">
+          <a href="/" class="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg hover:bg-slate-800 transition-all duration-200 btn-transition min-h-12 flex items-center justify-center">Post a Job</a>
+          <a href="/" class="px-4 sm:px-6 py-2 text-xs sm:text-sm bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 font-semibold rounded-lg hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 btn-transition min-h-12 flex items-center justify-center whitespace-nowrap">Join Free</a>
+        </div>
+
+        <button id="mobile-menu-btn" class="lg:hidden p-2.5 rounded-lg hover:bg-slate-800 transition-all duration-200 min-h-12 min-w-12 flex items-center justify-center" aria-label="Open navigation menu" aria-expanded="false">
+          <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden lg:hidden">
+      <div id="mobile-backdrop" class="hidden fixed inset-0 bg-black/60 z-40 backdrop-blur-sm backdrop-fade"></div>
+      <div id="mobile-menu-panel" class="hidden fixed right-0 top-14 sm:top-16 bottom-0 w-full max-w-xs bg-slate-950 border-l border-slate-800 z-50 mobile-menu-slide flex flex-col">
+        <div class="flex-1 overflow-y-auto p-4 space-y-1">
+          <nav class="space-y-0">
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center font-medium" onclick="closeMobileMenu()">Home</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Browse</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Post</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">About</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">How it Works</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Academy</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Pricing</a>
+          </nav>
+        </div>
+        <div class="border-t border-slate-800 p-4 space-y-2">
+          <a href="/" class="block px-4 py-3 text-center rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center justify-center" onclick="closeMobileMenu()">Post a Job</a>
+          <a href="/" class="block px-4 py-3 text-center bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 rounded-lg font-semibold hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 text-sm min-h-12 flex items-center justify-center" onclick="closeMobileMenu()">Join Free</a>
+        </div>
+        <button id="close-mobile-btn" class="absolute top-3 sm:top-4 right-3 sm:right-4 p-2.5 hover:bg-slate-800 rounded-lg transition-all duration-200 min-h-12 min-w-12 flex items-center justify-center" aria-label="Close menu">
+          <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Live Activity Pulse -->
+  <div class="bg-gradient-to-r from-emerald-600/10 via-slate-950 to-slate-950 border-b border-emerald-500/20 px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+    <div class="max-w-7xl mx-auto">
+      <p class="text-xs text-emerald-400 font-semibold uppercase tracking-wide mb-2">🔥 Live Activity</p>
+      <div class="marquee-container">
+        <div class="marquee">
+          <div class="marquee-item text-xs sm:text-sm text-slate-300">💰 Thabo M. earned R12,300 • Johannesburg • 2m ago</div>
+          <div class="marquee-item text-xs sm:text-sm text-slate-300">⭐ Amara K. completed React project • Cape Town • 5m ago</div>
+          <div class="marquee-item text-xs sm:text-sm text-slate-300">💰 Mandla J. earned R8,500 • Durban • 8m ago</div>
+          <div class="marquee-item text-xs sm:text-sm text-slate-300">🎉 Zola N. got new 5-star review • Pretoria • 12m ago</div>
+          <div class="marquee-item text-xs sm:text-sm text-slate-300">💰 Lerato B. earned R15,200 • Johannesburg • 15m ago</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="relative py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-950">
+    <div class="max-w-6xl mx-auto w-full">
+      <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6 hero-animate px-2">FreelanceSkills — The Future of Skilled Work</h1>
+      <p class="text-base sm:text-lg md:text-xl text-slate-300 mb-8 sm:mb-10 hero-animate-delay max-w-3xl px-2">South Africa's #1 verified talent marketplace. Connect with certified freelancers, secure escrow, instant ZAR payments. Start hiring or earning today.</p>
+      
+      <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 hero-animate-delay px-2">
+        <button onclick="scrollToJobs()" class="px-6 sm:px-8 py-3 sm:py-4 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all btn-transition min-h-12 sm:min-h-14 text-sm sm:text-base inline-flex items-center justify-center">
+          Browse Jobs Now
+        </button>
+        <a href="/" class="px-6 sm:px-8 py-3 sm:py-4 border-2 border-emerald-500 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-500/10 transition-all btn-transition min-h-12 sm:min-h-14 text-sm sm:text-base inline-flex items-center justify-center">
+          Hire Top Talent
+        </a>
+      </div>
+
+      <!-- Trust Line -->
+      <div class="mt-10 sm:mt-12 flex flex-col xs:flex-row xs:items-center gap-3 xs:gap-6 text-xs sm:text-sm text-slate-400 px-2 hero-animate-delay">
+        <span class="flex items-center gap-2">🔒 <strong>POPIA Compliant</strong></span>
+        <span class="hidden xs:inline text-slate-600">•</span>
+        <span class="flex items-center gap-2">✓ <strong>Escrow Protected</strong></span>
+        <span class="hidden xs:inline text-slate-600">•</span>
+        <span class="flex items-center gap-2">✓ <strong>CIPC Registered</strong></span>
+        <span class="hidden xs:inline text-slate-600">•</span>
+        <span class="flex items-center gap-2">✓ <strong>ID Verified</strong></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Urgent Jobs Section -->
+  <section class="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 lg:px-8" id="jobs-section">
+    <div class="max-w-7xl mx-auto w-full">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-12 px-2">🔥 Urgent Opportunities</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        <!-- Job Card 1 -->
+        <div class="p-4 sm:p-6 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl card-hover relative group">
+          <div class="flex items-start justify-between mb-3 sm:mb-4">
+            <div class="flex-1">
+              <h3 class="text-base sm:text-lg font-semibold mb-1">React App - Fintech MVP</h3>
+              <p class="text-xs sm:text-sm text-slate-400">TechStart Ventures • Johannesburg</p>
+            </div>
+          </div>
+          
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-sm sm:text-base font-semibold text-emerald-400">R45,000 - R65,000</span>
+            <div class="tooltip">
+              <div class="match-badge match-score-pulse high">
+                <span>94% Match</span>
+              </div>
+              <span class="tooltiptext">Based on your skills, location & availability</span>
+            </div>
+          </div>
+
+          <p class="text-xs sm:text-sm text-slate-400 mb-4 line-clamp-2">Build responsive React dashboard with real-time portfolio tracking. 4-week timeline. Experience with Tailwind CSS required.</p>
+          
+          <div class="flex flex-wrap gap-2 mb-5">
+            <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 rounded-full border border-emerald-500/20">React</span>
+            <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 rounded-full border border-emerald-500/20">Tailwind</span>
+            <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 rounded-full border border-emerald-500/20">4 weeks</span>
+          </div>
+
+          <button onclick="openInstantApply('React App - Fintech MVP', 'TechStart Ventures')" class="w-full px-4 py-2.5 sm:py-3 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all btn-transition min-h-12 text-xs sm:text-sm">
+            ⚡ Instant Apply
+          </button>
+        </div>
+
+        <!-- Job Card 2 -->
+        <div class="p-4 sm:p-6 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl card-hover relative group">
+          <div class="flex items-start justify-between mb-3 sm:mb-4">
+            <div class="flex-1">
+              <h3 class="text-base sm:text-lg font-semibold mb-1">Mobile App - Health Tech</h3>
+              <p class="text-xs sm:text-sm text-slate-400">HealthTech Labs • Cape Town</p>
+            </div>
+          </div>
+          
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-sm sm:text-base font-semibold text-emerald-400">R50,000 - R75,000</span>
+            <div class="tooltip">
+              <div class="match-badge match-score-pulse high">
+                <span>87% Match</span>
+              </div>
+              <span class="tooltiptext">Based on your skills, location & availability</span>
+            </div>
+          </div>
+
+          <p class="text-xs sm:text-sm text-slate-400 mb-4 line-clamp-2">Develop iOS/Android fitness tracking app. Flutter preferred. Integrate Stripe for payments. 6-week sprint.</p>
+          
+          <div class="flex flex-wrap gap-2 mb-5">
+            <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 rounded-full border border-emerald-500/20">Flutter</span>
+            <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 rounded-full border border-emerald-500/20">Firebase</span>
+            <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 rounded-full border border-emerald-500/20">6 weeks</span>
+          </div>
+
+          <button onclick="openInstantApply('Mobile App - Health Tech', 'HealthTech Labs')" class="w-full px-4 py-2.5 sm:py-3 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all btn-transition min-h-12 text-xs sm:text-sm">
+            ⚡ Instant Apply
+          </button>
+        </div>
+
+        <!-- Job Card 3 -->
+        <div class="p-4 sm:p-6 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl card-hover relative group">
+          <div class="flex items-start justify-between mb-3 sm:mb-4">
+            <div class="flex-1">
+              <h3 class="text-base sm:text-lg font-semibold mb-1">UI/UX Design - E-commerce</h3>
+              <p class="text-xs sm:text-sm text-slate-400">ShopAfrica • Durban</p>
+            </div>
+          </div>
+          
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-sm sm:text-base font-semibold text-emerald-400">R35,000 - R55,000</span>
+            <div class="tooltip">
+              <div class="match-badge match-score-pulse medium">
+                <span>72% Match</span>
+              </div>
+              <span class="tooltiptext">Based on your skills, location & availability</span>
+            </div>
+          </div>
+
+          <p class="text-xs sm:text-sm text-slate-400 mb-4 line-clamp-2">Design complete UI for mobile commerce app. Wireframes to high-fidelity. Responsive design. 3-week delivery.</p>
+          
+          <div class="flex flex-wrap gap-2 mb-5">
+            <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 rounded-full border border-emerald-500/20">Figma</span>
+            <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 rounded-full border border-emerald-500/20">Mobile</span>
+            <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 rounded-full border border-emerald-500/20">3 weeks</span>
+          </div>
+
+          <button onclick="openInstantApply('UI/UX Design - E-commerce', 'ShopAfrica')" class="w-full px-4 py-2.5 sm:py-3 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all btn-transition min-h-12 text-xs sm:text-sm">
+            ⚡ Instant Apply
+          </button>
+        </div>
+      </div>
+
+      <div class="mt-8 sm:mt-12 text-center">
+        <a href="/" class="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 border border-emerald-500 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-500/10 transition-all btn-transition min-h-12 text-xs sm:text-sm">
+          See All Opportunities
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Top Talent Section -->
+  <section class="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-slate-900/50 border-y border-slate-800">
+    <div class="max-w-7xl mx-auto w-full">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-12 px-2">⭐ Top Verified Talent</h2>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <!-- Talent Card 1 -->
+        <div class="p-4 sm:p-6 bg-slate-950/50 border border-slate-800 rounded-lg card-hover">
+          <div class="flex items-start justify-between mb-3">
+            <div class="w-12 h-12 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center flex-shrink-0">
+              <span class="text-sm font-bold text-slate-950">AI</span>
+            </div>
+            <svg class="w-5 h-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+          </div>
+          <h3 class="text-base font-semibold mb-1 leading-tight">Aisha Ibrahim</h3>
+          <p class="text-xs text-emerald-400 font-medium mb-2">Full-Stack Developer</p>
+          
+          <div class="flex items-center gap-2 mb-3">
+            <div class="tooltip">
+              <div class="match-badge match-score-pulse high text-xs">
+                <span>96% Match</span>
+              </div>
+              <span class="tooltiptext">Perfect fit for your projects</span>
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-400 mb-3 line-clamp-2">React, Node.js, PostgreSQL specialist. 5+ years, Cape Town-based.</p>
+          <button onclick="openInvite('Aisha Ibrahim')" class="w-full px-3 py-2 bg-emerald-500/20 text-emerald-300 rounded text-xs font-semibold hover:bg-emerald-500/30 transition-all btn-transition min-h-10">
+            👋 Invite to Apply
+          </button>
+        </div>
+
+        <!-- Talent Card 2 -->
+        <div class="p-4 sm:p-6 bg-slate-950/50 border border-slate-800 rounded-lg card-hover">
+          <div class="flex items-start justify-between mb-3">
+            <div class="w-12 h-12 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center flex-shrink-0">
+              <span class="text-sm font-bold text-slate-950">CK</span>
+            </div>
+            <svg class="w-5 h-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+          </div>
+          <h3 class="text-base font-semibold mb-1 leading-tight">Chidi Kapoor</h3>
+          <p class="text-xs text-emerald-400 font-medium mb-2">Product Designer</p>
+          
+          <div class="flex items-center gap-2 mb-3">
+            <div class="tooltip">
+              <div class="match-badge match-score-pulse high text-xs">
+                <span>89% Match</span>
+              </div>
+              <span class="tooltiptext">Great fit for design projects</span>
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-400 mb-3 line-clamp-2">UI/UX design, Figma expert. Mobile-first specialist. Johannesburg.</p>
+          <button onclick="openInvite('Chidi Kapoor')" class="w-full px-3 py-2 bg-emerald-500/20 text-emerald-300 rounded text-xs font-semibold hover:bg-emerald-500/30 transition-all btn-transition min-h-10">
+            👋 Invite to Apply
+          </button>
+        </div>
+
+        <!-- Talent Card 3 -->
+        <div class="p-4 sm:p-6 bg-slate-950/50 border border-slate-800 rounded-lg card-hover">
+          <div class="flex items-start justify-between mb-3">
+            <div class="w-12 h-12 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center flex-shrink-0">
+              <span class="text-sm font-bold text-slate-950">NK</span>
+            </div>
+            <svg class="w-5 h-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+          </div>
+          <h3 class="text-base font-semibold mb-1 leading-tight">Nomsa Khumalo</h3>
+          <p class="text-xs text-emerald-400 font-medium mb-2">Digital Marketing</p>
+          
+          <div class="flex items-center gap-2 mb-3">
+            <div class="tooltip">
+              <div class="match-badge match-score-pulse medium text-xs">
+                <span>76% Match</span>
+              </div>
+              <span class="tooltiptext">Good fit for marketing roles</span>
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-400 mb-3 line-clamp-2">SEO, social media expert. Content strategy specialist. Pretoria.</p>
+          <button onclick="openInvite('Nomsa Khumalo')" class="w-full px-3 py-2 bg-emerald-500/20 text-emerald-300 rounded text-xs font-semibold hover:bg-emerald-500/30 transition-all btn-transition min-h-10">
+            👋 Invite to Apply
+          </button>
+        </div>
+
+        <!-- Talent Card 4 -->
+        <div class="p-4 sm:p-6 bg-slate-950/50 border border-slate-800 rounded-lg card-hover">
+          <div class="flex items-start justify-between mb-3">
+            <div class="w-12 h-12 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center flex-shrink-0">
+              <span class="text-sm font-bold text-slate-950">KB</span>
+            </div>
+            <svg class="w-5 h-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+          </div>
+          <h3 class="text-base font-semibold mb-1 leading-tight">Kwasi Boateng</h3>
+          <p class="text-xs text-emerald-400 font-medium mb-2">Cloud Engineer</p>
+          
+          <div class="flex items-center gap-2 mb-3">
+            <div class="tooltip">
+              <div class="match-badge match-score-pulse high text-xs">
+                <span>91% Match</span>
+              </div>
+              <span class="tooltiptext">Excellent match for infra work</span>
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-400 mb-3 line-clamp-2">AWS, Kubernetes, DevOps. Infrastructure expert. Bloemfontein-based.</p>
+          <button onclick="openInvite('Kwasi Boateng')" class="w-full px-3 py-2 bg-emerald-500/20 text-emerald-300 rounded text-xs font-semibold hover:bg-emerald-500/30 transition-all btn-transition min-h-10">
+            👋 Invite to Apply
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Escrow & Trust Section -->
+  <section class="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto w-full">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-12 text-center px-2">How It Works — Secure Escrow Every Time</h2>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+        <div class="text-center">
+          <div class="w-12 h-12 sm:w-16 sm:h-16 bg-emerald-500/20 border border-emerald-500/40 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl sm:text-3xl">🤝</span>
+          </div>
+          <h3 class="text-base sm:text-lg font-semibold mb-2">Post/Find</h3>
+          <p class="text-xs sm:text-sm text-slate-400">Post a job or find a perfect freelancer match using our AI.</p>
+        </div>
+
+        <div class="text-center">
+          <div class="w-12 h-12 sm:w-16 sm:h-16 bg-emerald-500/20 border border-emerald-500/40 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl sm:text-3xl">💬</span>
+          </div>
+          <h3 class="text-base sm:text-lg font-semibold mb-2">Discuss Terms</h3>
+          <p class="text-xs sm:text-sm text-slate-400">Message, negotiate scope & timeline. Use our contract templates.</p>
+        </div>
+
+        <div class="text-center">
+          <div class="w-12 h-12 sm:w-16 sm:h-16 bg-emerald-500/20 border border-emerald-500/40 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl sm:text-3xl">🔒</span>
+          </div>
+          <h3 class="text-base sm:text-lg font-semibold mb-2">Secure Escrow</h3>
+          <p class="text-xs sm:text-sm text-slate-400">Funds held safely in escrow. Released when milestones complete.</p>
+        </div>
+
+        <div class="text-center">
+          <div class="w-12 h-12 sm:w-16 sm:h-16 bg-emerald-500/20 border border-emerald-500/40 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl sm:text-3xl">💳</span>
+          </div>
+          <h3 class="text-base sm:text-lg font-semibold mb-2">Instant ZAR Payout</h3>
+          <p class="text-xs sm:text-sm text-slate-400">Get paid instantly to your local bank. 10% platform fee only.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact Stats -->
+  <section class="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-emerald-600/10 via-slate-950 to-slate-950 border-y border-emerald-500/20">
+    <div class="max-w-7xl mx-auto w-full">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-8">
+        <div class="text-center stat-animate">
+          <p class="text-2xl sm:text-4xl font-bold text-emerald-400 mb-2">47K+</p>
+          <p class="text-xs sm:text-sm text-slate-400">Verified Freelancers</p>
+        </div>
+        <div class="text-center stat-animate">
+          <p class="text-2xl sm:text-4xl font-bold text-emerald-400 mb-2">R2.3B+</p>
+          <p class="text-xs sm:text-sm text-slate-400">Escrow Protected</p>
+        </div>
+        <div class="text-center stat-animate">
+          <p class="text-2xl sm:text-4xl font-bold text-emerald-400 mb-2">92K+</p>
+          <p class="text-xs sm:text-sm text-slate-400">Projects Completed</p>
+        </div>
+        <div class="text-center stat-animate">
+          <p class="text-2xl sm:text-4xl font-bold text-emerald-400 mb-2">4.9★</p>
+          <p class="text-xs sm:text-sm text-slate-400">Avg Rating</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-emerald-600/15 via-slate-950 to-slate-950 border-t border-emerald-500/20">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 px-2">Ready to Transform Your Work?</h2>
+      <p class="text-base sm:text-lg text-slate-300 mb-8 sm:mb-10 px-2">Join 47K+ freelancers and businesses earning trust on Africa's #1 marketplace.</p>
+      
+      <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-2">
+        <a href="/" class="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 btn-transition min-h-12 sm:min-h-14 text-xs sm:text-base whitespace-nowrap">
+          Create Free Account
+        </a>
+        <a href="/" class="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 border-2 border-emerald-500 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-500/10 transition-all btn-transition min-h-12 sm:min-h-14 text-xs sm:text-base whitespace-nowrap">
+          Browse Opportunities
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 bg-slate-950">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8 sm:mb-12">
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center">
+              <span class="text-slate-950 font-bold text-xs">FS</span>
+            </div>
+            <div class="flex items-baseline gap-0.5">
+              <span class="font-bold text-sm sm:text-base text-emerald-400">freelance</span>
+              <span class="font-bold text-sm sm:text-base text-slate-50">skills</span>
+            </div>
+          </div>
+          <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">Africa's #1 skills-first freelance marketplace for verified talent and quality projects.</p>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-3 sm:mb-4 text-xs sm:text-sm text-slate-50">Company</h4>
+          <ul class="space-y-2 text-slate-400 text-xs sm:text-sm">
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Home</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">About</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Blog</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-3 sm:mb-4 text-xs sm:text-sm text-slate-50">Legal</h4>
+          <ul class="space-y-2 text-slate-400 text-xs sm:text-sm">
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Terms</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Privacy</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Escrow</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-3 sm:mb-4 text-xs sm:text-sm text-slate-50">Contact</h4>
+          <p class="text-slate-400 text-xs sm:text-sm">Camps Bay, Cape Town, South Africa</p>
+          <p class="text-slate-400 text-xs sm:text-sm mt-2"><a href="mailto:support@freelanceskills.net" class="hover:text-emerald-400 transition-colors">support@freelanceskills.net</a></p>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-800 pt-6 sm:pt-8">
+        <p class="text-slate-500 text-xs text-center">© 2026 FreelanceSkills.net. CIPC Registered • POPIA Compliant • All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Match Me FAB -->
+  <button id="match-fab" class="match-fab px-4 py-3 bg-emerald-500 text-slate-950 rounded-full font-semibold hover:bg-emerald-400 transition-all shadow-lg min-h-14 min-w-14 flex items-center justify-center" onclick="scrollToJobs()" aria-label="Find best matches">
+    <span class="hidden sm:inline">🧲 Match Me</span>
+    <span class="sm:hidden">🧲</span>
+  </button>
+
+  <!-- Instant Apply Modal -->
+  <div id="apply-modal" class="hidden modal-overlay" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl sm:text-2xl font-bold">⚡ Instant Application</h2>
+        <button onclick="closeModal()" class="p-2 hover:bg-slate-700 rounded transition-all">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="mb-6">
+        <h3 class="text-base sm:text-lg font-semibold mb-2" id="modal-job-title"></h3>
+        <p class="text-sm text-slate-400" id="modal-job-client"></p>
+      </div>
+
+      <div class="bg-slate-950/50 border border-slate-700 rounded-lg p-4 sm:p-5 mb-6">
+        <p class="text-xs sm:text-sm font-semibold mb-3 text-emerald-400">Your Proposal Preview:</p>
+        <div id="proposal-preview" class="text-xs sm:text-sm text-slate-300 space-y-2 bg-slate-950 p-3 rounded border border-slate-800"></div>
+      </div>
+
+      <div class="flex gap-3">
+        <button onclick="submitApplication()" class="flex-1 px-4 py-3 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all btn-transition min-h-12 text-sm">
+          ✓ Submit Application
+        </button>
+        <button onclick="closeModal()" class="flex-1 px-4 py-3 border border-slate-600 text-slate-300 rounded-lg font-semibold hover:bg-slate-800 transition-all btn-transition min-h-12 text-sm">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Invite Modal -->
+  <div id="invite-modal" class="hidden modal-overlay" onclick="closeInviteModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl sm:text-2xl font-bold">👋 Invite Talent</h2>
+        <button onclick="closeInviteModal()" class="p-2 hover:bg-slate-700 rounded transition-all">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <p class="text-sm text-slate-300 mb-6">Invite <span id="invite-talent-name" class="font-semibold text-emerald-400"></span> to apply for your project?</p>
+
+      <div class="flex gap-3">
+        <button onclick="submitInvite()" class="flex-1 px-4 py-3 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all btn-transition min-h-12 text-sm">
+          ✓ Send Invite
+        </button>
+        <button onclick="closeInviteModal()" class="flex-1 px-4 py-3 border border-slate-600 text-slate-300 rounded-lg font-semibold hover:bg-slate-800 transition-all btn-transition min-h-12 text-sm">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-4 right-4 z-50 hidden bg-emerald-500 text-slate-950 px-6 py-4 rounded-lg font-semibold shadow-lg animate-pulse"></div>
+
+  <script>
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenuPanel = document.getElementById('mobile-menu-panel');
+    const mobileBackdrop = document.getElementById('mobile-backdrop');
+    const closeMobileBtn = document.getElementById('close-mobile-btn');
+
+    function openMobileMenu() {
+      mobileMenuPanel.classList.remove('hidden');
+      mobileBackdrop.classList.remove('hidden');
+      mobileMenuBtn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileMenu() {
+      mobileMenuPanel.classList.add('closing');
+      setTimeout(() => {
+        mobileMenuPanel.classList.add('hidden');
+        mobileMenuPanel.classList.remove('closing');
+        mobileBackdrop.classList.add('hidden');
+        mobileMenuBtn.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }, 300);
+    }
+
+    mobileMenuBtn.addEventListener('click', openMobileMenu);
+    closeMobileBtn.addEventListener('click', closeMobileMenu);
+    mobileBackdrop.addEventListener('click', closeMobileMenu);
+
+    window.closeMobileMenu = closeMobileMenu;
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !mobileMenuPanel.classList.contains('hidden')) {
+        closeMobileMenu();
+      }
+    });
+
+    // Instant Apply Modal
+    function openInstantApply(jobTitle, clientName) {
+      document.getElementById('modal-job-title').textContent = jobTitle;
+      document.getElementById('modal-job-client').textContent = clientName;
+      
+      const proposal = `Hi ${clientName},\n\nAs a certified React developer in Cape Town with 5 similar fintech projects, I'm confident I can deliver your ${jobTitle} on time and exceed your expectations.\n\nKey experience:\n• 5+ years React development\n• 3 fintech projects shipped\n• Mobile-first responsive design\n• Tailwind CSS expert\n\nLooking forward to discussing your project.\n\nBest regards`;
+      
+      document.getElementById('proposal-preview').textContent = proposal;
+      document.getElementById('apply-modal').classList.remove('hidden');
+    }
+
+    function closeModal(event) {
+      if (event && event.target.id !== 'apply-modal') return;
+      document.getElementById('apply-modal').classList.add('hidden');
+    }
+
+    function submitApplication() {
+      showToast('✓ Application sent! Check your messages.');
+      confetti({ particleCount: 80, spread: 70 });
+      closeModal();
+    }
+
+    // Invite Talent Modal
+    function openInvite(talentName) {
+      document.getElementById('invite-talent-name').textContent = talentName;
+      document.getElementById('invite-modal').classList.remove('hidden');
+    }
+
+    function closeInviteModal(event) {
+      if (event && event.target.id !== 'invite-modal') return;
+      document.getElementById('invite-modal').classList.add('hidden');
+    }
+
+    function submitInvite() {
+      showToast('✓ Invite sent! Talent will see your project soon.');
+      confetti({ particleCount: 60, spread: 60 });
+      closeInviteModal();
+    }
+
+    // Toast notification
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 3000);
+    }
+
+    // Scroll to jobs
+    function scrollToJobs() {
+      document.getElementById('jobs-section').scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

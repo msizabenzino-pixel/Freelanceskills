@@ -68,6 +68,7 @@ const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 const Vuma = lazy(() => import("@/pages/Vuma"));
 const VumaLive = lazy(() => import("@/pages/VumaLive"));
 const About = lazy(() => import("@/pages/About"));
+const Login = lazy(() => import("@/pages/Login"));
 const Careers = lazy(() => import("@/pages/Careers"));
 
 // ── Admin S1–S50 ──────────────────────────────────────────────────────────────
@@ -412,6 +413,7 @@ function Router() {
         <Route path="/privacy" component={Privacy} />
         <Route path="/impact" component={Impact} />
         <Route path="/about" component={About} />
+        <Route path="/login" component={Login} />
         <Route path="/careers" component={Careers} />
         <Route path="/academy" component={Academy} />
         <Route path="/academy/catalog" component={AcademyCatalog} />

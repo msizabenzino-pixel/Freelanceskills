@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="South Africa's #1 skills-first freelance platform. Verified local talent, secure escrow, ZAR payments. Hire developers, plumbers, designers in Johannesburg, Cape Town & beyond.">
+  <meta name="theme-color" content="#10b981">
+  <meta property="og:title" content="FreelanceSkills - South Africa Freelance Jobs">
+  <meta property="og:description" content="Connect with verified SA talent. Secure. Transparent. Built for Africa.">
+  <meta name="twitter:title" content="FreelanceSkills — South Africa Freelance Marketplace">
+  <meta name="twitter:description" content="Verified freelancers and jobs in South Africa. Secure escrow, ZAR payments, local support.">
+  <link rel="canonical" href="https://freelanceskills.net">
+  <title>FreelanceSkills — South Africa Freelance Jobs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    
+    * {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #0f172a;
+      color: #f1f5f9;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .nav-link {
+      position: relative;
+      transition: color 0.2s ease;
+    }
+
+    .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #10b981;
+      border-radius: 1px;
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOutRight {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes countUp {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .backdrop-fade {
+      animation: fadeIn 0.3s ease;
+    }
+
+    .mobile-menu-slide {
+      animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mobile-menu-slide.closing {
+      animation: slideOutRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .hero-animate {
+      animation: fadeInUp 0.8s ease-out 0.1s both;
+    }
+
+    .hero-animate-delay {
+      animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+
+    .stat-animate {
+      animation: countUp 0.6s ease-out;
+    }
+
+    .btn-transition {
+      transition: all 0.2s ease;
+    }
+
+    .btn-transition:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-transition:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary {
+      padding: 0.875rem 2rem;
+      background-color: #10b981;
+      color: white;
+      font-weight: 600;
+      border-radius: 1rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-primary:hover {
+      background-color: #059669;
+      box-shadow: 0 15px 20px -3px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-primary:active {
+      background-color: #047857;
+      transform: scale(0.97);
+    }
+
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgba(16, 185, 129, 0.15);
+    }
+
+    .card-hover-enhanced {
+      transition: all 0.3s ease;
+    }
+
+    .card-hover-enhanced:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 20px 25px -5px rgba(16, 185, 129, 0.1);
+    }
+
+    .input-focus {
+      transition: all 0.2s ease;
+    }
+
+    .input-focus:focus {
+      ring: 2px solid #10b981;
+      border-color: #10b981;
+    }
+
+    button:focus-visible,
+    a:focus-visible {
+      outline: 2px solid #10b981;
+      outline-offset: 2px;
+    }
+
+    input:focus-visible {
+      outline: 2px solid #10b981;
+      outline-offset: 2px;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        overflow-x: hidden;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-50">
+  <!-- Navbar -->
+  <nav class="sticky top-0 z-50 bg-slate-950/95 backdrop-blur border-b border-emerald-500/20" role="navigation" aria-label="Main navigation">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-14 sm:h-16">
+        <a href="/" class="flex items-center gap-2 sm:gap-3 group flex-shrink-0" aria-label="FreelanceSkills home">
+          <div class="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-emerald-500/50 transition-all duration-300 flex-shrink-0">
+            <span class="text-slate-950 font-bold text-xs sm:text-sm">FS</span>
+          </div>
+          <div class="hidden xs:flex items-baseline gap-0.5">
+            <span class="font-bold text-sm sm:text-base text-emerald-400">freelance</span>
+            <span class="font-bold text-sm sm:text-base text-slate-50">skills</span>
+          </div>
+        </a>
+
+        <div class="hidden lg:flex items-center gap-0 lg:gap-1">
+          <a href="/" class="nav-link active text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Home</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Browse</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Post</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">About</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">How it Works</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Academy</a>
+          <a href="/" class="nav-link text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Pricing</a>
+        </div>
+
+        <div class="hidden lg:flex items-center gap-2 flex-shrink-0">
+          <a href="/" class="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg hover:bg-slate-800 transition-all duration-200 btn-transition min-h-12 flex items-center justify-center">Post a Job</a>
+          <a href="/" class="px-4 sm:px-6 py-2 text-xs sm:text-sm bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 font-semibold rounded-lg hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 btn-transition min-h-12 flex items-center justify-center whitespace-nowrap">Join Free</a>
+        </div>
+
+        <button id="mobile-menu-btn" class="lg:hidden p-2.5 rounded-lg hover:bg-slate-800 transition-all duration-200 min-h-12 min-w-12 flex items-center justify-center" aria-label="Open navigation menu" aria-expanded="false">
+          <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden lg:hidden">
+      <div id="mobile-backdrop" class="hidden fixed inset-0 bg-black/60 z-40 backdrop-blur-sm backdrop-fade"></div>
+      <div id="mobile-menu-panel" class="hidden fixed right-0 top-14 sm:top-16 bottom-0 w-full max-w-xs bg-slate-950 border-l border-slate-800 z-50 mobile-menu-slide flex flex-col">
+        <div class="flex-1 overflow-y-auto p-4 space-y-1">
+          <nav class="space-y-0">
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center font-medium" onclick="closeMobileMenu()">Home</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Browse Talent</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Post a Job</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">About</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">How it Works</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Academy</a>
+            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Pricing</a>
+          </nav>
+        </div>
+        <div class="border-t border-slate-800 p-4 space-y-2">
+          <a href="/" class="block px-4 py-3 text-center rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-sm min-h-12 flex items-center justify-center" onclick="closeMobileMenu()">Post a Job</a>
+          <a href="/" class="block px-4 py-3 text-center bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 rounded-lg font-semibold hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 text-sm min-h-12 flex items-center justify-center" onclick="closeMobileMenu()">Join Free</a>
+        </div>
+        <button id="close-mobile-btn" class="absolute top-3 sm:top-4 right-3 sm:right-4 p-2.5 hover:bg-slate-800 rounded-lg transition-all duration-200 min-h-12 min-w-12 flex items-center justify-center" aria-label="Close menu">
+          <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="relative min-h-[100dvh] sm:min-h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+    <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900">
+      <div class="absolute inset-0 opacity-[0.08]">
+        <svg viewBox="0 0 100 100" class="w-full h-full">
+          <defs>
+            <pattern id="geo" patternUnits="userSpaceOnUse" width="20" height="20">
+              <path d="M0,10 L10,0 L20,10 L10,20 Z" fill="none" stroke="currentColor" stroke-width="0.5" class="text-emerald-500"/>
+              <circle cx="10" cy="10" r="2" fill="currentColor" class="text-emerald-500"/>
+            </pattern>
+          </defs>
+          <rect width="100" height="100" fill="url(#geo)"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="relative z-10 w-full max-w-4xl mx-auto text-center">
+      <h1 class="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-4 sm:mb-6 leading-tight hero-animate px-1 break-words">
+        The Future of Skilled Work in Africa and Beyond
+      </h1>
+      <p class="text-xs sm:text-base md:text-lg lg:text-xl text-slate-300 mb-8 sm:mb-12 leading-relaxed max-w-3xl mx-auto hero-animate-delay px-1">
+        FreelanceSkills is the trusted, skills-first AI-powered marketplace connecting verified African talent with businesses locally and globally — delivering quality, security, and real opportunity.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center hero-animate-delay px-1 w-full">
+        <a href="/" class="inline-flex items-center justify-center gap-2 px-5 sm:px-8 py-3 sm:py-4 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 btn-transition min-h-12 sm:min-h-14 text-xs sm:text-base whitespace-nowrap">
+          Browse Talent
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+          </svg>
+        </a>
+        <a href="/" class="inline-flex items-center justify-center gap-2 px-5 sm:px-8 py-3 sm:py-4 border-2 border-emerald-500 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-500/10 transition-all btn-transition min-h-12 sm:min-h-14 text-xs sm:text-base whitespace-nowrap">
+          Post a Project
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust Line -->
+  <div class="border-y border-slate-800 bg-slate-900/50 px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+    <div class="max-w-7xl mx-auto">
+      <p class="text-xs sm:text-sm text-slate-400 text-center">
+        <span class="flex flex-col sm:flex-row gap-2 sm:gap-4 items-center justify-center flex-wrap">
+          <span class="whitespace-nowrap">2,500+ Verified</span>
+          <span class="hidden sm:inline text-slate-600">•</span>
+          <span class="whitespace-nowrap">R50M+ Earnings</span>
+          <span class="hidden sm:inline text-slate-600">•</span>
+          <span class="whitespace-nowrap">POPIA Compliant</span>
+          <span class="hidden sm:inline text-slate-600">•</span>
+          <span class="whitespace-nowrap">PayFast Secure</span>
+        </span>
+      </p>
+    </div>
+  </div>
+
+  <!-- Why FreelanceSkills -->
+  <section class="py-12 sm:py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto w-full">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-12 md:mb-20 text-center px-2">Why Choose FreelanceSkills</h2>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+        <div class="p-5 sm:p-6 md:p-8 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all card-hover min-h-full">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-3 sm:mb-4 flex-shrink-0">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 leading-tight">Rigorous Verification</h3>
+          <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">Every profile is vetted. Every skill is tested. Quality assured from day one.</p>
+        </div>
+
+        <div class="p-5 sm:p-6 md:p-8 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all card-hover min-h-full">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-3 sm:mb-4 flex-shrink-0">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 leading-tight">Secure Escrow</h3>
+          <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">Protected transactions with instant ZAR payouts. Peace of mind guaranteed.</p>
+        </div>
+
+        <div class="p-5 sm:p-6 md:p-8 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all card-hover min-h-full">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-3 sm:mb-4 flex-shrink-0">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 leading-tight">Transparent Pricing</h3>
+          <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">10% fees, no hidden charges. Industry-leading rates for all.</p>
+        </div>
+
+        <div class="p-5 sm:p-6 md:p-8 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all card-hover min-h-full">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-3 sm:mb-4 flex-shrink-0">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 17v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 leading-tight">AI-Powered Matching</h3>
+          <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">Intelligent algorithms find perfect matches for skills and projects.</p>
+        </div>
+
+        <div class="p-5 sm:p-6 md:p-8 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all card-hover min-h-full">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-3 sm:mb-4 flex-shrink-0">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v4h8v-4zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/>
+            </svg>
+          </div>
+          <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 leading-tight">Local + Global</h3>
+          <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">Built for Africa, with worldwide reach. Your local advantage globally.</p>
+        </div>
+
+        <div class="p-5 sm:p-6 md:p-8 bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all card-hover min-h-full">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-3 sm:mb-4 flex-shrink-0">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M1 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H2a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM15 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 leading-tight">Long-Term Focus</h3>
+          <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">Building careers and lasting relationships, not just transactions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="py-12 sm:py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-slate-900/50">
+    <div class="max-w-6xl mx-auto w-full">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-12 md:mb-20 text-center px-2">How It Works</h2>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-4">
+        <div class="relative">
+          <div class="flex flex-col items-center text-center">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mb-4 sm:mb-6 shadow-lg shadow-emerald-500/25 flex-shrink-0">
+              <span class="text-xl sm:text-2xl font-bold text-slate-950">1</span>
+            </div>
+            <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 leading-tight">Create Profile</h3>
+            <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">Sign up, verify your identity, showcase your skills or needs.</p>
+          </div>
+          <div class="hidden lg:block absolute top-1/3 -right-2 w-4 h-0.5 bg-gradient-to-r from-emerald-500 to-transparent"></div>
+        </div>
+
+        <div class="relative">
+          <div class="flex flex-col items-center text-center">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mb-4 sm:mb-6 shadow-lg shadow-emerald-500/25 flex-shrink-0">
+              <span class="text-xl sm:text-2xl font-bold text-slate-950">2</span>
+            </div>
+            <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 leading-tight">AI Matches</h3>
+            <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">Our algorithm finds perfect matches based on skills and needs.</p>
+          </div>
+          <div class="hidden lg:block absolute top-1/3 -right-2 w-4 h-0.5 bg-gradient-to-r from-emerald-500 to-transparent"></div>
+        </div>
+
+        <div class="relative">
+          <div class="flex flex-col items-center text-center">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mb-4 sm:mb-6 shadow-lg shadow-emerald-500/25 flex-shrink-0">
+              <span class="text-xl sm:text-2xl font-bold text-slate-950">3</span>
+            </div>
+            <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 leading-tight">Collaborate</h3>
+            <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">Work securely with escrow protection and direct communication.</p>
+          </div>
+          <div class="hidden lg:block absolute top-1/3 -right-2 w-4 h-0.5 bg-gradient-to-r from-emerald-500 to-transparent"></div>
+        </div>
+
+        <div class="flex flex-col items-center text-center">
+          <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mb-4 sm:mb-6 shadow-lg shadow-emerald-500/25 flex-shrink-0">
+            <span class="text-xl sm:text-2xl font-bold text-slate-950">4</span>
+          </div>
+          <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 leading-tight">Get Paid & Grow</h3>
+          <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">Instant ZAR payouts, build reputation, unlock better opportunities.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Popular Skills -->
+  <section class="py-12 sm:py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto w-full">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-12 md:mb-20 text-center px-2">Popular Skills in Demand</h2>
+      
+      <div class="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer min-h-fit">
+          <div class="font-semibold text-sm sm:text-base mb-1 leading-tight">Web Development</div>
+          <p class="text-xs sm:text-sm text-slate-400">React, Node, Full-Stack</p>
+        </div>
+        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer min-h-fit">
+          <div class="font-semibold text-sm sm:text-base mb-1 leading-tight">Mobile Dev</div>
+          <p class="text-xs sm:text-sm text-slate-400">iOS, Android, Flutter</p>
+        </div>
+        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer min-h-fit">
+          <div class="font-semibold text-sm sm:text-base mb-1 leading-tight">UI/UX Design</div>
+          <p class="text-xs sm:text-sm text-slate-400">Product, Web, Mobile</p>
+        </div>
+        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer min-h-fit">
+          <div class="font-semibold text-sm sm:text-base mb-1 leading-tight">Data Science</div>
+          <p class="text-xs sm:text-sm text-slate-400">ML, Analytics, Python</p>
+        </div>
+        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer min-h-fit">
+          <div class="font-semibold text-sm sm:text-base mb-1 leading-tight">Cloud Infra</div>
+          <p class="text-xs sm:text-sm text-slate-400">AWS, GCP, DevOps</p>
+        </div>
+        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer min-h-fit">
+          <div class="font-semibold text-sm sm:text-base mb-1 leading-tight">Content</div>
+          <p class="text-xs sm:text-sm text-slate-400">SEO, Blogs, Marketing</p>
+        </div>
+        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer min-h-fit">
+          <div class="font-semibold text-sm sm:text-base mb-1 leading-tight">Digital Marketing</div>
+          <p class="text-xs sm:text-sm text-slate-400">Social, Ads, Strategy</p>
+        </div>
+        <div class="p-4 sm:p-5 md:p-6 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg hover:border-emerald-500/50 transition-colors cursor-pointer min-h-fit">
+          <div class="font-semibold text-sm sm:text-base mb-1 leading-tight">Video Production</div>
+          <p class="text-xs sm:text-sm text-slate-400">Editing, Animation, Ads</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact & Trust -->
+  <section class="py-12 sm:py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-emerald-600/15 via-slate-950 to-slate-950">
+    <div class="max-w-6xl mx-auto w-full">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-12 md:mb-20 text-center px-2">Our Impact & Trust</h2>
+      
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-8 sm:mb-12 md:mb-16">
+        <div class="text-center p-4 sm:p-6 md:p-8 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg stat-animate">
+          <div class="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold text-emerald-400 mb-2 sm:mb-3 leading-tight">2.5K+</div>
+          <div class="text-slate-400 text-xs sm:text-sm font-medium">Verified Pros</div>
+        </div>
+        <div class="text-center p-4 sm:p-6 md:p-8 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg stat-animate" style="animation-delay: 0.1s;">
+          <div class="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold text-emerald-400 mb-2 sm:mb-3 leading-tight">1.2K+</div>
+          <div class="text-slate-400 text-xs sm:text-sm font-medium">Projects</div>
+        </div>
+        <div class="text-center p-4 sm:p-6 md:p-8 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg stat-animate" style="animation-delay: 0.2s;">
+          <div class="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold text-emerald-400 mb-2 sm:mb-3 leading-tight">R50M+</div>
+          <div class="text-slate-400 text-xs sm:text-sm font-medium">Earnings</div>
+        </div>
+        <div class="text-center p-4 sm:p-6 md:p-8 bg-gradient-to-br from-emerald-500/10 to-slate-900 border border-emerald-500/20 rounded-lg stat-animate" style="animation-delay: 0.3s;">
+          <div class="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold text-emerald-400 mb-2 sm:mb-3 leading-tight">100%</div>
+          <div class="text-slate-400 text-xs sm:text-sm font-medium">POPIA</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 bg-slate-900/50 p-4 sm:p-6 md:p-8 rounded-lg lg:rounded-xl border border-slate-800">
+        <div class="flex items-center justify-center sm:justify-start gap-3 p-3 sm:p-4 bg-slate-950/50 rounded-lg border border-slate-700/50 hover:border-emerald-500/30 transition-colors min-h-12 sm:min-h-14">
+          <svg class="w-5 h-5 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          <span class="font-medium text-xs sm:text-sm">Verified Talent</span>
+        </div>
+        <div class="flex items-center justify-center sm:justify-start gap-3 p-3 sm:p-4 bg-slate-950/50 rounded-lg border border-slate-700/50 hover:border-emerald-500/30 transition-colors min-h-12 sm:min-h-14">
+          <svg class="w-5 h-5 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+          </svg>
+          <span class="font-medium text-xs sm:text-sm">Secure Escrow</span>
+        </div>
+        <div class="flex items-center justify-center sm:justify-start gap-3 p-3 sm:p-4 bg-slate-950/50 rounded-lg border border-slate-700/50 hover:border-emerald-500/30 transition-colors min-h-12 sm:min-h-14">
+          <svg class="w-5 h-5 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 17v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd"/>
+          </svg>
+          <span class="font-medium text-xs sm:text-sm">AI Matching</span>
+        </div>
+        <div class="flex items-center justify-center sm:justify-start gap-3 p-3 sm:p-4 bg-slate-950/50 rounded-lg border border-slate-700/50 hover:border-emerald-500/30 transition-colors min-h-12 sm:min-h-14">
+          <svg class="w-5 h-5 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+          </svg>
+          <span class="font-medium text-xs sm:text-sm">Cape Town-Based</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA Section -->
+  <section class="py-12 sm:py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto w-full">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 sm:mb-8 text-center px-2 leading-tight">Ready to Shape the Future of Work?</h2>
+      <p class="text-base sm:text-lg text-slate-300 mb-8 sm:mb-12 text-center px-2">Join thousands of skilled professionals and forward-thinking businesses building the new economy.</p>
+      
+      <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-2">
+        <a href="/" class="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 btn-transition min-h-12 sm:min-h-14 text-xs sm:text-base whitespace-nowrap">
+          Join as a Freelancer
+        </a>
+        <a href="/" class="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 border-2 border-emerald-500 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-500/10 transition-all btn-transition min-h-12 sm:min-h-14 text-xs sm:text-base whitespace-nowrap">
+          Hire Talent Now
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 bg-slate-950">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8 sm:mb-12">
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center">
+              <span class="text-slate-950 font-bold text-xs">FS</span>
+            </div>
+            <div class="flex items-baseline gap-0.5">
+              <span class="font-bold text-sm sm:text-base text-emerald-400">freelance</span>
+              <span class="font-bold text-sm sm:text-base text-slate-50">skills</span>
+            </div>
+          </div>
+          <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">The trusted, skills-first marketplace for Africa and beyond.</p>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-3 sm:mb-4 text-xs sm:text-sm text-slate-50">Company</h4>
+          <ul class="space-y-2 text-slate-400 text-xs sm:text-sm">
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Home</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">About</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">How it Works</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Blog</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-3 sm:mb-4 text-xs sm:text-sm text-slate-50">Legal</h4>
+          <ul class="space-y-2 text-slate-400 text-xs sm:text-sm">
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Terms of Service</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Privacy Policy</a></li>
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Cookie Policy</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-3 sm:mb-4 text-xs sm:text-sm text-slate-50">Contact</h4>
+          <p class="text-slate-400 text-xs sm:text-sm">Camps Bay, Cape Town, South Africa</p>
+          <p class="text-slate-400 text-xs sm:text-sm mt-2"><a href="mailto:support@freelanceskills.net" class="hover:text-emerald-400 transition-colors">support@freelanceskills.net</a></p>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-800 pt-6 sm:pt-8">
+        <p class="text-slate-500 text-xs text-center">© 2026 FreelanceSkills.net. CIPC Registered • POPIA Compliant • All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenuPanel = document.getElementById('mobile-menu-panel');
+    const mobileBackdrop = document.getElementById('mobile-backdrop');
+    const closeMobileBtn = document.getElementById('close-mobile-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    function openMobileMenu() {
+      mobileMenuPanel.classList.remove('hidden');
+      mobileBackdrop.classList.remove('hidden');
+      mobileMenuBtn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileMenu() {
+      mobileMenuPanel.classList.add('closing');
+      setTimeout(() => {
+        mobileMenuPanel.classList.add('hidden');
+        mobileMenuPanel.classList.remove('closing');
+        mobileBackdrop.classList.add('hidden');
+        mobileMenuBtn.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }, 300);
+    }
+
+    mobileMenuBtn.addEventListener('click', openMobileMenu);
+    closeMobileBtn.addEventListener('click', closeMobileMenu);
+    mobileBackdrop.addEventListener('click', closeMobileMenu);
+
+    window.closeMobileMenu = closeMobileMenu;
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !mobileMenuPanel.classList.contains('hidden')) {
+        closeMobileMenu();
+      }
+    });
+
+    document.addEventListener('touchmove', (e) => {
+      if (!mobileMenuPanel.classList.contains('hidden')) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+  </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+You are a ruthless, zero-tolerance principal frontend architect with 15+ years shipping top 1% global marketplaces. Your standards are brutal and non-negotiable. Anything less than pixel-perfect, production-ready, fully functional, and immediately deployable code is FAILURE. You will rewrite until it is flawless.
+
+Create a COMPLETE, SINGLE-FILE, PRODUCTION-READY Login page for https://freelanceskills.net — the skills-first AI-powered freelance marketplace connecting verified African talent with businesses globally.
+
+MANDATORY RULES — ZERO EXCEPTIONS:
+- 100% platform-first. ZERO founder, personal, or individual mentions.
+- Premium dark theme: deep navy/slate base (#0f172a), emerald accent (#10b981).
+- Use Tailwind CSS 3.4+ via CDN only.
+- Beautiful split-screen desktop layout (inspiring left panel + clean right form). Perfectly responsive on mobile.
+- FULLY FUNCTIONAL PWA install promotion (Spotify/Pinterest-level polish).
+
+EXACT PAGE STRUCTURE YOU MUST FOLLOW:
+1. Sticky navbar with logo "FreelanceSkills", full links (Home, Browse Talent, Post a Job, About, How it Works, Academy, Pricing), "Post a Job" and "Join Free" buttons. FULLY WORKING slide-in mobile menu with backdrop.
+2. Split-screen main section:
+   - LEFT PANEL (45% desktop): Dark gradient + subtle geometric pattern.
+     Headline: "Welcome back to the future of skilled work in Africa"
+     Subheadline: "Log in to connect verified talent with high-value opportunities — locally and globally."
+     5 benefit bullets with clean icons.
+     Trust line at bottom.
+   - RIGHT PANEL (elevated card):
+     "Log in to your account"
+     Prominent SOCIAL LOGIN buttons first (Google, Apple, LinkedIn — large, full-width).
+     OR divider
+     Email field + Password field with show/hide toggle
+     Remember me + Forgot password?
+     Big emerald "Log in" button
+     "Don’t have an account? Join as Freelancer or Client"
+     PREMIUM PWA SECTION BELOW FORM:
+       Headline: "For the best experience, install as an app on your phone"
+       Benefits list + prominent "Install FreelanceSkills App" button
+       FULL JavaScript: beforeinstallprompt detection + smart fallback modal with crystal-clear 2-step instructions for every browser.
+3. Subtle trust bar: "Secure login • POPIA compliant • PayFast Escrow • Industry-leading encryption • Cape Town, South Africa"
+4. Minimal footer with logo, links, legal, and "Cape Town, South Africa • © 2026 FreelanceSkills.net"
+
+COMMAND IMPLEMENTATION RIGHT AFTER GENERATION:
+- Make the code 100% ready for immediate live deployment on freelanceskills.net.
+- Include every micro-interaction, hover/focus state, and accessibility feature.
+- Ensure mobile menu, PWA install button, form toggles, and all animations work perfectly with zero console errors.
+- Self-audit the entire code before outputting and confirm it is production-grade.
+
+OUTPUT ONLY the complete, valid <!DOCTYPE html> ... </html> file. 
+No explanations. No comments. No intro text. Start directly with the DOCTYPE and end with </html>.
+
+This code must be ready to copy-paste into the live Replit project, republish, and go live on https://freelanceskills.net/login with zero additional changes.
+
+Generate now with nuclear precision.
