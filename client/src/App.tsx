@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CountryProvider, CountrySelectorDialog } from "@/components/CountrySelector";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { SupportChat } from "@/components/SupportChat";
 import { CookieConsent } from "@/components/CookieConsent";
 import { OnboardingCarousel } from "@/components/OnboardingCarousel";
@@ -212,6 +212,52 @@ function PageLoader() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>
+  );
+}
+
+const GLOBAL_LAUNCH_DATE = new Date("2026-04-07T00:00:00+02:00");
+
+function getGlobalCountdown() {
+  const diffMs = GLOBAL_LAUNCH_DATE.getTime() - Date.now();
+  if (diffMs <= 0) {
+    return { launched: true, days: 0, hours: 0, minutes: 0, seconds: 0 };
+  }
+  const totalSeconds = Math.floor(diffMs / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  return { launched: false, days, hours, minutes, seconds };
+}
+
+function LaunchCountdownGlobal() {
+  const [countdown, setCountdown] = useState(getGlobalCountdown);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setCountdown(getGlobalCountdown());
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="fixed top-0 inset-x-0 z-[120] bg-primary text-white border-b border-white/20 shadow-lg">
+      <div className="container mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
+        <div className="text-sm font-semibold">
+          Launching Soon • 07 April 2026
+        </div>
+        {countdown.launched ? (
+          <div className="text-xs md:text-sm text-emerald-200 font-bold">We are live now</div>
+        ) : (
+          <div className="text-xs md:text-sm font-mono" data-testid="global-launch-countdown">
+            {String(countdown.days).padStart(2, "0")}d :
+            {String(countdown.hours).padStart(2, "0")}h :
+            {String(countdown.minutes).padStart(2, "0")}m :
+            {String(countdown.seconds).padStart(2, "0")}s
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -462,6 +508,7 @@ function App() {
           <TooltipProvider>
             <Toaster />
             <CountrySelectorDialog />
+            <LaunchCountdownGlobal />
             <Router />
             <div id="floating-fab"><FloatingActionButton /></div>
             <div id="floating-support"><SupportChat /></div>

@@ -2,7 +2,7 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Menu, X, Zap, LogOut, HelpCircle, Users, Briefcase, ChevronDown, Sparkles, Moon, Sun, Mic, GraduationCap } from "lucide-react";
+import { Menu, X, Zap, LogOut, HelpCircle, Users, Briefcase, ChevronDown, Sparkles, Moon, Sun, Mic, GraduationCap, Bell, AlertTriangle } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useDarkMode } from "@/hooks/use-dark-mode";
 import { VoiceSearch } from "./VoiceSearch";
@@ -20,13 +20,14 @@ type NavbarProps = {
 };
 
 export function Navbar({ topOffset = 0 }: NavbarProps) {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const globalLaunchBarOffset = 40;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showVoiceSearch, setShowVoiceSearch] = useState(false);
   const [location, navigate] = useLocation();
   const { user, isLoading, isAuthenticated, logout } = useAuth();
   const { isDark, toggle: toggleDarkMode } = useDarkMode();
   const [highContrast, setHighContrast] = useState(() => localStorage.getItem("high-contrast") === "true");
+  const useSolidNav = true;
 
   useEffect(() => {
     if (highContrast) {
@@ -39,25 +40,47 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
 
   const toggleHighContrast = () => setHighContrast(!highContrast);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const navLinks = [
-    { name: "Explore", href: "/explore", highlight: true },
-    { name: "Vuma AI", href: "/vuma", icon: Sparkles, highlight: true },
-    { name: "Services", href: "/services" },
-    { name: "Academy", href: "/academy", icon: GraduationCap },
-    { name: "Blog", href: "/blog" },
-    { name: "Pricing", href: "/pricing" },
-    ...(isAuthenticated ? [
-      { name: "Messages", href: "/messages" },
-      { name: "Dashboard", href: "/dashboard" },
-    ] : []),
+  const mainNavGroups: Array<{
+    name: string;
+    items: Array<{ name: string; href: string; icon?: any; description?: string }>;
+  }> = [
+    {
+      name: "Discover",
+      items: [
+        { name: "Explore", href: "/explore", icon: Sparkles, description: "Browse opportunities and categories" },
+        { name: "Services", href: "/services", icon: Users, description: "Book local taskers and pros" },
+        { name: "Pricing", href: "/pricing", icon: Zap, description: "Compare plans and fees" },
+        { name: "Blog", href: "/blog", icon: GraduationCap, description: "Guides and marketplace insights" },
+      ],
+    },
+    {
+      name: "Learn",
+      items: [
+        { name: "Academy", href: "/academy", icon: GraduationCap, description: "Courses and upskilling" },
+        { name: "How It Works", href: "/how-it-works", icon: HelpCircle, description: "Platform overview" },
+        { name: "How to Hire", href: "/how-to-hire", icon: Users, description: "Client onboarding" },
+        { name: "How to Get Hired", href: "/how-to-get-hired", icon: Briefcase, description: "Freelancer onboarding" },
+      ],
+    },
+    {
+      name: "Platform",
+      items: [
+        { name: "Vuma AI", href: "/vuma", icon: Sparkles, description: "AI tools and automations" },
+        { name: "Support", href: "/support", icon: HelpCircle, description: "Get help and FAQs" },
+        { name: "Resolution Center", href: "/resolution-center", icon: Briefcase, description: "Disputes and case resolution" },
+      ],
+    },
+    ...(isAuthenticated
+      ? [
+          {
+            name: "My Account",
+            items: [
+              { name: "Messages", href: "/messages", icon: Users, description: "Chat and conversations" },
+              { name: "Dashboard", href: "/dashboard", icon: Briefcase, description: "Manage your account and jobs" },
+            ],
+          },
+        ]
+      : []),
   ];
 
   const FindWorkMenu = () => {
@@ -70,7 +93,7 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
           <button
             className={cn(
               "flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors",
-              isScrolled || location !== "/"
+              useSolidNav
                 ? isFindWorkActive
                   ? "text-primary bg-primary/8 font-semibold"
                   : "text-muted-foreground hover:text-primary hover:bg-muted"
@@ -140,7 +163,7 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
         <button 
           className={cn(
             "flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors",
-            isScrolled || location !== "/" 
+            useSolidNav 
               ? "text-muted-foreground hover:text-primary hover:bg-muted" 
               : "text-white/90 hover:text-white hover:bg-white/10"
           )}
@@ -189,16 +212,114 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
     </DropdownMenu>
   );
 
+  const MainHeadingMenu = ({
+    name,
+    items,
+  }: {
+    name: string;
+    items: Array<{ name: string; href: string; icon?: any; description?: string }>;
+  }) => {
+    const isActive = items.some((item) => location === item.href);
+
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            className={cn(
+              "flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+              useSolidNav
+                ? isActive
+                  ? "text-primary bg-primary/8 font-semibold"
+                  : "text-muted-foreground hover:text-primary hover:bg-muted"
+                : isActive
+                  ? "text-white font-semibold bg-white/15"
+                  : "text-white/90 hover:text-white hover:bg-white/10"
+            )}
+            data-testid={`button-main-heading-${name.toLowerCase().replace(/\s+/g, "-")}`}
+          >
+            <span>{name}</span>
+            <ChevronDown className="h-3 w-3" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="w-64">
+          {items.map((item) => (
+            <Link key={item.name} href={item.href}>
+              <DropdownMenuItem
+                className="cursor-pointer py-3"
+                data-testid={`link-subheading-${item.name.toLowerCase().replace(/\s+/g, "-")}`}
+              >
+                <div className="flex items-start gap-3">
+                  {item.icon ? <item.icon className="h-5 w-5 text-primary mt-0.5" /> : null}
+                  <div>
+                    <div className="font-medium">{item.name}</div>
+                    {item.description ? <div className="text-xs text-muted-foreground">{item.description}</div> : null}
+                  </div>
+                </div>
+              </DropdownMenuItem>
+            </Link>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  };
+
+  const UrgentAlertsMenu = () => {
+    const urgentCount = 3;
+
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            className={cn(
+              "relative p-2 rounded-lg transition-colors",
+              useSolidNav
+                ? "text-muted-foreground hover:bg-muted hover:text-primary"
+                : "text-white/90 hover:bg-white/10"
+            )}
+            aria-label="Urgent alerts"
+            data-testid="button-urgent-alerts"
+          >
+            <Bell className="h-4 w-4" />
+            {urgentCount > 0 ? (
+              <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
+                {urgentCount}
+              </span>
+            ) : null}
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-72">
+          <div className="px-3 py-2 border-b">
+            <p className="text-sm font-semibold">Urgent Alerts</p>
+            <p className="text-xs text-muted-foreground">{urgentCount} jobs need immediate attention</p>
+          </div>
+          <DropdownMenuItem
+            className="cursor-pointer py-3"
+            onClick={() => navigate("/jobs?urgent=true")}
+            data-testid="link-urgent-jobs-popup"
+          >
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5" />
+              <div>
+                <div className="font-medium">3 urgent jobs need attention</div>
+                <div className="text-xs text-muted-foreground">Open filtered jobs and apply quickly</div>
+              </div>
+            </div>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  };
+
   return (
     <nav
       role="navigation"
       aria-label="Main navigation"
-      style={{ top: `${topOffset}px` }}
+      style={{ top: `${topOffset + globalLaunchBarOffset}px` }}
       className={cn(
         "fixed left-0 right-0 z-50 transition-all duration-300 border-b border-transparent",
-        isScrolled || location !== "/"
+        useSolidNav
           ? "bg-background/95 backdrop-blur-md border-border py-3 shadow-sm"
-          : "bg-transparent py-5 text-white"
+          : "bg-transparent py-3 text-white"
       )}
     >
       <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-background focus:px-4 focus:py-2 focus:border-2 focus:border-primary focus:rounded-md">Skip to main content</a>
@@ -208,13 +329,13 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
           <Link href="/" className="flex items-center gap-2 group">
               <div className={cn(
                 "w-8 h-8 rounded-lg flex items-center justify-center font-bold text-lg transition-colors",
-                 isScrolled || location !== "/" ? "bg-primary text-white" : "bg-white text-primary"
+                 useSolidNav ? "bg-primary text-white" : "bg-white text-primary"
               )}>
                 F
               </div>
               <span className={cn(
                 "font-display font-bold text-xl tracking-tight",
-                isScrolled || location !== "/" ? "text-primary" : "text-white"
+                useSolidNav ? "text-primary" : "text-white"
               )}>
                 FreelanceSkills
               </span>
@@ -222,35 +343,9 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
 
           <div className="hidden md:flex items-center gap-1">
             <FindWorkMenu />
-            {navLinks.map((link) => {
-              const isActive = location === link.href;
-              return (
-                <Link key={link.name} href={link.href}>
-                  <a className={cn(
-                    "text-sm font-medium transition-all px-3 py-2 rounded-lg flex items-center gap-1.5 relative",
-                    isScrolled || location !== "/"
-                      ? isActive
-                        ? "text-primary bg-primary/8 font-semibold"
-                        : "text-muted-foreground hover:text-primary hover:bg-muted/60"
-                      : isActive
-                        ? "text-white font-semibold bg-white/15"
-                        : "text-white/90 hover:text-white hover:bg-white/10",
-                    link.icon && !isActive && (isScrolled || location !== "/" ? "text-primary" : "text-accent")
-                  )}
-                  aria-label={link.name}
-                  >
-                    {link.icon && <link.icon className="h-4 w-4" aria-hidden="true" />}
-                    {link.name}
-                    {isActive && (
-                      <span className={cn(
-                        "absolute bottom-0.5 left-3 right-3 h-0.5 rounded-full",
-                        isScrolled || location !== "/" ? "bg-primary" : "bg-accent"
-                      )} aria-hidden="true" />
-                    )}
-                  </a>
-                </Link>
-              );
-            })}
+            {mainNavGroups.map((group) => (
+              <MainHeadingMenu key={group.name} name={group.name} items={group.items} />
+            ))}
           </div>
         </div>
 
@@ -259,7 +354,7 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
             onClick={() => setShowVoiceSearch(true)}
             className={cn(
               "p-2 rounded-lg transition-colors",
-              isScrolled || location !== "/"
+              useSolidNav
                 ? "text-muted-foreground hover:bg-muted hover:text-primary"
                 : "text-white/90 hover:bg-white/10"
             )}
@@ -269,11 +364,12 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
             <Mic className="h-4 w-4" />
           </button>
           <HelpMenu />
+          <UrgentAlertsMenu />
           <button
             onClick={toggleHighContrast}
             className={cn(
               "p-2 rounded-lg transition-colors",
-              isScrolled || location !== "/"
+              useSolidNav
                 ? "text-muted-foreground hover:bg-muted"
                 : "text-white/90 hover:bg-white/10"
             )}
@@ -286,7 +382,7 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
             onClick={toggleDarkMode}
             className={cn(
               "p-2 rounded-lg transition-colors",
-              isScrolled || location !== "/"
+              useSolidNav
                 ? "text-muted-foreground hover:bg-muted"
                 : "text-white/90 hover:bg-white/10"
             )}
@@ -296,13 +392,13 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
             {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
           <div className={cn(
-            isScrolled || location !== "/" ? "text-muted-foreground" : "text-white/90"
+            useSolidNav ? "text-muted-foreground" : "text-white/90"
           )}>
             <CountrySelector />
           </div>
           {isAuthenticated && (
             <div className={cn(
-              isScrolled || location !== "/" ? "text-muted-foreground" : "text-white/90"
+              useSolidNav ? "text-muted-foreground" : "text-white/90"
             )}>
               <NotificationBell />
             </div>
@@ -311,7 +407,7 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
               variant="ghost" 
               className={cn(
                 "hover:text-accent hover:bg-transparent font-medium",
-                isScrolled || location !== "/" ? "text-primary" : "text-white"
+                useSolidNav ? "text-primary" : "text-white"
               )}
               data-testid="button-post-job-navbar"
               onClick={() => navigate("/post-job")}
@@ -330,7 +426,7 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
                 )}
                 <span className={cn(
                   "text-sm font-medium",
-                  isScrolled || location !== "/" ? "text-foreground" : "text-white"
+                  useSolidNav ? "text-foreground" : "text-white"
                 )}>
                   {user?.firstName || "User"}
                 </span>
@@ -340,7 +436,7 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
                   size="sm"
                   className={cn(
                     "hover:text-red-500",
-                    isScrolled || location !== "/" ? "text-muted-foreground" : "text-white/80"
+                    useSolidNav ? "text-muted-foreground" : "text-white/80"
                   )}
                   data-testid="button-logout"
                   onClick={logout}
@@ -355,7 +451,7 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
                   variant="ghost"
                   className={cn(
                     "hover:text-accent hover:bg-transparent font-medium",
-                    isScrolled || location !== "/" ? "text-primary" : "text-white"
+                    useSolidNav ? "text-primary" : "text-white"
                   )}
                   data-testid="button-login"
                   aria-label="Log in to your account"
@@ -367,7 +463,7 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
                 <Button 
                   className={cn(
                     "font-semibold shadow-lg transition-all hover:scale-105 active:scale-95",
-                    isScrolled || location !== "/" 
+                    useSolidNav 
                       ? "bg-primary text-white hover:bg-primary/90" 
                       : "bg-accent text-primary hover:bg-accent/90"
                   )}
@@ -390,9 +486,9 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
           aria-expanded={isMobileMenuOpen}
         >
           {isMobileMenuOpen ? (
-            <X className={cn("w-6 h-6", isScrolled || location !== "/" ? "text-primary" : "text-white")} />
+            <X className={cn("w-6 h-6", useSolidNav ? "text-primary" : "text-white")} />
           ) : (
-            <Menu className={cn("w-6 h-6", isScrolled || location !== "/" ? "text-primary" : "text-white")} />
+            <Menu className={cn("w-6 h-6", useSolidNav ? "text-primary" : "text-white")} />
           )}
         </button>
       </div>
@@ -422,21 +518,34 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
 
           <div className="flex flex-col gap-2">
             <h3 className="text-xs font-semibold text-muted-foreground px-2 uppercase tracking-wider">Navigation</h3>
-            {navLinks.map((link) => {
-              const isActive = location === link.href;
-              return (
-                <Link key={link.name} href={link.href} className={cn(
-                  "text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md flex items-center gap-2",
-                  isActive && "text-primary bg-primary/5",
-                  link.icon && "text-primary"
-                )} data-testid={`link-mobile-nav-${link.name.toLowerCase().replace(/\s+/g, '-')}`}>
-                    {link.icon && <link.icon className="h-4 w-4" />}
-                    {link.name}
-                </Link>
-              );
-            })}
+            {mainNavGroups.map((group) => (
+              <div key={group.name} className="space-y-1">
+                <h4 className="text-[11px] font-bold text-muted-foreground px-2 uppercase tracking-wider">{group.name}</h4>
+                {group.items.map((item) => {
+                  const isActive = location === item.href;
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className={cn(
+                        "text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md flex items-center gap-2",
+                        isActive && "text-primary bg-primary/5"
+                      )}
+                      data-testid={`link-mobile-subheading-${item.name.toLowerCase().replace(/\s+/g, "-")}`}
+                    >
+                      {item.icon ? <item.icon className="h-4 w-4 text-primary" /> : null}
+                      {item.name}
+                    </Link>
+                  );
+                })}
+              </div>
+            ))}
           </div>
 
+          <div className="h-px bg-border my-1" />
+          <Link href="/jobs?urgent=true" className="text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md flex items-center gap-2" data-testid="link-mobile-urgent-alerts">
+            <Bell className="h-4 w-4 text-red-500" /> Urgent Jobs (3)
+          </Link>
           <div className="h-px bg-border my-1" />
           <Link href="/post-job" className="text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md" data-testid="link-mobile-post-job">
               Post a Job

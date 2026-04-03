@@ -1,4 +1,5 @@
 import type { User } from "@shared/models/auth";
+import { FirebaseError } from "firebase/app";
 import {
   createUserWithEmailAndPassword,
   OAuthProvider,
@@ -35,6 +36,39 @@ function mapFirebaseUser(user: FirebaseUser): User {
     createdAt: user.metadata.creationTime ? new Date(user.metadata.creationTime) : null,
     updatedAt: user.metadata.lastSignInTime ? new Date(user.metadata.lastSignInTime) : null,
   };
+}
+
+function mapSocialAuthError(error: unknown, provider: "google" | "apple"): Error {
+  if (!(error instanceof FirebaseError)) {
+    return new Error("Sign-in failed. Please try again.");
+  }
+
+  switch (error.code) {
+    case "auth/popup-closed-by-user":
+      return new Error("Sign-in popup was closed before completing login.");
+    case "auth/popup-blocked":
+      return new Error("Popup was blocked by the browser. Allow popups and try again.");
+    case "auth/network-request-failed":
+      return new Error("Network error during sign-in. Check your connection and retry.");
+    case "auth/unauthorized-domain":
+      return new Error("This domain is not authorized in Firebase Auth. Add localhost to Authorized domains.");
+    case "auth/operation-not-allowed":
+      return new Error(
+        provider === "google"
+          ? "Google sign-in is not enabled in Firebase Authentication."
+          : "Apple sign-in is not enabled in Firebase Authentication."
+      );
+    case "auth/account-exists-with-different-credential":
+      return new Error("An account with this email exists with a different sign-in method.");
+    case "auth/internal-error":
+      return new Error(
+        provider === "apple"
+          ? "Apple sign-in is not fully configured for this environment yet. Use email or Google sign-in for now."
+          : "Google sign-in setup is incomplete. Check Firebase provider settings and authorized domains."
+      );
+    default:
+      return new Error(error.message || "Sign-in failed. Please try again.");
+  }
 }
 
 export async function registerWithEmail(data: {
@@ -76,15 +110,23 @@ export async function loginWithGoogle(): Promise<User> {
   ensureFirebaseReady();
   const provider = new GoogleAuthProvider();
   provider.setCustomParameters({ prompt: "select_account" });
-  const credential = await signInWithPopup(firebaseAuth!, provider);
-  return mapFirebaseUser(credential.user);
+  try {
+    const credential = await signInWithPopup(firebaseAuth!, provider);
+    return mapFirebaseUser(credential.user);
+  } catch (error) {
+    throw mapSocialAuthError(error, "google");
+  }
 }
 
 export async function loginWithApple(): Promise<User> {
   ensureFirebaseReady();
   const provider = new OAuthProvider("apple.com");
-  const credential = await signInWithPopup(firebaseAuth!, provider);
-  return mapFirebaseUser(credential.user);
+  try {
+    const credential = await signInWithPopup(firebaseAuth!, provider);
+    return mapFirebaseUser(credential.user);
+  } catch (error) {
+    throw mapSocialAuthError(error, "apple");
+  }
 }
 
 export async function sendFirebaseResetEmail(email: string): Promise<void> {

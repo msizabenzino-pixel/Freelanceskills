@@ -270,10 +270,10 @@ export default function Auth() {
         <div className="w-full max-w-5xl grid md:grid-cols-2 gap-8 items-center">
           <div className="hidden md:block space-y-8">
             <div>
-              <h1 className="text-4xl font-bold text-slate-900 mb-3">
+              <h1 className="text-4xl font-bold text-foreground mb-3">
                 {isLogin ? "Welcome back" : "Join FreelanceSkills"}
               </h1>
-              <p className="text-lg text-slate-600">
+              <p className="text-lg text-muted-foreground">
                 {isLogin
                   ? "Sign in to access your dashboard, messages, and opportunities."
                   : "Create your account and start connecting with opportunities worldwide."}
@@ -281,46 +281,46 @@ export default function Auth() {
             </div>
 
             <div className="space-y-4">
-              <div className="flex items-start gap-4 p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
+              <div className="flex items-start gap-4 p-4 bg-white rounded-xl border border-border shadow-sm">
                 <div className="p-2 rounded-lg bg-blue-50">
                   <Globe className="h-5 w-5 text-blue-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900">Global Opportunities</h3>
-                  <p className="text-sm text-slate-500">Access thousands of jobs from South Africa and worldwide</p>
+                  <h3 className="font-semibold text-foreground">Global Opportunities</h3>
+                  <p className="text-sm text-muted-foreground">Access thousands of jobs from South Africa and worldwide</p>
                 </div>
               </div>
-              <div className="flex items-start gap-4 p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
+              <div className="flex items-start gap-4 p-4 bg-white rounded-xl border border-border shadow-sm">
                 <div className="p-2 rounded-lg bg-amber-50">
                   <Zap className="h-5 w-5 text-amber-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900">AI-Powered Matching</h3>
-                  <p className="text-sm text-slate-500">Our AI finds the perfect opportunities for your skills</p>
+                  <h3 className="font-semibold text-foreground">AI-Powered Matching</h3>
+                  <p className="text-sm text-muted-foreground">Our AI finds the perfect opportunities for your skills</p>
                 </div>
               </div>
-              <div className="flex items-start gap-4 p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
+              <div className="flex items-start gap-4 p-4 bg-white rounded-xl border border-border shadow-sm">
                 <div className="p-2 rounded-lg bg-green-50">
                   <Shield className="h-5 w-5 text-green-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900">Secure & Trusted</h3>
-                  <p className="text-sm text-slate-500">Escrow-protected payments and verified professionals</p>
+                  <h3 className="font-semibold text-foreground">Secure & Trusted</h3>
+                  <p className="text-sm text-muted-foreground">Escrow-protected payments and verified professionals</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <Card className="shadow-xl border-slate-200" data-testid="auth-card">
+          <Card className="shadow-xl border-border" data-testid="auth-card">
             <CardContent className="p-8">
               <div className="text-center mb-8">
                 <div className="w-12 h-12 bg-primary text-white rounded-xl flex items-center justify-center font-bold text-xl mx-auto mb-4">
                   F
                 </div>
-                <h2 className="text-2xl font-bold text-slate-900" data-testid="text-auth-title">
+                <h2 className="text-2xl font-bold text-card-foreground" data-testid="text-auth-title">
                   {isForgotPassword ? "Reset Password" : (isLogin ? "Sign In" : "Create Account")}
                 </h2>
-                <p className="text-sm text-slate-500 mt-1">
+                <p className="text-sm text-card-foreground/75 mt-1">
                   {isForgotPassword 
                     ? "Enter your email to receive a reset link" 
                     : (isLogin ? "Enter your credentials to continue" : "Fill in your details to get started")}
@@ -330,9 +330,9 @@ export default function Auth() {
               {isForgotPassword ? (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                    <Label htmlFor="resetEmail" className="text-sm font-medium text-slate-700">Email Address</Label>
+                    <Label htmlFor="resetEmail" className="text-sm font-medium text-card-foreground">Email Address</Label>
                     <div className="relative mt-1">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-card-foreground/60" />
                       <Input
                         id="resetEmail"
                         type="email"
@@ -389,9 +389,9 @@ export default function Auth() {
                   {!isLogin && (
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <Label htmlFor="firstName" className="text-sm font-medium text-slate-700">First Name</Label>
+                        <Label htmlFor="firstName" className="text-sm font-medium text-card-foreground">First Name</Label>
                         <div className="relative mt-1">
-                          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-card-foreground/60" />
                           <Input
                             id="firstName"
                             placeholder="John"
@@ -404,9 +404,9 @@ export default function Auth() {
                         </div>
                       </div>
                       <div>
-                        <Label htmlFor="lastName" className="text-sm font-medium text-slate-700">Last Name</Label>
+                        <Label htmlFor="lastName" className="text-sm font-medium text-card-foreground">Last Name</Label>
                         <div className="relative mt-1">
-                          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-card-foreground/60" />
                           <Input
                             id="lastName"
                             placeholder="Doe"
@@ -423,12 +423,12 @@ export default function Auth() {
 
                   {!isLogin && (
                     <>
-                      <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+                      <div className="rounded-lg border border-border bg-muted/30 px-3 py-2 text-xs text-card-foreground/75">
                         Application Profile (required): this information is saved for job applications.
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                          <Label htmlFor="userType" className="text-sm font-medium text-slate-700">Account Type</Label>
+                          <Label htmlFor="userType" className="text-sm font-medium text-card-foreground">Account Type</Label>
                           <select
                             id="userType"
                             value={formData.userType}
@@ -442,7 +442,7 @@ export default function Auth() {
                           </select>
                         </div>
                         <div>
-                          <Label htmlFor="phoneNumber" className="text-sm font-medium text-slate-700">Phone Number</Label>
+                          <Label htmlFor="phoneNumber" className="text-sm font-medium text-card-foreground">Phone Number</Label>
                           <Input
                             id="phoneNumber"
                             placeholder="+27..."
@@ -456,7 +456,7 @@ export default function Auth() {
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                          <Label htmlFor="country" className="text-sm font-medium text-slate-700">Country</Label>
+                          <Label htmlFor="country" className="text-sm font-medium text-card-foreground">Country</Label>
                           <Input
                             id="country"
                             placeholder="South Africa"
@@ -467,7 +467,7 @@ export default function Auth() {
                           />
                         </div>
                         <div>
-                          <Label htmlFor="location" className="text-sm font-medium text-slate-700">City / Location</Label>
+                          <Label htmlFor="location" className="text-sm font-medium text-card-foreground">City / Location</Label>
                           <Input
                             id="location"
                             placeholder="Cape Town"
@@ -481,7 +481,7 @@ export default function Auth() {
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                          <Label htmlFor="title" className="text-sm font-medium text-slate-700">Professional Title</Label>
+                          <Label htmlFor="title" className="text-sm font-medium text-card-foreground">Professional Title</Label>
                           <Input
                             id="title"
                             placeholder="React Developer"
@@ -492,7 +492,7 @@ export default function Auth() {
                           />
                         </div>
                         <div>
-                          <Label htmlFor="yearsExperience" className="text-sm font-medium text-slate-700">Years of Experience</Label>
+                          <Label htmlFor="yearsExperience" className="text-sm font-medium text-card-foreground">Years of Experience</Label>
                           <Input
                             id="yearsExperience"
                             type="number"
@@ -508,7 +508,7 @@ export default function Auth() {
                       </div>
 
                       <div>
-                        <Label htmlFor="skills" className="text-sm font-medium text-slate-700">Key Skills</Label>
+                        <Label htmlFor="skills" className="text-sm font-medium text-card-foreground">Key Skills</Label>
                         <Input
                           id="skills"
                           placeholder="React, TypeScript, Node.js"
@@ -520,7 +520,7 @@ export default function Auth() {
                       </div>
 
                       <div>
-                        <Label htmlFor="bio" className="text-sm font-medium text-slate-700">Short Bio</Label>
+                        <Label htmlFor="bio" className="text-sm font-medium text-card-foreground">Short Bio</Label>
                         <textarea
                           id="bio"
                           placeholder="Tell clients about your experience, strengths, and what kind of jobs you are looking for."
@@ -535,9 +535,9 @@ export default function Auth() {
                   )}
 
                   <div>
-                    <Label htmlFor="email" className="text-sm font-medium text-slate-700">Email Address</Label>
+                    <Label htmlFor="email" className="text-sm font-medium text-card-foreground">Email Address</Label>
                     <div className="relative mt-1">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-card-foreground/60" />
                       <Input
                         id="email"
                         type="email"
@@ -553,7 +553,7 @@ export default function Auth() {
 
                   <div>
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="password" className="text-sm font-medium text-slate-700">Password</Label>
+                      <Label htmlFor="password" className="text-sm font-medium text-card-foreground">Password</Label>
                       {isLogin && (
                         <button
                           type="button"
@@ -566,7 +566,7 @@ export default function Auth() {
                       )}
                     </div>
                     <div className="relative mt-1">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-card-foreground/60" />
                       <Input
                         id="password"
                         type={showPassword ? "text" : "password"}
@@ -581,7 +581,7 @@ export default function Auth() {
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-card-foreground/60 hover:text-card-foreground"
                         data-testid="button-toggle-password"
                       >
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -607,10 +607,10 @@ export default function Auth() {
 
                   <div className="relative py-1">
                     <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t border-slate-200" />
+                      <span className="w-full border-t border-border" />
                     </div>
                     <div className="relative flex justify-center text-xs uppercase tracking-wide">
-                      <span className="bg-white px-2 text-slate-400">Or continue with</span>
+                      <span className="bg-card px-2 text-card-foreground/70">Or continue with</span>
                     </div>
                   </div>
 
@@ -634,7 +634,7 @@ export default function Auth() {
                       disabled={socialAuthMutation.isPending}
                       data-testid="button-auth-google"
                     >
-                      <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white border border-slate-300 text-[11px] font-bold text-slate-700">
+                      <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white border border-border text-[11px] font-bold text-slate-900">
                         G
                       </span>
                       Google
