@@ -71,6 +71,13 @@ const About = lazy(() => import("@/pages/About"));
 const Login = lazy(() => import("@/pages/Login"));
 const Careers = lazy(() => import("@/pages/Careers"));
 
+// ── Nuclear Vetting System ───────────────────────────────────────────────────
+const VettingHub = lazy(() => import("@/pages/VettingHub"));
+const VettingIdentity = lazy(() => import("@/pages/VettingIdentity"));
+const VettingSkills = lazy(() => import("@/pages/VettingSkills"));
+const VettingEducation = lazy(() => import("@/pages/VettingEducation"));
+const VettingBackground = lazy(() => import("@/pages/VettingBackground"));
+
 // ── Admin S1–S50 ──────────────────────────────────────────────────────────────
 const FraudDashboard = lazy(() => import("@/pages/FraudDashboard"));
 const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
@@ -461,6 +468,12 @@ function Router() {
         <Route path="/about" component={About} />
         <Route path="/login" component={Login} />
         <Route path="/careers" component={Careers} />
+        {/* Nuclear Vetting System */}
+        <Route path="/vetting" component={VettingHub} />
+        <Route path="/vetting/identity" component={VettingIdentity} />
+        <Route path="/vetting/skills" component={VettingSkills} />
+        <Route path="/vetting/education" component={VettingEducation} />
+        <Route path="/vetting/background" component={VettingBackground} />
         <Route path="/academy" component={Academy} />
         <Route path="/academy/catalog" component={AcademyCatalog} />
         <Route path="/academy/:id" component={AcademyCourseDetail} />

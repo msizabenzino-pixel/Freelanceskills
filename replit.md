@@ -117,3 +117,19 @@ Route: `/admin/roles` | 10 tabs: 📋 Roles Library · ⚡ Permission Matrix · 
 Key files (Section 26): `server/featureFlagsRoutes.ts`, `client/src/pages/FeatureFlagsManagement.tsx`, `shared/models/feature_flags.ts`
 DB Tables: `feature_flags`, `flag_history`, `flag_experiments`
 Route: `/admin/feature-flags` | 8 tabs: 🚩 Flags Library · 🎯 Targeting Engine · 🤖 AI Command Centre · 🧪 Experiments · 📡 Live Dashboard · 🌍 Africa Intel · ✏️ Editor · 📜 History
+
+
+**Nuclear Vetting System — Tiers 0–3 — POPIA-Compliant AI-Proctored** (5-step verification):
+- 6 Drizzle DB tables: `vetting_records`, `vetting_documents`, `vetting_skill_assessments`, `vetting_references`, `vetting_audit_logs`, `vetting_consents`
+- 12 API endpoints at `/api/vetting/*`: status, start, consent, identity, skills, education, background, score/:id, questions/:testType, references/respond, audit-trail, tiers, DELETE data
+- POPIA right to erasure: soft anonymise (not hard delete) with immutable audit trail
+- Lebo AI Guide: multilingual nudges (en/zu/xh/af) keyed by (tier, nextStep, language)
+- Blockchain hash: SHA-256 of `FreelanceSkills:${userId}:tier${n}:${Date.now()}:POPIA-v1.0`
+- AI-proctored skills: tab-switch tracking, face detection flag, time analysis, adaptive questions
+- Education: OCR extraction + SAQA NLRD cross-check simulation + blockchain credential minting
+- Background: automated reference outreach, criminal check consent, Elite tier activation
+- 5 React pages wired into router: /vetting, /vetting/identity, /vetting/skills, /vetting/education, /vetting/background
+- Beats Fiverr + Upwork + Toptal + Andela + Guru verification systems until 2030
+
+Key files: `server/vettingRoutes.ts`, `shared/models/vetting.ts`, `client/src/pages/VettingHub.tsx`, `client/src/pages/VettingIdentity.tsx`, `client/src/pages/VettingSkills.tsx`, `client/src/pages/VettingEducation.tsx`, `client/src/pages/VettingBackground.tsx`
+Migration: `script/create-vetting-tables.ts` (raw SQL, all 6 tables created)
