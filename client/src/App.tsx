@@ -77,6 +77,7 @@ const VettingIdentity = lazy(() => import("@/pages/VettingIdentity"));
 const VettingSkills = lazy(() => import("@/pages/VettingSkills"));
 const VettingEducation = lazy(() => import("@/pages/VettingEducation"));
 const VettingBackground = lazy(() => import("@/pages/VettingBackground"));
+const NuclearChallenge = lazy(() => import("@/pages/NuclearChallenge"));
 
 // ── Admin S1–S50 ──────────────────────────────────────────────────────────────
 const FraudDashboard = lazy(() => import("@/pages/FraudDashboard"));
@@ -474,6 +475,7 @@ function Router() {
         <Route path="/vetting/skills" component={VettingSkills} />
         <Route path="/vetting/education" component={VettingEducation} />
         <Route path="/vetting/background" component={VettingBackground} />
+          <Route path="/nuclear-challenge" component={NuclearChallenge} />
         <Route path="/academy" component={Academy} />
         <Route path="/academy/catalog" component={AcademyCatalog} />
         <Route path="/academy/:id" component={AcademyCourseDetail} />
