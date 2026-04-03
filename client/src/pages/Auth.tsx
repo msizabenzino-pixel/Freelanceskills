@@ -64,6 +64,23 @@ export default function Auth() {
   const [resetEmail, setResetEmail] = useState("");
   const [resetLink, setResetLink] = useState("");
 
+  const getSocialAuthErrorMessage = (error: Error) => {
+    const msg = (error.message || "").toLowerCase();
+    if (msg.includes("auth/internal-error")) {
+      return "Social sign-in is not fully configured yet. Use email/password for now, or enable the provider in Firebase Auth.";
+    }
+    if (msg.includes("auth/unauthorized-domain")) {
+      return "This domain is not authorized in Firebase Auth. Add localhost to Authorized domains.";
+    }
+    if (msg.includes("auth/operation-not-allowed")) {
+      return "This sign-in provider is disabled in Firebase Authentication settings.";
+    }
+    if (msg.includes("firebase: error")) {
+      return "Social sign-in failed. Please try again, or continue with email/password.";
+    }
+    return error.message;
+  };
+
   const resolvePostAuthDestination = () => {
     if (typeof window === "undefined") return "/dashboard";
     const params = new URLSearchParams(window.location.search);
@@ -245,7 +262,11 @@ export default function Auth() {
       await completeAuthSuccess(user);
     },
     onError: (error: Error) => {
-      toast({ title: "Social sign-in failed", description: error.message, variant: "destructive" });
+      toast({
+        title: "Social sign-in failed",
+        description: getSocialAuthErrorMessage(error),
+        variant: "destructive",
+      });
     },
   });
 
