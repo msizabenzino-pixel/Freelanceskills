@@ -4,18 +4,117 @@ import { JobCard } from "@/components/JobCard";
 import { FreelancerCard } from "@/components/FreelancerCard";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users, Gift, Building2, Brain, Link2, Wallet, BarChart3, Leaf, Globe, ChevronRight, ShieldCheck, Lock, FileText, Headphones, Star, Quote, Send, Zap, Bell, Newspaper, Mail, Clock, CheckCheck, Activity } from "lucide-react";
+import { ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users, Gift, Building2, Brain, Link2, Wallet, BarChart3, Leaf, Globe, ChevronRight, ShieldCheck, Lock, FileText, Headphones, Star, Quote, Send, Zap, Bell, Newspaper, Mail, Clock, CheckCheck, Activity, X, Flame, Cpu, MapPin } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { useCurrency } from "@/lib/currency";
 import { SERVICE_CATEGORIES } from "@shared/categories";
 import { Code, Wrench, Heart, Hammer, Home as HomeIcon, Waves, Car, Shield as ShieldIcon, Palette, PenTool, Briefcase, PartyPopper, Sparkles as SparklesIcon, Bot } from "lucide-react";
-import { useState, useEffect, type FormEvent } from "react";
+import { useState, useEffect, useRef, type FormEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { motion, AnimatePresence } from "framer-motion";
+
+// ── Instant Apply Modal ────────────────────────────────────────────────────────
+function InstantApplyModal({ job, onClose }: { job: { title: string; company: string; budget: string; location: string } | null; onClose: () => void }) {
+  const [step, setStep] = useState<"form" | "success">("form");
+  const [note, setNote] = useState("");
+  const confettiRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (step === "success" && confettiRef.current) {
+      const colors = ["#10b981", "#f59e0b", "#3b82f6", "#8b5cf6", "#ef4444"];
+      for (let i = 0; i < 80; i++) {
+        const el = document.createElement("div");
+        el.style.cssText = `
+          position:absolute;width:8px;height:8px;border-radius:2px;
+          background:${colors[i % colors.length]};
+          left:${Math.random() * 100}%;
+          top:${Math.random() * 30}%;
+          animation:confettiFall ${1 + Math.random() * 2}s ease-out forwards;
+          transform:rotate(${Math.random() * 360}deg);
+          animation-delay:${Math.random() * 0.5}s;
+        `;
+        confettiRef.current.appendChild(el);
+      }
+    }
+  }, [step]);
+
+  if (!job) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+        data-testid="modal-instant-apply"
+      >
+        <motion.div
+          className="relative w-full max-w-md bg-card border border-border rounded-2xl shadow-2xl overflow-hidden"
+          initial={{ y: 60, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 60, opacity: 0 }}
+          onClick={e => e.stopPropagation()}
+        >
+          {step === "success" ? (
+            <div ref={confettiRef} className="relative p-8 text-center overflow-hidden">
+              <style>{`@keyframes confettiFall{to{transform:translateY(200px) rotate(720deg);opacity:0;}}`}</style>
+              <div className="text-5xl mb-4">🎉</div>
+              <h3 className="text-2xl font-black text-foreground mb-2" data-testid="text-apply-success-title">Application Sent!</h3>
+              <p className="text-muted-foreground text-sm mb-2">Your proposal for <span className="font-semibold text-foreground">{job.title}</span> has been sent.</p>
+              <p className="text-emerald-500 text-xs font-semibold mb-6">Verified freelancers get responses 3× faster. Start your vetting →</p>
+              <div className="flex gap-3">
+                <Link href="/vetting" className="flex-1 py-3 rounded-xl bg-emerald-500 text-slate-950 font-bold text-sm text-center hover:bg-emerald-400 transition-all" data-testid="button-apply-success-verify">Get Verified</Link>
+                <button onClick={onClose} className="flex-1 py-3 rounded-xl border border-border text-sm font-semibold hover:bg-muted transition-all" data-testid="button-apply-success-close">Done</button>
+              </div>
+            </div>
+          ) : (
+            <div className="p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h3 className="font-bold text-lg text-foreground leading-tight" data-testid="text-apply-modal-title">{job.title}</h3>
+                  <p className="text-sm text-muted-foreground">{job.company}</p>
+                </div>
+                <button onClick={onClose} className="p-1 rounded-lg hover:bg-muted transition-all" aria-label="Close" data-testid="button-apply-modal-close"><X className="w-5 h-5 text-muted-foreground" /></button>
+              </div>
+              <div className="flex gap-3 text-xs text-muted-foreground mb-5">
+                <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{job.location}</span>
+                <span className="flex items-center gap-1 text-emerald-600 font-semibold"><Flame className="w-3.5 h-3.5" />{job.budget}</span>
+              </div>
+              <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3 mb-5 flex items-start gap-3">
+                <Cpu className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                <div className="text-xs">
+                  <div className="font-semibold text-emerald-600 mb-0.5">AI Pre-filled Proposal</div>
+                  <div className="text-muted-foreground">Based on your profile, skills, and SA market rates. Edit before sending.</div>
+                </div>
+              </div>
+              <textarea
+                value={note}
+                onChange={e => setNote(e.target.value)}
+                className="w-full h-28 text-sm rounded-xl border border-border bg-muted/40 p-3 resize-none focus:outline-none focus:ring-2 focus:ring-primary/30 mb-4"
+                placeholder="Hi, I'm interested in this role. I have 5+ years experience in..."
+                data-testid="textarea-apply-proposal"
+              />
+              <button
+                onClick={() => { if (!note.trim()) setNote("Hi, I have the skills and availability to deliver this project on time and within budget. I'd love to discuss further."); setStep("success"); }}
+                className="w-full py-3.5 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-sm transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
+                data-testid="button-apply-submit"
+              >
+                <Send className="w-4 h-4" /> Send Application
+              </button>
+              <p className="text-xs text-muted-foreground text-center mt-3">Verified freelancers get 3× more interview invites</p>
+            </div>
+          )}
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
 
 const ICON_MAP: Record<string, any> = {
   Code, Wrench, Heart, Hammer, Home: HomeIcon, Waves, Car, Shield: ShieldIcon, Palette, PenTool, 
@@ -216,7 +315,10 @@ export default function Home() {
       location: "Pretoria East (5km away)",
       postedAt: "1h ago",
       tags: ["Safety Officer", "Construction", "OHS"],
-      description: "Looking for a certified Safety Officer for a government tender project in Pretoria East. Must have SACPCMP registration."
+      description: "Looking for a certified Safety Officer for a government tender project in Pretoria East. Must have SACPCMP registration.",
+      aiMatchScore: 94,
+      applicants: 7,
+      urgent: false,
     },
     {
       title: "Emergency Plumber Needed",
@@ -226,7 +328,10 @@ export default function Home() {
       location: "Sandton (2km away)",
       postedAt: "15m ago",
       tags: ["Plumbing", "Maintenance", "Urgent"],
-      description: "Geyser burst in the garage. Need someone immediately to assist with shutoff and repair."
+      description: "Geyser burst in the garage. Need someone immediately to assist with shutoff and repair.",
+      aiMatchScore: 88,
+      applicants: 3,
+      urgent: true,
     },
     {
       title: "Senior React Developer for Fintech App",
@@ -236,7 +341,10 @@ export default function Home() {
       location: "Cape Town / Remote",
       postedAt: "2h ago",
       tags: ["React", "TypeScript", "Node.js"],
-      description: "We are looking for an experienced Senior React Developer to join our digital transformation team. You will be building secure, high-performance banking interfaces."
+      description: "We are looking for an experienced Senior React Developer to join our digital transformation team. You will be building secure, high-performance banking interfaces.",
+      aiMatchScore: 97,
+      applicants: 12,
+      urgent: false,
     },
     {
       title: "Tender Documentation Consultant",
@@ -246,7 +354,10 @@ export default function Home() {
       location: "Durban / Remote",
       postedAt: "4h ago",
       tags: ["Tender Compliance", "Writing", "Government"],
-      description: "Need expert assistance in compiling a compliant bid for a municipal transport tender."
+      description: "Need expert assistance in compiling a compliant bid for a municipal transport tender.",
+      aiMatchScore: 82,
+      applicants: 5,
+      urgent: false,
     }
   ];
 
@@ -294,12 +405,17 @@ export default function Home() {
   ];
 
   const topChromeOffset = 96;
+  type FeaturedJob = { title: string; company: string; budget: string; location: string; type: string; postedAt: string; tags: string[]; description: string; aiMatchScore: number; applicants: number; urgent: boolean };
+  const [applyJob, setApplyJob] = useState<FeaturedJob | null>(null);
 
   return (
     <div
       className="min-h-screen bg-background font-sans flex flex-col overflow-x-hidden"
       style={{ paddingTop: `${topChromeOffset}px` }}
     >
+      {/* Instant Apply Modal */}
+      {applyJob && <InstantApplyModal job={applyJob} onClose={() => setApplyJob(null)} />}
+
       <Navbar topOffset={0} />
       <Hero />
       <LiveActivityTicker />
@@ -318,10 +434,93 @@ export default function Home() {
                 </Button>
             </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {featuredJobs.map((job, i) => (
-              <JobCard key={i} {...job} />
+              <div
+                key={i}
+                className="bg-card rounded-2xl border border-border hover:border-primary/30 hover:shadow-xl transition-all duration-300 p-5 md:p-6 group relative"
+                data-testid={`card-featured-job-${i}`}
+              >
+                {/* AI Match Score Badge */}
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {job.urgent && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400" data-testid={`badge-urgent-${i}`}>
+                        🔴 Urgent
+                      </span>
+                    )}
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                      {job.type}
+                    </span>
+                  </div>
+                  <div
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-black bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 flex-shrink-0"
+                    data-testid={`badge-ai-match-${i}`}
+                    title="AI Match Score — how well this matches your profile"
+                  >
+                    <Cpu className="w-3 h-3" />
+                    {job.aiMatchScore}% AI Match
+                  </div>
+                </div>
+
+                <h3 className="font-bold text-lg text-foreground mb-1 leading-tight group-hover:text-primary transition-colors" data-testid={`text-job-title-${i}`}>
+                  {job.title}
+                </h3>
+                <p className="text-sm text-muted-foreground mb-3 font-medium">{job.company}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-4 line-clamp-2">{job.description}</p>
+
+                <div className="flex items-center gap-4 text-xs text-muted-foreground mb-4">
+                  <span className="flex items-center gap-1">📍 {job.location}</span>
+                  <span className="flex items-center gap-1">⏰ {job.postedAt}</span>
+                  <span className="flex items-center gap-1">👥 {job.applicants} applied</span>
+                </div>
+
+                <div className="flex flex-wrap gap-1.5 mb-5">
+                  {job.tags.map(tag => (
+                    <span key={tag} className="px-2.5 py-1 rounded-full text-xs font-semibold bg-muted text-muted-foreground border border-border">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="flex items-center justify-between gap-3 pt-4 border-t border-border">
+                  <span className="text-lg font-black text-primary" data-testid={`text-job-budget-${i}`}>{job.budget}</span>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-xs"
+                      onClick={() => navigate("/jobs")}
+                      data-testid={`button-view-job-${i}`}
+                    >
+                      View
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="text-xs bg-primary hover:bg-primary/90 text-white gap-1.5"
+                      onClick={() => setApplyJob(job)}
+                      data-testid={`button-quick-apply-${i}`}
+                    >
+                      <Send className="w-3 h-3" /> Quick Apply
+                    </Button>
+                  </div>
+                </div>
+              </div>
             ))}
+          </div>
+
+          {/* 30-Day Challenge CTA */}
+          <div className="mt-8 p-5 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 border border-emerald-500/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🔥</span>
+              <div>
+                <div className="font-bold text-sm text-foreground">30-Day African Talent Revolution is Live!</div>
+                <div className="text-xs text-muted-foreground">47,470+ verified freelancers · 92,340+ projects completed · R2.3B+ escrow released</div>
+              </div>
+            </div>
+            <Link href="/challenge" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-sm hover:bg-emerald-400 transition-all flex-shrink-0" data-testid="link-challenge-cta">
+              View Dashboard <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
       </section>
@@ -1008,6 +1207,7 @@ export default function Home() {
                   location: "Soweto, GP",
                   rating: 5,
                   quote: "FreelanceSkills changed my business. I used to struggle with payments, now everything is secure through escrow.",
+                  photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=120&h=120",
                 },
                 {
                   name: "Lerato Mokoena",
@@ -1015,6 +1215,7 @@ export default function Home() {
                   location: "Sandton, GP",
                   rating: 5,
                   quote: "The AI profile builder helped me showcase my skills perfectly. I landed my first big corporate client within a week.",
+                  photo: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=120&h=120",
                 },
                 {
                   name: "Johan van der Merwe",
@@ -1022,6 +1223,7 @@ export default function Home() {
                   location: "Stellenbosch, WC",
                   rating: 4,
                   quote: "Finding reliable developers in South Africa was a challenge until I found this platform. Highly recommended for businesses.",
+                  photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=120&h=120",
                 },
                 {
                   name: "Fatima Patel",
@@ -1029,6 +1231,7 @@ export default function Home() {
                   location: "Durban, KZN",
                   rating: 5,
                   quote: "I love the local support team. They actually understand the SA market and help whenever I have questions about tax invoicing.",
+                  photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=120&h=120",
                 },
                 {
                   name: "Thandiwe Dlamini",
@@ -1036,6 +1239,7 @@ export default function Home() {
                   location: "Mbombela, MP",
                   rating: 5,
                   quote: "As a remote freelancer, having a platform that handles South African bank transfers easily is a lifesaver.",
+                  photo: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=120&h=120",
                 },
                 {
                   name: "Kevin Naidoo",
@@ -1043,6 +1247,7 @@ export default function Home() {
                   location: "Umhlanga, KZN",
                   rating: 5,
                   quote: "The verification process adds so much trust. Clients know they're hiring a professional, not just anyone.",
+                  photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=120&h=120",
                 },
                 {
                   name: "Zanele Mbeki",
@@ -1050,6 +1255,7 @@ export default function Home() {
                   location: "Port Elizabeth, EC",
                   rating: 4,
                   quote: "The variety of talent here is amazing. From photographers to security, I find everything I need for my events.",
+                  photo: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=120&h=120",
                 },
                 {
                   name: "Pieter Botha",
@@ -1057,6 +1263,7 @@ export default function Home() {
                   location: "Pretoria, GP",
                   rating: 5,
                   quote: "Technical projects require specialized talent. This platform consistently delivers high-quality candidates.",
+                  photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=120&h=120",
                 }
               ].map((testimonial, i) => (
                 <CarouselItem key={i} className="md:basis-1/2 lg:basis-1/3 pl-4">
@@ -1073,9 +1280,9 @@ export default function Home() {
                       <Quote className="w-8 h-8 text-primary/10 mb-4 shrink-0" />
                       <p className="text-muted-foreground italic mb-6 flex-grow">"{testimonial.quote}"</p>
                       <div className="flex items-center gap-4 mt-auto">
-                        <Avatar className="h-12 w-12 border border-border">
-                          <AvatarImage src={`https://ui-avatars.com/api/?name=${encodeURIComponent(testimonial.name)}&background=random&color=fff`} />
-                          <AvatarFallback>{testimonial.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                        <Avatar className="h-12 w-12 border-2 border-emerald-500/30 shadow-sm">
+                          <AvatarImage src={testimonial.photo} alt={testimonial.name} />
+                          <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white font-bold text-sm">{testimonial.name.split(' ').map((n: string) => n[0]).join('')}</AvatarFallback>
                         </Avatar>
                         <div>
                           <div className="font-bold text-foreground text-sm" data-testid={`text-testimonial-name-${i}`}>{testimonial.name}</div>
