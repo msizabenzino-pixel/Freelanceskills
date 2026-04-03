@@ -49,10 +49,10 @@ export default function VettingEducation() {
   });
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 pb-16">
+    <div className="min-h-screen bg-slate-950 text-slate-50 pb-16" data-testid="page-vetting-education">
       <div className="bg-slate-900/80 border-b border-slate-800 px-4 sm:px-6 py-4">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <Link href="/vetting" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm">
+          <Link href="/vetting" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm" data-testid="link-back-to-hub">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
@@ -83,6 +83,7 @@ export default function VettingEducation() {
                     <button
                       key={value}
                       onClick={() => setForm(f => ({ ...f, documentType: value }))}
+                      data-testid={`button-doctype-${value}`}
                       className={`flex items-start gap-2.5 p-3 rounded-lg border text-sm text-left transition-all ${
                         form.documentType === value
                           ? "border-emerald-500 bg-emerald-500/10"
@@ -112,6 +113,7 @@ export default function VettingEducation() {
                     placeholder="e.g. University of Cape Town, Boston City Campus"
                     className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     aria-label="Institution name"
+                    data-testid="input-institution-name"
                   />
                 </div>
 
@@ -124,6 +126,7 @@ export default function VettingEducation() {
                     placeholder="e.g. BSc Computer Science, National Diploma Electrical Engineering"
                     className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     aria-label="Qualification name"
+                    data-testid="input-qualification-name"
                   />
                 </div>
 
@@ -183,6 +186,7 @@ export default function VettingEducation() {
                   role="button"
                   tabIndex={0}
                   aria-label="Upload education certificate"
+                  data-testid="upload-zone-education-cert"
                 >
                   {form.fileName ? (
                     <div className="text-emerald-400">
@@ -211,6 +215,7 @@ export default function VettingEducation() {
               <button
                 onClick={() => submitMutation.mutate()}
                 disabled={!form.institutionName || !form.qualificationName || !form.fileName || submitMutation.isPending}
+                data-testid="button-submit-education"
                 className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl transition-all disabled:opacity-50"
               >
                 {submitMutation.isPending ? "Verifying & Minting Credential..." : "🎓 Submit for Verification"}

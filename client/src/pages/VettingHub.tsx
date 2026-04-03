@@ -85,7 +85,7 @@ export default function VettingHub() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 pb-16">
+    <div className="min-h-screen bg-slate-950 text-slate-50 pb-16" data-testid="page-vetting-hub">
       {/* Header */}
       <div className="bg-gradient-to-r from-slate-900 via-slate-950 to-emerald-950/20 border-b border-emerald-500/20 px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="max-w-5xl mx-auto">
@@ -117,12 +117,13 @@ export default function VettingHub() {
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="font-semibold text-emerald-400 text-sm">Lebo AI Guide</span>
+                  <span className="font-semibold text-emerald-400 text-sm" data-testid="text-lebo-ai-label">Lebo AI Guide</span>
                   <select
                     value={lang}
                     onChange={e => setLang(e.target.value)}
                     className="text-xs bg-slate-800 border border-slate-700 rounded px-2 py-0.5 text-slate-300"
                     aria-label="Select language"
+                    data-testid="select-lebo-language"
                   >
                     <option value="en">English</option>
                     <option value="zu">isiZulu</option>
@@ -130,7 +131,7 @@ export default function VettingHub() {
                     <option value="af">Afrikaans</option>
                   </select>
                 </div>
-                <p className="text-sm text-slate-300 leading-relaxed">
+                <p className="text-sm text-slate-300 leading-relaxed" data-testid="text-lebo-message">
                   {status?.lebaMessage || "Hi! I'm Lebo, your FreelanceSkills vetting guide. Let's get you verified — it takes just 15 minutes and unlocks 3× more job matches!"}
                 </p>
               </div>
@@ -189,22 +190,24 @@ export default function VettingHub() {
             <button
               onClick={() => startMutation.mutate()}
               disabled={startMutation.isPending}
+              data-testid="button-start-vetting"
               className="px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-lg transition-all shadow-lg shadow-emerald-500/25 disabled:opacity-50"
             >
               {startMutation.isPending ? "Starting..." : "🚀 Start Vetting Now"}
             </button>
           ) : nextStep === "complete" ? (
-            <div className="inline-flex flex-col items-center gap-3">
+            <div className="inline-flex flex-col items-center gap-3" data-testid="section-vetting-complete">
               <div className="text-4xl">🏆</div>
-              <p className="text-xl font-bold text-emerald-400">You're Fully Verified!</p>
+              <p className="text-xl font-bold text-emerald-400" data-testid="text-fully-verified">You're Fully Verified!</p>
               <p className="text-slate-400 text-sm">Elite status active. Enjoy 0% commission on your first 3 projects.</p>
-              <Link href="/dashboard" className="px-6 py-3 bg-emerald-500 text-slate-950 font-semibold rounded-xl hover:bg-emerald-400 transition-all">
+              <Link href="/dashboard" className="px-6 py-3 bg-emerald-500 text-slate-950 font-semibold rounded-xl hover:bg-emerald-400 transition-all" data-testid="link-go-to-dashboard">
                 Go to Dashboard →
               </Link>
             </div>
           ) : (
             <Link
               href={nextStepUrl[nextStep] || "/vetting/identity"}
+              data-testid="link-continue-vetting"
               className="inline-flex items-center gap-2 px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-lg transition-all shadow-lg shadow-emerald-500/25"
             >
               Continue: {nextStep === "consent" ? "Give POPIA Consent" : `${nextStep.charAt(0).toUpperCase() + nextStep.slice(1)} Verification`}
@@ -289,6 +292,7 @@ export default function VettingHub() {
                   }
                 }
               }}
+              data-testid="button-delete-data"
               className="text-red-400 hover:text-red-300 underline"
             >
               Request data deletion

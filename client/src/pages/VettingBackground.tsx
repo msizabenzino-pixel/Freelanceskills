@@ -46,10 +46,10 @@ export default function VettingBackground() {
   const validRefs = refs.filter(r => r.refName.trim());
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 pb-16">
+    <div className="min-h-screen bg-slate-950 text-slate-50 pb-16" data-testid="page-vetting-background">
       <div className="bg-slate-900/80 border-b border-slate-800 px-4 sm:px-6 py-4">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <Link href="/vetting" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm">
+          <Link href="/vetting" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm" data-testid="link-back-to-hub">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
@@ -102,7 +102,7 @@ export default function VettingBackground() {
                     </p>
                   </div>
                   {refs.length < 5 && (
-                    <button onClick={addRef} className="text-xs text-emerald-400 hover:text-emerald-300 border border-emerald-500/30 rounded-lg px-3 py-1.5 transition-all">
+                    <button onClick={addRef} data-testid="button-add-reference" className="text-xs text-emerald-400 hover:text-emerald-300 border border-emerald-500/30 rounded-lg px-3 py-1.5 transition-all">
                       + Add Reference
                     </button>
                   )}
@@ -114,7 +114,7 @@ export default function VettingBackground() {
                       <div className="flex items-center justify-between mb-3">
                         <span className="text-sm font-medium text-slate-300">Reference {i + 1}</span>
                         {refs.length > 1 && (
-                          <button onClick={() => removeRef(i)} className="text-xs text-red-400 hover:text-red-300">Remove</button>
+                          <button onClick={() => removeRef(i)} data-testid={`button-remove-reference-${i}`} className="text-xs text-red-400 hover:text-red-300">Remove</button>
                         )}
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -208,6 +208,7 @@ export default function VettingBackground() {
                     onChange={e => setCriminalConsent(e.target.checked)}
                     className="mt-0.5 w-4 h-4 accent-emerald-500 flex-shrink-0"
                     aria-label="Consent to criminal background check"
+                    data-testid="input-criminal-consent"
                   />
                   <span className="text-sm text-slate-300">
                     I consent to a criminal background check by FreelanceSkills in partnership with accredited SAPS-authorised verification providers.
@@ -219,6 +220,7 @@ export default function VettingBackground() {
               <button
                 onClick={() => submitMutation.mutate()}
                 disabled={validRefs.length < 1 || !criminalConsent || submitMutation.isPending}
+                data-testid="button-submit-background"
                 className="w-full py-4 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-slate-950 font-bold rounded-xl transition-all disabled:opacity-50 text-sm sm:text-base"
               >
                 {submitMutation.isPending ? "Activating Elite Status..." : `🏆 Activate Elite — ${validRefs.length} Reference(s) Submitted`}
