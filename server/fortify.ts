@@ -720,11 +720,16 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
     "https://firestore.googleapis.com",
     "https://*.firebaseio.com",
     "wss://*.firebaseio.com",
+    // Firebase Auth popup/iframe handler communicates via its own domain
+    "https://*.firebaseapp.com",
   ].join(" ");
   const firebaseFrameSrc = [
     "https://accounts.google.com",
     "https://apis.google.com",
     "https://*.googleusercontent.com",
+    // Firebase Auth hidden iframe (__/auth/iframe) lives on firebaseapp.com
+    // Without this, signInWithPopup breaks in production (CSP blocks the iframe)
+    "https://*.firebaseapp.com",
   ].join(" ");
   res.setHeader("Content-Security-Policy",
     "default-src 'self'; " +
