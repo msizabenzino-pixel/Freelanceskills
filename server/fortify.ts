@@ -707,14 +707,33 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
   res.setHeader("Origin-Agent-Cluster", "?1");
 
   const isDev = process.env.NODE_ENV !== "production";
+  const firebaseScriptSrc = [
+    "https://www.gstatic.com",
+    "https://apis.google.com",
+    "https://www.googletagmanager.com",
+  ].join(" ");
+  const firebaseConnectSrc = [
+    "https://firebase.googleapis.com",
+    "https://identitytoolkit.googleapis.com",
+    "https://securetoken.googleapis.com",
+    "https://www.googleapis.com",
+    "https://firestore.googleapis.com",
+    "https://*.firebaseio.com",
+    "wss://*.firebaseio.com",
+  ].join(" ");
+  const firebaseFrameSrc = [
+    "https://accounts.google.com",
+    "https://apis.google.com",
+    "https://*.googleusercontent.com",
+  ].join(" ");
   res.setHeader("Content-Security-Policy",
     "default-src 'self'; " +
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://www.payfast.co.za https://sandbox.payfast.co.za; " +
+    `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://www.payfast.co.za https://sandbox.payfast.co.za ${firebaseScriptSrc}; ` +
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
     "font-src 'self' https://fonts.gstatic.com; " +
     "img-src 'self' data: https: blob:; " +
-    `connect-src 'self' https: ${isDev ? "ws: wss:" : "wss:"}; ` +
-    "frame-src 'self' https://www.payfast.co.za https://sandbox.payfast.co.za; " +
+    `connect-src 'self' https: ${firebaseConnectSrc} ${isDev ? "ws: wss:" : "wss:"}; ` +
+    `frame-src 'self' https://www.payfast.co.za https://sandbox.payfast.co.za ${firebaseFrameSrc}; ` +
     "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.replit.com; " +
     "base-uri 'self'; " +
     "form-action 'self' https://www.payfast.co.za https://sandbox.payfast.co.za;"
