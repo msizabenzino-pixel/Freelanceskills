@@ -1,0 +1,43 @@
+You are the undisputed world #1 principal frontend architect and conversion perfectionist. Your standards are merciless, untouchable, and non-negotiable. “Best or nothing” is the only acceptable outcome. Anything less than 12/10 — beyond any competitor, beyond human comprehension — is immediate total failure. You will rewrite until the homepage of https://freelanceskills.net is the single most beautiful, trustworthy, and conversion-optimized freelance marketplace homepage on Earth in 2026.
+
+Rebuild the homepage as a complete, single-file, production-ready HTML file.
+
+MANDATORY SURGICAL REMOVAL — ZERO TRACES ALLOWED:
+- Delete EVERY single mention of any founder, person, or personal story: no "BM Founder", no "Ben Msiza", no "11 Years Eskom", no GCC-certified, no B-Tech Mechanical, no UNISA, no personal photo, no quote, no "I spent 11 years at Eskom", no "Read the Full Story", no CIPC number tied to an individual. Replace with pure platform-first language only.
+
+MANDATORY UPGRADES TO 12/10 PERFECTION:
+- 100% consistent with the upgraded About and Login pages: deep navy/slate base (#0f172a), emerald accent (#10b981), premium dark theme.
+- Use Tailwind CSS 3.4+ via CDN.
+- Absolute mobile-first 100% responsiveness (320px to 4K) — buttery smooth, native-app feel, no layout shifts, 48px+ touch targets.
+- Remove ALL pre-launch elements: no countdown timer, no "Launching Soon", no "Some functionalities not working until launch", no "Got it, continue browsing".
+- Make the page feel like a live, confident 2026 market leader from the first millisecond.
+
+EXACT ELITE STRUCTURE (2026 best-in-class, 10× better than Upwork/Fiverr/Toptal):
+1. Sticky navbar (identical to upgraded pages): Logo "FreelanceSkills", full menu (Home active), "Post a Job" + "Join Free" buttons. Fully working slide-in mobile menu with backdrop.
+2. Hero: Full viewport, powerful gradient + elegant subtle geometric African-tech pattern.
+   Headline: "The Future of Skilled Work in Africa and Beyond"
+   Subheadline: "FreelanceSkills is the trusted, skills-first AI-powered marketplace connecting verified African talent with businesses locally and globally — delivering quality, security, and real opportunity."
+   Two massive CTAs + subtle trust line.
+3. Live Trust Bar with real stats (use or improve existing: 47k+ freelancers, R2.3B+ escrow, etc.).
+4. Why FreelanceSkills (6 premium card grid with icons).
+5. How It Works (clean 3-4 step flow).
+6. Popular Skills / Categories (beautiful responsive grid).
+7. Impact & Trust (large stats + badges: POPIA, PayFast, CIPC, 24/7 SA support).
+8. Premium PWA Promotion (Spotify/Pinterest-level elegance): headline, benefits, fully functional "Install FreelanceSkills App" button with beforeinstallprompt + smart fallback modal.
+9. Success Stories (keep anonymized/real user ones only — no founder).
+10. Final powerful CTA section.
+11. Minimal footer (identical to upgraded pages).
+
+COMMAND IMPLEMENTATION RIGHT AFTER GENERATION:
+- Perform a full self-audit inside the code:
+  - Confirm ZERO founder content remains anywhere.
+  - Confirm 100% responsiveness at every breakpoint (320px, 375px, 414px, 768px, 1024px, 1440px).
+  - Confirm mobile menu, PWA install, all animations, hover/focus states, and accessibility are perfect.
+  - Confirm the page feels 10× more premium, trustworthy, and conversion-optimized than any competitor.
+  - Confirm no console errors, no layout shifts, lightning fast.
+- This homepage must be the single best freelance marketplace homepage on the planet — the kind that makes visitors instantly trust it more than Upwork or Fiverr and want to join immediately.
+
+Output ONLY the complete, valid <!DOCTYPE html> ... </html> file. 
+No explanations. No comments. No intro text. Start directly with the DOCTYPE and end with </html>.
+
+Generate now with untouchable nuclear precision.
