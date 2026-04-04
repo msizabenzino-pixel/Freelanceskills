@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { ADMIN_MODULES, hasPermission } from "@/lib/admin/permissions";
 import { useAdminAuth } from "@/hooks/admin/useAdminAuth";
 import { useToast } from "@/hooks/use-toast";
+import { BrandMark } from "@/components/BrandMark";
 
 function labelFromPath(path: string) {
   return path
@@ -41,9 +42,12 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const Sidebar = (
     <aside className="w-72 shrink-0 bg-primary text-primary-foreground border-r border-primary/30 flex flex-col h-full">
       <div className="px-4 py-4 border-b border-white/10">
-        <button className="text-left" onClick={() => navigate("/admin/overview")}>
-          <p className="text-lg font-bold tracking-tight">FreelanceSkills Admin</p>
-          <p className="text-xs text-white/70">Operations Command Center</p>
+        <button className="text-left flex items-center gap-2" onClick={() => navigate("/admin/overview")}>
+          <BrandMark imageClassName="h-7 w-7 rounded-md" />
+          <div>
+            <p className="text-lg font-bold tracking-tight">FreelanceSkills Admin</p>
+            <p className="text-xs text-white/70">Operations Command Center</p>
+          </div>
         </button>
       </div>
 

@@ -271,6 +271,48 @@ function LaunchCountdownGlobal() {
   );
 }
 
+function LaunchNoticeModal() {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const seen = window.sessionStorage.getItem("freelanceskills-launch-notice-seen");
+    if (!seen) setOpen(true);
+  }, []);
+
+  const handleClose = () => {
+    setOpen(false);
+    if (typeof window !== "undefined") {
+      window.sessionStorage.setItem("freelanceskills-launch-notice-seen", "1");
+    }
+  };
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-[140] bg-black/70 backdrop-blur-sm flex items-center justify-center px-4">
+      <div className="w-full max-w-2xl rounded-2xl border border-border bg-card shadow-[var(--shadow-lg)] p-8 md:p-10 text-center">
+        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+          Launch Notice
+        </h2>
+        <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-8">
+          Some functionalities are not going to work fully until launch day
+          ({` `}
+          <span className="font-semibold text-foreground">07 April 2026</span>
+          ). Please browse around and enjoy the website in the meantime.
+        </p>
+        <button
+          onClick={handleClose}
+          className="inline-flex items-center justify-center min-h-11 px-6 rounded-lg font-semibold bg-brand-gradient text-[#0F1115] border border-white/15 hover:opacity-95 transition"
+          data-testid="button-launch-notice-close"
+        >
+          Got it, continue browsing
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function AdminRouter() {
   return (
     <RequireAdmin>
@@ -526,6 +568,7 @@ function App() {
             <Toaster />
             <CountrySelectorDialog />
             <LaunchCountdownGlobal />
+            <LaunchNoticeModal />
             <Router />
             <div id="floating-fab"><FloatingActionButton /></div>
             <div id="floating-support"><SupportChat /></div>

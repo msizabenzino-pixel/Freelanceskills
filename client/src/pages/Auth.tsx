@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { BrandLogo } from "@/components/BrandLogo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,7 +11,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Loader2, Shield, Zap, Globe } from "lucide-react";
 import {
-  loginWithApple,
   loginWithEmail,
   loginWithGoogle,
   registerWithEmail,
@@ -230,9 +230,8 @@ export default function Auth() {
   const isLoading = loginMutation.isPending || registerMutation.isPending || forgotPasswordMutation.isPending;
 
   const socialAuthMutation = useMutation({
-    mutationFn: async (provider: "google" | "apple") => {
-      if (provider === "google") return loginWithGoogle();
-      return loginWithApple();
+    mutationFn: async () => {
+      return loginWithGoogle();
     },
     onSuccess: async (user) => {
       if (!isLogin) {
@@ -335,8 +334,8 @@ export default function Auth() {
           <Card className="shadow-xl border-border" data-testid="auth-card">
             <CardContent className="p-8">
               <div className="text-center mb-8">
-                <div className="w-12 h-12 bg-primary text-white rounded-xl flex items-center justify-center font-bold text-xl mx-auto mb-4">
-                  F
+                <div className="mx-auto mb-4 flex justify-center">
+                  <BrandLogo imageClassName="h-12 max-w-[220px]" />
                 </div>
                 <h2 className="text-2xl font-bold text-card-foreground" data-testid="text-auth-title">
                   {isForgotPassword ? "Reset Password" : (isLogin ? "Sign In" : "Create Account")}
@@ -635,7 +634,7 @@ export default function Auth() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 gap-3">
                     <Button
                       type="button"
                       variant="outline"
@@ -650,7 +649,7 @@ export default function Auth() {
                           return;
                         }
                         if (!isLogin && !validateSignupProfile()) return;
-                        socialAuthMutation.mutate("google");
+                        socialAuthMutation.mutate();
                       }}
                       disabled={socialAuthMutation.isPending}
                       data-testid="button-auth-google"
@@ -659,30 +658,6 @@ export default function Auth() {
                         G
                       </span>
                       Google
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="h-11 rounded-xl font-medium"
-                      onClick={() => {
-                        if (!isFirebaseConfigured) {
-                          toast({
-                            title: "Firebase not configured",
-                            description: "Please set VITE_FIREBASE_* values and restart the dev server.",
-                            variant: "destructive",
-                          });
-                          return;
-                        }
-                        if (!isLogin && !validateSignupProfile()) return;
-                        socialAuthMutation.mutate("apple");
-                      }}
-                      disabled={socialAuthMutation.isPending}
-                      data-testid="button-auth-apple"
-                    >
-                      <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-black text-[11px] font-bold text-white">
-                        A
-                      </span>
-                      Apple
                     </Button>
                   </div>
                 </form>

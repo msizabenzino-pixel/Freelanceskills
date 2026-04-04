@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { BrandLogo } from "@/components/BrandLogo";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, ArrowRight, Shield, CheckCircle, Lock, Zap, Download, X, Verified } from "lucide-react";
 import { Link } from "wouter";
@@ -68,7 +69,6 @@ export default function Login() {
 
   const socialButtons = [
     { name: "Google", icon: "G" },
-    { name: "Apple", icon: "⌘" },
     { name: "LinkedIn", icon: "in" },
   ];
 
@@ -137,6 +137,9 @@ export default function Login() {
           {/* Right Panel - Login Form */}
           <div className="w-full" data-testid="panel-form">
             <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 sm:p-10 shadow-2xl" data-testid="card-login">
+              <div className="mb-6 flex justify-center">
+                <BrandLogo imageClassName="h-12 md:h-14 max-w-[260px]" />
+              </div>
               
               <h2 className="text-3xl font-bold mb-8 text-center" data-testid="heading-login">
                 Log in to your account

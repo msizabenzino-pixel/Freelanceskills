@@ -1,6 +1,6 @@
-import { Shield, Phone, Mail, Facebook, Instagram, Youtube, Linkedin, ShieldCheck, Lock, Clock, CheckCircle2, MessageCircle } from "lucide-react";
+import { Shield, Phone, Mail, Facebook, Instagram, Youtube, Linkedin, ShieldCheck, Lock, Clock, CheckCircle2 } from "lucide-react";
 import { Link } from "wouter";
-import { useCurrency } from "@/lib/currency";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export function Footer() {
   return (
@@ -25,9 +25,8 @@ export function Footer() {
 
         <div className="grid grid-cols-1 md:grid-cols-6 gap-12 mb-12">
           <div className="space-y-4 md:col-span-2">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary text-white rounded-lg flex items-center justify-center font-bold">F</div>
-              <span className="font-display font-bold text-xl text-primary">FreelanceSkills</span>
+            <div className="flex items-center">
+              <BrandLogo imageClassName="h-10 max-w-[220px]" />
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed">
               Empowering South Africa's workforce through digital connection. The safest way to hire local talent online.
