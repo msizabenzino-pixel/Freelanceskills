@@ -136,7 +136,7 @@ export default function About() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/browse" asChild>
+            <Link href="/freelancers" asChild>
               <Button
                 size="lg"
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-emerald-500 text-slate-950 rounded-xl font-semibold hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:-translate-y-0.5"
@@ -146,7 +146,7 @@ export default function About() {
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </Link>
-            <Link href="/jobs/post" asChild>
+            <Link href="/post-job" asChild>
               <Button
                 variant="outline"
                 size="lg"
@@ -533,7 +533,7 @@ export default function About() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/join/freelancer" asChild>
+            <Link href="/auth?mode=register" asChild>
               <Button
                 size="lg"
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-emerald-500 text-slate-950 rounded-xl font-semibold hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/25 hover:-translate-y-0.5"
@@ -543,7 +543,7 @@ export default function About() {
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </Link>
-            <Link href="/browse" asChild>
+            <Link href="/freelancers" asChild>
               <Button
                 variant="outline"
                 size="lg"

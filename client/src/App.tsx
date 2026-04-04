@@ -391,7 +391,6 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/auth" component={Auth} />
         <Route path="/signup" component={Auth} />
-        <Route path="/login" component={Auth} />
         <Route path="/reset-password/:token" component={ResetPassword} />
         <Route path="/jobs" component={Jobs} />
         <Route path="/jobs/:id" component={JobDetails} />

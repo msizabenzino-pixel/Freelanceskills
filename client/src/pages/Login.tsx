@@ -421,7 +421,7 @@ export default function Login() {
               <div className="mt-8 pt-6 border-t border-slate-800 text-center" data-testid="signup-section">
                 <p className="text-slate-400 mb-4 text-sm">Don't have an account yet?</p>
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <Link href="/join/freelancer" asChild>
+                  <Link href="/auth?mode=register" asChild>
                     <Button
                       variant="outline"
                       className="flex-1 border-emerald-500/60 text-emerald-400 hover:bg-emerald-500/10 hover:-translate-y-0.5 active:translate-y-0 transition-all"
@@ -430,7 +430,7 @@ export default function Login() {
                       Join as Freelancer
                     </Button>
                   </Link>
-                  <Link href="/join/client" asChild>
+                  <Link href="/auth?mode=register" asChild>
                     <Button
                       variant="outline"
                       className="flex-1 border-emerald-500/60 text-emerald-400 hover:bg-emerald-500/10 hover:-translate-y-0.5 active:translate-y-0 transition-all"
