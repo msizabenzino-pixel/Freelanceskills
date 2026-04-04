@@ -116,6 +116,75 @@ function InstantApplyModal({ job, onClose }: { job: { title: string; company: st
   );
 }
 
+function PWAInstallButton() {
+  const [installState, setInstallState] = useState<"idle" | "available" | "installed" | "fallback">("idle");
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showFallback, setShowFallback] = useState(false);
+
+  useEffect(() => {
+    const handler = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setInstallState("available");
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    window.addEventListener("appinstalled", () => setInstallState("installed"));
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handler);
+    };
+  }, []);
+
+  const handleInstall = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === "accepted") setInstallState("installed");
+      setDeferredPrompt(null);
+    } else {
+      setShowFallback(true);
+    }
+  };
+
+  if (installState === "installed") {
+    return (
+      <div className="inline-flex items-center gap-3 px-6 py-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400">
+        <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
+        <span className="font-bold">App installed! Open from your home screen.</span>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="flex flex-col sm:flex-row gap-3">
+        <button
+          onClick={handleInstall}
+          className="inline-flex items-center justify-center gap-2.5 px-7 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-base shadow-xl shadow-emerald-500/30 transition-all hover:scale-[1.02] active:scale-[0.98] min-h-[52px]"
+          data-testid="button-pwa-install"
+        >
+          <Zap className="w-5 h-5" />
+          Install FreelanceSkills App
+        </button>
+        <div className="flex flex-col justify-center">
+          <p className="text-white/45 text-xs">Free · No app store · Works offline</p>
+          <p className="text-white/30 text-xs">Android, iOS, Windows, Mac</p>
+        </div>
+      </div>
+      {showFallback && (
+        <div className="mt-4 p-4 rounded-xl bg-white/8 border border-white/15 text-white/75 text-sm">
+          <p className="font-semibold mb-2 text-white">How to install:</p>
+          <ul className="space-y-1 text-white/60 text-xs">
+            <li>• <strong className="text-white/80">Chrome/Android:</strong> Tap the menu (⋮) → "Add to Home Screen"</li>
+            <li>• <strong className="text-white/80">Safari/iOS:</strong> Tap Share (↑) → "Add to Home Screen"</li>
+            <li>• <strong className="text-white/80">Desktop:</strong> Click the install icon (⊕) in your browser address bar</li>
+          </ul>
+          <button onClick={() => setShowFallback(false)} className="mt-3 text-xs text-emerald-400 hover:text-emerald-300">Close</button>
+        </div>
+      )}
+    </>
+  );
+}
+
 const ICON_MAP: Record<string, any> = {
   Code, Wrench, Heart, Hammer, Home: HomeIcon, Waves, Car, Shield: ShieldIcon, Palette, PenTool, 
   Briefcase, PartyPopper, GraduationCap, TrendingUp, Sparkles: SparklesIcon, Bot
@@ -404,7 +473,7 @@ export default function Home() {
     }
   ];
 
-  const topChromeOffset = 96;
+  const topChromeOffset = 56;
   type FeaturedJob = { title: string; company: string; budget: string; location: string; type: string; postedAt: string; tags: string[]; description: string; aiMatchScore: number; applicants: number; urgent: boolean };
   const [applyJob, setApplyJob] = useState<FeaturedJob | null>(null);
 
@@ -865,51 +934,38 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Founder Trust Signal */}
-      <section className="py-16 bg-muted/20 border-y border-border" data-testid="section-founder-trust">
+      {/* Platform Trust Signal — Platform-first, no personal content */}
+      <section className="py-16 bg-muted/20 border-y border-border" data-testid="section-platform-trust">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="max-w-5xl mx-auto grid md:grid-cols-5 gap-10 items-center">
-            <div className="md:col-span-2 flex justify-center">
-              <div className="relative">
-                <div className="w-48 h-48 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-2xl overflow-hidden border-4 border-white/20">
-                  <div className="text-white text-center p-4">
-                    <div className="text-5xl font-black">BM</div>
-                    <div className="text-xs font-semibold tracking-widest text-white/70 mt-1 uppercase">Founder</div>
-                  </div>
-                </div>
-                <div className="absolute -bottom-3 -right-3 bg-accent text-primary text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
-                  11 Years Eskom ✓
-                </div>
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/8 border border-primary/15 text-primary text-xs font-semibold tracking-wider uppercase mb-4">
+                Built for South Africa, Built for Africa
               </div>
-            </div>
-            <div className="md:col-span-3 space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/8 border border-primary/15 text-primary text-xs font-semibold tracking-wider uppercase">
-                Built by someone who lived the grind
-              </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground leading-tight">
-                "I spent 11 years at Eskom, led teams on R100M+ projects, and still struggled to hire reliable talent for my own business."
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground leading-tight mb-3">
+                A platform born from the real challenges of hiring and getting hired in Africa
               </h2>
-              <p className="text-muted-foreground leading-relaxed">
-                Ben Msiza, GCC-certified engineer, B-Tech Mechanical, and founder of FreelanceSkills, built this platform because he experienced the hiring problem firsthand — and decided to solve it for every South African.
+              <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                FreelanceSkills was designed from the ground up to address the unique trust, payment security, and quality verification challenges facing African professionals and businesses.
               </p>
-              <div className="flex flex-wrap gap-6 pt-2">
-                {[
-                  { label: "GCC Certified", sub: "Govt. Certificate of Competency" },
-                  { label: "B-Tech Mechanical", sub: "UNISA Graduate" },
-                  { label: "CIPC Registered", sub: "2026/070509/09" },
-                ].map((badge, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                    <div>
-                      <div className="text-sm font-bold text-foreground">{badge.label}</div>
-                      <div className="text-xs text-muted-foreground">{badge.sub}</div>
-                    </div>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {[
+                { icon: ShieldCheck, label: "POPIA Compliant", sub: "Full data privacy protection", color: "text-emerald-500", bg: "bg-emerald-500/10" },
+                { icon: Lock, label: "PayFast Escrow", sub: "R2.3B+ held securely", color: "text-blue-500", bg: "bg-blue-500/10" },
+                { icon: CheckCheck, label: "CIPC Registered", sub: "2026/070509/09", color: "text-violet-500", bg: "bg-violet-500/10" },
+                { icon: Headphones, label: "SA-Based Support", sub: "24/7 local human support", color: "text-amber-500", bg: "bg-amber-500/10" },
+              ].map(({ icon: Icon, label, sub, color, bg }, i) => (
+                <div key={i} className={`flex items-center gap-4 p-5 rounded-2xl border border-border ${bg}/30 hover:border-primary/20 transition-colors`} data-testid={`platform-trust-badge-${i}`}>
+                  <div className={`p-2.5 rounded-xl ${bg} flex-shrink-0`}>
+                    <Icon className={`w-5 h-5 ${color}`} />
                   </div>
-                ))}
-              </div>
-              <Button variant="outline" className="gap-2 group mt-2" onClick={() => navigate("/about")} data-testid="button-founder-story">
-                Read the Full Story <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
+                  <div>
+                    <div className="font-bold text-foreground text-sm">{label}</div>
+                    <div className="text-xs text-muted-foreground">{sub}</div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -1299,6 +1355,102 @@ export default function Home() {
               <CarouselNext className="-right-12" />
             </div>
           </Carousel>
+        </div>
+      </section>
+
+      {/* PWA Install Section */}
+      <section className="py-20 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white overflow-hidden relative" data-testid="section-pwa-install">
+        <div className="absolute inset-0 opacity-[0.06] pointer-events-none" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2310b981' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+        }} />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/8 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-500/8 rounded-full blur-3xl -translate-x-1/4 translate-y-1/4 pointer-events-none" />
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
+          <div className="max-w-5xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-6">
+                  <Zap className="w-3.5 h-3.5" /> Install Free App
+                </div>
+                <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight mb-4">
+                  Take FreelanceSkills{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">
+                    everywhere you go
+                  </span>
+                </h2>
+                <p className="text-white/65 text-lg leading-relaxed mb-8">
+                  Install our progressive web app for instant access to jobs, clients, and payments — even with limited data. Works offline. No app store required.
+                </p>
+                <div className="space-y-3 mb-8">
+                  {[
+                    { icon: "⚡", text: "Lightning-fast, native app feel on any device" },
+                    { icon: "📶", text: "Works offline — browse jobs even without data" },
+                    { icon: "🔔", text: "Instant push notifications for new job matches" },
+                    { icon: "🌍", text: "Optimised for SA mobile networks including USSD" },
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-center gap-3 text-white/75 text-sm">
+                      <span className="text-base flex-shrink-0">{item.icon}</span>
+                      <span>{item.text}</span>
+                    </div>
+                  ))}
+                </div>
+                <PWAInstallButton />
+              </div>
+              <div className="relative flex justify-center">
+                <div className="relative w-72 h-80">
+                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-teal-500/10 rounded-3xl border border-white/10 backdrop-blur-sm shadow-2xl flex flex-col overflow-hidden">
+                    <div className="flex items-center gap-2 px-4 py-3 bg-white/5 border-b border-white/10">
+                      <div className="flex gap-1.5">
+                        <div className="w-3 h-3 rounded-full bg-red-400/60" />
+                        <div className="w-3 h-3 rounded-full bg-amber-400/60" />
+                        <div className="w-3 h-3 rounded-full bg-emerald-400/60" />
+                      </div>
+                      <div className="flex-1 bg-white/10 rounded-lg h-5 mx-2 flex items-center px-2">
+                        <span className="text-white/40 text-[9px] font-mono truncate">freelanceskills.net</span>
+                      </div>
+                    </div>
+                    <div className="flex-1 p-4 flex flex-col gap-3">
+                      <div className="flex items-center gap-3 p-3 bg-white/8 rounded-xl border border-white/10">
+                        <div className="w-8 h-8 rounded-lg bg-emerald-500/30 flex items-center justify-center flex-shrink-0">
+                          <Zap className="w-4 h-4 text-emerald-400" />
+                        </div>
+                        <div>
+                          <div className="text-white text-xs font-bold mb-0.5">New Job Match!</div>
+                          <div className="text-white/50 text-[10px]">97% AI match · R850/hr</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 bg-white/8 rounded-xl border border-white/10">
+                        <div className="w-8 h-8 rounded-lg bg-blue-500/30 flex items-center justify-center flex-shrink-0">
+                          <CheckCircle2 className="w-4 h-4 text-blue-400" />
+                        </div>
+                        <div>
+                          <div className="text-white text-xs font-bold mb-0.5">Escrow Released!</div>
+                          <div className="text-white/50 text-[10px]">R12,500 on its way to you</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 bg-white/8 rounded-xl border border-white/10">
+                        <div className="w-8 h-8 rounded-lg bg-violet-500/30 flex items-center justify-center flex-shrink-0">
+                          <Star className="w-4 h-4 text-violet-400" />
+                        </div>
+                        <div>
+                          <div className="text-white text-xs font-bold mb-0.5">5-Star Review!</div>
+                          <div className="text-white/50 text-[10px]">FinTech client · "Outstanding work"</div>
+                        </div>
+                      </div>
+                      <div className="mt-auto pt-2">
+                        <div className="h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
+                          <span className="text-emerald-400 text-xs font-bold">✓ Installed · Always Available</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="absolute -bottom-3 -right-3 w-16 h-16 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-xl shadow-emerald-500/40 rotate-6 hover:rotate-0 transition-transform">
+                    <span className="text-2xl">📱</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

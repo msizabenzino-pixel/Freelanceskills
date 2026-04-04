@@ -225,94 +225,6 @@ function PageLoader() {
   );
 }
 
-const GLOBAL_LAUNCH_DATE = new Date("2026-04-07T00:00:00+02:00");
-
-function getGlobalCountdown() {
-  const diffMs = GLOBAL_LAUNCH_DATE.getTime() - Date.now();
-  if (diffMs <= 0) {
-    return { launched: true, days: 0, hours: 0, minutes: 0, seconds: 0 };
-  }
-  const totalSeconds = Math.floor(diffMs / 1000);
-  const days = Math.floor(totalSeconds / 86400);
-  const hours = Math.floor((totalSeconds % 86400) / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-  return { launched: false, days, hours, minutes, seconds };
-}
-
-function LaunchCountdownGlobal() {
-  const [countdown, setCountdown] = useState(getGlobalCountdown);
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      setCountdown(getGlobalCountdown());
-    }, 1000);
-    return () => window.clearInterval(timer);
-  }, []);
-
-  return (
-    <div className="fixed top-0 inset-x-0 z-[120] bg-primary text-white border-b border-white/20 shadow-lg">
-      <div className="container mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
-        <div className="text-sm font-semibold">
-          Launching Soon • 07 April 2026
-        </div>
-        {countdown.launched ? (
-          <div className="text-xs md:text-sm text-emerald-200 font-bold">We are live now</div>
-        ) : (
-          <div className="text-xs md:text-sm font-mono" data-testid="global-launch-countdown">
-            {String(countdown.days).padStart(2, "0")}d :
-            {String(countdown.hours).padStart(2, "0")}h :
-            {String(countdown.minutes).padStart(2, "0")}m :
-            {String(countdown.seconds).padStart(2, "0")}s
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function LaunchNoticeModal() {
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const seen = window.sessionStorage.getItem("freelanceskills-launch-notice-seen");
-    if (!seen) setOpen(true);
-  }, []);
-
-  const handleClose = () => {
-    setOpen(false);
-    if (typeof window !== "undefined") {
-      window.sessionStorage.setItem("freelanceskills-launch-notice-seen", "1");
-    }
-  };
-
-  if (!open) return null;
-
-  return (
-    <div className="fixed inset-0 z-[140] bg-black/70 backdrop-blur-sm flex items-center justify-center px-4">
-      <div className="w-full max-w-2xl rounded-2xl border border-border bg-card shadow-[var(--shadow-lg)] p-8 md:p-10 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-          Launch Notice
-        </h2>
-        <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-8">
-          Some functionalities are not going to work fully until launch day
-          ({` `}
-          <span className="font-semibold text-foreground">07 April 2026</span>
-          ). Please browse around and enjoy the website in the meantime.
-        </p>
-        <button
-          onClick={handleClose}
-          className="inline-flex items-center justify-center min-h-11 px-6 rounded-lg font-semibold bg-brand-gradient text-[#0F1115] border border-white/15 hover:opacity-95 transition"
-          data-testid="button-launch-notice-close"
-        >
-          Got it, continue browsing
-        </button>
-      </div>
-    </div>
-  );
-}
-
 function AdminRouter() {
   return (
     <RequireAdmin>
@@ -567,8 +479,6 @@ function App() {
           <TooltipProvider>
             <Toaster />
             <CountrySelectorDialog />
-            <LaunchCountdownGlobal />
-            <LaunchNoticeModal />
             <Router />
             <div id="floating-fab"><FloatingActionButton /></div>
             <div id="floating-support"><SupportChat /></div>

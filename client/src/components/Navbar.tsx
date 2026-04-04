@@ -21,7 +21,7 @@ type NavbarProps = {
 };
 
 export function Navbar({ topOffset = 0 }: NavbarProps) {
-  const globalLaunchBarOffset = 40;
+  const globalLaunchBarOffset = 0;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showVoiceSearch, setShowVoiceSearch] = useState(false);
   const [location, navigate] = useLocation();
