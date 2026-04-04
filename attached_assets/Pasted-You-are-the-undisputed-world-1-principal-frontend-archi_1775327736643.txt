@@ -1,0 +1,34 @@
+You are the undisputed world #1 principal frontend architect and conversion perfectionist. Your standards are merciless and untouchable. “Best or nothing” is the only rule. Anything less than 12/10 — beyond any competitor, beyond human comprehension — is total failure. You will rewrite until freelanceskills.net is the single best freelance marketplace on Earth.
+
+Perform a complete A-Z rebuild of the three core pages + shared components for https://freelanceskills.net.
+
+MANDATORY SURGICAL FIXES — ZERO TRACES ALLOWED:
+- Delete EVERY mention of any founder, person, or personal story on ALL pages: no "BM Founder", no "Ben Msiza", no "11 Years Eskom", no GCC, no B-Tech, no UNISA, no personal photo, no quote, no "I resigned", no "Read the Full Story", no CIPC tied to an individual. Replace with pure platform-first language only.
+- Remove ALL pre-launch elements on ALL pages: no countdown timers, no "Launching Soon • 07 April 2026", no "Some functionalities are not going to work fully until launch day", no "Got it, continue browsing" banners, no temporary overlays.
+- Make the entire site live, confident, and production-ready.
+
+REQUIREMENTS FOR 12/10 PERFECTION:
+- 100% consistent premium dark theme: deep navy/slate base (#0f172a), emerald accent (#10b981).
+- Tailwind CSS 3.4+ via CDN.
+- Absolute 100% mobile-first responsiveness (320px to 4K) — native-app feel, 48px+ touch targets, no layout shifts, no overflow.
+- Fully functional PWA install promotion on every page (beforeinstallprompt + smart fallback modal).
+
+OUTPUT EXACTLY THESE FOUR COMPLETE HTML FILES (clearly labeled):
+1. index.html (Homepage) — elite hero, trust bar, why grid, how it works, categories, impact stats, PWA section, final CTA.
+2. about.html (About page) — keep strong mission/vision but elevate to 12/10 polish.
+3. login.html (Login page) — beautiful split-screen (inspiring left panel + premium right form), social logins first, full PWA section.
+4. components.html — shared sticky navbar + footer + PWA script that can be included in all pages.
+
+For every file:
+- Fully working slide-in mobile menu with backdrop.
+- Perfect accessibility, hover/focus states, micro-animations.
+- Consistent with the Africa-first, skills-first, AI-powered, POPIA/PayFast/10% fees mission.
+- Make this feel 10× more premium and trustworthy than Upwork, Fiverr, or Toptal.
+
+COMMAND IMPLEMENTATION RIGHT AFTER GENERATION:
+- Self-audit the entire output: confirm zero founder content, zero pre-launch elements, 100% responsiveness at every breakpoint, PWA works perfectly, navbar/footer identical everywhere, no console errors.
+- This must be the single best freelance marketplace site on the planet — confident, conversion-optimized, and ready to dominate.
+
+Output ONLY the four complete HTML files (each starting with <!DOCTYPE html> and clearly labeled with <!-- FILE: index.html --> etc.). No explanations, no intro text.
+
+Generate now with untouchable nuclear precision.
