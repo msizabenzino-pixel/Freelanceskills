@@ -1,320 +1,388 @@
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
+import { useLocation } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { useLocation } from "wouter";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { queryClient } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
+import { COURSES, getTotalLessons } from "@/lib/academyCurriculum";
 import {
-  Sparkles,
-  BookOpen,
-  CheckCircle2,
-  Award,
-  ArrowRight,
-  PlayCircle,
-  FileText,
-  Lock,
-  ChevronRight,
-  Trophy
+  BookOpen, Clock, TrendingUp, Star, Users, Search, Filter,
+  ChevronRight, Award, CheckCircle2, Lock, Zap, Play, Trophy,
+  ArrowRight, Sparkles, Target, BarChart3, Globe
 } from "lucide-react";
 
-interface Lesson {
-  id: number;
-  title: string;
-  content: string;
-  orderIndex: number;
-  type: "video" | "text" | "quiz";
-  completed: boolean;
+const CATEGORIES = [
+  "All Categories",
+  "AI & Machine Learning",
+  "Web Development",
+  "Graphic Design",
+  "Digital Marketing",
+  "Copywriting",
+  "Data Analytics",
+  "Video & Animation",
+  "Business Development",
+];
+
+const DIFFICULTIES = ["All Levels", "Beginner", "Intermediate", "Advanced"];
+
+const CATEGORY_ICONS: Record<string, string> = {
+  "AI & Machine Learning": "🤖",
+  "Web Development": "💻",
+  "Graphic Design": "🎨",
+  "Digital Marketing": "📢",
+  "Copywriting": "✍️",
+  "Data Analytics": "📊",
+  "Video & Animation": "🎬",
+  "Business Development": "💼",
+};
+
+function DifficultyBadge({ level }: { level: string }) {
+  const colors = {
+    Beginner: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+    Intermediate: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+    Advanced: "bg-rose-500/20 text-rose-400 border-rose-500/30",
+  }[level] ?? "bg-gray-500/20 text-gray-400 border-gray-500/30";
+
+  return (
+    <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${colors}`}>
+      {level}
+    </span>
+  );
 }
 
-interface Course {
-  id: number;
-  title: string;
-  description: string;
-  category: string;
-  difficulty: string;
-  duration: string;
-  totalLessons: number;
-  progress: number;
+function CourseCard({ course, onClick }: { course: (typeof COURSES)[0]; onClick: () => void }) {
+  const totalLessons = getTotalLessons(course);
+
+  return (
+    <button
+      onClick={onClick}
+      data-testid={`course-card-${course.id}`}
+      className="group text-left bg-slate-900 border border-slate-700/50 rounded-2xl overflow-hidden hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 flex flex-col"
+    >
+      {/* Course Header Gradient */}
+      <div className={`h-36 bg-gradient-to-br ${course.color} relative flex items-center justify-center overflow-hidden`}>
+        <span className="text-6xl z-10">{course.emoji}</span>
+        <div className="absolute inset-0 bg-black/20" />
+        {/* Free badge */}
+        {course.isFree && (
+          <div className="absolute top-3 right-3 bg-emerald-500 text-slate-950 text-xs font-bold px-2 py-0.5 rounded-full">
+            FREE
+          </div>
+        )}
+        {/* Category label */}
+        <div className="absolute bottom-3 left-3 text-xs text-white/80 font-medium bg-black/30 px-2 py-0.5 rounded-full">
+          {CATEGORY_ICONS[course.category]} {course.category}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="p-5 flex flex-col flex-1">
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <h3 className="font-bold text-white text-base leading-snug group-hover:text-emerald-400 transition-colors line-clamp-2">
+            {course.title}
+          </h3>
+          <DifficultyBadge level={course.difficulty} />
+        </div>
+
+        <p className="text-slate-400 text-sm leading-relaxed mb-4 line-clamp-2">
+          {course.tagline}
+        </p>
+
+        {/* Meta row */}
+        <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400 mb-4">
+          <span className="flex items-center gap-1">
+            <BookOpen className="w-3.5 h-3.5" />
+            {totalLessons} lessons
+          </span>
+          <span className="flex items-center gap-1">
+            <Clock className="w-3.5 h-3.5" />
+            {course.duration}
+          </span>
+          <span className="flex items-center gap-1">
+            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+            {course.rating}
+          </span>
+          <span className="flex items-center gap-1 text-emerald-400 font-medium">
+            <TrendingUp className="w-3.5 h-3.5" />
+            {course.earningsLift} earnings
+          </span>
+        </div>
+
+        {/* Skills */}
+        <div className="flex flex-wrap gap-1.5 mb-5">
+          {course.skills.slice(0, 3).map((s) => (
+            <span key={s} className="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full">
+              {s}
+            </span>
+          ))}
+          {course.skills.length > 3 && (
+            <span className="text-xs bg-slate-800 text-slate-500 px-2 py-0.5 rounded-full">
+              +{course.skills.length - 3} more
+            </span>
+          )}
+        </div>
+
+        {/* CTA */}
+        <div className="mt-auto">
+          <div className="flex items-center justify-between">
+            <span className="flex items-center gap-1 text-xs text-slate-500">
+              <Users className="w-3.5 h-3.5" />
+              {course.enrolled.toLocaleString()} enrolled
+            </span>
+            <span className="flex items-center gap-1 text-sm font-semibold text-emerald-400 group-hover:text-emerald-300">
+              Start Learning
+              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </span>
+          </div>
+        </div>
+      </div>
+    </button>
+  );
+}
+
+function StatCard({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
+  return (
+    <div className="flex flex-col items-center text-center p-6 bg-slate-900/60 border border-slate-700/40 rounded-2xl">
+      <div className="text-emerald-400 mb-3">{icon}</div>
+      <div className="text-3xl font-bold text-white mb-1">{value}</div>
+      <div className="text-sm text-slate-400">{label}</div>
+    </div>
+  );
 }
 
 export default function Academy() {
   const [, navigate] = useLocation();
-  const { toast } = useToast();
-  const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
-  const [selectedLessonId, setSelectedLessonId] = useState<number | null>(null);
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("All Categories");
+  const [difficulty, setDifficulty] = useState("All Levels");
+  const [freeOnly, setFreeOnly] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
 
-  const { data: courses, isLoading: loadingCourses } = useQuery<Course[]>({
-    queryKey: ["/api/courses"],
-  });
+  const featuredCourses = COURSES.filter((c) => [1, 3, 8].includes(c.id));
 
-  const { data: selectedCourse, isLoading: loadingCourse } = useQuery<{
-    id: number;
-    title: string;
-    description: string;
-    lessons: Lesson[];
-  }>({
-    queryKey: [`/api/courses/${selectedCourseId}`],
-    enabled: !!selectedCourseId,
-  });
-
-  const { data: certificates } = useQuery<any[]>({
-    queryKey: ["/api/certificates/my"],
-  });
-
-  const completeLessonMutation = useMutation({
-    mutationFn: async ({ courseId, lessonId }: { courseId: number; lessonId: number }) => {
-      const res = await fetch(`/api/courses/${courseId}/lessons/${lessonId}/complete`, {
-        method: "POST",
-      });
-      if (!res.ok) throw new Error("Failed to complete lesson");
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/courses/${selectedCourseId}`] });
-      queryClient.invalidateQueries({ queryKey: ["/api/courses"] });
-      toast({ title: "Lesson completed!", description: "Keep up the great work!" });
-    },
-  });
-
-  const claimCertificateMutation = useMutation({
-    mutationFn: async (courseId: number) => {
-      const res = await fetch(`/api/courses/${courseId}/certificate`);
-      if (!res.ok) throw new Error("Failed to claim certificate");
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/certificates/my"] });
-      toast({ title: "Certificate earned!", description: "Congratulations! Your certificate is now available." });
-    },
-  });
-
-  const currentLesson = selectedCourse?.lessons.find(l => l.id === selectedLessonId);
-  const isCourseCompleted = selectedCourse?.lessons.every(l => l.completed);
+  const filtered = useMemo(() => {
+    return COURSES.filter((c) => {
+      const matchesSearch =
+        !search ||
+        c.title.toLowerCase().includes(search.toLowerCase()) ||
+        c.description.toLowerCase().includes(search.toLowerCase()) ||
+        c.skills.some((s) => s.toLowerCase().includes(search.toLowerCase()));
+      const matchesCategory =
+        category === "All Categories" || c.category === category;
+      const matchesDifficulty =
+        difficulty === "All Levels" || c.difficulty === difficulty;
+      const matchesFree = !freeOnly || c.isFree;
+      return matchesSearch && matchesCategory && matchesDifficulty && matchesFree;
+    });
+  }, [search, category, difficulty, freeOnly]);
 
   return (
-    <div className="min-h-screen bg-background font-sans flex flex-col">
+    <div className="min-h-screen bg-slate-950 text-white flex flex-col">
       <Navbar />
 
-      <main className="flex-1 pt-24 pb-12">
-        <div className="container mx-auto px-4 md:px-6">
-          {!selectedCourseId ? (
-            <>
-              <div className="mb-12 text-center">
-                <h1 className="text-4xl font-bold text-primary mb-4" data-testid="text-academy-title">Academy</h1>
-                <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                  Master the skills you need to succeed in the modern freelance economy.
-                </p>
-              </div>
+      {/* ── HERO ─────────────────────────────────────────────────── */}
+      <section className="relative bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950 pt-16 pb-20 px-4 overflow-hidden">
+        {/* Decorative blurs */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-violet-500/5 rounded-full blur-3xl pointer-events-none" />
 
-              {certificates && certificates.length > 0 && (
-                <section className="mb-12">
-                  <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                    <Trophy className="text-accent" /> Your Certificates
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {certificates.map((cert) => (
-                      <Card key={cert.id} className="border-accent/20 bg-accent/5">
-                        <CardContent className="p-6 text-center">
-                          <Award className="w-12 h-12 text-accent mx-auto mb-4" />
-                          <h3 className="font-bold text-lg mb-1">{cert.courseTitle}</h3>
-                          <p className="text-sm text-muted-foreground mb-4">Issued on {new Date(cert.issuedAt).toLocaleDateString()}</p>
-                          <Badge variant="outline" className="font-mono text-[10px]">{cert.certificateCode}</Badge>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </section>
-              )}
+        <div className="max-w-5xl mx-auto text-center relative">
+          {/* Pill badge */}
+          <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-medium px-4 py-1.5 rounded-full mb-6">
+            <Sparkles className="w-4 h-4" />
+            15 Expert-Crafted Courses · Updated 2026
+          </div>
 
-              <section>
-                <h2 className="text-2xl font-bold mb-6">Featured Courses</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {courses?.map((course) => (
-                    <Card key={course.id} className="flex flex-col h-full hover:shadow-lg transition-shadow">
-                      <CardHeader>
-                        <div className="flex justify-between items-start mb-2">
-                          <Badge variant="secondary">{course.category}</Badge>
-                          <Badge variant="outline" className="capitalize">{course.difficulty}</Badge>
-                        </div>
-                        <CardTitle className="text-xl">{course.title}</CardTitle>
-                        <CardDescription className="line-clamp-2">{course.description}</CardDescription>
-                      </CardHeader>
-                      <CardContent className="flex-1">
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
-                          <div className="flex items-center gap-1">
-                            <BookOpen className="w-4 h-4" /> {course.totalLessons} lessons
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Sparkles className="w-4 h-4 text-accent" /> {course.duration}
-                          </div>
-                        </div>
-                        {course.progress > 0 && (
-                          <div className="space-y-2 mb-4">
-                            <div className="flex justify-between text-xs">
-                              <span>Progress</span>
-                              <span>{course.progress}%</span>
-                            </div>
-                            <Progress value={course.progress} className="h-1.5" />
-                          </div>
-                        )}
-                      </CardContent>
-                      <div className="p-6 pt-0 mt-auto">
-                        <Button 
-                          className="w-full gap-2" 
-                          onClick={() => setSelectedCourseId(course.id)}
-                          data-testid={`button-start-course-${course.id}`}
-                        >
-                          {course.progress === 100 ? "Review Course" : course.progress > 0 ? "Continue Learning" : "Start Course"}
-                          <ArrowRight className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              </section>
-            </>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Sidebar: Lesson List */}
-              <div className="lg:col-span-1 space-y-6">
-                <Button variant="ghost" className="mb-2" onClick={() => { setSelectedCourseId(null); setSelectedLessonId(null); }}>
-                  ← Back to Courses
-                </Button>
-                
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">{selectedCourse?.title}</CardTitle>
-                    {selectedCourse && (
-                      <div className="space-y-2 mt-4">
-                         <Progress value={Math.round((selectedCourse.lessons.filter(l => l.completed).length / selectedCourse.lessons.length) * 100)} className="h-2" />
-                         <p className="text-xs text-muted-foreground text-center">
-                           {selectedCourse.lessons.filter(l => l.completed).length} of {selectedCourse.lessons.length} lessons completed
-                         </p>
-                      </div>
-                    )}
-                  </CardHeader>
-                  <CardContent className="p-0">
-                    <div className="divide-y border-t">
-                      {selectedCourse?.lessons.map((lesson) => (
-                        <button
-                          key={lesson.id}
-                          className={`w-full p-4 text-left flex items-start gap-3 hover:bg-muted/50 transition-colors ${selectedLessonId === lesson.id ? 'bg-muted border-l-4 border-primary' : ''}`}
-                          onClick={() => setSelectedLessonId(lesson.id)}
-                          data-testid={`button-lesson-${lesson.id}`}
-                        >
-                          <div className="mt-0.5">
-                            {lesson.completed ? (
-                              <CheckCircle2 className="w-5 h-5 text-green-500" />
-                            ) : (
-                              <PlayCircle className="w-5 h-5 text-muted-foreground" />
-                            )}
-                          </div>
-                          <div>
-                            <div className="text-sm font-medium leading-tight">{lesson.title}</div>
-                            <div className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                              {lesson.type === 'video' ? <PlayCircle className="w-3 h-3" /> : <FileText className="w-3 h-3" />}
-                              {lesson.type.charAt(0).toUpperCase() + lesson.type.slice(1)}
-                            </div>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white mb-6 leading-[1.05]">
+            Level Up Your{" "}
+            <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+              Freelance Career
+            </span>
+          </h1>
+          <p className="text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+            World-class courses built for African freelancers. Track your milestones,
+            earn verified certificates, and command premium rates.
+          </p>
 
-                {isCourseCompleted && (
-                  <Card className="border-accent bg-accent/5">
-                    <CardContent className="p-6">
-                      <Award className="w-12 h-12 text-accent mx-auto mb-4" />
-                      <h3 className="font-bold text-center mb-2">Congratulations!</h3>
-                      <p className="text-sm text-center text-muted-foreground mb-6">
-                        You've completed all lessons in this course.
-                      </p>
-                      <Button 
-                        className="w-full bg-accent text-primary hover:bg-accent/90" 
-                        onClick={() => claimCertificateMutation.mutate(selectedCourseId)}
-                        disabled={claimCertificateMutation.isPending || !!certificates?.find(c => c.courseId === selectedCourseId)}
-                        data-testid="button-claim-certificate"
-                      >
-                        {certificates?.find(c => c.courseId === selectedCourseId) ? "Certificate Earned" : "Claim Certificate"}
-                      </Button>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
+          {/* Search bar */}
+          <div className="relative max-w-lg mx-auto mb-6">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Search courses, skills, or topics…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              data-testid="input-course-search"
+              className="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 pl-12 pr-4 py-4 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-base"
+            />
+          </div>
 
-              {/* Main Content: Lesson Viewer */}
-              <div className="lg:col-span-2">
-                {selectedLessonId ? (
-                  <Card className="min-h-[600px] flex flex-col">
-                    <CardHeader className="border-b">
-                      <div className="flex justify-between items-center">
-                        <CardTitle>{currentLesson?.title}</CardTitle>
-                        {currentLesson?.completed && (
-                          <Badge className="bg-green-500/10 text-green-600 hover:bg-green-500/10 border-green-500/20">
-                            Completed
-                          </Badge>
-                        )}
-                      </div>
-                    </CardHeader>
-                    <CardContent className="flex-1 p-8 prose prose-slate max-w-none">
-                      {currentLesson?.content && (
-                        <div className="whitespace-pre-wrap">{currentLesson.content}</div>
-                      )}
-                    </CardContent>
-                    <div className="p-6 border-t flex justify-between items-center bg-muted/20">
-                      <Button 
-                        variant="outline" 
-                        disabled={!selectedCourse?.lessons.find(l => l.orderIndex === (currentLesson?.orderIndex || 0) - 1)}
-                        onClick={() => setSelectedLessonId(selectedCourse?.lessons.find(l => l.orderIndex === (currentLesson?.orderIndex || 0) - 1)?.id || null)}
-                      >
-                        Previous Lesson
-                      </Button>
-                      
-                      {!currentLesson?.completed ? (
-                        <Button 
-                          onClick={() => completeLessonMutation.mutate({ courseId: selectedCourseId, lessonId: selectedLessonId })}
-                          disabled={completeLessonMutation.isPending}
-                          data-testid="button-complete-lesson"
-                        >
-                          Mark as Complete
-                        </Button>
-                      ) : (
-                        <Button 
-                          onClick={() => {
-                            const next = selectedCourse?.lessons.find(l => l.orderIndex === (currentLesson?.orderIndex || 0) + 1);
-                            if (next) setSelectedLessonId(next.id);
-                          }}
-                          disabled={!selectedCourse?.lessons.find(l => l.orderIndex === (currentLesson?.orderIndex || 0) + 1)}
-                          className="gap-2"
-                        >
-                          Next Lesson <ChevronRight className="w-4 h-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </Card>
-                ) : (
-                  <div className="h-full flex flex-col items-center justify-center text-center p-12 bg-muted/30 rounded-lg border-2 border-dashed border-muted">
-                    <BookOpen className="w-16 h-16 text-muted-foreground mb-4" />
-                    <h3 className="text-2xl font-bold mb-2">Ready to start?</h3>
-                    <p className="text-muted-foreground max-w-md mb-8">
-                      Select a lesson from the sidebar to begin learning. Each lesson you complete brings you closer to your certificate.
-                    </p>
-                    <Button onClick={() => setSelectedLessonId(selectedCourse?.lessons[0].id || null)}>
-                      Start First Lesson
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
+          {/* Quick category pills */}
+          <div className="flex flex-wrap justify-center gap-2">
+            {["AI & Machine Learning", "Web Development", "Business Development", "Graphic Design", "Data Analytics"].map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setCategory(cat === category ? "All Categories" : cat)}
+                data-testid={`pill-${cat}`}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                  category === cat
+                    ? "bg-emerald-500 text-slate-950"
+                    : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white"
+                }`}
+              >
+                {CATEGORY_ICONS[cat]} {cat}
+              </button>
+            ))}
+          </div>
         </div>
-      </main>
+      </section>
+
+      {/* ── STATS ─────────────────────────────────────────────────── */}
+      <section className="max-w-5xl mx-auto px-4 -mt-6 mb-16 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <StatCard icon={<BookOpen className="w-7 h-7" />} value="15" label="Expert Courses" />
+        <StatCard icon={<Users className="w-7 h-7" />} value="94K+" label="Enrolled Learners" />
+        <StatCard icon={<Award className="w-7 h-7" />} value="38K+" label="Certificates Issued" />
+        <StatCard icon={<TrendingUp className="w-7 h-7" />} value="+87%" label="Avg Earnings Lift" />
+      </section>
+
+      {/* ── FEATURED COURSES ─────────────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 mb-16">
+        <div className="flex items-center gap-3 mb-8">
+          <Star className="w-6 h-6 text-amber-400 fill-amber-400" />
+          <h2 className="text-2xl font-bold text-white">Featured Courses</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {featuredCourses.map((c) => (
+            <CourseCard key={c.id} course={c} onClick={() => navigate(`/academy/${c.id}`)} />
+          ))}
+        </div>
+      </section>
+
+      {/* ── HOW IT WORKS ─────────────────────────────────────────── */}
+      <section className="bg-slate-900/50 border-y border-slate-800 py-16 px-4 mb-16">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-2xl font-bold text-white text-center mb-12">
+            How the Academy Works
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { icon: <Play className="w-8 h-8" />, step: "01", title: "Enrol Free", desc: "Choose a course and enrol instantly. No credit card needed for free courses." },
+              { icon: <Target className="w-8 h-8" />, step: "02", title: "Track Milestones", desc: "Complete lessons to unlock milestone badges at the end of each module." },
+              { icon: <CheckCircle2 className="w-8 h-8" />, step: "03", title: "Pass Quizzes", desc: "Prove your knowledge with interactive quizzes embedded in each module." },
+              { icon: <Award className="w-8 h-8" />, step: "04", title: "Earn Certificate", desc: "100% completion unlocks a blockchain-verified, downloadable certificate." },
+            ].map((item) => (
+              <div key={item.step} className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-emerald-400 mb-4">
+                  {item.icon}
+                </div>
+                <div className="text-xs text-emerald-500 font-bold mb-1">{item.step}</div>
+                <h3 className="font-bold text-white mb-2">{item.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── ALL COURSES ──────────────────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 mb-20">
+        {/* Filter bar */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+          <div>
+            <h2 className="text-2xl font-bold text-white">All Courses</h2>
+            <p className="text-slate-400 text-sm mt-1">
+              {filtered.length} course{filtered.length !== 1 ? "s" : ""} found
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Free only toggle */}
+            <button
+              onClick={() => setFreeOnly(!freeOnly)}
+              data-testid="toggle-free-only"
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                freeOnly
+                  ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-400"
+                  : "bg-slate-800 border border-slate-700 text-slate-400 hover:text-white"
+              }`}
+            >
+              <Zap className="w-4 h-4" />
+              Free Only
+            </button>
+
+            {/* Difficulty */}
+            <select
+              value={difficulty}
+              onChange={(e) => setDifficulty(e.target.value)}
+              data-testid="select-difficulty"
+              className="bg-slate-800 border border-slate-700 text-slate-300 text-sm px-3 py-2 rounded-lg focus:outline-none focus:border-emerald-500 cursor-pointer"
+            >
+              {DIFFICULTIES.map((d) => (
+                <option key={d}>{d}</option>
+              ))}
+            </select>
+
+            {/* Category */}
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              data-testid="select-category"
+              className="bg-slate-800 border border-slate-700 text-slate-300 text-sm px-3 py-2 rounded-lg focus:outline-none focus:border-emerald-500 cursor-pointer"
+            >
+              {CATEGORIES.map((c) => (
+                <option key={c}>{c}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Course grid */}
+        {filtered.length === 0 ? (
+          <div className="text-center py-20">
+            <Search className="w-12 h-12 text-slate-600 mx-auto mb-4" />
+            <p className="text-xl font-semibold text-slate-400 mb-2">No courses found</p>
+            <p className="text-slate-500">Try different search terms or filters</p>
+            <button
+              onClick={() => { setSearch(""); setCategory("All Categories"); setDifficulty("All Levels"); setFreeOnly(false); }}
+              className="mt-4 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm transition-colors"
+            >
+              Clear Filters
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {filtered.map((c) => (
+              <CourseCard key={c.id} course={c} onClick={() => navigate(`/academy/${c.id}`)} />
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* ── BOTTOM CTA ─────────────────────────────────────────── */}
+      <section className="bg-gradient-to-r from-emerald-700 via-emerald-600 to-teal-600 py-16 px-4 mx-4 mb-16 rounded-3xl max-w-7xl lg:mx-auto">
+        <div className="max-w-3xl mx-auto text-center">
+          <Trophy className="w-12 h-12 text-white/80 mx-auto mb-4" />
+          <h2 className="text-3xl font-black text-white mb-4">
+            Every Course Includes a Blockchain Certificate
+          </h2>
+          <p className="text-emerald-100 mb-8 text-lg">
+            Your certificate is verified, shareable on LinkedIn, and stored on the blockchain.
+            Clients trust credentials they can verify independently.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={() => navigate("/academy/1")}
+              data-testid="button-start-free"
+              className="px-8 py-4 bg-white text-emerald-700 font-bold rounded-xl hover:bg-emerald-50 transition-colors text-lg"
+            >
+              Start Free Course →
+            </button>
+            <button
+              onClick={() => navigate("/browse")}
+              className="px-8 py-4 bg-emerald-800/50 border border-white/20 text-white font-bold rounded-xl hover:bg-emerald-800/80 transition-colors text-lg"
+            >
+              Find Freelance Work
+            </button>
+          </div>
+        </div>
+      </section>
 
       <Footer />
     </div>
