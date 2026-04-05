@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="About FreelanceSkills — Our mission to empower 1 million African freelancers by 2031. Africa's #1 verified, AI-powered freelance marketplace. POPIA compliant.">
+  <meta name="theme-color" content="#10b981">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta property="og:title" content="About FreelanceSkills — Mission to Empower 1 Million African Freelancers">
+  <meta property="og:description" content="Africa's #1 verified freelance platform. Our mission: empowering 1 million African freelancers by 2031 through AI, trust, and fair opportunity.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://freelanceskills.net/about">
+  <link rel="canonical" href="https://freelanceskills.net/about">
+  <link rel="icon" type="image/png" href="/favcon-fls.png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>About FreelanceSkills — Africa's #1 Verified Freelance Platform</title>
+  <style>
+    *{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;box-sizing:border-box}
+    html{scroll-behavior:smooth;background:#0f172a}
+    body{background:#0f172a;color:#f1f5f9;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    ::selection{background:#10b981;color:#0f172a}
+    ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#1e293b}::-webkit-scrollbar-thumb{background:#10b981;border-radius:3px}
+    .nav-solid{background:rgba(15,23,42,0.97)!important;backdrop-filter:blur(16px);border-bottom:1px solid rgba(16,185,129,0.15)!important;box-shadow:0 2px 24px rgba(0,0,0,0.4)}
+    .stat-number{background:linear-gradient(135deg,#10b981,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .card-hover{transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+    .card-hover:hover{transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.4),0 0 0 1px rgba(16,185,129,0.25)}
+    .btn-primary{background:linear-gradient(135deg,#10b981,#059669);transition:all .2s ease;min-height:48px;display:inline-flex;align-items:center;justify-content:center}
+    .btn-primary:hover{background:linear-gradient(135deg,#34d399,#10b981);transform:translateY(-1px);box-shadow:0 8px 24px rgba(16,185,129,0.4)}
+    .btn-secondary{border:1.5px solid rgba(16,185,129,0.4);color:#10b981;background:transparent;transition:all .2s ease;min-height:48px;display:inline-flex;align-items:center;justify-content:center}
+    .btn-secondary:hover{background:rgba(16,185,129,0.1);border-color:#10b981}
+    .mobile-menu{transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+    .mobile-menu.open{transform:translateX(0)}
+    .overlay{opacity:0;pointer-events:none;transition:opacity .3s ease}
+    .overlay.open{opacity:1;pointer-events:all}
+    .fade-up{opacity:0;transform:translateY(24px);transition:opacity .65s ease,transform .65s ease}
+    .fade-up.visible{opacity:1;transform:translateY(0)}
+    @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+    .pulse-dot{animation:pulse-dot 1.5s ease-in-out infinite}
+    .vetting-connector{background:linear-gradient(90deg,#10b981,#059669)}
+  </style>
+</head>
+<body>
+
+<!-- ════════════════ NAVBAR ════════════════ -->
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 py-3 border-b border-transparent transition-all duration-300">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-12">
+      <a href="/" class="flex items-center gap-2.5 flex-shrink-0" aria-label="FreelanceSkills home">
+        <div class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-slate-950" fill="currentColor" viewBox="0 0 20 20"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/></svg>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-white font-black text-[17px] leading-none tracking-tight">FreelanceSkills</span>
+          <span class="text-emerald-400 text-[9px] font-bold tracking-widest uppercase">.net · Africa's #1</span>
+        </div>
+      </a>
+      <div class="hidden lg:flex items-center gap-0.5">
+        <a href="/jobs" class="px-3.5 py-2 text-slate-300 hover:text-white text-sm font-medium rounded-lg hover:bg-white/5 transition-all">Find Work</a>
+        <a href="/freelancers" class="px-3.5 py-2 text-slate-300 hover:text-white text-sm font-medium rounded-lg hover:bg-white/5 transition-all">Find Talent</a>
+        <a href="/academy" class="px-3.5 py-2 text-slate-300 hover:text-white text-sm font-medium rounded-lg hover:bg-white/5 transition-all">Academy</a>
+        <a href="/pricing" class="px-3.5 py-2 text-slate-300 hover:text-white text-sm font-medium rounded-lg hover:bg-white/5 transition-all">Pricing</a>
+        <a href="/about" class="px-3.5 py-2 text-white bg-emerald-500/10 text-sm font-semibold rounded-lg">About</a>
+      </div>
+      <div class="hidden lg:flex items-center gap-2.5">
+        <a href="/login" class="px-4 py-2 text-slate-300 hover:text-white text-sm font-semibold rounded-lg hover:bg-white/5 transition-all">Log In</a>
+        <a href="/signup" class="btn-primary px-5 py-2 text-slate-950 font-bold text-sm rounded-xl gap-1.5">Sign Up Free <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a>
+      </div>
+      <button id="hamburger" class="lg:hidden w-10 h-10 flex items-center justify-center text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-all" aria-label="Open menu">
+        <svg id="icon-open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        <svg id="icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+<div id="overlay" class="overlay fixed inset-0 z-40 bg-slate-950/80 backdrop-blur-sm lg:hidden"></div>
+<div id="mob-menu" class="mobile-menu fixed top-0 right-0 bottom-0 z-50 w-80 max-w-[85vw] bg-slate-900 border-l border-slate-800 lg:hidden flex flex-col overflow-y-auto">
+  <div class="flex items-center justify-between p-5 border-b border-slate-800">
+    <span class="text-white font-black">FreelanceSkills</span>
+    <button id="close-mob" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-white rounded-lg hover:bg-white/5" aria-label="Close menu"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+  </div>
+  <nav class="flex-1 p-4 space-y-1">
+    <a href="/jobs" class="flex items-center gap-3 px-4 py-3.5 text-slate-300 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all">Find Work</a>
+    <a href="/freelancers" class="flex items-center gap-3 px-4 py-3.5 text-slate-300 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all">Find Talent</a>
+    <a href="/academy" class="flex items-center gap-3 px-4 py-3.5 text-slate-300 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all">Academy</a>
+    <a href="/pricing" class="flex items-center gap-3 px-4 py-3.5 text-slate-300 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all">Pricing</a>
+    <a href="/about" class="flex items-center gap-3 px-4 py-3.5 text-white bg-emerald-500/10 rounded-xl font-semibold transition-all">About</a>
+    <div class="border-t border-slate-800 mt-3 pt-3 space-y-2">
+      <a href="/login" class="block w-full text-center py-3 border border-slate-700 hover:border-emerald-500/40 text-white rounded-xl font-semibold transition-all hover:bg-white/5">Log In</a>
+      <a href="/signup" class="btn-primary block w-full text-center py-3 text-slate-950 font-bold rounded-xl">Sign Up Free →</a>
+    </div>
+  </nav>
+</div>
+
+<!-- ════════════════ HERO ════════════════ -->
+<section class="relative pt-20 overflow-hidden" style="background:linear-gradient(135deg,#0f172a 0%,#0d1f35 60%,#0a1628 100%)">
+  <div class="absolute inset-0 pointer-events-none overflow-hidden">
+    <div class="absolute -top-32 -left-32 w-[500px] h-[500px] bg-emerald-500/6 rounded-full blur-3xl"></div>
+    <div class="absolute top-1/2 right-0 w-96 h-96 bg-teal-400/4 rounded-full blur-3xl"></div>
+    <div class="absolute inset-0" style="background-image:linear-gradient(rgba(16,185,129,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(16,185,129,0.02) 1px,transparent 1px);background-size:64px 64px"></div>
+  </div>
+  <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 text-center">
+    <div class="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 text-xs sm:text-sm font-semibold px-4 py-2 rounded-full mb-8 fade-up">
+      <span class="w-2 h-2 bg-emerald-400 rounded-full pulse-dot"></span>
+      Platform-First · Mission-Driven · Africa-Built
+    </div>
+    <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[1.07] tracking-tight mb-6 fade-up">
+      <span class="text-white">We're Building</span><br>
+      <span class="stat-number">Africa's Economic</span><br>
+      <span class="text-white">Infrastructure</span>
+    </h1>
+    <p class="text-xl sm:text-2xl text-slate-400 max-w-3xl mx-auto mb-10 leading-relaxed font-light fade-up">
+      FreelanceSkills exists to verify, connect, and empower every skilled person on the continent — giving African talent access to global opportunity on equal terms.
+    </p>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 fade-up">
+      <a href="/signup" class="btn-primary w-full sm:w-auto px-8 py-4 text-slate-950 font-extrabold text-lg rounded-2xl gap-2 shadow-2xl shadow-emerald-500/20">Join the Mission <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a>
+      <a href="#mission" class="btn-secondary w-full sm:w-auto px-8 py-4 font-semibold text-lg rounded-2xl gap-2">Our Mission <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></a>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-3xl mx-auto mt-14 fade-up">
+      <div class="bg-slate-900/70 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-4 sm:p-5 text-center card-hover">
+        <div class="stat-number text-2xl sm:text-3xl font-black mb-1">47K+</div>
+        <div class="text-slate-400 text-xs sm:text-sm">Verified Freelancers</div>
+      </div>
+      <div class="bg-slate-900/70 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-4 sm:p-5 text-center card-hover">
+        <div class="stat-number text-2xl sm:text-3xl font-black mb-1">R2.3B+</div>
+        <div class="text-slate-400 text-xs sm:text-sm">Escrow Processed</div>
+      </div>
+      <div class="bg-slate-900/70 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-4 sm:p-5 text-center card-hover">
+        <div class="stat-number text-2xl sm:text-3xl font-black mb-1">12</div>
+        <div class="text-slate-400 text-xs sm:text-sm">African Countries</div>
+      </div>
+      <div class="bg-slate-900/70 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-4 sm:p-5 text-center card-hover">
+        <div class="stat-number text-2xl sm:text-3xl font-black mb-1">2031</div>
+        <div class="text-slate-400 text-xs sm:text-sm">Mission Target Year</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ MISSION & VISION ════════════════ -->
+<section id="mission" class="py-20 sm:py-28 px-4">
+  <div class="max-w-4xl mx-auto">
+    <div class="fade-up text-center mb-16">
+      <p class="text-emerald-400 text-sm font-bold uppercase tracking-widest mb-3">Why We Exist</p>
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-6">Our Mission &amp; Vision</h2>
+    </div>
+
+    <div class="space-y-8">
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 sm:p-10 card-hover fade-up">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-10 h-10 bg-emerald-500/20 border border-emerald-500/30 rounded-xl flex items-center justify-center text-emerald-400 flex-shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <h3 class="text-xl font-bold text-white">The Mission</h3>
+        </div>
+        <p class="text-slate-300 text-lg leading-relaxed">To empower <strong class="text-emerald-400">1 million African freelancers</strong> by 2031 — giving every skilled person on the continent the tools, trust signals, and global connections needed to build a sustainable, independent career on their own terms.</p>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 sm:p-10 card-hover fade-up">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-10 h-10 bg-blue-500/20 border border-blue-500/30 rounded-xl flex items-center justify-center text-blue-400 flex-shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="text-xl font-bold text-white">The Vision</h3>
+        </div>
+        <p class="text-slate-300 text-lg leading-relaxed">A future where African talent competes on a <strong class="text-blue-400">level playing field</strong> with the world's best — not held back by geography, lack of credentials, or institutional bias. Where a developer in Soweto earns what a developer in San Francisco earns. Where a designer in Nairobi works with brands in New York. This is the future FreelanceSkills is building.</p>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 sm:p-10 card-hover fade-up">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-10 h-10 bg-amber-500/20 border border-amber-500/30 rounded-xl flex items-center justify-center text-amber-400 flex-shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          </div>
+          <h3 class="text-xl font-bold text-white">The Problem We're Solving</h3>
+        </div>
+        <p class="text-slate-300 text-lg leading-relaxed mb-5">Africa has the youngest, fastest-growing workforce on Earth. But most freelancers lack <strong class="text-amber-400">verifiable credentials</strong>, access to <strong class="text-amber-400">global clients</strong>, or <strong class="text-amber-400">secure payment infrastructure</strong>. Existing platforms were built for Western markets and extract 20–30% of every transaction.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+            <div class="text-2xl font-black text-rose-400 mb-1">20-30%</div>
+            <div class="text-slate-400 text-sm">Fees charged by foreign platforms</div>
+          </div>
+          <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+            <div class="text-2xl font-black text-amber-400 mb-1">68%</div>
+            <div class="text-slate-400 text-sm">Freelancers lack verifiable credentials</div>
+          </div>
+          <div class="bg-emerald-500/10 rounded-xl p-4 border border-emerald-500/25">
+            <div class="text-2xl font-black text-emerald-400 mb-1">10%</div>
+            <div class="text-slate-400 text-sm">FreelanceSkills fee — the lowest in Africa</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ NUCLEAR VETTING DEEP DIVE ════════════════ -->
+<section class="py-20 sm:py-28 px-4 bg-slate-900/50 border-y border-slate-800">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-16 fade-up">
+      <p class="text-emerald-400 text-sm font-bold uppercase tracking-widest mb-3">Our Technology</p>
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">Nuclear Vetting System™</h2>
+      <p class="text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed">5 verification levels. AI-proctored. Blockchain-anchored. The most rigorous freelancer trust system ever built for the African market.</p>
+    </div>
+
+    <div class="space-y-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 card-hover fade-up hover:border-emerald-500/40 group">
+        <div class="flex items-start gap-5">
+          <div class="w-14 h-14 bg-emerald-500/15 border border-emerald-500/25 rounded-xl flex items-center justify-center text-emerald-400 font-black text-xl flex-shrink-0 group-hover:bg-emerald-500/25 transition-all">01</div>
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2">
+              <h3 class="text-xl font-bold text-white">Identity Verification</h3>
+              <span class="text-[10px] bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Required</span>
+            </div>
+            <p class="text-slate-400 leading-relaxed">SA ID or passport biometric scan. Face-match against Home Affairs. Real-time liveness detection. Every freelancer on FreelanceSkills is a real, verified person — no fake accounts, no bots.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 card-hover fade-up hover:border-blue-500/40 group">
+        <div class="flex items-start gap-5">
+          <div class="w-14 h-14 bg-blue-500/15 border border-blue-500/25 rounded-xl flex items-center justify-center text-blue-400 font-black text-xl flex-shrink-0 group-hover:bg-blue-500/25 transition-all">02</div>
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2">
+              <h3 class="text-xl font-bold text-white">AI-Proctored Skills Assessment</h3>
+              <span class="text-[10px] bg-blue-500/15 text-blue-400 border border-blue-500/25 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">AI Monitored</span>
+            </div>
+            <p class="text-slate-400 leading-relaxed">Role-specific tests monitored by our AI proctor. Tab-switch detection, face presence tracking, adaptive question difficulty, and time-analysis scoring. You earn your badge — no shortcuts.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 card-hover fade-up hover:border-purple-500/40 group">
+        <div class="flex items-start gap-5">
+          <div class="w-14 h-14 bg-purple-500/15 border border-purple-500/25 rounded-xl flex items-center justify-center text-purple-400 font-black text-xl flex-shrink-0 group-hover:bg-purple-500/25 transition-all">03</div>
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2">
+              <h3 class="text-xl font-bold text-white">Education Verification</h3>
+              <span class="text-[10px] bg-purple-500/15 text-purple-400 border border-purple-500/25 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">SAQA Verified</span>
+            </div>
+            <p class="text-slate-400 leading-relaxed">Document OCR scanning + cross-check against the South African Qualifications Authority NLRD database. Whether your qualification is from UKZN, UJ, UNISA, or a SETA — we verify it against the national register.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 card-hover fade-up hover:border-amber-500/40 group">
+        <div class="flex items-start gap-5">
+          <div class="w-14 h-14 bg-amber-500/15 border border-amber-500/25 rounded-xl flex items-center justify-center text-amber-400 font-black text-xl flex-shrink-0 group-hover:bg-amber-500/25 transition-all">04</div>
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2">
+              <h3 class="text-xl font-bold text-white">Background Check</h3>
+              <span class="text-[10px] bg-amber-500/15 text-amber-400 border border-amber-500/25 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">POPIA Compliant</span>
+            </div>
+            <p class="text-slate-400 leading-relaxed">SAPS criminal record check with POPIA-compliant consent. Automated reference outreach to previous clients. Full right-to-erasure support — your data is yours, always.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-emerald-500/25 rounded-2xl p-6 sm:p-8 card-hover fade-up" style="box-shadow:0 0 40px rgba(16,185,129,0.08)">
+        <div class="flex items-start gap-5">
+          <div class="w-14 h-14 bg-emerald-500/20 border border-emerald-500/30 rounded-xl flex items-center justify-center text-emerald-400 font-black text-xl flex-shrink-0">05</div>
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2">
+              <h3 class="text-xl font-bold text-white">Blockchain Credential</h3>
+              <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider flex items-center gap-1"><span class="w-1.5 h-1.5 bg-emerald-400 rounded-full pulse-dot"></span>Live</span>
+            </div>
+            <p class="text-slate-400 leading-relaxed">A SHA-256 blockchain hash is issued as a tamper-proof credential NFT. Permanently verifiable. Globally portable. Clients can scan a QR code and verify your credentials in real time — no forgery possible.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-10 fade-up">
+      <a href="/vetting" class="btn-primary inline-flex items-center gap-2 px-7 py-3.5 text-slate-950 font-bold rounded-xl text-sm">Start Verification <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ WHY CHOOSE US ════════════════ -->
+<section class="py-20 sm:py-28 px-4">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-16 fade-up">
+      <p class="text-emerald-400 text-sm font-bold uppercase tracking-widest mb-3">Our Advantages</p>
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">Why Choose FreelanceSkills?</h2>
+      <p class="text-slate-400 max-w-xl mx-auto text-lg">Purpose-built for Africa. Premium trust. Global reach.</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 card-hover fade-up group">
+        <div class="text-3xl mb-4">🛡️</div>
+        <h3 class="text-lg font-bold text-white mb-3">Zero Trust Gap</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">Every freelancer on our platform has passed 5 levels of verification. Clients hire with complete confidence. No catfishing. No credential fraud.</p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 card-hover fade-up group">
+        <div class="text-3xl mb-4">💸</div>
+        <h3 class="text-lg font-bold text-white mb-3">Keep 90% of Your Earnings</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">10% platform fee — the lowest in Africa. No monthly fees. No listing fees. No bidding credits. Earn more of what you're worth.</p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 card-hover fade-up group">
+        <div class="text-3xl mb-4">🤖</div>
+        <h3 class="text-lg font-bold text-white mb-3">AI That Actually Works</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">Vuma AI analyses 47 data points to match clients with the right freelancer every time. No more wading through irrelevant proposals.</p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 card-hover fade-up group">
+        <div class="text-3xl mb-4">🔐</div>
+        <h3 class="text-lg font-bold text-white mb-3">POPIA Compliant by Design</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">Full right to erasure. No data sold to third parties. SA-hosted data. POPIA compliance built into every feature — not bolted on after.</p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 card-hover fade-up group">
+        <div class="text-3xl mb-4">⚡</div>
+        <h3 class="text-lg font-bold text-white mb-3">Instant ZAR Payouts</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">PayFast escrow means guaranteed payment. Funds hit your account within 24 hours of project approval. No international wire delays.</p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 card-hover fade-up group">
+        <div class="text-3xl mb-4">🌍</div>
+        <h3 class="text-lg font-bold text-white mb-3">Built for the African Context</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">Load-shedding support. Mobile-first design. Multi-language. SA support team. Not a foreign platform with SA as an afterthought.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ IMPACT STATS ════════════════ -->
+<section class="py-20 sm:py-24 px-4 bg-slate-900/50 border-y border-slate-800">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-12 fade-up">
+      <p class="text-emerald-400 text-sm font-bold uppercase tracking-widest mb-3">Real Impact</p>
+      <h2 class="text-3xl sm:text-4xl font-black text-white mb-4">Numbers That Mean Something</h2>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 fade-up">
+      <div class="text-center p-6 bg-slate-900 border border-slate-800 rounded-2xl card-hover">
+        <div class="stat-number text-4xl sm:text-5xl font-black mb-2">47K+</div>
+        <div class="text-white font-semibold mb-1">Verified Freelancers</div>
+        <div class="text-slate-400 text-xs">Across 12 African countries</div>
+      </div>
+      <div class="text-center p-6 bg-slate-900 border border-slate-800 rounded-2xl card-hover">
+        <div class="stat-number text-4xl sm:text-5xl font-black mb-2">R2.3B+</div>
+        <div class="text-white font-semibold mb-1">Total Escrow</div>
+        <div class="text-slate-400 text-xs">Zero payment fraud ever</div>
+      </div>
+      <div class="text-center p-6 bg-slate-900 border border-slate-800 rounded-2xl card-hover">
+        <div class="stat-number text-4xl sm:text-5xl font-black mb-2">92K+</div>
+        <div class="text-white font-semibold mb-1">Projects Done</div>
+        <div class="text-slate-400 text-xs">With 4.9★ average rating</div>
+      </div>
+      <div class="text-center p-6 bg-slate-900 border border-slate-800 rounded-2xl card-hover">
+        <div class="stat-number text-4xl sm:text-5xl font-black mb-2">1M</div>
+        <div class="text-white font-semibold mb-1">2031 Vision</div>
+        <div class="text-slate-400 text-xs">Freelancers empowered by 2031</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ POPIA & TRUST ════════════════ -->
+<section class="py-20 sm:py-28 px-4">
+  <div class="max-w-4xl mx-auto text-center fade-up">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 sm:p-12">
+      <div class="text-5xl mb-6">🔒</div>
+      <h2 class="text-2xl sm:text-3xl font-black text-white mb-5">POPIA Compliant. Privacy-First.</h2>
+      <p class="text-slate-400 text-lg leading-relaxed mb-8 max-w-2xl mx-auto">FreelanceSkills is built from the ground up to comply with South Africa's Protection of Personal Information Act (POPIA). Your data belongs to you. Full stop. We don't sell it. We don't share it. You have full right to access, correct, or delete it at any time.</p>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto">
+        <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700 text-center">
+          <div class="text-emerald-400 font-black text-sm mb-1">✓ POPIA</div>
+          <div class="text-slate-400 text-xs">Full compliance</div>
+        </div>
+        <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700 text-center">
+          <div class="text-emerald-400 font-black text-sm mb-1">✓ GDPR</div>
+          <div class="text-slate-400 text-xs">EU data rights</div>
+        </div>
+        <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700 text-center">
+          <div class="text-emerald-400 font-black text-sm mb-1">✓ Right Erasure</div>
+          <div class="text-slate-400 text-xs">Delete anytime</div>
+        </div>
+        <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700 text-center">
+          <div class="text-emerald-400 font-black text-sm mb-1">✓ SA Hosted</div>
+          <div class="text-slate-400 text-xs">Data stays local</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ FINAL CTA ════════════════ -->
+<section class="py-20 sm:py-28 px-4" style="background:linear-gradient(135deg,#064e3b,#065f46,#047857)">
+  <div class="max-w-4xl mx-auto text-center fade-up">
+    <div class="text-5xl mb-6">🌍</div>
+    <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-6">Be Part of Africa's<br>Economic Revolution</h2>
+    <p class="text-emerald-100 text-lg sm:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">Join 47,000+ verified freelancers and 18,000+ businesses. Your skills. Your terms. Africa's platform.</p>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+      <a href="/signup" class="w-full sm:w-auto px-10 py-5 bg-white text-emerald-800 font-black text-lg rounded-2xl hover:bg-emerald-50 transition-all hover:scale-[1.02] shadow-2xl">Join Free Today →</a>
+      <a href="/vetting" class="w-full sm:w-auto px-10 py-5 bg-emerald-800/40 border border-white/25 text-white font-bold text-lg rounded-2xl hover:bg-emerald-800/60 transition-all">Get Verified</a>
+    </div>
+    <p class="text-emerald-200/70 text-sm mt-8">CIPC Reg: 2026/070509/09 · POPIA Compliant · 24/7 SA Support · Camps Bay, Cape Town, South Africa</p>
+  </div>
+</section>
+
+<!-- ════════════════ FOOTER ════════════════ -->
+<footer class="bg-slate-950 border-t border-slate-800 pt-14 pb-8 px-4">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-8 mb-12">
+      <div class="col-span-2 sm:col-span-1">
+        <div class="flex items-center gap-2.5 mb-4">
+          <div class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0"><svg class="w-5 h-5 text-slate-950" fill="currentColor" viewBox="0 0 20 20"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM14 15a4 4 0 00-8 0v3h8v-3z"/></svg></div>
+          <span class="text-white font-black text-lg">FreelanceSkills</span>
+        </div>
+        <p class="text-slate-400 text-sm leading-relaxed mb-4">Africa's #1 verified freelance platform. Empowering 1 million Africans by 2031.</p>
+      </div>
+      <div>
+        <h4 class="text-white font-bold text-xs uppercase tracking-widest mb-4">Platform</h4>
+        <ul class="space-y-2.5 text-sm">
+          <li><a href="/jobs" class="text-slate-400 hover:text-white transition-colors">Find Work</a></li>
+          <li><a href="/freelancers" class="text-slate-400 hover:text-white transition-colors">Find Talent</a></li>
+          <li><a href="/pricing" class="text-slate-400 hover:text-white transition-colors">Pricing</a></li>
+          <li><a href="/vetting" class="text-slate-400 hover:text-white transition-colors">Get Verified</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-bold text-xs uppercase tracking-widest mb-4">Learn</h4>
+        <ul class="space-y-2.5 text-sm">
+          <li><a href="/academy" class="text-slate-400 hover:text-white transition-colors">Academy</a></li>
+          <li><a href="/how-it-works" class="text-slate-400 hover:text-white transition-colors">How It Works</a></li>
+          <li><a href="/blog" class="text-slate-400 hover:text-white transition-colors">Blog</a></li>
+          <li><a href="/community" class="text-slate-400 hover:text-white transition-colors">Community</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-bold text-xs uppercase tracking-widest mb-4">Company</h4>
+        <ul class="space-y-2.5 text-sm">
+          <li><a href="/about" class="text-slate-400 hover:text-white transition-colors">About</a></li>
+          <li><a href="/careers" class="text-slate-400 hover:text-white transition-colors">Careers</a></li>
+          <li><a href="/support" class="text-slate-400 hover:text-white transition-colors">Support</a></li>
+          <li><a href="/terms" class="text-slate-400 hover:text-white transition-colors">Terms</a></li>
+          <li><a href="/privacy" class="text-slate-400 hover:text-white transition-colors">Privacy &amp; POPIA</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-slate-800 pt-7 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p class="text-slate-500 text-xs text-center sm:text-left">© 2026 FreelanceSkills (Pty) Ltd. CIPC Reg: 2026/070509/09. Camps Bay, Cape Town, South Africa. POPIA Compliant.</p>
+      <span class="flex items-center gap-1.5 text-slate-500 text-xs"><span class="w-1.5 h-1.5 bg-emerald-400 rounded-full pulse-dot"></span>All systems operational</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+const nav=document.getElementById('navbar');
+window.addEventListener('scroll',()=>{if(window.scrollY>24)nav.classList.add('nav-solid');else nav.classList.remove('nav-solid')},{passive:true});
+const hamburger=document.getElementById('hamburger');
+const mobMenu=document.getElementById('mob-menu');
+const overlay=document.getElementById('overlay');
+const closeMob=document.getElementById('close-mob');
+const iconOpen=document.getElementById('icon-open');
+const iconClose=document.getElementById('icon-close');
+const openMob=()=>{mobMenu.classList.add('open');overlay.classList.add('open');iconOpen.classList.add('hidden');iconClose.classList.remove('hidden');document.body.style.overflow='hidden'};
+const closeMobFn=()=>{mobMenu.classList.remove('open');overlay.classList.remove('open');iconOpen.classList.remove('hidden');iconClose.classList.add('hidden');document.body.style.overflow=''};
+hamburger.addEventListener('click',openMob);
+closeMob.addEventListener('click',closeMobFn);
+overlay.addEventListener('click',closeMobFn);
+const io=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')}),{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.fade-up').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>

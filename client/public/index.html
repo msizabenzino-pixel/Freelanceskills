@@ -3,1167 +3,565 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="FreelanceSkills — South Africa's #1 verified freelance platform. AI-matched talent, secure escrow, instant ZAR payouts. 47K+ freelancers. R2.3B+ protected. Join Africa's future of work.">
+  <meta name="description" content="FreelanceSkills — Africa's #1 verified freelance platform. AI-matched talent, secure PayFast escrow, instant ZAR payouts. 47K+ verified freelancers. R2.3B+ protected. POPIA compliant.">
   <meta name="theme-color" content="#10b981">
-  <meta name="color-scheme" content="light dark">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta property="og:title" content="FreelanceSkills - Africa's #1 Verified Freelance Platform">
-  <meta property="og:description" content="47K+ verified freelancers. AI matching. Secure escrow. Instant ZAR payouts. R2.3B+ protected. Join South Africa's future of work.">
+  <meta property="og:title" content="FreelanceSkills — Africa's #1 Verified Freelance Platform">
+  <meta property="og:description" content="AI-matched talent, secure escrow, instant ZAR payouts. 47K+ verified freelancers. R2.3B+ protected.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://freelanceskills.net">
   <meta property="og:image" content="https://freelanceskills.net/og-image.jpg">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="FreelanceSkills - Africa's Verified Talent Platform">
-  <meta name="twitter:description" content="AI-matched freelancers. Secure escrow. ZAR payments. R2.3B+ protected. 47K+ verified talent.">
-  <meta name="twitter:image" content="https://freelanceskills.net/twitter-image.jpg">
   <link rel="canonical" href="https://freelanceskills.net">
   <link rel="icon" type="image/png" href="/favcon-fls.png">
   <link rel="manifest" href="/manifest.json">
-  <title>FreelanceSkills — Africa's #1 Verified Freelance Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  <title>FreelanceSkills — Africa's #1 Verified Freelance Platform</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-    
-    :root {
-      --color-dark: #0f172a;
-      --color-emerald: #10b981;
-      --color-slate: #f1f5f9;
-      color-scheme: light dark;
-    }
-
-    * {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      background: var(--color-dark);
-      color: var(--color-slate);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      transition: background-color 0.3s, color 0.3s;
-    }
-
-    body.light-mode {
-      background: #f8fafc;
-      color: #0f172a;
-    }
-
-    .nav-link {
-      position: relative;
-      transition: color 0.2s ease;
-    }
-
-    .nav-link.active::after {
-      content: '';
-      position: absolute;
-      bottom: -8px;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: #10b981;
-      border-radius: 1px;
-    }
-
-    @keyframes slideInRight {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-
-    @keyframes slideOutRight {
-      from { transform: translateX(0); opacity: 1; }
-      to { transform: translateX(100%); opacity: 0; }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes countUp {
-      from { opacity: 0; transform: scale(0.9); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    @keyframes pulse-match {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
-    }
-
-    @keyframes marquee {
-      0% { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
-    }
-
-    @keyframes float-up {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-8px); }
-    }
-
-    @keyframes slideUp {
-      from { transform: translateY(100vh); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    .backdrop-fade {
-      animation: fadeIn 0.3s ease;
-    }
-
-    .mobile-menu-slide {
-      animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .mobile-menu-slide.closing {
-      animation: slideOutRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .hero-animate {
-      animation: fadeInUp 0.6s ease-out 0.1s both;
-    }
-
-    .hero-animate-delay {
-      animation: fadeInUp 0.6s ease-out 0.2s both;
-    }
-
-    .stat-animate {
-      animation: countUp 0.6s ease-out;
-    }
-
-    .match-score-pulse {
-      animation: pulse-match 2s ease-in-out infinite;
-    }
-
-    .marquee-container {
-      overflow: hidden;
-      width: 100%;
-    }
-
-    .marquee {
-      display: flex;
-      animation: marquee 40s linear infinite;
-      white-space: nowrap;
-    }
-
-    .marquee:hover {
-      animation-play-state: paused;
-    }
-
-    .marquee-item {
-      flex-shrink: 0;
-      padding: 0 2.5rem;
-      min-width: max-content;
-    }
-
-    .match-fab {
-      position: fixed;
-      bottom: 2rem;
-      right: 1rem;
-      z-index: 40;
-      animation: float-up 3s ease-in-out infinite;
-    }
-
-    .btn-transition {
-      transition: all 0.2s ease;
-    }
-
-    .btn-transition:hover {
-      transform: translateY(-2px);
-    }
-
-    .btn-transition:active {
-      transform: translateY(0);
-    }
-
-    .btn-primary {
-      padding: 0.875rem 2rem;
-      background-color: var(--color-emerald);
-      color: var(--color-dark);
-      font-weight: 600;
-      border-radius: 1rem;
-      transition: all 0.2s ease;
-      box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
-    }
-
-    .btn-primary:hover {
-      background-color: #059669;
-      box-shadow: 0 15px 20px -3px rgba(16, 185, 129, 0.4);
-    }
-
-    .btn-primary:active {
-      background-color: #047857;
-      transform: scale(0.97);
-    }
-
-    body.light-mode .btn-primary {
-      color: white;
-    }
-
-    .card-hover {
-      transition: all 0.3s ease;
-    }
-
-    .card-hover:hover {
-      transform: translateY(-4px);
-    }
-
-    .match-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 0.75rem;
-      border-radius: 0.5rem;
-      font-size: 0.75rem;
-      font-weight: 600;
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      color: white;
-    }
-
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 50;
-      backdrop-filter: blur(4px);
-    }
-
-    body.light-mode .modal-overlay {
-      background: rgba(0, 0, 0, 0.5);
-    }
-
-    .modal-content {
-      background: #1e293b;
-      border-radius: 1rem;
-      padding: 2rem;
-      max-width: 600px;
-      width: 90%;
-      max-height: 80vh;
-      overflow-y: auto;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-    }
-
-    body.light-mode .modal-content {
-      background: white;
-    }
-
-    .tooltip {
-      position: relative;
-      display: inline-block;
-    }
-
-    .tooltip .tooltiptext {
-      visibility: hidden;
-      width: 220px;
-      background-color: var(--color-emerald);
-      color: var(--color-dark);
-      text-align: center;
-      padding: 0.5rem;
-      border-radius: 0.25rem;
-      position: absolute;
-      z-index: 1;
-      bottom: 125%;
-      left: 50%;
-      margin-left: -110px;
-      opacity: 0;
-      transition: opacity 0.3s;
-      font-size: 0.75rem;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .tooltip:hover .tooltiptext {
-      visibility: visible;
-      opacity: 1;
-    }
-
-    .input-focus {
-      transition: all 0.2s ease;
-    }
-
-    .input-focus:focus {
-      outline: 2px solid var(--color-emerald);
-      outline-offset: 2px;
-    }
-
-    button:focus-visible,
-    a:focus-visible {
-      outline: 2px solid var(--color-emerald);
-      outline-offset: 2px;
-    }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border-width: 0;
-    }
-
-    .progress-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 2px;
-      background: linear-gradient(90deg, #10b981, #059669);
-      animation: progress 20s ease-in-out;
-      z-index: 100;
-    }
-
-    @keyframes progress {
-      0% { width: 0%; }
-      50% { width: 70%; }
-      100% { width: 100%; }
-    }
-
-    .testimonial-card {
-      padding: 1.5rem;
-      border-radius: 0.75rem;
-      border: 1px solid #334155;
-      transition: all 0.3s ease;
-      background: rgba(30, 41, 59, 0.5);
-    }
-
-    .testimonial-card:hover {
-      border-color: var(--color-emerald);
-      box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.1);
-    }
-
-    body.light-mode .testimonial-card {
-      background: #f1f5f9;
-      border-color: #cbd5e1;
-    }
-
-    .step-connector {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .step-line {
-      position: absolute;
-      top: 50%;
-      left: 12.5%;
-      right: 12.5%;
-      height: 2px;
-      background: linear-gradient(90deg, #10b981, #059669);
-      z-index: 0;
-    }
-
-    @media (max-width: 640px) {
-      .step-line {
-        display: none;
-      }
-    }
-
-    .step-icon {
-      position: relative;
-      z-index: 1;
-      width: 48px;
-      height: 48px;
-      background: var(--color-emerald);
-      color: var(--color-dark);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 1.25rem;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-    }
-
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: var(--color-dark);
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: #334155;
-      border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: #475569;
-    }
-
-    body.light-mode ::-webkit-scrollbar-track {
-      background: #f8fafc;
-    }
-
-    body.light-mode ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-    }
-
-    .lazy-load {
-      opacity: 0;
-      transition: opacity 0.6s ease;
-    }
-
-    .lazy-load.loaded {
-      opacity: 1;
-    }
-
-    @media (max-width: 640px) {
-      body {
-        overflow-x: hidden;
-      }
-
-      .marquee {
-        animation: none;
-      }
-
-      .marquee-item {
-        padding: 0 1rem;
-      }
-    }
+    *{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;box-sizing:border-box}
+    html{scroll-behavior:smooth;background:#0f172a}
+    body{background:#0f172a;color:#f1f5f9;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    ::selection{background:#10b981;color:#0f172a}
+    ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#1e293b}::-webkit-scrollbar-thumb{background:#10b981;border-radius:3px}
+    .nav-solid{background:rgba(15,23,42,0.97)!important;backdrop-filter:blur(16px);border-bottom:1px solid rgba(16,185,129,0.15)!important;box-shadow:0 2px 24px rgba(0,0,0,0.4)}
+    .hero-gradient{background:linear-gradient(135deg,#0f172a 0%,#0d1f35 50%,#0a1628 100%)}
+    .stat-number{background:linear-gradient(135deg,#10b981,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .card-hover{transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+    .card-hover:hover{transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.4),0 0 0 1px rgba(16,185,129,0.25)}
+    .btn-primary{background:linear-gradient(135deg,#10b981,#059669);transition:all .2s ease;min-height:48px;display:inline-flex;align-items:center;justify-content:center}
+    .btn-primary:hover{background:linear-gradient(135deg,#34d399,#10b981);transform:translateY(-1px);box-shadow:0 8px 24px rgba(16,185,129,0.4)}
+    .btn-primary:active{transform:translateY(0)}
+    .btn-secondary{border:1.5px solid rgba(16,185,129,0.4);color:#10b981;background:transparent;transition:all .2s ease;min-height:48px;display:inline-flex;align-items:center;justify-content:center}
+    .btn-secondary:hover{background:rgba(16,185,129,0.1);border-color:#10b981}
+    .mobile-menu{transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+    .mobile-menu.open{transform:translateX(0)}
+    .overlay{opacity:0;pointer-events:none;transition:opacity .3s ease}
+    .overlay.open{opacity:1;pointer-events:all}
+    .fade-up{opacity:0;transform:translateY(24px);transition:opacity .65s ease,transform .65s ease}
+    .fade-up.visible{opacity:1;transform:translateY(0)}
+    .skill-chip{transition:all .2s ease;cursor:pointer}
+    .skill-chip:hover{background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.5);color:#10b981;transform:scale(1.04)}
+    .pwa-card{background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(5,150,105,0.06));border:1px solid rgba(16,185,129,0.25)}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    .float{animation:float 4s ease-in-out infinite}
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    .shimmer-badge{background:linear-gradient(90deg,rgba(16,185,129,0.1) 0%,rgba(16,185,129,0.3) 30%,rgba(16,185,129,0.1) 60%,rgba(16,185,129,0.1) 100%);background-size:200%;animation:shimmer 2.5s linear infinite}
+    @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+    .pulse-dot{animation:pulse-dot 1.5s ease-in-out infinite}
   </style>
 </head>
-<body class="bg-slate-950 text-slate-50">
-  <div class="progress-bar"></div>
+<body>
 
-  <!-- Navbar -->
-  <nav class="sticky top-0 z-50 bg-slate-950/95 dark:bg-slate-950/95 light:bg-white/95 backdrop-blur border-b border-emerald-500/20 light:border-emerald-200" role="navigation" aria-label="Main navigation">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-14 sm:h-16">
-        <a href="/" class="flex items-center gap-2 sm:gap-3 group flex-shrink-0" aria-label="FreelanceSkills home">
-          <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-emerald-500/50 transition-all duration-300 flex-shrink-0">
-            <span class="text-slate-950 font-bold text-sm sm:text-base">FS</span>
-          </div>
-          <div class="hidden xs:flex items-baseline gap-1">
-            <span class="font-bold text-base sm:text-lg text-emerald-400">freelance</span>
-            <span class="font-bold text-base sm:text-lg">skills</span>
-          </div>
+<!-- ════════════════ NAVBAR ════════════════ -->
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 py-3 border-b border-transparent transition-all duration-300">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-12">
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-2.5 flex-shrink-0" aria-label="FreelanceSkills home">
+        <div class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-slate-950" fill="currentColor" viewBox="0 0 20 20"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/></svg>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-white font-black text-[17px] leading-none tracking-tight">FreelanceSkills</span>
+          <span class="text-emerald-400 text-[9px] font-bold tracking-widest uppercase">.net · Africa's #1</span>
+        </div>
+      </a>
+
+      <!-- Desktop Links -->
+      <div class="hidden lg:flex items-center gap-0.5">
+        <a href="/jobs" class="px-3.5 py-2 text-slate-300 hover:text-white text-sm font-medium rounded-lg hover:bg-white/5 transition-all">Find Work</a>
+        <a href="/freelancers" class="px-3.5 py-2 text-slate-300 hover:text-white text-sm font-medium rounded-lg hover:bg-white/5 transition-all">Find Talent</a>
+        <a href="/academy" class="px-3.5 py-2 text-slate-300 hover:text-white text-sm font-medium rounded-lg hover:bg-white/5 transition-all">Academy</a>
+        <a href="/pricing" class="px-3.5 py-2 text-slate-300 hover:text-white text-sm font-medium rounded-lg hover:bg-white/5 transition-all">Pricing</a>
+        <a href="/about" class="px-3.5 py-2 text-slate-300 hover:text-white text-sm font-medium rounded-lg hover:bg-white/5 transition-all">About</a>
+      </div>
+
+      <!-- Desktop Auth -->
+      <div class="hidden lg:flex items-center gap-2.5">
+        <a id="nav-install-btn" href="/install-app" class="hidden items-center gap-1.5 px-3 py-1.5 text-emerald-400 border border-emerald-500/30 rounded-lg text-xs font-bold hover:bg-emerald-500/10 transition-all">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Get App
         </a>
-
-        <div class="hidden lg:flex items-center gap-0 lg:gap-1">
-          <a href="/" class="nav-link active text-sm px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Home</a>
-          <a href="/explore" class="nav-link text-sm px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Browse</a>
-          <a href="/post-job" class="nav-link text-sm px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Post Job</a>
-          <a href="/about" class="nav-link text-sm px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">About</a>
-          <a href="/pricing" class="nav-link text-sm px-4 py-2 rounded-lg hover:text-emerald-400 hover:bg-slate-800/50 transition-all duration-200">Pricing</a>
-        </div>
-
-        <div class="flex items-center gap-2 flex-shrink-0">
-          <button id="theme-toggle" class="p-2.5 rounded-lg hover:bg-slate-800 transition-all duration-200 min-h-12 min-w-12 flex items-center justify-center" aria-label="Toggle dark/light mode" aria-pressed="true">
-            <svg class="w-5 h-5 dark:hidden" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
-            </svg>
-            <svg class="w-5 h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.536l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.121-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM5.464 5.464a1 1 0 000 1.414l-.707.707A1 1 0 003.343 5.464l.707-.707a1 1 0 011.414 0z" clip-rule="evenodd"/>
-            </svg>
-          </button>
-
-          <a href="/login" class="hidden sm:flex px-3 sm:px-4 py-2 text-sm rounded-lg hover:bg-slate-800 transition-all duration-200 btn-transition min-h-12 items-center justify-center">Login</a>
-          <a href="/signup" class="px-4 sm:px-6 py-2 text-sm bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 font-semibold rounded-lg hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 btn-transition min-h-12 flex items-center justify-center whitespace-nowrap">Join Free</a>
-
-          <button id="mobile-menu-btn" class="lg:hidden p-2.5 rounded-lg hover:bg-slate-800 transition-all duration-200 min-h-12 min-w-12 flex items-center justify-center" aria-label="Open navigation menu" aria-expanded="false">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-            </svg>
-          </button>
-        </div>
+        <a href="/login" class="px-4 py-2 text-slate-300 hover:text-white text-sm font-semibold rounded-lg hover:bg-white/5 transition-all">Log In</a>
+        <a href="/signup" class="btn-primary px-5 py-2 text-slate-950 font-bold text-sm rounded-xl gap-1.5">
+          Sign Up Free
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
       </div>
-    </div>
 
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden lg:hidden">
-      <div id="mobile-backdrop" class="hidden fixed inset-0 bg-black/60 z-40 backdrop-blur-sm backdrop-fade"></div>
-      <div id="mobile-menu-panel" class="hidden fixed right-0 top-14 sm:top-16 bottom-0 w-full max-w-xs bg-slate-950 dark:bg-slate-950 light:bg-white border-l border-slate-800 light:border-slate-200 z-50 mobile-menu-slide flex flex-col">
-        <div class="flex-1 overflow-y-auto p-4 space-y-1">
-          <nav class="space-y-0">
-            <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-800 light:hover:bg-slate-100 transition-all duration-200 text-sm min-h-12 flex items-center font-medium" onclick="closeMobileMenu()">Home</a>
-            <a href="/explore" class="block px-4 py-3 rounded-lg hover:bg-slate-800 light:hover:bg-slate-100 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Browse</a>
-            <a href="/post-job" class="block px-4 py-3 rounded-lg hover:bg-slate-800 light:hover:bg-slate-100 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Post Job</a>
-            <a href="/about" class="block px-4 py-3 rounded-lg hover:bg-slate-800 light:hover:bg-slate-100 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">About</a>
-            <a href="/pricing" class="block px-4 py-3 rounded-lg hover:bg-slate-800 light:hover:bg-slate-100 transition-all duration-200 text-sm min-h-12 flex items-center" onclick="closeMobileMenu()">Pricing</a>
-          </nav>
-        </div>
-        <div class="border-t border-slate-800 light:border-slate-200 p-4 space-y-2">
-          <a href="/login" class="block px-4 py-3 text-center rounded-lg hover:bg-slate-800 light:hover:bg-slate-100 transition-all duration-200 text-sm min-h-12 flex items-center justify-center" onclick="closeMobileMenu()">Login</a>
-          <a href="/signup" class="block px-4 py-3 text-center bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 rounded-lg font-semibold hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 text-sm min-h-12 flex items-center justify-center" onclick="closeMobileMenu()">Join Free</a>
-        </div>
-        <button id="close-mobile-btn" class="absolute top-3 sm:top-4 right-3 sm:right-4 p-2.5 hover:bg-slate-800 light:hover:bg-slate-100 rounded-lg transition-all duration-200 min-h-12 min-w-12 flex items-center justify-center" aria-label="Close menu">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
-      </div>
+      <!-- Mobile Hamburger -->
+      <button id="hamburger" class="lg:hidden w-10 h-10 flex items-center justify-center text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-all" aria-label="Open menu" aria-expanded="false">
+        <svg id="icon-open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        <svg id="icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
     </div>
+  </div>
+</nav>
+
+<!-- Mobile Overlay -->
+<div id="overlay" class="overlay fixed inset-0 z-40 bg-slate-950/80 backdrop-blur-sm lg:hidden"></div>
+<!-- Mobile Menu Panel -->
+<div id="mob-menu" class="mobile-menu fixed top-0 right-0 bottom-0 z-50 w-80 max-w-[85vw] bg-slate-900 border-l border-slate-800 lg:hidden flex flex-col overflow-y-auto">
+  <div class="flex items-center justify-between p-5 border-b border-slate-800 flex-shrink-0">
+    <div class="flex items-center gap-2">
+      <div class="w-7 h-7 bg-emerald-500 rounded-md flex items-center justify-center"><svg class="w-4 h-4 text-slate-950" fill="currentColor" viewBox="0 0 20 20"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0z M14 15a4 4 0 00-8 0v3h8v-3z"/></svg></div>
+      <span class="text-white font-black">FreelanceSkills</span>
+    </div>
+    <button id="close-mob" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-white rounded-lg hover:bg-white/5" aria-label="Close menu">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <nav class="flex-1 p-4 space-y-1">
+    <a href="/jobs" class="flex items-center gap-3 px-4 py-3.5 text-slate-300 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all">
+      <svg class="w-5 h-5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+      Find Work
+    </a>
+    <a href="/freelancers" class="flex items-center gap-3 px-4 py-3.5 text-slate-300 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all">
+      <svg class="w-5 h-5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Find Talent
+    </a>
+    <a href="/academy" class="flex items-center gap-3 px-4 py-3.5 text-slate-300 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all">
+      <svg class="w-5 h-5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"/></svg>
+      Academy
+    </a>
+    <a href="/pricing" class="flex items-center gap-3 px-4 py-3.5 text-slate-300 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all">
+      <svg class="w-5 h-5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      Pricing
+    </a>
+    <a href="/how-it-works" class="flex items-center gap-3 px-4 py-3.5 text-slate-300 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all">
+      <svg class="w-5 h-5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+      How It Works
+    </a>
+    <a href="/about" class="flex items-center gap-3 px-4 py-3.5 text-slate-300 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all">
+      <svg class="w-5 h-5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      About
+    </a>
+    <div class="border-t border-slate-800 mt-3 pt-3 space-y-2">
+      <a href="/login" class="block w-full text-center py-3 border border-slate-700 hover:border-emerald-500/40 text-white rounded-xl font-semibold transition-all hover:bg-white/5">Log In</a>
+      <a href="/signup" class="btn-primary block w-full text-center py-3 text-slate-950 font-bold rounded-xl">Sign Up Free →</a>
+    </div>
+    <a href="/install-app" class="flex items-center gap-2 px-4 py-3 mt-1 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 font-bold text-sm">
+      <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+      Install Free App
+      <span class="ml-auto text-[10px] bg-emerald-500/20 border border-emerald-500/30 px-2 py-0.5 rounded-full font-black">FREE</span>
+    </a>
   </nav>
+</div>
 
-  <!-- Live Activity Pulse (Fixed) -->
-  <div class="bg-gradient-to-r from-emerald-600/10 via-slate-950 to-slate-950 dark:via-slate-950 light:via-white light:bg-gradient-to-r light:from-emerald-600/5 light:to-white border-b border-emerald-500/20 light:border-emerald-200 px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
-    <div class="max-w-7xl mx-auto">
-      <p class="text-xs text-emerald-400 font-semibold uppercase tracking-wide mb-2">🔥 Live on FreelanceSkills</p>
-      <div class="marquee-container">
-        <div class="marquee">
-          <div class="marquee-item text-xs sm:text-sm text-slate-300">💰 Thabo M. earned R12,300 • Johannesburg • 2m ago</div>
-          <div class="marquee-item text-xs sm:text-sm text-slate-300">⭐ Amara K. completed React project • Cape Town • 5m ago</div>
-          <div class="marquee-item text-xs sm:text-sm text-slate-300">💰 Mandla J. earned R8,500 • Durban • 8m ago</div>
-          <div class="marquee-item text-xs sm:text-sm text-slate-300">🎉 Zola N. got new 5-star review • Pretoria • 12m ago</div>
-          <div class="marquee-item text-xs sm:text-sm text-slate-300">💰 Lerato B. earned R15,200 • Johannesburg • 15m ago</div>
-          <div class="marquee-item text-xs sm:text-sm text-slate-300">✓ Sipho T. verified ID • Sandton • 18m ago</div>
-          <div class="marquee-item text-xs sm:text-sm text-slate-300">💼 Busiswa L. signed R340K escrow project • Soweto • 22m ago</div>
-          <div class="marquee-item text-xs sm:text-sm text-slate-300">🏆 Themba K. reached 4.9★ rating • Boksburg • 25m ago</div>
+<!-- ════════════════ HERO ════════════════ -->
+<section class="hero-gradient relative min-h-screen flex flex-col justify-center overflow-hidden pt-20">
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute -top-40 -left-40 w-[500px] h-[500px] bg-emerald-500/6 rounded-full blur-3xl"></div>
+    <div class="absolute top-1/3 -right-20 w-96 h-96 bg-teal-400/5 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-20 left-1/3 w-72 h-72 bg-emerald-600/5 rounded-full blur-3xl"></div>
+    <div class="absolute inset-0" style="background-image:linear-gradient(rgba(16,185,129,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(16,185,129,0.025) 1px,transparent 1px);background-size:64px 64px"></div>
+  </div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-28 w-full">
+    <div class="text-center max-w-5xl mx-auto fade-up">
+
+      <!-- Live badge -->
+      <div class="inline-flex items-center gap-2.5 bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 text-xs sm:text-sm font-semibold px-4 py-2 rounded-full mb-8 shimmer-badge">
+        <span class="w-2 h-2 bg-emerald-400 rounded-full pulse-dot"></span>
+        47,000+ Active Freelancers · Africa's #1 Verified Marketplace · POPIA Compliant
+      </div>
+
+      <!-- Main headline -->
+      <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-[1.05] tracking-tight mb-6">
+        <span class="text-white">The Future of</span><br>
+        <span class="stat-number">Skilled Work</span><br>
+        <span class="text-white">in Africa and Beyond</span>
+      </h1>
+
+      <!-- Subheadline -->
+      <p class="text-xl sm:text-2xl text-slate-400 max-w-3xl mx-auto mb-10 leading-relaxed font-light">
+        AI-powered matching connects verified African talent with global businesses. Secure PayFast escrow. Instant ZAR payouts. Just 10%.
+      </p>
+
+      <!-- CTA Buttons -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+        <a href="/signup" class="btn-primary w-full sm:w-auto px-9 py-4 text-slate-950 font-extrabold text-lg rounded-2xl gap-2.5 shadow-2xl shadow-emerald-500/25">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Start Earning Free
+        </a>
+        <a href="/freelancers" class="btn-secondary w-full sm:w-auto px-9 py-4 font-semibold text-lg rounded-2xl gap-2.5">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          Hire Top Talent
+        </a>
+      </div>
+
+      <!-- Trust Stats Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-3xl mx-auto">
+        <div class="bg-slate-900/70 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-4 sm:p-5 text-center card-hover">
+          <div class="stat-number text-2xl sm:text-3xl font-black mb-1">47K+</div>
+          <div class="text-slate-400 text-xs sm:text-sm leading-tight">Verified Freelancers</div>
+        </div>
+        <div class="bg-slate-900/70 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-4 sm:p-5 text-center card-hover">
+          <div class="stat-number text-2xl sm:text-3xl font-black mb-1">R2.3B+</div>
+          <div class="text-slate-400 text-xs sm:text-sm leading-tight">PayFast Escrow</div>
+        </div>
+        <div class="bg-slate-900/70 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-4 sm:p-5 text-center card-hover">
+          <div class="stat-number text-2xl sm:text-3xl font-black mb-1">92K+</div>
+          <div class="text-slate-400 text-xs sm:text-sm leading-tight">Projects Delivered</div>
+        </div>
+        <div class="bg-slate-900/70 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-4 sm:p-5 text-center card-hover">
+          <div class="stat-number text-2xl sm:text-3xl font-black mb-1">4.9★</div>
+          <div class="text-slate-400 text-xs sm:text-sm leading-tight">Average Rating</div>
         </div>
       </div>
     </div>
   </div>
+</section>
 
-  <!-- Hero Section -->
-  <section class="relative py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-950 dark:from-slate-900 light:from-blue-50 light:via-white light:to-white">
-    <div class="max-w-6xl mx-auto w-full">
-      <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 hero-animate px-2 leading-tight">Africa's #1 Verified Freelance Platform</h1>
-      <p class="text-base sm:text-lg md:text-xl text-slate-300 dark:text-slate-300 light:text-slate-600 mb-8 sm:mb-10 hero-animate-delay max-w-3xl px-2 leading-relaxed">47K+ verified freelancers. AI-matched talent. Secure escrow. Instant ZAR payouts. R2.3B+ protected daily. Join South Africa's thriving economy of skilled work.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 hero-animate-delay px-2 mb-8 sm:mb-10">
-        <button onclick="document.getElementById('opportunities').scrollIntoView({behavior:'smooth'})" class="px-7 sm:px-8 py-3 sm:py-4 bg-emerald-500 text-slate-950 rounded-lg font-semibold hover:bg-emerald-400 transition-all btn-transition min-h-12 sm:min-h-14 text-sm sm:text-base inline-flex items-center justify-center gap-2" aria-label="Browse job opportunities">
-          🔍 Browse 340+ Jobs Now
-        </button>
-        <a href="/signup" class="px-7 sm:px-8 py-3 sm:py-4 border-2 border-emerald-500 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-500/10 transition-all btn-transition min-h-12 sm:min-h-14 text-sm sm:text-base inline-flex items-center justify-center gap-2">
-          ⚡ Get Started Free
-        </a>
-      </div>
-
-      <!-- Trust Bar (Consolidated - No Repetition) -->
-      <div class="p-4 sm:p-6 bg-slate-900/50 dark:bg-slate-900/50 light:bg-blue-50 border border-emerald-500/20 light:border-emerald-200 rounded-lg hero-animate-delay px-2 mb-8 max-w-3xl">
-        <p class="text-xs sm:text-sm font-semibold text-emerald-400 uppercase tracking-wide mb-3">✓ You're Protected By</p>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div class="flex items-center gap-2 text-xs sm:text-sm">
-            <span class="text-emerald-400">🔒</span>
-            <span><strong>Escrow Protected</strong> • ZAR Held Safe</span>
-          </div>
-          <div class="flex items-center gap-2 text-xs sm:text-sm">
-            <span class="text-emerald-400">📋</span>
-            <span><strong>CIPC Registered</strong> • Legal Entity</span>
-          </div>
-          <div class="flex items-center gap-2 text-xs sm:text-sm">
-            <span class="text-emerald-400">🛡️</span>
-            <span><strong>POPIA Compliant</strong> • Data Safe</span>
-          </div>
-          <div class="flex items-center gap-2 text-xs sm:text-sm">
-            <span class="text-emerald-400">✓</span>
-            <span><strong>ID Verified</strong> • 48-Hour Check</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Key Stats Row -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 px-2">
-        <div class="text-center stat-animate">
-          <p class="text-2xl sm:text-4xl font-bold text-emerald-400 mb-1">47K+</p>
-          <p class="text-xs sm:text-sm text-slate-400">Verified Freelancers</p>
-        </div>
-        <div class="text-center stat-animate">
-          <p class="text-2xl sm:text-4xl font-bold text-emerald-400 mb-1">R2.3B+</p>
-          <p class="text-xs sm:text-sm text-slate-400">Escrow Protected</p>
-        </div>
-        <div class="text-center stat-animate">
-          <p class="text-2xl sm:text-4xl font-bold text-emerald-400 mb-1">92K+</p>
-          <p class="text-xs sm:text-sm text-slate-400">Projects Completed</p>
-        </div>
-        <div class="text-center stat-animate">
-          <p class="text-2xl sm:text-4xl font-bold text-emerald-400 mb-1">4.9★</p>
-          <p class="text-xs sm:text-sm text-slate-400">Avg Rating</p>
-        </div>
-      </div>
+<!-- ════════════════ WHY FREELANCESKILLS ════════════════ -->
+<section class="py-20 sm:py-28 px-4">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-16 fade-up">
+      <p class="text-emerald-400 text-sm font-bold uppercase tracking-widest mb-3">Why FreelanceSkills</p>
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">Built for Africa. Built for Excellence.</h2>
+      <p class="text-slate-400 max-w-xl mx-auto text-lg leading-relaxed">Every feature engineered for trust, speed, and fair opportunity across the continent.</p>
     </div>
-  </section>
-
-  <!-- Urgent Opportunities Section -->
-  <section class="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 lg:px-8" id="opportunities">
-    <div class="max-w-7xl mx-auto w-full">
-      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 px-2">🔥 Urgent Opportunities</h2>
-      <p class="text-sm sm:text-base text-slate-400 mb-8 sm:mb-12 px-2">340+ active projects seeking verified talent</p>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-        <!-- Job Card 1 - Diverse Real SA Image Placeholder -->
-        <div class="p-4 sm:p-6 bg-slate-900/50 dark:bg-slate-900/50 light:bg-slate-100 border border-slate-800 light:border-slate-300 rounded-lg sm:rounded-xl card-hover group" data-testid="job-card-1">
-          <div class="mb-4 sm:mb-5 overflow-hidden rounded-lg h-40 sm:h-48 bg-gradient-to-br from-emerald-600 to-slate-900 flex items-center justify-center">
-            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23334155' width='400' height='300'/%3E%3Ctext x='200' y='150' font-size='40' fill='%2394a3b8' text-anchor='middle' dominant-baseline='middle'%3EReact Developer%3C/text%3E%3C/svg%3E" alt="Black South African React developer - placeholder" class="w-full h-full object-cover lazy-load loaded">
-          </div>
-          
-          <div class="flex items-start justify-between mb-3 sm:mb-4">
-            <div class="flex-1">
-              <h3 class="text-base sm:text-lg font-semibold mb-1 leading-tight">React Fintech Dashboard</h3>
-              <p class="text-xs sm:text-sm text-slate-400 dark:text-slate-400 light:text-slate-600">TechStart Ventures • Johannesburg</p>
-            </div>
-          </div>
-          
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-sm sm:text-base font-semibold text-emerald-400">R45,000 - R65,000</span>
-            <div class="tooltip">
-              <div class="match-badge match-score-pulse">
-                <span>94% Match</span>
-              </div>
-              <span class="tooltiptext">Based on your skills &amp; location</span>
-            </div>
-          </div>
-
-          <p class="text-xs sm:text-sm text-slate-400 dark:text-slate-400 light:text-slate-600 mb-4 line-clamp-2">Build responsive React dashboard with real-time portfolio tracking. 4-week timeline.</p>
-          
-          <div class="flex flex-wrap gap-2 mb-5">
-            <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 light:bg-emerald-100 light:text-emerald-700 rounded-full border border-emerald-500/20 light:border-emerald-300">React</span>
-            <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 light:bg-emerald-100 light:text-emerald-700 rounded-full border border-emerald-500/20 light:border-emerald-300">Tailwind</span>
-            <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 light:bg-emerald-100 light:text-emerald-700 rounded-full border border-emerald-500/20 light:border-emerald-300">4 weeks</span>
-          </div>
-
-          <button onclick="openInstantApply('React Fintech Dashboard', 'TechStart Ventures')" class="w-full px-4 py-2.5 sm:py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-lg font-semibold transition-all btn-transition min-h-12 text-xs sm:text-sm" data-testid="instant-apply-btn-1" aria-label="Instantly apply for React Fintech Dashboard">
-            ⚡ Instant Apply
-          </button>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-7 card-hover fade-up group">
+        <div class="w-12 h-12 bg-emerald-500/15 border border-emerald-500/20 rounded-xl flex items-center justify-center mb-5 group-hover:bg-emerald-500/25 transition-all">
+          <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
         </div>
-
-        <!-- Job Card 2 - Diverse Female Developer Image -->
-        <div class="p-4 sm:p-6 bg-slate-900/50 dark:bg-slate-900/50 light:bg-slate-100 border border-slate-800 light:border-slate-300 rounded-lg sm:rounded-xl card-hover group" data-testid="job-card-2">
-          <div class="mb-4 sm:mb-5 overflow-hidden rounded-lg h-40 sm:h-48 bg-gradient-to-br from-purple-600 to-slate-900 flex items-center justify-center">
-            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23334155' width='400' height='300'/%3E%3Ctext x='200' y='150' font-size='40' fill='%2394a3b8' text-anchor='middle' dominant-baseline='middle'%3EMobile Developer%3C/text%3E%3C/svg%3E" alt="Female South African Flutter developer - placeholder" class="w-full h-full object-cover lazy-load loaded">
-          </div>
-
-          <div class="flex items-start justify-between mb-3 sm:mb-4">
-            <div class="flex-1">
-              <h3 class="text-base sm:text-lg font-semibold mb-1 leading-tight">Health Tech Mobile App</h3>
-              <p class="text-xs sm:text-sm text-slate-400 dark:text-slate-400 light:text-slate-600">MedTech Labs • Cape Town</p>
-            </div>
-          </div>
-          
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-sm sm:text-base font-semibold text-emerald-400">R50,000 - R75,000</span>
-            <div class="tooltip">
-              <div class="match-badge match-score-pulse">
-                <span>87% Match</span>
-              </div>
-              <span class="tooltiptext">Based on your skills &amp; location</span>
-            </div>
-          </div>
-
-          <p class="text-xs sm:text-sm text-slate-400 dark:text-slate-400 light:text-slate-600 mb-4 line-clamp-2">Develop iOS/Android fitness tracking app. Flutter preferred. Integrate Stripe for payments.</p>
-          
-          <div class="flex flex-wrap gap-2 mb-5">
-            <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 light:bg-emerald-100 light:text-emerald-700 rounded-full border border-emerald-500/20 light:border-emerald-300">Flutter</span>
-            <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 light:bg-emerald-100 light:text-emerald-700 rounded-full border border-emerald-500/20 light:border-emerald-300">Firebase</span>
-            <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 light:bg-emerald-100 light:text-emerald-700 rounded-full border border-emerald-500/20 light:border-emerald-300">6 weeks</span>
-          </div>
-
-          <button onclick="openInstantApply('Health Tech Mobile App', 'MedTech Labs')" class="w-full px-4 py-2.5 sm:py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-lg font-semibold transition-all btn-transition min-h-12 text-xs sm:text-sm" data-testid="instant-apply-btn-2" aria-label="Instantly apply for Health Tech Mobile App">
-            ⚡ Instant Apply
-          </button>
-        </div>
-
-        <!-- Job Card 3 - Diverse Designer Image -->
-        <div class="p-4 sm:p-6 bg-slate-900/50 dark:bg-slate-900/50 light:bg-slate-100 border border-slate-800 light:border-slate-300 rounded-lg sm:rounded-xl card-hover group" data-testid="job-card-3">
-          <div class="mb-4 sm:mb-5 overflow-hidden rounded-lg h-40 sm:h-48 bg-gradient-to-br from-blue-600 to-slate-900 flex items-center justify-center">
-            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23334155' width='400' height='300'/%3E%3Ctext x='200' y='150' font-size='40' fill='%2394a3b8' text-anchor='middle' dominant-baseline='middle'%3EUI/UX Designer%3C/text%3E%3C/svg%3E" alt="Indian South African UX designer - placeholder" class="w-full h-full object-cover lazy-load loaded">
-          </div>
-
-          <div class="flex items-start justify-between mb-3 sm:mb-4">
-            <div class="flex-1">
-              <h3 class="text-base sm:text-lg font-semibold mb-1 leading-tight">E-Commerce Platform UI</h3>
-              <p class="text-xs sm:text-sm text-slate-400 dark:text-slate-400 light:text-slate-600">ShopAfrica Inc. • Durban</p>
-            </div>
-          </div>
-          
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-sm sm:text-base font-semibold text-emerald-400">R35,000 - R55,000</span>
-            <div class="tooltip">
-              <div class="match-badge match-score-pulse" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
-                <span>72% Match</span>
-              </div>
-              <span class="tooltiptext">Based on your skills &amp; location</span>
-            </div>
-          </div>
-
-          <p class="text-xs sm:text-sm text-slate-400 dark:text-slate-400 light:text-slate-600 mb-4 line-clamp-2">Design complete UI for mobile commerce app. Wireframes to high-fidelity. 3-week delivery.</p>
-          
-          <div class="flex flex-wrap gap-2 mb-5">
-            <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 light:bg-emerald-100 light:text-emerald-700 rounded-full border border-emerald-500/20 light:border-emerald-300">Figma</span>
-            <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 light:bg-emerald-100 light:text-emerald-700 rounded-full border border-emerald-500/20 light:border-emerald-300">Mobile</span>
-            <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 light:bg-emerald-100 light:text-emerald-700 rounded-full border border-emerald-500/20 light:border-emerald-300">3 weeks</span>
-          </div>
-
-          <button onclick="openInstantApply('E-Commerce Platform UI', 'ShopAfrica Inc.')" class="w-full px-4 py-2.5 sm:py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-lg font-semibold transition-all btn-transition min-h-12 text-xs sm:text-sm" data-testid="instant-apply-btn-3" aria-label="Instantly apply for E-Commerce Platform UI">
-            ⚡ Instant Apply
-          </button>
-        </div>
+        <div class="text-xs text-emerald-400 font-bold uppercase tracking-wider mb-2">Nuclear Vetting</div>
+        <h3 class="text-xl font-bold text-white mb-3">5-Level Verification</h3>
+        <p class="text-slate-400 leading-relaxed text-sm">AI-proctored skills tests, biometric ID, SAQA education checks, background screening, and blockchain credentials. Zero trust gap.</p>
       </div>
-
-      <div class="mt-8 sm:mt-12 text-center">
-        <a href="/explore" class="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 border border-emerald-500 text-emerald-400 light:text-emerald-600 light:border-emerald-400 rounded-lg font-semibold hover:bg-emerald-500/10 transition-all btn-transition min-h-12 sm:min-h-14 text-sm sm:text-base">
-          View All 340+ Opportunities
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-          </svg>
-        </a>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-7 card-hover fade-up group">
+        <div class="w-12 h-12 bg-blue-500/15 border border-blue-500/20 rounded-xl flex items-center justify-center mb-5 group-hover:bg-blue-500/25 transition-all">
+          <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+        </div>
+        <div class="text-xs text-blue-400 font-bold uppercase tracking-wider mb-2">Vuma AI</div>
+        <h3 class="text-xl font-bold text-white mb-3">Smart Matching Engine</h3>
+        <p class="text-slate-400 leading-relaxed text-sm">Our AI scores 47 data points per match — skills, location, budget, history, availability — delivering perfect fits in seconds.</p>
       </div>
-    </div>
-  </section>
-
-  <!-- How It Works - Illustrated Escrow Stepper -->
-  <section class="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-slate-900/50 dark:bg-slate-900/50 light:bg-blue-50 border-y border-slate-800 light:border-slate-200">
-    <div class="max-w-7xl mx-auto w-full">
-      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 px-2 text-center">How It Works — Secure Escrow Every Time</h2>
-      <p class="text-center text-sm sm:text-base text-slate-400 dark:text-slate-400 light:text-slate-600 mb-12 sm:mb-16 px-2">Your money is protected at every stage</p>
-      
-      <div class="max-w-5xl mx-auto px-2">
-        <!-- Desktop Stepper -->
-        <div class="hidden sm:block">
-          <div class="step-connector mb-12">
-            <div class="step-line"></div>
-            
-            <div class="flex-1 text-center">
-              <div class="step-icon mx-auto mb-4">🤝</div>
-              <h3 class="text-base sm:text-lg font-semibold mb-2">Post/Find</h3>
-              <p class="text-xs sm:text-sm text-slate-400 dark:text-slate-400 light:text-slate-600">Post a job or find your perfect freelancer match using our AI engine.</p>
-            </div>
-
-            <div class="flex-1 text-center">
-              <div class="step-icon mx-auto mb-4">💬</div>
-              <h3 class="text-base sm:text-lg font-semibold mb-2">Discuss Terms</h3>
-              <p class="text-xs sm:text-sm text-slate-400 dark:text-slate-400 light:text-slate-600">Message, negotiate scope & timeline. Use our contract templates. Zero guesswork.</p>
-            </div>
-
-            <div class="flex-1 text-center">
-              <div class="step-icon mx-auto mb-4">🔒</div>
-              <h3 class="text-base sm:text-lg font-semibold mb-2">Secure Escrow</h3>
-              <p class="text-xs sm:text-sm text-slate-400 dark:text-slate-400 light:text-slate-600">Client funds held safely in escrow. Released only when milestones complete.</p>
-            </div>
-
-            <div class="flex-1 text-center">
-              <div class="step-icon mx-auto mb-4">💳</div>
-              <h3 class="text-base sm:text-lg font-semibold mb-2">Instant ZAR Payout</h3>
-              <p class="text-xs sm:text-sm text-slate-400 dark:text-slate-400 light:text-slate-600">Get paid instantly to your SA bank. 10% platform fee only. No surprises.</p>
-            </div>
-          </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-7 card-hover fade-up group">
+        <div class="w-12 h-12 bg-purple-500/15 border border-purple-500/20 rounded-xl flex items-center justify-center mb-5 group-hover:bg-purple-500/25 transition-all">
+          <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
         </div>
-
-        <!-- Mobile Stepper -->
-        <div class="sm:hidden space-y-6">
-          <div class="text-center">
-            <div class="step-icon mx-auto mb-4 inline-flex">🤝</div>
-            <h3 class="text-base font-semibold mb-2">1. Post/Find</h3>
-            <p class="text-xs text-slate-400">AI matches you with perfect fit</p>
-          </div>
-          <div class="border-l-2 border-emerald-500/50 ml-6 h-4"></div>
-          <div class="text-center">
-            <div class="step-icon mx-auto mb-4 inline-flex">💬</div>
-            <h3 class="text-base font-semibold mb-2">2. Discuss Terms</h3>
-            <p class="text-xs text-slate-400">Agree on scope & payment</p>
-          </div>
-          <div class="border-l-2 border-emerald-500/50 ml-6 h-4"></div>
-          <div class="text-center">
-            <div class="step-icon mx-auto mb-4 inline-flex">🔒</div>
-            <h3 class="text-base font-semibold mb-2">3. Secure Escrow</h3>
-            <p class="text-xs text-slate-400">Money held safe until completion</p>
-          </div>
-          <div class="border-l-2 border-emerald-500/50 ml-6 h-4"></div>
-          <div class="text-center">
-            <div class="step-icon mx-auto mb-4 inline-flex">💳</div>
-            <h3 class="text-base font-semibold mb-2">4. ZAR Payout</h3>
-            <p class="text-xs text-slate-400">Instant payment to your bank</p>
-          </div>
-        </div>
+        <div class="text-xs text-purple-400 font-bold uppercase tracking-wider mb-2">Secure Payments</div>
+        <h3 class="text-xl font-bold text-white mb-3">PayFast Escrow</h3>
+        <p class="text-slate-400 leading-relaxed text-sm">R2.3B+ held securely. Funds released only when you approve the work. Instant ZAR payouts. 100% fraud protection. POPIA compliant.</p>
       </div>
-    </div>
-  </section>
-
-  <!-- Real Testimonials Section (Diverse SA Professionals) -->
-  <section class="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-7xl mx-auto w-full">
-      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 px-2 text-center">Real Success Stories</h2>
-      <p class="text-center text-sm sm:text-base text-slate-400 dark:text-slate-400 light:text-slate-600 mb-12 sm:mb-16 px-2">From freelancers and businesses just like you</p>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-        <!-- Testimonial 1 -->
-        <div class="testimonial-card" data-testid="testimonial-1">
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center flex-shrink-0">
-              <span class="text-sm font-bold text-slate-950">TM</span>
-            </div>
-            <div class="flex-1">
-              <p class="text-sm font-semibold">Thabo Mthembu</p>
-              <p class="text-xs text-slate-400 dark:text-slate-400 light:text-slate-600">React Developer • Johannesburg</p>
-            </div>
-            <div class="flex text-emerald-400">⭐⭐⭐⭐⭐</div>
-          </div>
-          <p class="text-sm text-slate-300 dark:text-slate-300 light:text-slate-700">"FreelanceSkills changed my life. I went from R8K/month to R48K/month in 6 months. The escrow system gave me peace of mind. Zero payment issues."</p>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-7 card-hover fade-up group">
+        <div class="w-12 h-12 bg-amber-500/15 border border-amber-500/20 rounded-xl flex items-center justify-center mb-5 group-hover:bg-amber-500/25 transition-all">
+          <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
         </div>
-
-        <!-- Testimonial 2 -->
-        <div class="testimonial-card" data-testid="testimonial-2">
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
-              <span class="text-sm font-bold text-white">AM</span>
-            </div>
-            <div class="flex-1">
-              <p class="text-sm font-semibold">Amara Okonkwo</p>
-              <p class="text-xs text-slate-400 dark:text-slate-400 light:text-slate-600">UI Designer • Cape Town</p>
-            </div>
-            <div class="flex text-emerald-400">⭐⭐⭐⭐⭐</div>
-          </div>
-          <p class="text-sm text-slate-300 dark:text-slate-300 light:text-slate-700">"Landed 12 design projects in 4 months. The AI matching is insane — every project feels like it was made for me. Love this platform!"</p>
-        </div>
-
-        <!-- Testimonial 3 -->
-        <div class="testimonial-card" data-testid="testimonial-3">
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-              <span class="text-sm font-bold text-white">NK</span>
-            </div>
-            <div class="flex-1">
-              <p class="text-sm font-semibold">Nomsa Khumalo</p>
-              <p class="text-xs text-slate-400 dark:text-slate-400 light:text-slate-600">Digital Marketer • Durban</p>
-            </div>
-            <div class="flex text-emerald-400">⭐⭐⭐⭐⭐</div>
-          </div>
-          <p class="text-sm text-slate-300 dark:text-slate-300 light:text-slate-700">"As a business owner, hiring here was so easy. The vetting is legit. I've hired 8 freelancers, 7 became long-term partners. 10/10 platform."</p>
-        </div>
-
-        <!-- Testimonial 4 -->
-        <div class="testimonial-card" data-testid="testimonial-4">
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 bg-gradient-to-br from-red-400 to-red-600 rounded-full flex items-center justify-center flex-shrink-0">
-              <span class="text-sm font-bold text-white">KB</span>
-            </div>
-            <div class="flex-1">
-              <p class="text-sm font-semibold">Kwasi Boateng</p>
-              <p class="text-xs text-slate-400 dark:text-slate-400 light:text-slate-600">Cloud Engineer • Pretoria</p>
-            </div>
-            <div class="flex text-emerald-400">⭐⭐⭐⭐⭐</div>
-          </div>
-          <p class="text-sm text-slate-300 dark:text-slate-300 light:text-slate-700">"Started as freelancer, now running a 5-person team. FreelanceSkills' tools & support made scaling easy. Best decision ever."</p>
-        </div>
-
-        <!-- Testimonial 5 -->
-        <div class="testimonial-card" data-testid="testimonial-5">
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 bg-gradient-to-br from-pink-400 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
-              <span class="text-sm font-bold text-white">SM</span>
-            </div>
-            <div class="flex-1">
-              <p class="text-sm font-semibold">Sipho Mokoena</p>
-              <p class="text-xs text-slate-400 dark:text-slate-400 light:text-slate-600">Business Owner • Sandton</p>
-            </div>
-            <div class="flex text-emerald-400">⭐⭐⭐⭐⭐</div>
-          </div>
-          <p class="text-sm text-slate-300 dark:text-slate-300 light:text-slate-700">"Saved 40 hours on hiring. The escrow guarantee means we can scale globally without payment risks. Game-changer for our business."</p>
-        </div>
-
-        <!-- Testimonial 6 -->
-        <div class="testimonial-card" data-testid="testimonial-6">
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center flex-shrink-0">
-              <span class="text-sm font-bold text-slate-950">LB</span>
-            </div>
-            <div class="flex-1">
-              <p class="text-sm font-semibold">Lerato Busiswa</p>
-              <p class="text-xs text-slate-400 dark:text-slate-400 light:text-slate-600">Content Strategist • Soweto</p>
-            </div>
-            <div class="flex text-emerald-400">⭐⭐⭐⭐⭐</div>
-          </div>
-          <p class="text-sm text-slate-300 dark:text-slate-300 light:text-slate-700">"This platform treats freelancers with respect. Fast payouts, transparent fees, real support. Finally, a platform built for us!"</p>
-        </div>
+        <div class="text-xs text-amber-400 font-bold uppercase tracking-wider mb-2">Lowest Fees</div>
+        <h3 class="text-xl font-bold text-white mb-3">Just 10%. No Surprises.</h3>
+        <p class="text-slate-400 leading-relaxed text-sm">No monthly subscriptions. No listing fees. No hidden charges. Pay 10% only when you successfully earn. Keep 90% of every rand.</p>
       </div>
-    </div>
-  </section>
-
-  <!-- CTA Section -->
-  <section class="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-emerald-600/15 via-slate-950 to-slate-950 dark:via-slate-950 light:from-emerald-600/5 light:via-white light:to-white border-t border-emerald-500/20 light:border-emerald-200">
-    <div class="max-w-3xl mx-auto text-center">
-      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 px-2">Ready to Transform Your Work?</h2>
-      <p class="text-base sm:text-lg text-slate-300 dark:text-slate-300 light:text-slate-600 mb-8 sm:mb-10 px-2">Join 47K+ freelancers and 1,200+ businesses earning trust on Africa's #1 verified platform.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-2">
-        <a href="/signup" class="inline-flex items-center justify-center gap-2 px-7 sm:px-8 py-3 sm:py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-lg font-semibold transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 btn-transition min-h-12 sm:min-h-14 text-sm sm:text-base whitespace-nowrap" data-testid="cta-signup">
-          🚀 Create Free Account
-        </a>
-        <a href="/explore" class="inline-flex items-center justify-center gap-2 px-7 sm:px-8 py-3 sm:py-4 border-2 border-emerald-500 text-emerald-400 light:text-emerald-600 light:border-emerald-400 rounded-lg font-semibold hover:bg-emerald-500/10 transition-all btn-transition min-h-12 sm:min-h-14 text-sm sm:text-base whitespace-nowrap">
-          🔍 Browse Opportunities
-        </a>
-      </div>
-
-      <p class="text-xs text-slate-500 dark:text-slate-500 light:text-slate-400 mt-6">Verified in 48 hours • 10% platform fee • POPIA-protected • Instant ZAR payouts</p>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="border-t border-slate-800 light:border-slate-200 bg-slate-950 dark:bg-slate-950 light:bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 mb-8 sm:mb-12">
-        <div>
-          <div class="flex items-center gap-2 mb-4">
-            <div class="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center">
-              <span class="text-slate-950 font-bold text-xs">FS</span>
-            </div>
-            <div class="flex items-baseline gap-0.5">
-              <span class="font-bold text-sm text-emerald-400">freelance</span>
-              <span class="font-bold text-sm">skills</span>
-            </div>
-          </div>
-          <p class="text-slate-400 dark:text-slate-400 light:text-slate-600 text-xs sm:text-sm leading-relaxed">Africa's verified freelance platform. 47K+ talent. R2.3B+ protected. Instant ZAR payouts.</p>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-7 card-hover fade-up group">
+        <div class="w-12 h-12 bg-teal-500/15 border border-teal-500/20 rounded-xl flex items-center justify-center mb-5 group-hover:bg-teal-500/25 transition-all">
+          <svg class="w-6 h-6 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
-
-        <div>
-          <h4 class="font-semibold mb-4 text-sm text-slate-50">Platform</h4>
-          <ul class="space-y-2 text-slate-400 dark:text-slate-400 light:text-slate-600 text-xs sm:text-sm">
-            <li><a href="/explore" class="hover:text-emerald-400 transition-colors">Browse Talent</a></li>
-            <li><a href="/post-job" class="hover:text-emerald-400 transition-colors">Post a Job</a></li>
-            <li><a href="/pricing" class="hover:text-emerald-400 transition-colors">Pricing</a></li>
-            <li><a href="/how-it-works" class="hover:text-emerald-400 transition-colors">How It Works</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 class="font-semibold mb-4 text-sm text-slate-50">Company</h4>
-          <ul class="space-y-2 text-slate-400 dark:text-slate-400 light:text-slate-600 text-xs sm:text-sm">
-            <li><a href="/about" class="hover:text-emerald-400 transition-colors">About</a></li>
-            <li><a href="/blog" class="hover:text-emerald-400 transition-colors">Blog</a></li>
-            <li><a href="/careers" class="hover:text-emerald-400 transition-colors">Careers</a></li>
-            <li><a href="/contact" class="hover:text-emerald-400 transition-colors">Contact</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 class="font-semibold mb-4 text-sm text-slate-50">Legal</h4>
-          <ul class="space-y-2 text-slate-400 dark:text-slate-400 light:text-slate-600 text-xs sm:text-sm">
-            <li><a href="/terms" class="hover:text-emerald-400 transition-colors">Terms</a></li>
-            <li><a href="/privacy" class="hover:text-emerald-400 transition-colors">Privacy</a></li>
-            <li><a href="/escrow" class="hover:text-emerald-400 transition-colors">Escrow Guarantee</a></li>
-            <li><a href="/disputes" class="hover:text-emerald-400 transition-colors">Dispute Resolution</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 class="font-semibold mb-4 text-sm text-slate-50">Connect</h4>
-          <div class="flex gap-3 mb-4">
-            <a href="https://twitter.com/freelanceskills" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-emerald-500 flex items-center justify-center transition-all text-xs" aria-label="Twitter">𝕏</a>
-            <a href="https://linkedin.com/company/freelanceskills" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-emerald-500 flex items-center justify-center transition-all text-xs" aria-label="LinkedIn">in</a>
-            <a href="https://facebook.com/freelanceskills" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-emerald-500 flex items-center justify-center transition-all text-xs" aria-label="Facebook">f</a>
-          </div>
-          <p class="text-slate-400 dark:text-slate-400 light:text-slate-600 text-xs">Camps Bay, Cape Town, South Africa</p>
-        </div>
+        <div class="text-xs text-teal-400 font-bold uppercase tracking-wider mb-2">Pan-African</div>
+        <h3 class="text-xl font-bold text-white mb-3">12 Countries, One Platform</h3>
+        <p class="text-slate-400 leading-relaxed text-sm">Connect with talent and clients across SA, Nigeria, Kenya, Ghana, Egypt and 7 more countries. Multi-currency. Multi-lingual.</p>
       </div>
-
-      <div class="border-t border-slate-800 light:border-slate-200 pt-6 sm:pt-8">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-          <p class="text-slate-500 dark:text-slate-500 light:text-slate-400 text-xs">© 2026 FreelanceSkills. CIPC Registered • POPIA Compliant • Verified Platform</p>
-          <div class="flex gap-4 justify-start sm:justify-end text-xs">
-            <a href="#" class="text-slate-500 hover:text-emerald-400">Language: English</a>
-          </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-7 card-hover fade-up group">
+        <div class="w-12 h-12 bg-rose-500/15 border border-rose-500/20 rounded-xl flex items-center justify-center mb-5 group-hover:bg-rose-500/25 transition-all">
+          <svg class="w-6 h-6 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
         </div>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Match Me FAB -->
-  <button id="match-fab" class="match-fab px-4 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-full font-semibold transition-all shadow-lg min-h-14 min-w-14 flex items-center justify-center" onclick="document.getElementById('opportunities').scrollIntoView({behavior:'smooth'})" aria-label="Find best matched jobs">
-    <span class="hidden sm:inline">🧲 Match Me</span>
-    <span class="sm:hidden">🧲</span>
-  </button>
-
-  <!-- Instant Apply Modal -->
-  <div id="apply-modal" class="hidden modal-overlay" onclick="closeModal(event)">
-    <div class="modal-content" onclick="event.stopPropagation()">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl sm:text-2xl font-bold">⚡ Instant Application</h2>
-        <button onclick="closeModal()" class="p-2 hover:bg-slate-700 rounded transition-all min-h-10 min-w-10 flex items-center justify-center" aria-label="Close modal">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
-      </div>
-
-      <div class="mb-6">
-        <h3 class="text-lg font-semibold mb-2" id="modal-job-title"></h3>
-        <p class="text-sm text-slate-400" id="modal-job-client"></p>
-      </div>
-
-      <div class="bg-slate-950/50 border border-slate-700 rounded-lg p-4 sm:p-5 mb-6">
-        <p class="text-xs sm:text-sm font-semibold mb-3 text-emerald-400">Your Proposal Preview:</p>
-        <div id="proposal-preview" class="text-xs sm:text-sm text-slate-300 space-y-2 bg-slate-950 p-3 rounded border border-slate-800"></div>
-      </div>
-
-      <div class="flex gap-3">
-        <button onclick="submitApplication()" class="flex-1 px-4 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-lg font-semibold transition-all btn-transition min-h-12 text-sm">
-          ✓ Submit Application
-        </button>
-        <button onclick="closeModal()" class="flex-1 px-4 py-3 border border-slate-600 text-slate-300 rounded-lg font-semibold hover:bg-slate-800 transition-all btn-transition min-h-12 text-sm">
-          Cancel
-        </button>
+        <div class="text-xs text-rose-400 font-bold uppercase tracking-wider mb-2">Always On</div>
+        <h3 class="text-xl font-bold text-white mb-3">24/7 SA Support</h3>
+        <p class="text-slate-400 leading-relaxed text-sm">Real humans. South African team. Available around the clock. POPIA-compliant data handling. Your success is our mission.</p>
       </div>
     </div>
   </div>
+</section>
 
-  <!-- Toast Notification -->
-  <div id="toast" class="fixed bottom-4 right-4 z-50 hidden bg-emerald-500 text-slate-950 px-6 py-4 rounded-lg font-semibold shadow-lg animate-pulse"></div>
+<!-- ════════════════ HOW IT WORKS ════════════════ -->
+<section class="py-20 sm:py-28 px-4 bg-slate-900/50 border-y border-slate-800">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-16 fade-up">
+      <p class="text-emerald-400 text-sm font-bold uppercase tracking-widest mb-3">Simple 3-Step Process</p>
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">How FreelanceSkills Works</h2>
+      <p class="text-slate-400 max-w-xl mx-auto text-lg">From brief to paid in 3 steps. Our AI handles the complexity.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="text-center fade-up">
+        <div class="relative inline-flex w-20 h-20 bg-emerald-500/15 border-2 border-emerald-500/40 rounded-2xl items-center justify-center mb-5 group-hover:border-emerald-500 transition-all duration-300 mx-auto">
+          <svg class="w-9 h-9 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+          <span class="absolute -top-3 -right-3 w-7 h-7 bg-emerald-500 text-slate-950 font-black text-sm rounded-full flex items-center justify-center">1</span>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-3">Post Your Project</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">Describe your project, set your budget and timeline. Our smart form guides you in under 3 minutes.</p>
+      </div>
+      <div class="text-center fade-up">
+        <div class="relative inline-flex w-20 h-20 bg-blue-500/15 border-2 border-blue-500/40 rounded-2xl items-center justify-center mb-5 transition-all duration-300 mx-auto">
+          <svg class="w-9 h-9 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          <span class="absolute -top-3 -right-3 w-7 h-7 bg-blue-500 text-white font-black text-sm rounded-full flex items-center justify-center">2</span>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-3">Get AI-Matched</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">Vuma AI instantly surfaces the 5 best-matched, verified freelancers for your specific needs and budget.</p>
+      </div>
+      <div class="text-center fade-up">
+        <div class="relative inline-flex w-20 h-20 bg-purple-500/15 border-2 border-purple-500/40 rounded-2xl items-center justify-center mb-5 transition-all duration-300 mx-auto">
+          <svg class="w-9 h-9 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span class="absolute -top-3 -right-3 w-7 h-7 bg-purple-500 text-white font-black text-sm rounded-full flex items-center justify-center">3</span>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-3">Work &amp; Pay Safely</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">Collaborate with escrow protection. Funds released only on your approval. Instant ZAR payout to your bank.</p>
+      </div>
+    </div>
+    <div class="text-center mt-12 fade-up">
+      <a href="/how-it-works" class="btn-secondary inline-flex items-center gap-2 px-7 py-3.5 font-semibold rounded-xl text-sm">Full Platform Overview <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a>
+    </div>
+  </div>
+</section>
 
-  <!-- JSON-LD Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "FreelanceSkills",
-    "url": "https://freelanceskills.net",
-    "description": "Africa's #1 verified freelance platform with AI matching and secure escrow",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://freelanceskills.net/explore?q={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
-  }
-  </script>
+<!-- ════════════════ POPULAR SKILLS ════════════════ -->
+<section class="py-20 sm:py-28 px-4">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-12 fade-up">
+      <p class="text-emerald-400 text-sm font-bold uppercase tracking-widest mb-3">Top Skill Categories</p>
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">Browse 47 Categories</h2>
+      <p class="text-slate-400 max-w-xl mx-auto text-lg">From AI engineering to Afrikaans copywriting — Africa's most in-demand skills, verified.</p>
+    </div>
+    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 mb-10 fade-up">
+      <a href="/jobs?cat=web-dev" class="skill-chip bg-slate-900 border border-slate-800 rounded-xl p-3 sm:p-4 text-center block"><div class="text-2xl sm:text-3xl mb-1.5">💻</div><div class="text-white text-[11px] sm:text-xs font-semibold">Web Dev</div><div class="text-slate-500 text-[10px] mt-0.5">8.2K jobs</div></a>
+      <a href="/jobs?cat=design" class="skill-chip bg-slate-900 border border-slate-800 rounded-xl p-3 sm:p-4 text-center block"><div class="text-2xl sm:text-3xl mb-1.5">🎨</div><div class="text-white text-[11px] sm:text-xs font-semibold">Design</div><div class="text-slate-500 text-[10px] mt-0.5">5.4K jobs</div></a>
+      <a href="/jobs?cat=ai" class="skill-chip bg-slate-900 border border-slate-800 rounded-xl p-3 sm:p-4 text-center block"><div class="text-2xl sm:text-3xl mb-1.5">🤖</div><div class="text-white text-[11px] sm:text-xs font-semibold">AI / ML</div><div class="text-slate-500 text-[10px] mt-0.5">3.1K jobs</div></a>
+      <a href="/jobs?cat=writing" class="skill-chip bg-slate-900 border border-slate-800 rounded-xl p-3 sm:p-4 text-center block"><div class="text-2xl sm:text-3xl mb-1.5">✍️</div><div class="text-white text-[11px] sm:text-xs font-semibold">Writing</div><div class="text-slate-500 text-[10px] mt-0.5">4.7K jobs</div></a>
+      <a href="/jobs?cat=marketing" class="skill-chip bg-slate-900 border border-slate-800 rounded-xl p-3 sm:p-4 text-center block"><div class="text-2xl sm:text-3xl mb-1.5">📣</div><div class="text-white text-[11px] sm:text-xs font-semibold">Marketing</div><div class="text-slate-500 text-[10px] mt-0.5">6.0K jobs</div></a>
+      <a href="/jobs?cat=video" class="skill-chip bg-slate-900 border border-slate-800 rounded-xl p-3 sm:p-4 text-center block"><div class="text-2xl sm:text-3xl mb-1.5">🎬</div><div class="text-white text-[11px] sm:text-xs font-semibold">Video</div><div class="text-slate-500 text-[10px] mt-0.5">2.8K jobs</div></a>
+      <a href="/jobs?cat=data" class="skill-chip bg-slate-900 border border-slate-800 rounded-xl p-3 sm:p-4 text-center block"><div class="text-2xl sm:text-3xl mb-1.5">📈</div><div class="text-white text-[11px] sm:text-xs font-semibold">Data</div><div class="text-slate-500 text-[10px] mt-0.5">4.1K jobs</div></a>
+      <a href="/jobs?cat=finance" class="skill-chip bg-slate-900 border border-slate-800 rounded-xl p-3 sm:p-4 text-center block"><div class="text-2xl sm:text-3xl mb-1.5">📊</div><div class="text-white text-[11px] sm:text-xs font-semibold">Finance</div><div class="text-slate-500 text-[10px] mt-0.5">2.3K jobs</div></a>
+      <a href="/jobs?cat=legal" class="skill-chip bg-slate-900 border border-slate-800 rounded-xl p-3 sm:p-4 text-center block"><div class="text-2xl sm:text-3xl mb-1.5">⚖️</div><div class="text-white text-[11px] sm:text-xs font-semibold">Legal</div><div class="text-slate-500 text-[10px] mt-0.5">1.2K jobs</div></a>
+      <a href="/jobs?cat=trades" class="skill-chip bg-slate-900 border border-slate-800 rounded-xl p-3 sm:p-4 text-center block"><div class="text-2xl sm:text-3xl mb-1.5">🔧</div><div class="text-white text-[11px] sm:text-xs font-semibold">Trades</div><div class="text-slate-500 text-[10px] mt-0.5">1.9K jobs</div></a>
+      <a href="/jobs?cat=translations" class="skill-chip bg-slate-900 border border-slate-800 rounded-xl p-3 sm:p-4 text-center block"><div class="text-2xl sm:text-3xl mb-1.5">🌍</div><div class="text-white text-[11px] sm:text-xs font-semibold">Translation</div><div class="text-slate-500 text-[10px] mt-0.5">1.4K jobs</div></a>
+      <a href="/explore" class="skill-chip bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3 sm:p-4 text-center block"><div class="text-2xl sm:text-3xl mb-1.5">✨</div><div class="text-emerald-400 text-[11px] sm:text-xs font-bold">View All</div><div class="text-emerald-500/60 text-[10px] mt-0.5">47 total</div></a>
+    </div>
+  </div>
+</section>
 
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "FreelanceSkills",
-    "url": "https://freelanceskills.net",
-    "logo": "https://freelanceskills.net/logo.svg",
-    "description": "South Africa's #1 verified freelance platform",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Cape Town",
-      "addressRegion": "Western Cape",
-      "postalCode": "8005",
-      "addressCountry": "ZA"
-    },
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "contactType": "Customer Support",
-      "email": "support@freelanceskills.net"
-    },
-    "sameAs": [
-      "https://twitter.com/freelanceskills",
-      "https://linkedin.com/company/freelanceskills",
-      "https://facebook.com/freelanceskills"
-    ]
-  }
-  </script>
+<!-- ════════════════ NUCLEAR VETTING ════════════════ -->
+<section class="py-20 sm:py-28 px-4 bg-gradient-to-b from-slate-950 to-slate-900/80">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-16 fade-up">
+      <p class="text-emerald-400 text-sm font-bold uppercase tracking-widest mb-3">Verification System</p>
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">Nuclear Vetting System™</h2>
+      <p class="text-slate-400 max-w-2xl mx-auto text-lg">Africa's most rigorous 5-level freelancer verification. AI-proctored. Blockchain-anchored. Tamper-proof.</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-5 gap-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center card-hover fade-up hover:border-emerald-500/40">
+        <div class="w-12 h-12 bg-emerald-500/15 rounded-xl flex items-center justify-center mx-auto mb-4 text-emerald-400 text-lg font-black">01</div>
+        <h3 class="font-bold text-white text-sm mb-2">Identity</h3>
+        <p class="text-slate-500 text-xs">SA ID / Passport biometric scan</p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center card-hover fade-up hover:border-blue-500/40">
+        <div class="w-12 h-12 bg-blue-500/15 rounded-xl flex items-center justify-center mx-auto mb-4 text-blue-400 text-lg font-black">02</div>
+        <h3 class="font-bold text-white text-sm mb-2">Skills Test</h3>
+        <p class="text-slate-500 text-xs">AI-proctored with tab detection</p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center card-hover fade-up hover:border-purple-500/40">
+        <div class="w-12 h-12 bg-purple-500/15 rounded-xl flex items-center justify-center mx-auto mb-4 text-purple-400 text-lg font-black">03</div>
+        <h3 class="font-bold text-white text-sm mb-2">Education</h3>
+        <p class="text-slate-500 text-xs">SAQA NLRD cross-check + OCR</p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center card-hover fade-up hover:border-amber-500/40">
+        <div class="w-12 h-12 bg-amber-500/15 rounded-xl flex items-center justify-center mx-auto mb-4 text-amber-400 text-lg font-black">04</div>
+        <h3 class="font-bold text-white text-sm mb-2">Background</h3>
+        <p class="text-slate-500 text-xs">Criminal check + references</p>
+      </div>
+      <div class="bg-slate-900 border border-emerald-500/30 rounded-2xl p-6 text-center card-hover fade-up" style="box-shadow:0 0 30px rgba(16,185,129,0.12)">
+        <div class="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center mx-auto mb-4 text-emerald-400 text-lg font-black">05</div>
+        <h3 class="font-bold text-white text-sm mb-2">Blockchain</h3>
+        <p class="text-slate-500 text-xs">SHA-256 credential NFT issued</p>
+        <div class="mt-3 w-2 h-2 bg-emerald-400 rounded-full mx-auto animate-pulse"></div>
+      </div>
+    </div>
+    <div class="text-center mt-10 fade-up">
+      <a href="/vetting" class="btn-primary inline-flex items-center gap-2 px-7 py-3.5 text-slate-950 font-bold rounded-xl text-sm">Get Verified Now <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></a>
+    </div>
+  </div>
+</section>
 
-  <script>
-    // Dark/Light Mode Toggle
-    const themeToggle = document.getElementById('theme-toggle');
-    const htmlElement = document.documentElement;
+<!-- ════════════════ PWA INSTALL ════════════════ -->
+<section class="py-20 sm:py-24 px-4 bg-slate-900/50 border-y border-slate-800">
+  <div class="max-w-4xl mx-auto fade-up">
+    <div class="pwa-card rounded-3xl p-8 sm:p-14 text-center">
+      <div class="w-16 h-16 bg-emerald-500/20 border border-emerald-500/30 rounded-2xl flex items-center justify-center mx-auto mb-6 float">
+        <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-black text-white mb-4">Take FreelanceSkills Everywhere</h2>
+      <p class="text-slate-400 text-lg mb-8 max-w-xl mx-auto leading-relaxed">Install our free app. Native feel, offline browsing, instant job alerts. Under 1MB. No App Store needed. Works on any device.</p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+        <button id="pwa-install-btn" class="btn-primary hidden px-8 py-4 text-slate-950 font-bold rounded-2xl text-base gap-3 shadow-lg shadow-emerald-500/20">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Install Now — Free
+        </button>
+        <a href="/install-app" class="btn-secondary px-8 py-4 font-semibold rounded-2xl text-base gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          View Install Guide
+        </a>
+      </div>
+      <div class="flex items-center justify-center gap-8 text-center">
+        <div><div class="stat-number font-black text-xl">&lt;1MB</div><div class="text-slate-500 text-xs mt-1">Storage used</div></div>
+        <div class="w-px h-8 bg-slate-800"></div>
+        <div><div class="stat-number font-black text-xl">0.8s</div><div class="text-slate-500 text-xs mt-1">Load time</div></div>
+        <div class="w-px h-8 bg-slate-800"></div>
+        <div><div class="stat-number font-black text-xl">4.9★</div><div class="text-slate-500 text-xs mt-1">User rating</div></div>
+        <div class="w-px h-8 bg-slate-800"></div>
+        <div><div class="stat-number font-black text-xl">Free</div><div class="text-slate-500 text-xs mt-1">Always</div></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    if (localStorage.getItem('theme') === 'light') {
-      document.body.classList.add('light-mode');
-      htmlElement.classList.add('light');
-      themeToggle.setAttribute('aria-pressed', 'false');
-    }
+<!-- ════════════════ IMPACT & VISION ════════════════ -->
+<section class="py-20 sm:py-28 px-4">
+  <div class="max-w-6xl mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+      <div class="fade-up">
+        <p class="text-emerald-400 text-sm font-bold uppercase tracking-widest mb-4">Our Mission</p>
+        <h2 class="text-3xl sm:text-4xl font-black text-white mb-6 leading-tight">Empowering 1 Million African Freelancers by 2031</h2>
+        <p class="text-slate-400 text-lg leading-relaxed mb-5">Africa has the youngest workforce on Earth. FreelanceSkills turns raw talent into verified, bankable skill — connecting it directly to global demand with zero exploitation.</p>
+        <p class="text-slate-400 leading-relaxed mb-8">10% fee. Fair pay. Instant payouts. POPIA-compliant. 24/7 South African support. This is what a people-first marketplace looks like.</p>
+        <div class="flex flex-wrap gap-3">
+          <a href="/about" class="btn-primary px-6 py-3 text-slate-950 font-bold rounded-xl text-sm gap-2">Our Mission <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a>
+          <a href="/impact" class="btn-secondary px-6 py-3 font-semibold rounded-xl text-sm">View Impact Data</a>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4 fade-up">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 card-hover text-center">
+          <div class="stat-number text-3xl sm:text-4xl font-black mb-2">1M</div>
+          <div class="text-white font-semibold mb-1 text-sm">2031 Vision</div>
+          <div class="text-slate-400 text-xs">Freelancers empowered across Africa</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 card-hover text-center">
+          <div class="stat-number text-3xl sm:text-4xl font-black mb-2">12</div>
+          <div class="text-white font-semibold mb-1 text-sm">Countries</div>
+          <div class="text-slate-400 text-xs">Active across the African continent</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 card-hover text-center">
+          <div class="stat-number text-3xl sm:text-4xl font-black mb-2">R4.5K</div>
+          <div class="text-white font-semibold mb-1 text-sm">Avg Monthly Boost</div>
+          <div class="text-slate-400 text-xs">Income increase per active freelancer</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 card-hover text-center">
+          <div class="stat-number text-3xl sm:text-4xl font-black mb-2">10%</div>
+          <div class="text-white font-semibold mb-1 text-sm">Only Fee</div>
+          <div class="text-slate-400 text-xs">Lowest in Africa. Zero hidden charges.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    themeToggle.addEventListener('click', () => {
-      document.body.classList.toggle('light-mode');
-      htmlElement.classList.toggle('light');
-      
-      if (document.body.classList.contains('light-mode')) {
-        localStorage.setItem('theme', 'light');
-        themeToggle.setAttribute('aria-pressed', 'false');
-      } else {
-        localStorage.setItem('theme', 'dark');
-        themeToggle.setAttribute('aria-pressed', 'true');
-      }
-    });
+<!-- ════════════════ FINAL CTA ════════════════ -->
+<section class="py-20 sm:py-28 px-4" style="background:linear-gradient(135deg,#064e3b,#065f46,#047857)">
+  <div class="max-w-4xl mx-auto text-center fade-up">
+    <div class="text-5xl mb-6">🌍</div>
+    <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-6 leading-tight">Africa's #1 Talent Platform.<br class="hidden sm:block">Your Career Starts Now.</h2>
+    <p class="text-emerald-100 text-lg sm:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">47,000+ verified freelancers. 18,000+ businesses. Free to join. 10% fee only when you earn. Instant ZAR payouts. POPIA protected.</p>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+      <a href="/signup" class="w-full sm:w-auto px-10 py-5 bg-white text-emerald-800 font-black text-lg rounded-2xl hover:bg-emerald-50 transition-all hover:scale-[1.02] shadow-2xl shadow-black/30">Start Free Today →</a>
+      <a href="/freelancers" class="w-full sm:w-auto px-10 py-5 bg-emerald-800/40 border border-white/25 text-white font-bold text-lg rounded-2xl hover:bg-emerald-800/60 transition-all">Browse Top Talent</a>
+    </div>
+    <p class="text-emerald-200/70 text-sm mt-8">CIPC Reg: 2026/070509/09 · POPIA Compliant · 24/7 SA Support · Camps Bay, Cape Town, South Africa</p>
+  </div>
+</section>
 
-    // Mobile Menu
-    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-    const mobileMenuPanel = document.getElementById('mobile-menu-panel');
-    const mobileBackdrop = document.getElementById('mobile-backdrop');
-    const closeMobileBtn = document.getElementById('close-mobile-btn');
+<!-- ════════════════ FOOTER ════════════════ -->
+<footer class="bg-slate-950 border-t border-slate-800 pt-14 pb-8 px-4">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-8 mb-12">
+      <div class="col-span-2 sm:col-span-1">
+        <div class="flex items-center gap-2.5 mb-4">
+          <div class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0"><svg class="w-5 h-5 text-slate-950" fill="currentColor" viewBox="0 0 20 20"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/></svg></div>
+          <span class="text-white font-black text-lg">FreelanceSkills</span>
+        </div>
+        <p class="text-slate-400 text-sm leading-relaxed mb-4">Africa's #1 verified freelance platform. Empowering 1 million African freelancers by 2031.</p>
+        <div class="flex gap-2">
+          <a href="https://twitter.com/FreelanceSkills" class="w-8 h-8 bg-slate-800 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-all" aria-label="Twitter/X"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          <a href="https://linkedin.com/company/freelanceskills" class="w-8 h-8 bg-slate-800 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-all" aria-label="LinkedIn"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+          <a href="https://facebook.com/FreelanceSkills" class="w-8 h-8 bg-slate-800 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-all" aria-label="Facebook"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h4 class="text-white font-bold text-xs uppercase tracking-widest mb-4">Platform</h4>
+        <ul class="space-y-2.5 text-sm">
+          <li><a href="/jobs" class="text-slate-400 hover:text-white transition-colors">Find Work</a></li>
+          <li><a href="/freelancers" class="text-slate-400 hover:text-white transition-colors">Find Talent</a></li>
+          <li><a href="/pricing" class="text-slate-400 hover:text-white transition-colors">Pricing</a></li>
+          <li><a href="/post-job" class="text-slate-400 hover:text-white transition-colors">Post a Job</a></li>
+          <li><a href="/vetting" class="text-slate-400 hover:text-white transition-colors">Get Verified</a></li>
+          <li><a href="/install-app" class="text-slate-400 hover:text-white transition-colors">Install App</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-bold text-xs uppercase tracking-widest mb-4">Learn</h4>
+        <ul class="space-y-2.5 text-sm">
+          <li><a href="/academy" class="text-slate-400 hover:text-white transition-colors">Academy</a></li>
+          <li><a href="/how-it-works" class="text-slate-400 hover:text-white transition-colors">How It Works</a></li>
+          <li><a href="/how-to-hire" class="text-slate-400 hover:text-white transition-colors">How to Hire</a></li>
+          <li><a href="/how-to-get-hired" class="text-slate-400 hover:text-white transition-colors">How to Get Hired</a></li>
+          <li><a href="/blog" class="text-slate-400 hover:text-white transition-colors">Blog</a></li>
+          <li><a href="/community" class="text-slate-400 hover:text-white transition-colors">Community</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-bold text-xs uppercase tracking-widest mb-4">Company</h4>
+        <ul class="space-y-2.5 text-sm">
+          <li><a href="/about" class="text-slate-400 hover:text-white transition-colors">About Us</a></li>
+          <li><a href="/careers" class="text-slate-400 hover:text-white transition-colors">Careers</a></li>
+          <li><a href="/support" class="text-slate-400 hover:text-white transition-colors">Support</a></li>
+          <li><a href="/ambassador" class="text-slate-400 hover:text-white transition-colors">Ambassador</a></li>
+          <li><a href="/terms" class="text-slate-400 hover:text-white transition-colors">Terms of Service</a></li>
+          <li><a href="/privacy" class="text-slate-400 hover:text-white transition-colors">Privacy &amp; POPIA</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-slate-800 pt-7 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p class="text-slate-500 text-xs text-center sm:text-left">© 2026 FreelanceSkills (Pty) Ltd. CIPC Reg: 2026/070509/09. Camps Bay, Cape Town, South Africa. All rights reserved. POPIA Compliant.</p>
+      <div class="flex items-center gap-4">
+        <span class="flex items-center gap-1.5 text-slate-500 text-xs"><span class="w-1.5 h-1.5 bg-emerald-400 rounded-full pulse-dot"></span>All systems operational</span>
+      </div>
+    </div>
+  </div>
+</footer>
 
-    function openMobileMenu() {
-      mobileMenuPanel.classList.remove('hidden');
-      mobileBackdrop.classList.remove('hidden');
-      mobileMenuBtn.setAttribute('aria-expanded', 'true');
-      document.body.style.overflow = 'hidden';
-    }
+<script>
+// Navbar scroll
+const nav=document.getElementById('navbar');
+const onScroll=()=>{if(window.scrollY>24)nav.classList.add('nav-solid');else nav.classList.remove('nav-solid')};
+window.addEventListener('scroll',onScroll,{passive:true});
 
-    function closeMobileMenu() {
-      mobileMenuPanel.classList.add('closing');
-      setTimeout(() => {
-        mobileMenuPanel.classList.add('hidden');
-        mobileMenuPanel.classList.remove('closing');
-        mobileBackdrop.classList.add('hidden');
-        mobileMenuBtn.setAttribute('aria-expanded', 'false');
-        document.body.style.overflow = '';
-      }, 300);
-    }
+// Mobile menu
+const hamburger=document.getElementById('hamburger');
+const mobMenu=document.getElementById('mob-menu');
+const overlay=document.getElementById('overlay');
+const closeMob=document.getElementById('close-mob');
+const iconOpen=document.getElementById('icon-open');
+const iconClose=document.getElementById('icon-close');
+const openMob=()=>{mobMenu.classList.add('open');overlay.classList.add('open');iconOpen.classList.add('hidden');iconClose.classList.remove('hidden');document.body.style.overflow='hidden'};
+const closeMobFn=()=>{mobMenu.classList.remove('open');overlay.classList.remove('open');iconOpen.classList.remove('hidden');iconClose.classList.add('hidden');document.body.style.overflow=''};
+hamburger.addEventListener('click',openMob);
+closeMob.addEventListener('click',closeMobFn);
+overlay.addEventListener('click',closeMobFn);
 
-    mobileMenuBtn.addEventListener('click', openMobileMenu);
-    closeMobileBtn.addEventListener('click', closeMobileMenu);
-    mobileBackdrop.addEventListener('click', closeMobileMenu);
+// Fade-up
+const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.fade-up').forEach(el=>io.observe(el));
 
-    window.closeMobileMenu = closeMobileMenu;
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !mobileMenuPanel.classList.contains('hidden')) {
-        closeMobileMenu();
-      }
-    });
-
-    // Instant Apply Modal
-    function openInstantApply(jobTitle, clientName) {
-      document.getElementById('modal-job-title').textContent = jobTitle;
-      document.getElementById('modal-job-client').textContent = clientName;
-      
-      const proposal = `Hi ${clientName},\n\nI'm a verified freelancer on FreelanceSkills with expertise in your project requirements. I've successfully completed 15+ similar projects with 4.9★ average rating.\n\nKey highlights:\n• 5+ years professional experience\n• Similar projects delivered on time\n• Mobile-first & responsive expertise\n• Excellent communication\n\nI'm confident I can deliver exceptional results within your timeline and budget.\n\nLooking forward to discussing your project.\n\nBest regards`;
-      
-      document.getElementById('proposal-preview').innerText = proposal;
-      document.getElementById('apply-modal').classList.remove('hidden');
-    }
-
-    function closeModal(event) {
-      if (event && event.target.id !== 'apply-modal') return;
-      document.getElementById('apply-modal').classList.add('hidden');
-    }
-
-    function submitApplication() {
-      showToast('✓ Application sent! Check your messages.');
-      confetti({ particleCount: 100, spread: 70 });
-      closeModal();
-    }
-
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.classList.remove('hidden');
-      setTimeout(() => toast.classList.add('hidden'), 3500);
-    }
-
-    // Lazy Load Observer
-    const lazyElements = document.querySelectorAll('.lazy-load');
-    if ('IntersectionObserver' in window) {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('loaded');
-            observer.unobserve(entry.target);
-          }
-        });
-      });
-
-      lazyElements.forEach(el => observer.observe(el));
-    } else {
-      lazyElements.forEach(el => el.classList.add('loaded'));
-    }
-  </script>
+// PWA
+let deferred=null;
+const installBtn=document.getElementById('pwa-install-btn');
+const navBtn=document.getElementById('nav-install-btn');
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;if(installBtn){installBtn.classList.remove('hidden');installBtn.classList.add('inline-flex');}if(navBtn)navBtn.style.display='flex';});
+if(installBtn){installBtn.addEventListener('click',async()=>{if(!deferred){window.location.href='/install-app';return;}deferred.prompt();const{outcome}=await deferred.userChoice;if(outcome==='accepted'){installBtn.textContent='✓ App Installed!';installBtn.disabled=true;}deferred=null;});}
+window.addEventListener('appinstalled',()=>{if(installBtn)installBtn.style.display='none';});
+if(window.matchMedia('(display-mode:standalone)').matches&&installBtn)installBtn.style.display='none';
+</script>
 </body>
 </html>
