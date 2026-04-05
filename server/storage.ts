@@ -77,6 +77,7 @@ export interface IStorage {
   getAggregatedJobs(filters?: { province?: string; category?: string; source?: string; jobType?: string }): Promise<AggregatedJob[]>;
   getAggregatedJobCount(): Promise<number>;
   clearOldAggregatedJobs(): Promise<void>;
+  deleteAgentGeneratedJobs(): Promise<number>;
 
   // Job application operations
   createJobApplication(application: InsertJobApplication): Promise<JobApplication>;
@@ -488,6 +489,13 @@ class DatabaseStorage implements IStorage {
   async clearOldAggregatedJobs(): Promise<void> {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     await db.delete(aggregatedJobs).where(sql`${aggregatedJobs.createdAt} < ${thirtyDaysAgo}`);
+  }
+
+  async deleteAgentGeneratedJobs(): Promise<number> {
+    const result = await db.delete(aggregatedJobs)
+      .where(eq(aggregatedJobs.agentGenerated, true))
+      .returning({ id: aggregatedJobs.id });
+    return result.length;
   }
 
   async getAggregatedJobById(id: string): Promise<AggregatedJob | null> {

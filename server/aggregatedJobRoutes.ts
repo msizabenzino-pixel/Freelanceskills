@@ -6,6 +6,9 @@
 import { type Express, type Request, type Response } from "express";
 import { storage } from "./storage";
 import { log } from "./logger";
+import { db } from "./db";
+import { aggregatedJobs } from "@shared/models/jobs";
+import { eq, sql } from "drizzle-orm";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
@@ -290,20 +293,37 @@ Generate a personalised cover letter and honest employability assessment.`,
     }
   });
 
-  // ── Startup: trigger live job fetch in background ───────────────────────
+  // ── Startup: purge fake jobs, fetch all real jobs, then refresh every 30min ─
   (async () => {
     try {
-      const count = await storage.getAggregatedJobCount();
-      if (count < 200) {
-        log(`Only ${count} jobs — running startup seed + live fetch`, "jobs");
-        const { seedInitialJobs } = await import("./jobAgent");
-        await seedInitialJobs();
+      const { purgeAndRefresh, fetchAndStoreLiveJobs } = await import("./liveJobFetcher");
+
+      // First check: wipe any AI-generated (fake) jobs still in DB
+      const fakeCount = await db.select({ count: sql<number>`cast(count(*) as integer)` })
+        .from(aggregatedJobs)
+        .where(eq(aggregatedJobs.agentGenerated, true));
+      const fake = fakeCount[0]?.count || 0;
+
+      if (fake > 0) {
+        log(`[Jobs] Detected ${fake} fake AI-generated jobs — purging and replacing with real jobs`, "jobs");
+        await purgeAndRefresh();
+      } else {
+        log("[Jobs] No fake jobs detected — running live refresh", "jobs");
+        await fetchAndStoreLiveJobs();
       }
-      const { fetchAndStoreLiveJobs } = await import("./liveJobFetcher");
-      const result = await fetchAndStoreLiveJobs();
-      log(`Startup live fetch: +${result.inserted} real jobs from ${Object.keys(result.sources).join(", ")}`, "jobs");
+
+      // Refresh real jobs every 30 minutes
+      setInterval(async () => {
+        try {
+          const result = await fetchAndStoreLiveJobs();
+          log(`[Jobs] 30-min refresh: +${result.inserted} new real jobs, total: ${result.total}`, "jobs");
+        } catch (e: any) {
+          log(`[Jobs] 30-min refresh error: ${e.message}`, "warn");
+        }
+      }, 30 * 60 * 1000);
+
     } catch (err: any) {
-      log(`Startup live fetch error (non-fatal): ${err.message}`, "jobs");
+      log(`[Jobs] Startup error (non-fatal): ${err.message}`, "warn");
     }
   })();
 

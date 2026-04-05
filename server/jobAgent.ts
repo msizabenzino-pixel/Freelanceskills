@@ -689,39 +689,13 @@ export async function runFullJobAgentSync(batchSize: number = 20): Promise<Agent
  * Initial seed: populate the database with 150 diverse pan-African jobs.
  * Called once on first startup if DB is empty (or below threshold).
  */
+/**
+ * AI seeding is permanently disabled.
+ * FreelanceSkills only serves REAL advertised jobs from live APIs.
+ * Use fetchAndStoreLiveJobs() from liveJobFetcher.ts instead.
+ */
 export async function seedInitialJobs(): Promise<void> {
-  try {
-    const currentCount = await storage.getAggregatedJobCount();
-    if (currentCount >= 300) {
-      log(`[JobAgent] DB already has ${currentCount} active jobs — skipping seed`, "agent");
-      return;
-    }
-
-    log(`[JobAgent] Seeding pan-African jobs (current: ${currentCount}, target: 350)...`, "agent");
-
-    const allJobs: InsertAggregatedJob[] = [];
-
-    // Generate 350 jobs across all categories and ALL African regions
-    for (let i = 0; i < 350; i++) {
-      const category = CATEGORIES[i % CATEGORIES.length];
-      // Weighted: 60% SA provinces, 40% rest of Africa
-      const locationPool = i % 5 < 3
-        ? AFRICAN_LOCATIONS.slice(0, 9)    // SA provinces (3 of every 5)
-        : AFRICAN_LOCATIONS.slice(9);       // Rest of Africa (2 of every 5)
-      const location = locationPool[i % locationPool.length];
-      const source = INTERNAL_SOURCES[i % INTERNAL_SOURCES.length];
-      allJobs.push(generateFallbackJob(category, location.region, source));
-    }
-
-    // Insert in batches of 25
-    for (let i = 0; i < allJobs.length; i += 25) {
-      await storage.createManyAggregatedJobs(allJobs.slice(i, i + 25));
-    }
-
-    log(`[JobAgent] Seeded 150 initial pan-African jobs successfully`, "agent");
-  } catch (err: any) {
-    log(`[JobAgent] Seed error: ${err.message}`, "agent");
-  }
+  log("[JobAgent] AI seeding disabled — FreelanceSkills serves only REAL jobs", "agent");
 }
 
 /**
