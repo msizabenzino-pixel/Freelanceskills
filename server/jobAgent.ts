@@ -654,12 +654,22 @@ export async function runFullJobAgentSync(batchSize: number = 20): Promise<Agent
     upgraded = upgradeResult.upgraded;
     errors.push(...upgradeResult.errors);
 
-    // 3. Generate fresh jobs
+    // 3. Generate fresh AI jobs
     const genResult = await runJobGenerationAgent(batchSize, true);
     generated = genResult.generated;
     errors.push(...genResult.errors);
 
-    // 4. Clean jobs older than 30 days
+    // 4. Pull live jobs from external APIs
+    try {
+      const { fetchAndStoreLiveJobs } = await import("./liveJobFetcher");
+      const liveResult = await fetchAndStoreLiveJobs();
+      generated += liveResult.inserted;
+      log(`[JobAgent] Live fetch added ${liveResult.inserted} new real jobs`, "agent");
+    } catch (e: any) {
+      log(`[JobAgent] Live fetch error: ${e.message}`, "warn");
+    }
+
+    // 5. Clean jobs older than 30 days
     await storage.clearOldAggregatedJobs();
 
   } catch (err: any) {
@@ -682,17 +692,17 @@ export async function runFullJobAgentSync(batchSize: number = 20): Promise<Agent
 export async function seedInitialJobs(): Promise<void> {
   try {
     const currentCount = await storage.getAggregatedJobCount();
-    if (currentCount >= 120) {
+    if (currentCount >= 300) {
       log(`[JobAgent] DB already has ${currentCount} active jobs — skipping seed`, "agent");
       return;
     }
 
-    log(`[JobAgent] Seeding pan-African jobs (current: ${currentCount}, target: 150)...`, "agent");
+    log(`[JobAgent] Seeding pan-African jobs (current: ${currentCount}, target: 350)...`, "agent");
 
     const allJobs: InsertAggregatedJob[] = [];
 
-    // Generate 150 jobs across all categories and ALL African regions
-    for (let i = 0; i < 150; i++) {
+    // Generate 350 jobs across all categories and ALL African regions
+    for (let i = 0; i < 350; i++) {
       const category = CATEGORIES[i % CATEGORIES.length];
       // Weighted: 60% SA provinces, 40% rest of Africa
       const locationPool = i % 5 < 3

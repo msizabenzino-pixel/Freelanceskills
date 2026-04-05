@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { ApplyModal } from "@/components/ApplyModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -120,6 +121,7 @@ export default function Jobs() {
   const [remoteOnly, setRemoteOnly] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [applyingId, setApplyingId] = useState<string | null>(null);
+  const [applyModalJob, setApplyModalJob] = useState<AggregatedJob | null>(null);
   const [activeTab, setActiveTab] = useState("all");
 
   const { formatAmount } = useCurrency();
@@ -218,34 +220,15 @@ export default function Jobs() {
     },
   });
 
-  // ── Aggregated apply ──────────────────────────────────────────────────────
-  const handleAggregatedApply = useCallback(async (job: AggregatedJob) => {
+  // ── Aggregated apply — opens AI Apply Modal ───────────────────────────────
+  const handleAggregatedApply = useCallback((job: AggregatedJob) => {
     if (!user?.id) {
       toast({ title: "Sign in required", description: "Please sign in to apply for jobs." });
       navigate(`/login?redirect=${encodeURIComponent("/jobs")}`);
       return;
     }
-    setApplyingId(job.id);
-    try {
-      const res = await apiRequest("POST", `/api/aggregated-jobs/${job.id}/apply`, { coverLetter: "" });
-      const data = await res.json();
-      if (data.success) {
-        toast({
-          title: "Application tracked!",
-          description: "Opening the full job listing…",
-        });
-        if (data.redirectUrl) {
-          window.open(data.redirectUrl, "_blank", "noopener,noreferrer");
-        }
-        // Refresh job list to show updated application count
-        queryClient.invalidateQueries({ queryKey: ["aggregated-jobs"] });
-      }
-    } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
-    } finally {
-      setApplyingId(null);
-    }
-  }, [user, navigate, toast, queryClient]);
+    setApplyModalJob(job);
+  }, [user, navigate, toast]);
 
   // ── Filtered Firebase jobs ────────────────────────────────────────────────
   const filteredFirebaseJobs = useMemo(() => {
@@ -523,6 +506,17 @@ export default function Jobs() {
             <StatPill icon={Wifi} value={remoteCount} label="remote" color="sky" />
             <StatPill icon={BrainCircuit} value={aggJobs.length} label="AI-aggregated" color="violet" />
             <div className="ml-auto flex items-center gap-2">
+              {user && (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="gap-1.5 text-emerald-400 hover:text-emerald-300 h-8 font-medium"
+                  onClick={() => navigate("/my-applications")}
+                  data-testid="btn-my-applications"
+                >
+                  <Briefcase className="w-3.5 h-3.5" /> My Applications
+                </Button>
+              )}
               <Button
                 size="sm"
                 variant="ghost"
@@ -712,6 +706,15 @@ export default function Jobs() {
           </Tabs>
         </div>
       </main>
+      {applyModalJob && (
+        <ApplyModal
+          job={applyModalJob}
+          onClose={() => {
+            setApplyModalJob(null);
+            queryClient.invalidateQueries({ queryKey: ["aggregated-jobs"] });
+          }}
+        />
+      )}
       <Footer />
     </div>
   );

@@ -20,6 +20,7 @@ import { AdminShell } from "@/components/admin/layout/AdminShell";
 // ── Public Pages ──────────────────────────────────────────────────────────────
 const Home = lazy(() => import("@/pages/Home"));
 const Jobs = lazy(() => import("@/pages/Jobs"));
+const MyApplications = lazy(() => import("@/pages/MyApplications"));
 const JobDetails = lazy(() => import("@/pages/JobDetails"));
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const Pricing = lazy(() => import("@/pages/Pricing"));
@@ -401,6 +402,11 @@ function Router() {
         <Route path="/reset-password/:token" component={ResetPassword} />
         <Route path="/jobs" component={Jobs} />
         <Route path="/jobs/:id" component={JobDetails} />
+        <Route path="/my-applications">
+          <AuthGuard>
+            <MyApplications />
+          </AuthGuard>
+        </Route>
         <Route path="/dashboard">
           <AuthGuard>
             <Dashboard />

@@ -81,6 +81,7 @@ export interface IStorage {
   // Job application operations
   createJobApplication(application: InsertJobApplication): Promise<JobApplication>;
   getUserApplications(userId: string): Promise<JobApplication[]>;
+  updateJobApplication(id: string, updates: Partial<Pick<JobApplication, "status" | "notes" | "aiCoverLetter" | "employabilityScore" | "interviewDate">>): Promise<JobApplication | undefined>;
 
   // Business invitation operations
   createBusinessInvitation(invitation: InsertBusinessInvitation): Promise<BusinessInvitation>;
@@ -607,6 +608,14 @@ class DatabaseStorage implements IStorage {
     return db.select().from(jobApplications)
       .where(eq(jobApplications.userId, userId))
       .orderBy(desc(jobApplications.appliedAt));
+  }
+
+  async updateJobApplication(id: string, updates: Partial<Pick<JobApplication, "status" | "notes" | "aiCoverLetter" | "employabilityScore" | "interviewDate">>): Promise<JobApplication | undefined> {
+    const [updated] = await db.update(jobApplications)
+      .set(updates)
+      .where(eq(jobApplications.id, id))
+      .returning();
+    return updated;
   }
 
   async createBusinessInvitation(invitation: InsertBusinessInvitation): Promise<BusinessInvitation> {
