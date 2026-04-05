@@ -217,23 +217,58 @@ export async function registerRoutes(
   });
 
   // Job routes
-  app.get("/api/jobs", async (_req, res) => {
+  app.get("/api/jobs", async (req, res) => {
     try {
-      const allJobs = await storage.getAllJobs();
+      const { q, category, locationType, minBudget, maxBudget, status } = req.query;
+      let allJobs = await storage.getAllJobs();
+
+      if (q) {
+        const qLower = (q as string).toLowerCase();
+        allJobs = allJobs.filter(
+          (j) =>
+            j.title.toLowerCase().includes(qLower) ||
+            j.description.toLowerCase().includes(qLower)
+        );
+      }
+      if (category) {
+        allJobs = allJobs.filter((j) => j.category === category);
+      }
+      if (locationType) {
+        allJobs = allJobs.filter((j) => j.locationType === locationType);
+      }
+      if (minBudget) {
+        const min = parseInt(minBudget as string) * 100;
+        allJobs = allJobs.filter((j) => j.budget >= min);
+      }
+      if (maxBudget) {
+        const max = parseInt(maxBudget as string) * 100;
+        allJobs = allJobs.filter((j) => j.budget <= max);
+      }
+      if (status) {
+        allJobs = allJobs.filter((j) => j.status === status);
+      } else {
+        allJobs = allJobs.filter((j) => j.status === "open" || j.status === "in_progress");
+      }
+
       const jobsWithNames = await Promise.all(
         allJobs.map(async (job) => {
           try {
             const profile = await storage.getProfile(job.clientId);
             return {
               ...job,
-              clientName: profile?.title || profile?.bio?.substring(0, 30) || "FreelanceSkills Client",
+              budgetFormatted: `R${(job.budget / 100).toLocaleString("en-ZA")}`,
+              clientName: profile?.title || "FreelanceSkills Client",
             };
           } catch {
-            return { ...job, clientName: "FreelanceSkills Client" };
+            return {
+              ...job,
+              budgetFormatted: `R${(job.budget / 100).toLocaleString("en-ZA")}`,
+              clientName: "FreelanceSkills Client",
+            };
           }
         })
       );
-      res.json(jobsWithNames);
+      res.json({ jobs: jobsWithNames, total: jobsWithNames.length });
     } catch (error) {
       console.error("Error fetching jobs:", error);
       res.status(500).json({ message: "Failed to fetch jobs" });
@@ -345,11 +380,51 @@ export async function registerRoutes(
     }
   });
 
-  app.get("/api/freelancers", async (req, res) => {
+  app.get("/api/talent/search", async (req, res) => {
     try {
-      const { location } = req.query;
-      const freelancers = await storage.searchFreelancers(undefined, location as string);
-      res.json(freelancers);
+      const { q, location, verified, maxRate, minRating, limit, offset } = req.query;
+
+      const maxRateCents = maxRate ? Math.round(parseFloat(maxRate as string) * 100) : undefined;
+      const minRatingScaled = minRating ? Math.round(parseFloat(minRating as string) * 100) : undefined;
+
+      const freelancers = await storage.searchFreelancers(
+        q as string | undefined,
+        location as string | undefined,
+        {
+          verifiedOnly: verified === "true",
+          maxRateCents,
+          minRating: minRatingScaled,
+          limit: limit ? parseInt(limit as string) : 50,
+          offset: offset ? parseInt(offset as string) : 0,
+        }
+      );
+
+      const enriched = freelancers.map((f) => ({
+        id: f.id,
+        userId: f.userId,
+        name: f.title || "FreelanceSkills Pro",
+        title: f.bio?.substring(0, 80) || "Verified Freelancer",
+        skills: f.skills || [],
+        location: f.location || "South Africa",
+        hourlyRateCents: f.hourlyRate,
+        hourlyRateFormatted: f.hourlyRate
+          ? `R${(f.hourlyRate / 100).toFixed(0)}/hr`
+          : null,
+        rating: f.rating ? f.rating / 100 : null,
+        completedJobs: f.completedJobs,
+        isPro: f.isPro,
+        verified: f.kycStatus === "verified",
+        kycStatus: f.kycStatus,
+        country: f.country || "ZA",
+        avatarInitials: (f.title || "FS")
+          .split(" ")
+          .map((w) => w[0])
+          .slice(0, 2)
+          .join("")
+          .toUpperCase(),
+      }));
+
+      res.json({ freelancers: enriched, total: enriched.length });
     } catch (error) {
       console.error("Error searching freelancers:", error);
       res.status(500).json({ message: "Failed to search freelancers" });

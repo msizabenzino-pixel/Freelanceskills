@@ -32,7 +32,7 @@ export interface IStorage {
   getProfile(userId: string): Promise<Profile | undefined>;
   getProfileById(id: string): Promise<Profile | undefined>;
   updateProfile(userId: string, updates: Partial<InsertProfile>): Promise<Profile | undefined>;
-  searchFreelancers(query?: string, location?: string): Promise<Profile[]>;
+  searchFreelancers(query?: string, location?: string, opts?: { verifiedOnly?: boolean; availableNow?: boolean; maxRateCents?: number; minRating?: number; limit?: number; offset?: number }): Promise<Profile[]>;
 
   // Service Package operations (TaskRabbit-style)
   createServicePackage(pkg: InsertServicePackage): Promise<ServicePackage>;
@@ -213,14 +213,56 @@ class DatabaseStorage implements IStorage {
     return profile;
   }
 
-  async searchFreelancers(query?: string, location?: string): Promise<Profile[]> {
-    let conditions = [eq(profiles.userType, "freelancer")];
-    
+  async searchFreelancers(
+    query?: string,
+    location?: string,
+    opts?: {
+      verifiedOnly?: boolean;
+      availableNow?: boolean;
+      maxRateCents?: number;
+      minRating?: number;
+      limit?: number;
+      offset?: number;
+    }
+  ): Promise<Profile[]> {
+    const conditions: any[] = [
+      eq(profiles.userType, "freelancer"),
+      eq(profiles.status, "active"),
+    ];
+
+    if (query) {
+      const q = `%${query}%`;
+      conditions.push(
+        sql`(${profiles.title} ILIKE ${q} OR ${profiles.bio} ILIKE ${q} OR ${profiles.location} ILIKE ${q} OR EXISTS (SELECT 1 FROM unnest(${profiles.skills}) skill WHERE skill ILIKE ${q}))`
+      );
+    }
+
     if (location) {
       conditions.push(sql`${profiles.location} ILIKE ${'%' + location + '%'}`);
     }
-    
-    return db.select().from(profiles).where(and(...conditions));
+
+    if (opts?.verifiedOnly) {
+      conditions.push(eq(profiles.kycStatus, "verified"));
+    }
+
+    if (opts?.maxRateCents) {
+      conditions.push(sql`${profiles.hourlyRate} <= ${opts.maxRateCents}`);
+    }
+
+    if (opts?.minRating) {
+      conditions.push(sql`${profiles.rating} >= ${opts.minRating}`);
+    }
+
+    const limit = opts?.limit ?? 50;
+    const offset = opts?.offset ?? 0;
+
+    return db
+      .select()
+      .from(profiles)
+      .where(and(...conditions))
+      .orderBy(desc(profiles.rating), desc(profiles.completedJobs))
+      .limit(limit)
+      .offset(offset);
   }
 
   // Service Package operations
