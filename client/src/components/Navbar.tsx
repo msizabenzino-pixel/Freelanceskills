@@ -2,7 +2,7 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Menu, X, Zap, LogOut, HelpCircle, Users, Briefcase, ChevronDown, Sparkles, Moon, Sun, Mic, GraduationCap, Bell, AlertTriangle } from "lucide-react";
+import { Menu, X, Zap, LogOut, HelpCircle, Users, Briefcase, ChevronDown, Sparkles, Moon, Sun, Mic, GraduationCap, Bell, AlertTriangle, Download } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useDarkMode } from "@/hooks/use-dark-mode";
 import { VoiceSearch } from "./VoiceSearch";
@@ -355,6 +355,21 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
           </button>
           <HelpMenu />
           <UrgentAlertsMenu />
+          <Link href="/install-app">
+            <button
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all border",
+                useSolidNav
+                  ? "text-emerald-600 bg-emerald-500/10 border-emerald-500/30 hover:bg-emerald-500/20"
+                  : "text-emerald-400 bg-emerald-500/10 border-emerald-500/30 hover:bg-emerald-500/20"
+              )}
+              aria-label="Install FreelanceSkills App"
+              data-testid="button-install-app-navbar"
+            >
+              <Download className="h-3.5 w-3.5" />
+              Get App
+            </button>
+          </Link>
           <button
             onClick={toggleHighContrast}
             className={cn(
@@ -532,6 +547,11 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
             ))}
           </div>
 
+          <div className="h-px bg-border my-1" />
+          <Link href="/install-app" className="flex items-center gap-2 p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-600 font-bold text-sm" data-testid="link-mobile-install-app" onClick={() => setIsMobileMenuOpen(false)}>
+            <Download className="h-4 w-4" /> Install Free App
+            <span className="ml-auto text-xs bg-emerald-500/20 px-2 py-0.5 rounded-full">NEW</span>
+          </Link>
           <div className="h-px bg-border my-1" />
           <Link href="/jobs?urgent=true" className="text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md flex items-center gap-2" data-testid="link-mobile-urgent-alerts">
             <Bell className="h-4 w-4 text-red-500" /> Urgent Jobs (3)

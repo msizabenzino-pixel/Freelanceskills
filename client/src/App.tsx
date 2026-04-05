@@ -132,6 +132,13 @@ const SystemPerformance = lazy(() => import("@/pages/SystemPerformance"));
 const DataCompliance = lazy(() => import("@/pages/DataCompliance"));
 const MissionControl = lazy(() => import("@/pages/MissionControl"));
 
+// ── Public pages (community / PWA / wellbeing) ────────────────────────────────
+const InstallApp = lazy(() => import("@/pages/InstallApp"));
+const CommunityPage = lazy(() => import("@/pages/CommunityPage"));
+const AmbassadorPage = lazy(() => import("@/pages/AmbassadorPage"));
+const EliteClubPage = lazy(() => import("@/pages/EliteClubPage"));
+const WellbeingPage = lazy(() => import("@/pages/WellbeingPage"));
+
 // ── Admin S51–S100 ────────────────────────────────────────────────────────────
 const SearchDiscovery = lazy(() => import("@/pages/SearchDiscovery"));
 const PaymentIntelligence = lazy(() => import("@/pages/PaymentIntelligence"));
@@ -462,6 +469,23 @@ function Router() {
         <Route path="/vuma" component={Vuma} />
         <Route path="/vuma-admin" component={VumaAdmin} />
         <Route path="/vuma-live" component={VumaLive} />
+        {/* PWA install page */}
+        <Route path="/install-app" component={InstallApp} />
+        <Route path="/download-app" component={InstallApp} />
+        {/* Public community & programme pages */}
+        <Route path="/community" component={CommunityPage} />
+        <Route path="/ambassador" component={AmbassadorPage} />
+        <Route path="/elite-club" component={EliteClubPage} />
+        <Route path="/wellbeing" component={WellbeingPage} />
+        {/* Alias routes for SEO / nav */}
+        <Route path="/help" component={Support} />
+        <Route path="/contact" component={Support} />
+        <Route path="/find-talent" component={FindTalent} />
+        <Route path="/freelancer-profile/:id" component={FreelancerProfile} />
+        <Route path="/background-checks" component={VettingBackground} />
+        <Route path="/blockchain-verification" component={BlockchainVerification} />
+        <Route path="/skill-assessment" component={SkillAssessments} />
+        <Route path="/gig-marketplace" component={Explore} />
         <Route path="/admin" component={AdminRouter} />
         <Route path="/admin/:rest*" component={AdminRouter} />
         <Route component={NotFound} />
