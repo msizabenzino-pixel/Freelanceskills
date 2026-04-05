@@ -26,9 +26,15 @@ import { apiRequest } from "@/lib/queryClient";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
-const SA_PROVINCES = [
+// Pan-African regions — SA provinces first, then rest of continent
+const AFRICAN_REGIONS = [
+  // South Africa
   "Gauteng", "Western Cape", "KwaZulu-Natal", "Eastern Cape",
   "Limpopo", "Mpumalanga", "Free State", "North West", "Northern Cape",
+  // Rest of Africa
+  "Nigeria", "Kenya", "Ghana", "Egypt", "Morocco",
+  "Ethiopia", "Tanzania", "Uganda", "Rwanda", "Senegal",
+  "Côte d'Ivoire", "Zimbabwe", "Zambia", "Botswana", "Namibia", "Mozambique",
 ];
 
 const CATEGORIES = [
@@ -42,6 +48,7 @@ const CATEGORIES = [
   "Banking & Insurance", "Project Management", "Creative & Design",
   "Customer Service", "Operations & Admin", "Environmental & ESG",
   "Manufacturing", "Government & Public Sector",
+  "Fintech & Payments", "Telecommunications", "Property & Real Estate",
 ];
 
 const JOB_TYPES = [
@@ -59,11 +66,6 @@ const EXP_LEVELS = [
   { value: "mid", label: "Mid-Level" },
   { value: "senior", label: "Senior" },
   { value: "executive", label: "Executive" },
-];
-
-const SOURCES = [
-  "PNet", "Career24", "LinkedIn", "Indeed SA", "CareerJunction",
-  "OfferZen", "Bizcommunity", "JobMail", "Government Vacancies", "BestJobs",
 ];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -95,7 +97,6 @@ export default function Jobs() {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [jobTypeFilter, setJobTypeFilter] = useState("all");
   const [expLevelFilter, setExpLevelFilter] = useState("all");
-  const [sourceFilter, setSourceFilter] = useState("all");
   const [urgentOnly, setUrgentOnly] = useState(false);
   const [remoteOnly, setRemoteOnly] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
@@ -130,7 +131,7 @@ export default function Jobs() {
     queryKey: [
       "aggregated-jobs",
       { province: provinceFilter, category: categoryFilter, jobType: jobTypeFilter,
-        expLevel: expLevelFilter, source: sourceFilter, urgent: urgentOnly, remote: remoteOnly, search: query },
+        expLevel: expLevelFilter, urgent: urgentOnly, remote: remoteOnly, search: query },
     ],
     queryFn: async () => {
       const params = new URLSearchParams();
@@ -138,7 +139,6 @@ export default function Jobs() {
       if (categoryFilter && categoryFilter !== "all") params.set("category", categoryFilter);
       if (jobTypeFilter && jobTypeFilter !== "all") params.set("jobType", jobTypeFilter);
       if (expLevelFilter && expLevelFilter !== "all") params.set("experienceLevel", expLevelFilter);
-      if (sourceFilter && sourceFilter !== "all") params.set("source", sourceFilter);
       if (urgentOnly) params.set("isUrgent", "true");
       if (remoteOnly) params.set("isRemote", "true");
       if (query) params.set("search", query);
@@ -187,7 +187,7 @@ export default function Jobs() {
       if (data.success) {
         toast({
           title: "Application tracked!",
-          description: `Redirecting you to ${job.source}…`,
+          description: "Opening the full job listing…",
         });
         if (data.redirectUrl) {
           window.open(data.redirectUrl, "_blank", "noopener,noreferrer");
@@ -227,7 +227,7 @@ export default function Jobs() {
   const totalJobs = aggJobs.length + filteredFirebaseJobs.length;
 
   const hasActiveFilters = provinceFilter !== "all" || categoryFilter !== "all" ||
-    jobTypeFilter !== "all" || expLevelFilter !== "all" || sourceFilter !== "all" ||
+    jobTypeFilter !== "all" || expLevelFilter !== "all" ||
     urgentOnly || remoteOnly || query || locationFilter;
 
   const clearFilters = () => {
@@ -235,7 +235,6 @@ export default function Jobs() {
     setCategoryFilter("all");
     setJobTypeFilter("all");
     setExpLevelFilter("all");
-    setSourceFilter("all");
     setUrgentOnly(false);
     setRemoteOnly(false);
     setQuery("");
@@ -259,14 +258,14 @@ export default function Jobs() {
             <div className="flex items-center gap-2 mb-3">
               <BrainCircuit className="w-5 h-5 text-emerald-400" />
               <span className="text-emerald-400 text-sm font-semibold uppercase tracking-wider">
-                AI Job Intelligence — South Africa &amp; Global
+                AI Job Intelligence — Africa &amp; Beyond
               </span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-2">
               Find Your Perfect Job
             </h1>
             <p className="text-white/70 text-lg mb-6">
-              Aggregating jobs from PNet, Career24, LinkedIn, Indeed SA, OfferZen and more — all in one place, powered by AI.
+              The most powerful job intelligence platform on the African continent — AI-matched opportunities across 17 countries, 80+ cities.
             </p>
 
             {/* Search bar */}
@@ -287,7 +286,7 @@ export default function Jobs() {
                   value={locationFilter}
                   onChange={(e) => setLocationFilter(e.target.value)}
                   className="pl-9 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15"
-                  placeholder="City or province"
+                  placeholder="City, country, or region"
                   data-testid="jobs-input-location"
                 />
               </div>
@@ -336,14 +335,14 @@ export default function Jobs() {
 
             {/* Advanced filters panel */}
             {showFilters && (
-              <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-5 gap-3 p-4 bg-white/5 rounded-xl border border-white/10">
+              <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-3 p-4 bg-white/5 rounded-xl border border-white/10">
                 <Select value={provinceFilter} onValueChange={setProvinceFilter}>
                   <SelectTrigger className="bg-white/10 border-white/20 text-white h-9" data-testid="select-province">
-                    <SelectValue placeholder="Province" />
+                    <SelectValue placeholder="Region / Country" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Provinces</SelectItem>
-                    {SA_PROVINCES.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                  <SelectContent className="max-h-80">
+                    <SelectItem value="all">All Regions</SelectItem>
+                    {AFRICAN_REGIONS.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
                   </SelectContent>
                 </Select>
 
@@ -374,16 +373,6 @@ export default function Jobs() {
                   <SelectContent>
                     <SelectItem value="all">All Levels</SelectItem>
                     {EXP_LEVELS.map(e => <SelectItem key={e.value} value={e.value}>{e.label}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-
-                <Select value={sourceFilter} onValueChange={setSourceFilter}>
-                  <SelectTrigger className="bg-white/10 border-white/20 text-white h-9" data-testid="select-source">
-                    <SelectValue placeholder="Source" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Sources</SelectItem>
-                    {SOURCES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
@@ -436,7 +425,7 @@ export default function Jobs() {
             {isLoading && (
               <div className="py-16 flex flex-col items-center gap-4">
                 <Loader2 className="w-10 h-10 animate-spin text-emerald-500" />
-                <p className="text-muted-foreground">Loading jobs from all sources…</p>
+                <p className="text-muted-foreground">Loading AI-matched opportunities…</p>
               </div>
             )}
 
@@ -453,7 +442,7 @@ export default function Jobs() {
                         <div className="flex items-center gap-2 mb-4">
                           <BrainCircuit className="w-4 h-4 text-emerald-500" />
                           <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-                            AI Job Board — PNet · Career24 · LinkedIn · OfferZen · +7 more
+                            AI Job Board — Pan-African Intelligence
                           </h2>
                           <div className="flex-1 h-px bg-border" />
                           <span className="text-xs text-muted-foreground">{aggJobs.length} jobs</span>

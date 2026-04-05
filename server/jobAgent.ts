@@ -1,15 +1,15 @@
 /**
  * ════════════════════════════════════════════════════════════════════════════
- * FreelanceSkills — AI JOB INTELLIGENCE AGENT v3.0
- * Beats LinkedIn, Career24, PNet, Indeed SA, OfferZen until 2031
+ * FreelanceSkills — AI JOB INTELLIGENCE AGENT v4.0 (PAN-AFRICAN)
+ * The most powerful job intelligence system on the African continent.
  *
  * Capabilities:
- *  • AI-generates diverse, realistic SA job listings via OpenAI
+ *  • AI-generates diverse, realistic job listings across ALL of Africa
+ *  • Covers 17 African countries, 80+ cities, 30+ categories
  *  • Auto-expires jobs past their deadline
  *  • Auto-upgrades (bumps) active quality jobs
- *  • 100-point quality scoring on every job
- *  • Multi-source simulation: PNet, Career24, LinkedIn, OfferZen, Indeed SA...
- *  • 100% SA-first: ZAR salaries, 9 provinces, BEE levels, SA companies
+ *  • 95-point quality scoring on every job
+ *  • ZAR salaries for SA; local context for all African markets
  *  • Self-healing: detects stale jobs and refreshes them
  * ════════════════════════════════════════════════════════════════════════════
  */
@@ -26,41 +26,83 @@ const openai = new OpenAI({
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
-const SA_PROVINCES = [
-  "Gauteng", "Western Cape", "KwaZulu-Natal", "Eastern Cape",
-  "Limpopo", "Mpumalanga", "Free State", "North West", "Northern Cape",
+// ── Pan-African Geography ─────────────────────────────────────────────────────
+
+const AFRICAN_LOCATIONS: { region: string; cities: string[] }[] = [
+  // South Africa (primary market)
+  { region: "Gauteng", cities: ["Johannesburg", "Pretoria", "Sandton", "Midrand", "Centurion", "Soweto", "Randburg"] },
+  { region: "Western Cape", cities: ["Cape Town", "Stellenbosch", "Paarl", "George", "Bellville", "Somerset West"] },
+  { region: "KwaZulu-Natal", cities: ["Durban", "Pietermaritzburg", "Richards Bay", "Empangeni", "Newcastle"] },
+  { region: "Eastern Cape", cities: ["Gqeberha", "East London", "Mthatha", "Uitenhage", "Grahamstown"] },
+  { region: "Limpopo", cities: ["Polokwane", "Tzaneen", "Phalaborwa", "Louis Trichardt"] },
+  { region: "Mpumalanga", cities: ["Nelspruit", "Witbank", "Secunda", "Standerton"] },
+  { region: "Free State", cities: ["Bloemfontein", "Welkom", "Sasolburg", "Kroonstad"] },
+  { region: "North West", cities: ["Rustenburg", "Klerksdorp", "Potchefstroom", "Mahikeng"] },
+  { region: "Northern Cape", cities: ["Kimberley", "Upington", "Springbok", "Kathu"] },
+  // Nigeria
+  { region: "Nigeria", cities: ["Lagos", "Abuja", "Port Harcourt", "Kano", "Ibadan", "Enugu", "Kaduna"] },
+  // Kenya
+  { region: "Kenya", cities: ["Nairobi", "Mombasa", "Kisumu", "Nakuru", "Eldoret"] },
+  // Ghana
+  { region: "Ghana", cities: ["Accra", "Kumasi", "Takoradi", "Tema", "Cape Coast"] },
+  // Egypt
+  { region: "Egypt", cities: ["Cairo", "Alexandria", "Giza", "Sharm El-Sheikh", "Hurghada"] },
+  // Morocco
+  { region: "Morocco", cities: ["Casablanca", "Rabat", "Marrakech", "Fes", "Tangier"] },
+  // Ethiopia
+  { region: "Ethiopia", cities: ["Addis Ababa", "Dire Dawa", "Mekelle", "Bahir Dar"] },
+  // Tanzania
+  { region: "Tanzania", cities: ["Dar es Salaam", "Arusha", "Mwanza", "Zanzibar City"] },
+  // Uganda
+  { region: "Uganda", cities: ["Kampala", "Entebbe", "Gulu", "Mbarara"] },
+  // Rwanda
+  { region: "Rwanda", cities: ["Kigali", "Butare", "Gitarama", "Musanze"] },
+  // Senegal
+  { region: "Senegal", cities: ["Dakar", "Thiès", "Saint-Louis", "Ziguinchor"] },
+  // Côte d'Ivoire
+  { region: "Côte d'Ivoire", cities: ["Abidjan", "Bouaké", "Yamoussoukro", "Daloa"] },
+  // Zimbabwe
+  { region: "Zimbabwe", cities: ["Harare", "Bulawayo", "Mutare", "Gweru"] },
+  // Zambia
+  { region: "Zambia", cities: ["Lusaka", "Ndola", "Kitwe", "Livingstone"] },
+  // Botswana
+  { region: "Botswana", cities: ["Gaborone", "Francistown", "Maun", "Serowe"] },
+  // Namibia
+  { region: "Namibia", cities: ["Windhoek", "Walvis Bay", "Swakopmund", "Oshakati"] },
+  // Mozambique
+  { region: "Mozambique", cities: ["Maputo", "Beira", "Nampula", "Tete"] },
 ];
 
-const SA_CITIES: Record<string, string[]> = {
-  "Gauteng": ["Johannesburg", "Pretoria", "Sandton", "Midrand", "Centurion", "Soweto", "Randburg", "Roodepoort"],
-  "Western Cape": ["Cape Town", "Stellenbosch", "Paarl", "George", "Bellville", "Hermanus", "Somerset West"],
-  "KwaZulu-Natal": ["Durban", "Pietermaritzburg", "Richards Bay", "Empangeni", "Ladysmith", "Newcastle"],
-  "Eastern Cape": ["Port Elizabeth", "East London", "Gqeberha", "Mthatha", "Uitenhage", "Grahamstown"],
-  "Limpopo": ["Polokwane", "Tzaneen", "Phalaborwa", "Louis Trichardt", "Mokopane"],
-  "Mpumalanga": ["Nelspruit", "Witbank", "Secunda", "Barberton", "Standerton"],
-  "Free State": ["Bloemfontein", "Welkom", "Sasolburg", "Phuthaditjhaba", "Kroonstad"],
-  "North West": ["Rustenburg", "Klerksdorp", "Potchefstroom", "Mahikeng", "Brits"],
-  "Northern Cape": ["Kimberley", "Upington", "Springbok", "Kuruman", "Kathu"],
-};
+// SA provinces kept for backward compatibility with existing schema queries
+const SA_PROVINCES = AFRICAN_LOCATIONS.slice(0, 9).map(l => l.region);
 
-const JOB_SOURCES = [
-  "PNet", "Career24", "LinkedIn", "Indeed SA", "CareerJunction",
-  "OfferZen", "Bizcommunity", "JobMail", "Government Vacancies", "BestJobs",
+// Legacy compatibility: SA_CITIES for fallback generator
+const SA_CITIES: Record<string, string[]> = Object.fromEntries(
+  AFRICAN_LOCATIONS.map(l => [l.region, l.cities])
+);
+
+// ── Internal Source Labels (no third-party brand names) ───────────────────────
+// These are internal quality/trust tiers — no affiliation with any external platform.
+const INTERNAL_SOURCES = [
+  "FreelanceSkills AI",
+  "Verified Employer",
+  "Featured Listing",
+  "Tech Hub Africa",
+  "Government Portal",
+  "Remote-First",
+  "Startup Ecosystem",
+  "Enterprise Direct",
+  "Professional Network",
+  "Industry Partner",
 ];
 
-// Correct, real-world SA job portal URLs
-const SOURCE_URLS: Record<string, string> = {
-  "PNet": "https://www.pnet.co.za",
-  "Career24": "https://www.career24.com",
-  "LinkedIn": "https://za.linkedin.com/jobs",
-  "Indeed SA": "https://za.indeed.com",
-  "CareerJunction": "https://www.careerjunction.co.za",
-  "OfferZen": "https://www.offerzen.com/jobs",
-  "Bizcommunity": "https://www.bizcommunity.com/Vacancies",
-  "JobMail": "https://www.jobmail.co.za",
-  "Government Vacancies": "https://www.dpsa.gov.za/dpsa2g/vacancies.asp",
-  "BestJobs": "https://www.bestjobs.eu/en/jobs/c/south-africa",
-};
+// All jobs point to FreelanceSkills apply flow
+function getSourceUrl(_source: string): string {
+  return "https://freelanceskills.net/jobs";
+}
+
+// Legacy alias for backward compat
+const JOB_SOURCES = INTERNAL_SOURCES;
 
 const CATEGORIES = [
   "Software Engineering", "Data Science & AI", "Cybersecurity", "Cloud & DevOps",
@@ -73,6 +115,7 @@ const CATEGORIES = [
   "Banking & Insurance", "Project Management", "Creative & Design",
   "Customer Service", "Operations & Admin", "Environmental & ESG",
   "Manufacturing", "Government & Public Sector",
+  "Fintech & Payments", "Telecommunications", "Property & Real Estate",
 ];
 
 const JOB_TYPES = ["full-time", "part-time", "contract", "freelance", "internship", "learnership"] as const;
@@ -244,18 +287,33 @@ async function generateJobsWithAI(
   const minSal = salaryRange[0];
   const maxSal = salaryRange[1];
 
-  const prompt = `You are a senior SA recruitment expert. Generate ${count} realistic, diverse job listings for the category "${category}" based in ${city}, ${province}, South Africa.
+  // Determine if this is a SA province or another African country
+  const isSAJob = SA_PROVINCES.includes(province);
+  const locationLabel = isSAJob ? `${city}, ${province}, South Africa` : `${city}, ${province}`;
+  const currencyNote = isSAJob
+    ? `ZAR salaries in range R${minSal.toLocaleString()} – R${maxSal.toLocaleString()}/month`
+    : `Local currency equivalent to R${minSal.toLocaleString()} – R${maxSal.toLocaleString()} ZAR/month; mention currency in description if needed`;
+  const contextNote = isSAJob
+    ? "Reference SA legislation (BCEA, LRA, Skills Development Act, POPIA) where relevant."
+    : `Reference local ${province} business context, labour laws, and market realities where relevant.`;
+  const companyNote = isSAJob
+    ? "Use realistic South African companies (not fictional)."
+    : `Use realistic companies operating in ${province} — both local African companies and multinationals present in the region.`;
 
-IMPORTANT RULES:
-- South African context: use local companies, SA legislation references (BCEA, LRA, Skills Development Act), ZAR salaries
-- Make each job distinct — different seniority levels, different companies
-- Company names must be realistic SA companies (not fictional)
-- Salaries in ZAR/month, range: R${minSal.toLocaleString()} – R${maxSal.toLocaleString()}
-- Skills should be comma-separated, specific and market-relevant
-- Requirements should be practical and specific to SA job market
+  const prompt = `You are a pan-African recruitment intelligence expert. Generate ${count} realistic, diverse, high-quality job listings for the category "${category}" located in ${locationLabel}.
 
-Respond ONLY with a valid JSON array. No markdown, no preamble.
-Format: [{"title":"...","company":"...","description":"...","requirements":"...","skills":"skill1,skill2,skill3,skill4,skill5","salaryMin":30000,"salaryMax":55000,"isUrgent":false,"companySize":"medium (51-200)","beeLevel":"Level 2"}]`;
+RULES:
+- ${companyNote}
+- ${contextNote}
+- ${currencyNote}
+- Make each job distinct — different seniority levels, different companies, varied scopes
+- Skills must be comma-separated, specific, and market-relevant for the African region
+- Requirements must be practical and specific to the local job market
+- Descriptions should be 3-4 sentences: role overview, responsibilities, why it's a great opportunity
+- Avoid generic filler — every sentence should add real information
+
+Respond ONLY with a valid JSON array. No markdown, no preamble. No explanation.
+Format: [{"title":"...","company":"...","description":"...","requirements":"...","skills":"skill1,skill2,skill3,skill4,skill5","salaryMin":${minSal},"salaryMax":${maxSal},"isUrgent":false,"companySize":"medium (51-200)","beeLevel":"Level 2"}]`;
 
   const resp = await openai.chat.completions.create({
     model: "gpt-4o-mini",
@@ -273,33 +331,38 @@ Format: [{"title":"...","company":"...","description":"...","requirements":"..."
 // ── Fallback: Deterministic Job Generator (no AI needed) ────────────────────
 
 const COMPANIES_BY_CATEGORY: Record<string, string[]> = {
-  "Software Engineering": ["DVT", "EOH", "iOCO", "BBD Software", "Synthesis Software", "C2 Digital", "Derivco", "Dariel Software"],
-  "Data Science & AI": ["Standard Bank", "Nedbank", "Discovery Health", "MultiChoice", "Vodacom SA", "MTN", "DataOrbis", "Aerobotics"],
-  "Finance & Accounting": ["Deloitte SA", "PwC South Africa", "KPMG SA", "Grant Thornton", "BDO South Africa", "Nkonki Inc", "Sizwe Ntsaluba Gobodo"],
-  "Healthcare & Medical": ["Netcare", "Mediclinic", "Life Healthcare", "Discovery Health", "GEMS", "National Health Laboratory Service"],
-  "Mining & Resources": ["Anglo American", "Sibanye-Stillwater", "Impala Platinum", "Gold Fields", "Exxaro Resources", "African Rainbow Minerals"],
-  "Trades (Plumbing)": ["ABB SA", "Servest", "G4S South Africa", "WBHO Construction", "Murray & Roberts"],
-  "Trades (Electrical)": ["Energize Electrical", "Zest WEG", "Powertech Transformers", "ABB SA", "Siemens SA"],
-  "Education & Training": ["Wits University", "UCT", "Stellenbosch University", "UNISA", "Curro Holdings", "ADvTECH"],
-  "Legal & Compliance": ["ENSafrica", "Webber Wentzel", "Bowmans", "Cliffe Dekker Hofmeyr", "Norton Rose Fulbright"],
-  "Engineering (Civil/Structural)": ["WBHO", "Murray & Roberts", "Aveng Group", "Stefanutti Stocks", "Group Five", "Aurecon"],
-  "Marketing & Digital": ["Ogilvy SA", "TBWA South Africa", "JWT South Africa", "Digitas Liquorice", "Retroviral", "Flow Communications"],
-  "Government & Public Sector": ["City of Cape Town", "City of Johannesburg", "Eskom", "Transnet", "SARS", "DPSA"],
-  "Banking & Insurance": ["Standard Bank", "FNB", "ABSA", "Nedbank", "Capitec", "Old Mutual", "Sanlam", "Momentum"],
-  "Agriculture & Farming": ["Tongaat Hulett", "Afgri", "Senwes", "GWK", "NWK", "Pioneer Foods", "Tiger Brands"],
-  "Retail & FMCG": ["Woolworths SA", "Shoprite", "Pick n Pay", "Spar Group", "Massmart", "TFG", "The Foschini Group"],
-  "Hospitality & Tourism": ["Sun International", "Tsogo Sun", "City Lodge Hotels", "Protea Hotels", "Southern Sun"],
-  "Human Resources": ["LabourNet", "Workforce Holdings", "Adcorp", "Kelly Group", "Manpower SA"],
-  "Supply Chain & Logistics": ["Imperial Logistics", "Barloworld Logistics", "Unitrans", "DHL South Africa", "Bidvest Logistics"],
-  "Project Management": ["Aurecon", "WSP Africa", "Zutari", "SRK Consulting", "Hatch", "SMEC South Africa"],
-  "Creative & Design": ["Nando's SA (Design)", "Reprise Digital", "The Jupiter Drawing Room", "Joe Public United"],
-  "Sales & Business Development": ["Salesforce SA", "Microsoft SA", "SAP Africa", "Oracle SA", "Huawei SA"],
-  "Cybersecurity": ["Dimension Data", "NEC XON", "BDO IT", "Deloitte Cyber", "Accenture SA", "Liquid C2"],
-  "Cloud & DevOps": ["Amazon SA", "Microsoft Azure SA", "Google Cloud SA", "Accenture SA", "Dimension Data"],
-  "Customer Service": ["Teleperformance SA", "WNS SA", "Webhelp SA", "iContact BPO", "CCI Call Centre"],
-  "Operations & Admin": ["Bidvest Services", "Tsebo Solutions", "Servest SA", "G4S South Africa", "ISS Facility Services"],
-  "Environmental & ESG": ["CSIR", "SANBI", "Zutari", "Royal HaskoningDHV", "WSP Africa"],
-  "Manufacturing": ["Toyota SA", "Volkswagen SA", "BMW SA", "Sasol", "AECI", "PPC Cement"],
+  // South Africa
+  "Software Engineering": ["DVT", "EOH", "iOCO", "BBD Software", "Synthesis Software", "C2 Digital", "Derivco", "Dariel Software", "Flutterwave", "Paystack", "Andela", "Ushahidi"],
+  "Data Science & AI": ["Standard Bank", "Nedbank", "Discovery Health", "MultiChoice", "Vodacom SA", "MTN", "DataOrbis", "Aerobotics", "Safaricom", "OCP Group", "Interswitch"],
+  "Finance & Accounting": ["Deloitte SA", "PwC South Africa", "KPMG SA", "Grant Thornton", "BDO South Africa", "Nkonki Inc", "Access Bank", "Equity Bank Kenya", "Zenith Bank", "Ecobank"],
+  "Healthcare & Medical": ["Netcare", "Mediclinic", "Life Healthcare", "Discovery Health", "GEMS", "National Health Laboratory Service", "Aga Khan Health Service", "AAR Healthcare"],
+  "Mining & Resources": ["Anglo American", "Sibanye-Stillwater", "Impala Platinum", "Gold Fields", "Exxaro Resources", "African Rainbow Minerals", "Dangote Group", "OCP Morocco"],
+  "Trades (Plumbing)": ["ABB SA", "Servest", "G4S South Africa", "WBHO Construction", "Murray & Roberts", "Julius Berger Nigeria"],
+  "Trades (Electrical)": ["Energize Electrical", "Zest WEG", "Powertech Transformers", "ABB SA", "Siemens SA", "CEC Zambia", "Kenya Power"],
+  "Education & Training": ["Wits University", "UCT", "Stellenbosch University", "UNISA", "Curro Holdings", "ADvTECH", "University of Nairobi", "Lagos Business School", "University of Ghana"],
+  "Legal & Compliance": ["ENSafrica", "Webber Wentzel", "Bowmans", "Cliffe Dekker Hofmeyr", "Norton Rose Fulbright", "Udo Udoma & Belo-Osagie", "ALN Africa"],
+  "Engineering (Civil/Structural)": ["WBHO", "Murray & Roberts", "Aveng Group", "Stefanutti Stocks", "Group Five", "Aurecon", "Julius Berger", "SEACOM"],
+  "Marketing & Digital": ["Ogilvy SA", "TBWA South Africa", "JWT South Africa", "Digitas Liquorice", "Retroviral", "Flow Communications", "Noah's Ark Communications", "WPP Africa"],
+  "Government & Public Sector": ["City of Cape Town", "City of Johannesburg", "Eskom", "Transnet", "SARS", "DPSA", "Kenya Revenue Authority", "National Communications Authority Ghana"],
+  "Banking & Insurance": ["Standard Bank", "FNB", "ABSA", "Nedbank", "Capitec", "Old Mutual", "Sanlam", "Momentum", "Access Bank", "GTBank", "Equity Bank", "KCB Group", "Attijariwafa Bank"],
+  "Agriculture & Farming": ["Tongaat Hulett", "Afgri", "Senwes", "GWK", "NWK", "Pioneer Foods", "Tiger Brands", "Twiga Foods", "Farmerline", "Hello Tractor"],
+  "Retail & FMCG": ["Woolworths SA", "Shoprite", "Pick n Pay", "Spar Group", "Massmart", "TFG", "The Foschini Group", "Jumia", "Konga", "Melcom Ghana"],
+  "Hospitality & Tourism": ["Sun International", "Tsogo Sun", "City Lodge Hotels", "Protea Hotels", "Southern Sun", "Sarova Hotels", "Serena Hotels", "Radisson Blu Africa"],
+  "Human Resources": ["LabourNet", "Workforce Holdings", "Adcorp", "Kelly Group", "Manpower SA", "Frank Management Consult", "PeopleTree Group"],
+  "Supply Chain & Logistics": ["Imperial Logistics", "Barloworld Logistics", "Unitrans", "DHL South Africa", "Bidvest Logistics", "Sendy", "Kobo360", "Lori Systems"],
+  "Project Management": ["Aurecon", "WSP Africa", "Zutari", "SRK Consulting", "Hatch", "SMEC South Africa", "AFCONS Infrastructure", "Bechtel Africa"],
+  "Creative & Design": ["Nando's SA (Design)", "Reprise Digital", "The Jupiter Drawing Room", "Joe Public United", "Ogilvy Africa", "Leo Burnett Africa"],
+  "Sales & Business Development": ["Salesforce SA", "Microsoft SA", "SAP Africa", "Oracle SA", "Huawei Africa", "MTN Group", "Airtel Africa", "Safaricom"],
+  "Cybersecurity": ["Dimension Data", "NEC XON", "BDO IT", "Deloitte Cyber", "Accenture SA", "Liquid C2", "Serianu", "CyberSafe Foundation"],
+  "Cloud & DevOps": ["Amazon SA", "Microsoft Azure SA", "Google Cloud SA", "Accenture SA", "Dimension Data", "Andela", "Cellulant"],
+  "Customer Service": ["Teleperformance SA", "WNS SA", "Webhelp SA", "iContact BPO", "CCI Call Centre", "Capita Africa", "Merchants"],
+  "Operations & Admin": ["Bidvest Services", "Tsebo Solutions", "Servest SA", "G4S South Africa", "ISS Facility Services", "Ecobank Group", "I&M Group"],
+  "Environmental & ESG": ["CSIR", "SANBI", "Zutari", "Royal HaskoningDHV", "WSP Africa", "African Wildlife Foundation", "GreenCape"],
+  "Manufacturing": ["Toyota SA", "Volkswagen SA", "BMW SA", "Sasol", "AECI", "PPC Cement", "Dangote Cement", "Bamburi Cement Kenya"],
+  // Pan-African / Fintech specific
+  "Fintech & Payments": ["Flutterwave", "Paystack", "Interswitch", "OPay", "Wave", "Chipper Cash", "MFS Africa", "PalmPay", "M-Pesa", "Fawry", "Paymob"],
+  "Telecommunications": ["MTN Group", "Airtel Africa", "Safaricom", "Vodacom", "Orange Africa", "Liquid Telecom", "SEACOM", "Telkom SA"],
+  "Property & Real Estate": ["Growthpoint Properties", "Redefine Properties", "Attacq", "Atterbury", "Rawson Properties", "Broll Property Group"],
 };
 
 function pickRandom<T>(arr: T[]): T {
@@ -365,9 +428,11 @@ function generateFallbackJob(category: string, province: string, source: string)
     ? (prefix ? `${prefix} ${baseCat}` : `${baseCat} Director`)
     : (prefix ? `${prefix} ${baseCat} Specialist` : `${baseCat} Specialist`);
 
+  const isSA = SA_PROVINCES.includes(province);
+  const orgLabel = isSA ? "South Africa's" : `${province}'s`;
   const description = `${company} is seeking a ${expLevel}-level ${title} to join our ${province} team${isRemote ? " (Remote)" : ` based in ${city}`}.
 
-This is an exciting opportunity to work with one of South Africa's leading organisations in the ${category} sector. ${isUrgent ? "⚡ URGENT: This position needs to be filled immediately." : ""}
+This is an exciting opportunity to work with one of ${orgLabel} leading organisations in the ${category} sector. ${isUrgent ? "⚡ URGENT: This position needs to be filled immediately." : ""}
 
 Key Responsibilities:
 • Lead and deliver ${category.toLowerCase()} projects from inception to completion
@@ -406,7 +471,7 @@ What We Offer:
     salaryMax: salMax,
     salaryPeriod: "month",
     source,
-    sourceUrl: SOURCE_URLS[source] || `https://www.${source.toLowerCase().replace(/\s+/g, "")}.co.za`,
+    sourceUrl: getSourceUrl(source),
     category,
     jobType,
     experienceLevel: expLevel,
@@ -456,14 +521,19 @@ export async function runJobGenerationAgent(
   const selectedCategories = CATEGORIES.sort(() => Math.random() - 0.5).slice(0, Math.min(batchSize, CATEGORIES.length));
 
   for (const category of selectedCategories) {
-    const province = pickRandom(SA_PROVINCES);
-    const source = pickRandom(JOB_SOURCES);
+    // Pick from the full pan-African location pool (weighted 60% SA, 40% rest of Africa)
+    const locationPool = Math.random() < 0.60
+      ? AFRICAN_LOCATIONS.slice(0, 9)   // SA provinces
+      : AFRICAN_LOCATIONS.slice(9);      // Rest of Africa
+    const location = pickRandom(locationPool);
+    const province = location.region;
+    const source = pickRandom(INTERNAL_SOURCES);
 
     if (useAI && process.env.AI_INTEGRATIONS_OPENAI_API_KEY) {
       try {
         const aiJobs = await generateJobsWithAI(category, province, 2);
         for (const aj of aiJobs) {
-          const city = SA_CITIES[province]?.[0] ?? province;
+          const city = location.cities[0] ?? province;
           const salaryRange = SALARY_RANGES[category] || [15000, 60000];
           const isUrgent = Math.random() < 0.2;
           const isRemote = Math.random() < 0.3;
@@ -479,7 +549,7 @@ export async function runJobGenerationAgent(
             salaryMax: aj.salaryMax || salaryRange[1],
             salaryPeriod: "month",
             source,
-            sourceUrl: SOURCE_URLS[source] || `https://www.${source.toLowerCase().replace(/\s+/g, "")}.co.za`,
+            sourceUrl: getSourceUrl(source),
             category,
             jobType: pickRandom(JOB_TYPES as unknown as string[]),
             experienceLevel: inferExperienceLevelFromTitle(aj.title),
@@ -606,27 +676,31 @@ export async function runFullJobAgentSync(batchSize: number = 20): Promise<Agent
 }
 
 /**
- * Initial seed: populate the database with 100 diverse SA jobs.
- * Called once on first startup if DB is empty.
+ * Initial seed: populate the database with 150 diverse pan-African jobs.
+ * Called once on first startup if DB is empty (or below threshold).
  */
 export async function seedInitialJobs(): Promise<void> {
   try {
     const currentCount = await storage.getAggregatedJobCount();
-    if (currentCount >= 80) {
+    if (currentCount >= 120) {
       log(`[JobAgent] DB already has ${currentCount} active jobs — skipping seed`, "agent");
       return;
     }
 
-    log(`[JobAgent] Seeding SA jobs (current: ${currentCount}, target: 100)...`, "agent");
+    log(`[JobAgent] Seeding pan-African jobs (current: ${currentCount}, target: 150)...`, "agent");
 
     const allJobs: InsertAggregatedJob[] = [];
 
-    // Generate 100 jobs across all categories and provinces
-    for (let i = 0; i < 100; i++) {
+    // Generate 150 jobs across all categories and ALL African regions
+    for (let i = 0; i < 150; i++) {
       const category = CATEGORIES[i % CATEGORIES.length];
-      const province = SA_PROVINCES[i % SA_PROVINCES.length];
-      const source = JOB_SOURCES[i % JOB_SOURCES.length];
-      allJobs.push(generateFallbackJob(category, province, source));
+      // Weighted: 60% SA provinces, 40% rest of Africa
+      const locationPool = i % 5 < 3
+        ? AFRICAN_LOCATIONS.slice(0, 9)    // SA provinces (3 of every 5)
+        : AFRICAN_LOCATIONS.slice(9);       // Rest of Africa (2 of every 5)
+      const location = locationPool[i % locationPool.length];
+      const source = INTERNAL_SOURCES[i % INTERNAL_SOURCES.length];
+      allJobs.push(generateFallbackJob(category, location.region, source));
     }
 
     // Insert in batches of 25
@@ -634,7 +708,7 @@ export async function seedInitialJobs(): Promise<void> {
       await storage.createManyAggregatedJobs(allJobs.slice(i, i + 25));
     }
 
-    log(`[JobAgent] Seeded 100 initial SA jobs successfully`, "agent");
+    log(`[JobAgent] Seeded 150 initial pan-African jobs successfully`, "agent");
   } catch (err: any) {
     log(`[JobAgent] Seed error: ${err.message}`, "agent");
   }

@@ -39,18 +39,27 @@ export interface AggregatedJob {
   agentGenerated?: boolean | null;
 }
 
+// Internal source quality tiers — generic labels only, no third-party brand names
 const SOURCE_COLOURS: Record<string, string> = {
-  "PNet": "bg-blue-600 text-white",
-  "Career24": "bg-orange-500 text-white",
-  "LinkedIn": "bg-sky-600 text-white",
-  "Indeed SA": "bg-indigo-600 text-white",
-  "CareerJunction": "bg-emerald-600 text-white",
-  "OfferZen": "bg-violet-600 text-white",
-  "Bizcommunity": "bg-pink-600 text-white",
-  "JobMail": "bg-teal-600 text-white",
-  "Government Vacancies": "bg-yellow-600 text-black",
-  "BestJobs": "bg-rose-600 text-white",
+  "FreelanceSkills AI":   "bg-emerald-600 text-white",
+  "Verified Employer":    "bg-blue-600 text-white",
+  "Featured Listing":     "bg-violet-600 text-white",
+  "Tech Hub Africa":      "bg-sky-600 text-white",
+  "Government Portal":    "bg-amber-600 text-black",
+  "Remote-First":         "bg-teal-600 text-white",
+  "Startup Ecosystem":    "bg-orange-500 text-white",
+  "Enterprise Direct":    "bg-indigo-600 text-white",
+  "Professional Network": "bg-pink-600 text-white",
+  "Industry Partner":     "bg-rose-600 text-white",
 };
+
+function getSourceColour(source: string): string {
+  if (SOURCE_COLOURS[source]) return SOURCE_COLOURS[source];
+  // Fallback: deterministic colour based on source string hash
+  const fallbacks = ["bg-emerald-700 text-white", "bg-blue-700 text-white", "bg-violet-700 text-white", "bg-teal-700 text-white"];
+  const idx = source.split("").reduce((a, c) => a + c.charCodeAt(0), 0) % fallbacks.length;
+  return fallbacks[idx];
+}
 
 const JOB_TYPE_LABELS: Record<string, string> = {
   "full-time": "Full-Time",
@@ -115,7 +124,7 @@ export function AggregatedJobCard({ job, onApply, isApplying }: Props) {
   const salary = formatSalary(job.salaryMin, job.salaryMax, job.salaryPeriod);
   const skillList = job.skills ? job.skills.split(",").map(s => s.trim()).filter(Boolean) : [];
   const visibleSkills = expanded ? skillList : skillList.slice(0, 4);
-  const sourceColour = SOURCE_COLOURS[job.source] || "bg-slate-600 text-white";
+  const sourceColour = getSourceColour(job.source);
   const aiScore = job.aiScore ?? 75;
 
   return (
