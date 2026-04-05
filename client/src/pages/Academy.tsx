@@ -1,12 +1,13 @@
 import { useState, useMemo } from "react";
 import { useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { COURSES, getTotalLessons } from "@/lib/academyCurriculum";
 import {
-  BookOpen, Clock, TrendingUp, Star, Users, Search, Filter,
-  ChevronRight, Award, CheckCircle2, Lock, Zap, Play, Trophy,
-  ArrowRight, Sparkles, Target, BarChart3, Globe
+  BookOpen, Clock, TrendingUp, Star, Users, Search,
+  ChevronRight, Award, CheckCircle2, Zap, Play, Trophy,
+  Sparkles, Target
 } from "lucide-react";
 
 const CATEGORIES = [
@@ -154,7 +155,18 @@ export default function Academy() {
   const [category, setCategory] = useState("All Categories");
   const [difficulty, setDifficulty] = useState("All Levels");
   const [freeOnly, setFreeOnly] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
+
+  const { data: apiStats } = useQuery<{
+    totalCourses: number;
+    freeCourses: number;
+    totalEnrolments: number;
+    totalLessons: number;
+    avgRating: string;
+    avgCompletionRate: string;
+  }>({
+    queryKey: ["/api/academy/stats"],
+    staleTime: 1000 * 60 * 5,
+  });
 
   const featuredCourses = COURSES.filter((c) => [1, 3, 8].includes(c.id));
 
@@ -237,10 +249,10 @@ export default function Academy() {
 
       {/* ── STATS ─────────────────────────────────────────────────── */}
       <section className="max-w-5xl mx-auto px-4 -mt-6 mb-16 grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard icon={<BookOpen className="w-7 h-7" />} value="15" label="Expert Courses" />
-        <StatCard icon={<Users className="w-7 h-7" />} value="94K+" label="Enrolled Learners" />
-        <StatCard icon={<Award className="w-7 h-7" />} value="38K+" label="Certificates Issued" />
-        <StatCard icon={<TrendingUp className="w-7 h-7" />} value="+87%" label="Avg Earnings Lift" />
+        <StatCard icon={<BookOpen className="w-7 h-7" />} value={apiStats ? `${apiStats.totalCourses}` : "15"} label="Expert Courses" />
+        <StatCard icon={<Users className="w-7 h-7" />} value={apiStats ? `${Math.round(apiStats.totalEnrolments / 1000)}K+` : "112K+"} label="Enrolled Learners" />
+        <StatCard icon={<Award className="w-7 h-7" />} value={apiStats ? `${apiStats.avgCompletionRate}%` : "94.8%"} label="Completion Rate" />
+        <StatCard icon={<TrendingUp className="w-7 h-7" />} value={apiStats ? `${apiStats.avgRating}★` : "4.8★"} label="Average Rating" />
       </section>
 
       {/* ── FEATURED COURSES ─────────────────────────────────────── */}

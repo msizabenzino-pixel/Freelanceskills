@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, registerAuthRoutes } from "./replit_integrations/auth";
+import { ACADEMY_COURSES, getAcademyStats } from "./academyData";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -6240,31 +6241,13 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
     // GET /api/academy/courses - List all courses (with filters)
     app.get("/api/academy/courses", async (req, res) => {
       try {
-        const { COURSES } = await import("../client/src/lib/academyCurriculum");
         const { category, difficulty, free } = req.query;
-        const courses = COURSES.filter((course) => {
-          if (category && course.category !== category) return false;
+        const courses = ACADEMY_COURSES.filter((course) => {
+          if (category && course.category !== String(category)) return false;
           if (difficulty && course.difficulty.toLowerCase() !== String(difficulty).toLowerCase()) return false;
           if (free === "true" && !course.isFree) return false;
           return true;
-        }).map((course) => ({
-          id: course.id,
-          slug: course.slug,
-          title: course.title,
-          tagline: course.tagline,
-          description: course.description,
-          category: course.category,
-          difficulty: course.difficulty,
-          duration: course.duration,
-          earningsLift: course.earningsLift,
-          skills: course.skills,
-          isFree: course.isFree,
-          rating: course.rating,
-          enrolled: course.enrolled,
-          color: course.color,
-          emoji: course.emoji,
-          modules: course.modules,
-        }));
+        });
         res.json(courses);
       } catch (error) {
         console.error("Error fetching courses:", error);
@@ -6275,9 +6258,10 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
     // GET /api/academy/courses/:id - Get course detail with lessons
     app.get("/api/academy/courses/:id", async (req, res) => {
       try {
-        const { COURSES } = await import("../client/src/lib/academyCurriculum");
         const courseId = Number(req.params.id);
-        const course = COURSES.find((item) => item.id === courseId || item.slug === req.params.id);
+        const course = ACADEMY_COURSES.find(
+          (item) => item.id === courseId || item.slug === req.params.id
+        );
         if (!course) return res.status(404).json({ error: "Course not found" });
         res.json(course);
       } catch (error) {
@@ -6456,18 +6440,8 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
     // GET /api/academy/stats - Platform-wide academy stats
     app.get("/api/academy/stats", async (req, res) => {
       try {
-        const { COURSES } = await import("../client/src/lib/academyCurriculum");
-        const totalCourses = COURSES.length;
-        const totalLessons = COURSES.reduce((sum, course) => sum + course.modules.reduce((mSum, module) => mSum + module.lessons.length, 0), 0);
-        const freeCourses = COURSES.filter((course) => course.isFree).length;
-        const totalEnrolments = COURSES.reduce((sum, course) => sum + course.enrolled, 0);
-        res.json({
-          totalCourses,
-          totalLessons,
-          freeCourses,
-          totalEnrolments,
-          avgCompletionRate: "94.8",
-        });
+        const stats = getAcademyStats();
+        res.json(stats);
       } catch (error) {
         console.error("Error fetching stats:", error);
         res.status(500).json({ error: "Failed to fetch stats" });
