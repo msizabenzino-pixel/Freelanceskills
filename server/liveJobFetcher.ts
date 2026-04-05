@@ -16,8 +16,21 @@
  *  8.  Adzuna South Africa × 20  api.adzuna.com/za    (South Africa, free key)
  *  9.  Adzuna Nigeria × 10       api.adzuna.com/ng    (Africa, free key)
  * 10.  Adzuna Kenya × 10         api.adzuna.com/ke    (Africa, free key)
- * 11.  Adzuna United Kingdom × 5 api.adzuna.com/gb    (remote only,  free key)
- * 12.  Adzuna Australia × 3      api.adzuna.com/au    (remote only,  free key)
+ * 11.  Adzuna Ghana × 8          api.adzuna.com/gh    (Africa, free key)
+ * 12.  Adzuna Egypt × 8          api.adzuna.com/eg    (Africa, free key)
+ * 13.  Adzuna Morocco × 8        api.adzuna.com/ma    (Africa, free key)
+ * 14.  Adzuna Tanzania × 8       api.adzuna.com/tz    (Africa, free key)
+ * 15.  Adzuna Uganda × 8         api.adzuna.com/ug    (Africa, free key)
+ * 16.  Adzuna Rwanda × 8         api.adzuna.com/rw    (Africa, free key)
+ * 17.  Adzuna Zimbabwe × 8       api.adzuna.com/zw    (Africa, free key)
+ * 18.  Adzuna Zambia × 8         api.adzuna.com/zm    (Africa, free key)
+ * 19.  Adzuna Botswana × 8       api.adzuna.com/bw    (Africa, free key)
+ * 20.  Adzuna Namibia × 8        api.adzuna.com/na    (Africa, free key)
+ * 21.  Adzuna Mozambique × 8     api.adzuna.com/mz    (Africa, free key)
+ * 22.  Adzuna Senegal × 8        api.adzuna.com/sn    (Africa, free key)
+ * 23.  Adzuna Côte d'Ivoire × 8  api.adzuna.com/ci    (Africa, free key)
+ * 24.  Adzuna United Kingdom × 5 api.adzuna.com/gb    (remote only,  free key)
+ * 25.  Adzuna Australia × 3      api.adzuna.com/au    (remote only,  free key)
  *
  * Env vars required for Adzuna (sources 8-10):
  *   ADZUNA_APP_ID   — from developer.adzuna.com (free)
@@ -429,8 +442,7 @@ async function fetchJobicy(): Promise<InsertAggregatedJob[]> {
 // ── 8-12. Adzuna (SA + UK + AU + CA + IN) ────────────────────────────────────
 // ADZUNA_APP_ID + ADZUNA_APP_KEY required (free at developer.adzuna.com)
 // SA: 20 pages × 50 = up to 1,000 South African jobs   (most relevant — all jobs)
-// NG: 10 pages × 50 = up to 500 Nigerian jobs          (Africa-first)
-// KE: 10 pages × 50 = up to 500 Kenyan jobs            (Africa-first)
+// NG/KE/GH/EG/MA/TZ/UG/RW/ZW/ZM/BW/NA/MZ/SN/CI each × 8 pages = deep Africa-first coverage
 // UK: 5 pages × 50 = up to 250 remote-eligible UK jobs (remote only)
 // AU: 3 pages × 50 = up to 150 remote-eligible AU jobs (remote only)
 // CA: 4 pages × 50 = up to 200 remote-eligible CA jobs (remote only)
@@ -440,6 +452,19 @@ const ADZUNA_CONFIGS: { country: string; label: string; maxPages: number; filter
   { country: "za", label: "South Africa",   maxPages: 20, filterRemote: false },
   { country: "ng", label: "Nigeria",        maxPages: 10, filterRemote: false },
   { country: "ke", label: "Kenya",          maxPages: 10, filterRemote: false },
+  { country: "gh", label: "Ghana",          maxPages: 8,  filterRemote: false },
+  { country: "eg", label: "Egypt",          maxPages: 8,  filterRemote: false },
+  { country: "ma", label: "Morocco",        maxPages: 8,  filterRemote: false },
+  { country: "tz", label: "Tanzania",       maxPages: 8,  filterRemote: false },
+  { country: "ug", label: "Uganda",         maxPages: 8,  filterRemote: false },
+  { country: "rw", label: "Rwanda",         maxPages: 8,  filterRemote: false },
+  { country: "zw", label: "Zimbabwe",       maxPages: 8,  filterRemote: false },
+  { country: "zm", label: "Zambia",         maxPages: 8,  filterRemote: false },
+  { country: "bw", label: "Botswana",       maxPages: 8,  filterRemote: false },
+  { country: "na", label: "Namibia",        maxPages: 8,  filterRemote: false },
+  { country: "mz", label: "Mozambique",     maxPages: 8,  filterRemote: false },
+  { country: "sn", label: "Senegal",        maxPages: 8,  filterRemote: false },
+  { country: "ci", label: "Côte d'Ivoire",  maxPages: 8,  filterRemote: false },
   { country: "gb", label: "United Kingdom", maxPages: 5,  filterRemote: true  },
   { country: "au", label: "Australia",      maxPages: 3,  filterRemote: true  },
   { country: "ca", label: "Canada",         maxPages: 4,  filterRemote: true  },
@@ -516,7 +541,7 @@ export interface LiveFetchResult {
 }
 
 export async function fetchAndStoreLiveJobs(): Promise<LiveFetchResult> {
-  log("[LiveFetcher] Launching 14-source REAL job fetch...", "jobs");
+  log("[LiveFetcher] Launching 25-source REAL job fetch...", "jobs");
 
   // ── Non-Adzuna sources — run in parallel (different hosts, no rate conflict) ─
   const [remotive, remoteok, arbeitnow, muse, himalayas, nomads, jobicy] =

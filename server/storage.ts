@@ -570,7 +570,13 @@ class DatabaseStorage implements IStorage {
       if (filters.country === "South Africa") {
         conditions.push(sql`${aggregatedJobs.province} = ANY(ARRAY['Gauteng','Western Cape','KwaZulu-Natal','Eastern Cape','Limpopo','Mpumalanga','Free State','North West','Northern Cape']::text[])`);
       } else {
-        conditions.push(sql`${aggregatedJobs.province} ILIKE ${'%' + filters.country + '%'}`);
+        conditions.push(
+          or(
+            eq(aggregatedJobs.country, filters.country),
+            sql`${aggregatedJobs.country} ILIKE ${'%' + filters.country + '%'}`,
+            sql`${aggregatedJobs.location} ILIKE ${'%' + filters.country + '%'}`,
+          ),
+        );
       }
     } else if (filters?.province) {
       conditions.push(sql`${aggregatedJobs.province} ILIKE ${'%' + filters.province + '%'}`);

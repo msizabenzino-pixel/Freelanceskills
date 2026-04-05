@@ -43,20 +43,22 @@ const AFRICAN_LOCATIONS: { region: string; cities: string[] }[] = [
   { region: "Nigeria", cities: ["Lagos", "Abuja", "Port Harcourt", "Kano", "Ibadan", "Enugu", "Kaduna"] },
   // Kenya
   { region: "Kenya", cities: ["Nairobi", "Mombasa", "Kisumu", "Nakuru", "Eldoret"] },
+  // Tanzania
+  { region: "Tanzania", cities: ["Dar es Salaam", "Arusha", "Mwanza", "Dodoma", "Zanzibar City"] },
+  // Uganda
+  { region: "Uganda", cities: ["Kampala", "Entebbe", "Gulu", "Mbarara", "Jinja"] },
+  // Rwanda
+  { region: "Rwanda", cities: ["Kigali", "Musanze", "Rubavu", "Huye"] },
   // Ghana
-  { region: "Ghana", cities: ["Accra", "Kumasi", "Takoradi", "Tema", "Cape Coast"] },
+  { region: "Ghana", cities: ["Accra", "Kumasi", "Takoradi", "Tema", "Tamale"] },
+  // Nigeria
+  { region: "Nigeria", cities: ["Lagos", "Abuja", "Port Harcourt", "Kano", "Ibadan", "Enugu", "Kaduna"] },
   // Egypt
-  { region: "Egypt", cities: ["Cairo", "Alexandria", "Giza", "Sharm El-Sheikh", "Hurghada"] },
+  { region: "Egypt", cities: ["Cairo", "Alexandria", "Giza", "Tanta", "Aswan"] },
   // Morocco
-  { region: "Morocco", cities: ["Casablanca", "Rabat", "Marrakech", "Fes", "Tangier"] },
+  { region: "Morocco", cities: ["Casablanca", "Rabat", "Marrakesh", "Fes", "Tangier"] },
   // Ethiopia
   { region: "Ethiopia", cities: ["Addis Ababa", "Dire Dawa", "Mekelle", "Bahir Dar"] },
-  // Tanzania
-  { region: "Tanzania", cities: ["Dar es Salaam", "Arusha", "Mwanza", "Zanzibar City"] },
-  // Uganda
-  { region: "Uganda", cities: ["Kampala", "Entebbe", "Gulu", "Mbarara"] },
-  // Rwanda
-  { region: "Rwanda", cities: ["Kigali", "Butare", "Gitarama", "Musanze"] },
   // Senegal
   { region: "Senegal", cities: ["Dakar", "Thiès", "Saint-Louis", "Ziguinchor"] },
   // Côte d'Ivoire
@@ -71,6 +73,8 @@ const AFRICAN_LOCATIONS: { region: string; cities: string[] }[] = [
   { region: "Namibia", cities: ["Windhoek", "Walvis Bay", "Swakopmund", "Oshakati"] },
   // Mozambique
   { region: "Mozambique", cities: ["Maputo", "Beira", "Nampula", "Tete"] },
+  // South Africa
+  // Ghana
 ];
 
 // SA provinces kept for backward compatibility with existing schema queries
