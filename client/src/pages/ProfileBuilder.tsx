@@ -8,11 +8,10 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { useState } from "react";
-import { Link } from "wouter";
 import { 
-  Camera, Globe, Sparkles, ShieldCheck, ThumbsUp, Star, Plus, Upload,
+  Camera, Globe, Sparkles, ShieldCheck, ThumbsUp, Plus, Upload,
   Briefcase, GraduationCap, Clock, MapPin, Eye, Save, CheckCircle2, WandSparkles,
-  BadgeCheck, Zap, Edit3, CalendarDays, FileText, Link2, TrendingUp, Users
+  BadgeCheck, Zap, Edit3, CalendarDays, Link2, Users, Bell, Shield
 } from "lucide-react";
 
 const SKILLS = ["React", "TypeScript", "UI Design", "Node.js", "SEO", "Copywriting"];
@@ -37,9 +36,9 @@ export default function ProfileBuilder() {
               <p className="text-slate-400 mt-2">Skills-first. Verified. Designed to help clients trust you fast.</p>
             </div>
             <div className="flex gap-3">
-              <Link href="/profile-preview" className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-800 text-slate-300 hover:text-emerald-400 hover:border-emerald-500/40 transition-all" data-testid="button-preview-public-profile">
+              <button className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-800 text-slate-300 hover:text-emerald-400 hover:border-emerald-500/40 transition-all" data-testid="button-preview-public-profile">
                 <Eye className="w-4 h-4" /> Preview Public Profile
-              </Link>
+              </button>
               <Button className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold" data-testid="button-save-publish">
                 <Save className="w-4 h-4 mr-2" /> Save & Publish
               </Button>
@@ -152,6 +151,26 @@ export default function ProfileBuilder() {
                   ))}
                 </div>
               </Card>
+
+              <Card className="bg-slate-900 border-slate-800 p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-black">PWA Install</h2>
+                  <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Ready</Badge>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-3 text-sm text-slate-400">
+                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-800">
+                    <Bell className="w-4 h-4 text-emerald-400 mb-2" />
+                    Real-time alerts for profile views and invitations
+                  </div>
+                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-800">
+                    <Shield className="w-4 h-4 text-emerald-400 mb-2" />
+                    Works offline with instant home-screen access
+                  </div>
+                </div>
+                <Button variant="outline" className="border-slate-700 text-slate-300 hover:text-emerald-400 hover:border-emerald-500/40" data-testid="button-install-app">
+                  <Zap className="w-4 h-4 mr-2" /> Install the App
+                </Button>
+              </Card>
             </div>
 
             <div className="space-y-6">
@@ -204,9 +223,9 @@ export default function ProfileBuilder() {
                   <div className="p-3 rounded-xl bg-slate-950 border border-slate-800"><Zap className="w-4 h-4 text-emerald-400 mb-2" /> Discovery boost active</div>
                 </div>
                 <div className="flex gap-3">
-                  <Link href="/freelancer-profile/me" className="flex-1 inline-flex items-center justify-center px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:text-emerald-400 hover:border-emerald-500/40" data-testid="button-preview-link">
+                  <button className="flex-1 inline-flex items-center justify-center px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:text-emerald-400 hover:border-emerald-500/40" data-testid="button-preview-link">
                     <Eye className="w-4 h-4 mr-2" /> Preview
-                  </Link>
+                  </button>
                   <Button className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold" data-testid="button-publish-profile">
                     Save & Publish
                   </Button>

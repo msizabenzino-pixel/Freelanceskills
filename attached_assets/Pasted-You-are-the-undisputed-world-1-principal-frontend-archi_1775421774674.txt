@@ -1,0 +1,35 @@
+You are the undisputed world #1 principal frontend architect, conversion perfectionist, and product visionary. Your standards are merciless, untouchable, and non-negotiable. "Best or nothing" is the only rule. Anything less than 95/100 quality — a platform that feels worth at least 50 billion dollars in long-term potential — is total and immediate failure. You will rewrite until freelanceskills.net is the single best freelance marketplace and professional network on Earth in 2026.
+
+Perform a complete A-Z nuclear rebuild of the four core pages for https://freelanceskills.net using EVERY requirement developed over the entire conversation.
+
+MANDATORY RULES — ZERO EXCEPTIONS, ZERO TRACES, ZERO MERCY:
+- 100% platform-first and mission-driven on every page. DELETE EVERY TRACE of any founder, person, or personal story: no "BM Founder", no "Ben Msiza", no "11 Years Eskom", no GCC, no B-Tech, no UNISA, no personal photo, no quote, no "I resigned", no "Read the Full Story", no CIPC tied to an individual.
+- Remove ALL pre-launch elements on every page: no countdowns, no "Launching Soon", no "07 April 2026", no "Some functionalities disabled", no temporary banners or overlays.
+- Premium consistent dark theme across ALL pages: deep navy/slate base (#0f172a), emerald accent (#10b981).
+- Use Tailwind CSS 3.4+ via CDN only.
+- Absolute 100% mobile-first responsiveness (320px to 4K) — native-app feel, 48px+ touch targets, no layout shifts, no overflow, buttery smooth.
+- Fully functional PWA install promotion on EVERY page (beforeinstallprompt API + smart fallback modal with crystal-clear 2-step instructions for Chrome/Android and Safari/iOS).
+- Consistent sticky navbar and minimal footer on ALL pages (Home, Browse Talent, Post a Job, About, How it Works, Academy, Pricing, Profile). Fully working slide-in mobile menu with backdrop and smooth close.
+- Core vision: "The Future of Skilled Work in Africa and Beyond" — skills-first AI-powered professional network + marketplace connecting verified African talent with businesses, 10% transparent fees, PayFast escrow, POPIA compliant, 24/7 SA support, empower 1 million Africans by 2031.
+
+OUTPUT EXACTLY THESE FOUR COMPLETE PRODUCTION-READY HTML FILES (clearly labeled):
+
+1. <!-- FILE: index.html --> — Elite 10× LinkedIn hybrid homepage: powerful hero with "Open to Gigs" energy, personalized opportunity feed teaser, professional profile spotlight cards, "For Beginners / First Gig" section, value pillars, success stories, PWA promotion, final CTA.
+
+2. <!-- FILE: about.html --> — Mission-first About page with hero, vision paragraphs, Nuclear Vetting System, mission cards, Why Choose grid, trust & impact stats, final CTA.
+
+3. <!-- FILE: login.html --> — Beautiful split-screen login (inspiring left benefit panel + premium right form card). Social logins first (Google, Apple, LinkedIn), email/password form, remember me, forgot password, full PWA section, trust bar.
+
+4. <!-- FILE: profile.html --> — The ultimate 10× LinkedIn Profile Builder / Edit Profile page: header with cover + photo + "Open to Freelance Gigs" badge, About with AI help, Skills with verification & endorsements, Portfolio drag-and-drop, Experience timeline, Hourly rate & availability, Endorsements section, Preview Public Profile button, Save & Publish.
+
+For every file:
+- Perfect accessibility, hover/focus states, micro-animations, lightning-fast loading.
+- Make every page feel confident, live, empowering, and 12/10 premium — 10× better than LinkedIn, Upwork, Fiverr, or Toptal in trust, clarity, conversion, and career growth for African talent.
+
+COMMAND IMPLEMENTATION RIGHT AFTER GENERATION:
+- Self-audit every file ruthlessly: confirm zero founder content, zero pre-launch elements, 100% responsiveness at every breakpoint, PWA works perfectly on all browsers, navbar/footer identical everywhere, no console errors.
+- This must be the single best freelance marketplace and professional network on the planet — untouchable, addictive, and positioned as a platform worth at least 50 billion dollars in long-term value.
+
+Output ONLY the four complete HTML files. Each must start with <!DOCTYPE html> and end with </html>. Clearly label them with the comment <!-- FILE: filename.html --> at the top of each. No explanations, no intro text, no extra comments.
+
+Generate now with untouchable nuclear fire precision.
