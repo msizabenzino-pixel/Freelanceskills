@@ -60,11 +60,12 @@ export default function HowItWorks() {
               <div className="mb-6">
                 <VideoLanguageInfo />
               </div>
-              <VideoPlayer 
+              <VideoPlayer
                 title="Getting Started with FreelanceSkills"
                 duration="2:30 min"
                 thumbnail="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&auto=format"
                 description="A complete introduction to using our platform - available in your language"
+                youtubeSearchQuery="how to use a freelance marketplace south africa"
               />
             </div>
           </div>
