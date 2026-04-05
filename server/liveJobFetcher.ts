@@ -5,7 +5,7 @@
  * Every job is a REAL advertised position. Every apply link is real.
  * Zero fake / AI-generated listings — ever.
  *
- * Sources (10 live feeds — running in parallel):
+ * Sources (25 live feeds — running in parallel):
  *  1.  Remotive × 15 categories  remotive.com         (global remote, no auth)
  *  2.  RemoteOK                  remoteok.com         (global remote, no auth)
  *  3.  Arbeitnow                 arbeitnow.com        (EU/remote,    no auth)
