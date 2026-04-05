@@ -152,6 +152,9 @@ export async function registerRoutes(
   const { registerMissionControlRoutes } = await import("./missionControlRoutes");
   await registerMissionControlRoutes(app, isAuthenticated);
 
+  const { registerAggregatedJobRoutes } = await import("./aggregatedJobRoutes");
+  registerAggregatedJobRoutes(app);
+
   // Dashboard Stats
   app.get("/api/dashboard/stats", isAuthenticated, async (req: any, res) => {
     try {

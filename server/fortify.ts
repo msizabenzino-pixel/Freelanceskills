@@ -789,6 +789,41 @@ export function corsMiddleware(req: Request, res: Response, next: NextFunction) 
 export function startCronScheduler() {
   log("Starting cron scheduler", "cron");
 
+  // ── AI Job Agent: seed + hourly cycle ────────────────────────────────────
+  (async () => {
+    try {
+      const { seedInitialJobs, runFullJobAgentSync } = await import("./jobAgent");
+      await seedInitialJobs();
+      log("Job agent initial seed complete", "cron");
+
+      // Run full sync every 2 hours
+      setInterval(async () => {
+        try {
+          const result = await runFullJobAgentSync(15);
+          log(`Job agent sync: +${result.generated} new, ${result.expired} expired, ${result.upgraded} upgraded | total=${result.totalActive}`, "cron");
+        } catch (err: any) {
+          log(`Job agent sync error: ${err.message}`, "cron");
+        }
+      }, 2 * 60 * 60 * 1000);
+
+      // Run expiry check every 30 minutes
+      setInterval(async () => {
+        try {
+          const { runJobExpiryAgent } = await import("./jobAgent");
+          const result = await runJobExpiryAgent();
+          if (result.expired > 0) {
+            log(`Job expiry check: ${result.expired} expired`, "cron");
+          }
+        } catch (err: any) {
+          log(`Job expiry error: ${err.message}`, "cron");
+        }
+      }, 30 * 60 * 1000);
+
+    } catch (err: any) {
+      log(`Job agent startup error: ${err.message}`, "cron");
+    }
+  })();
+
   setInterval(async () => {
     try {
       const result = await cronPurgeExpiredJobs();

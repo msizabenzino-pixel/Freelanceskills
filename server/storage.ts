@@ -485,8 +485,108 @@ class DatabaseStorage implements IStorage {
   }
 
   async clearOldAggregatedJobs(): Promise<void> {
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    await db.delete(aggregatedJobs).where(sql`${aggregatedJobs.createdAt} < ${thirtyDaysAgo}`);
+  }
+
+  async getAggregatedJobById(id: string): Promise<AggregatedJob | null> {
+    const [job] = await db.select().from(aggregatedJobs).where(eq(aggregatedJobs.id, id)).limit(1);
+    return job || null;
+  }
+
+  async expireOverdueAggregatedJobs(): Promise<number> {
+    const now = new Date();
+    const result = await db
+      .update(aggregatedJobs)
+      .set({ isActive: false })
+      .where(
+        and(
+          eq(aggregatedJobs.isActive, true),
+          sql`${aggregatedJobs.expiresAt} IS NOT NULL AND ${aggregatedJobs.expiresAt} < ${now}`,
+        ),
+      )
+      .returning({ id: aggregatedJobs.id });
+    return result.length;
+  }
+
+  async upgradeStaleAggregatedJobs(): Promise<number> {
     const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
-    await db.delete(aggregatedJobs).where(sql`${aggregatedJobs.createdAt} < ${threeDaysAgo}`);
+    const result = await db
+      .update(aggregatedJobs)
+      .set({
+        postedDate: new Date(),
+        upgradeCount: sql`COALESCE(${aggregatedJobs.upgradeCount}, 0) + 1`,
+      })
+      .where(
+        and(
+          eq(aggregatedJobs.isActive, true),
+          sql`${aggregatedJobs.aiScore} >= 80`,
+          sql`${aggregatedJobs.postedDate} < ${threeDaysAgo}`,
+        ),
+      )
+      .returning({ id: aggregatedJobs.id });
+    return result.length;
+  }
+
+  async incrementAggregatedJobView(id: string): Promise<void> {
+    await db
+      .update(aggregatedJobs)
+      .set({ viewCount: sql`COALESCE(${aggregatedJobs.viewCount}, 0) + 1` })
+      .where(eq(aggregatedJobs.id, id));
+  }
+
+  async incrementAggregatedJobApplication(id: string): Promise<void> {
+    await db
+      .update(aggregatedJobs)
+      .set({ applicationCount: sql`COALESCE(${aggregatedJobs.applicationCount}, 0) + 1` })
+      .where(eq(aggregatedJobs.id, id));
+  }
+
+  async searchAggregatedJobs(filters?: {
+    province?: string;
+    category?: string;
+    source?: string;
+    jobType?: string;
+    experienceLevel?: string;
+    isUrgent?: boolean;
+    isRemote?: boolean;
+    search?: string;
+    limit?: number;
+  }): Promise<AggregatedJob[]> {
+    const conditions = [eq(aggregatedJobs.isActive, true)];
+
+    if (filters?.province) {
+      conditions.push(sql`${aggregatedJobs.province} ILIKE ${'%' + filters.province + '%'}`);
+    }
+    if (filters?.category) {
+      conditions.push(sql`${aggregatedJobs.category} ILIKE ${'%' + filters.category + '%'}`);
+    }
+    if (filters?.source) {
+      conditions.push(eq(aggregatedJobs.source, filters.source));
+    }
+    if (filters?.jobType) {
+      conditions.push(eq(aggregatedJobs.jobType, filters.jobType));
+    }
+    if (filters?.experienceLevel) {
+      conditions.push(eq(aggregatedJobs.experienceLevel, filters.experienceLevel));
+    }
+    if (filters?.isUrgent) {
+      conditions.push(eq(aggregatedJobs.isUrgent, true));
+    }
+    if (filters?.isRemote) {
+      conditions.push(eq(aggregatedJobs.isRemote, true));
+    }
+    if (filters?.search) {
+      const q = `%${filters.search}%`;
+      conditions.push(
+        sql`(${aggregatedJobs.title} ILIKE ${q} OR ${aggregatedJobs.company} ILIKE ${q} OR ${aggregatedJobs.description} ILIKE ${q} OR ${aggregatedJobs.skills} ILIKE ${q})`,
+      );
+    }
+
+    return db.select().from(aggregatedJobs)
+      .where(and(...conditions))
+      .orderBy(desc(aggregatedJobs.aiScore), desc(aggregatedJobs.postedDate))
+      .limit(filters?.limit || 200);
   }
 
   // Job application operations

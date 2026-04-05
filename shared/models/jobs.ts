@@ -56,6 +56,17 @@ export const aggregatedJobs = pgTable("aggregated_jobs", {
   expiresAt: timestamp("expires_at"),
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
+  // AI Intelligence fields
+  aiScore: integer("ai_score").default(75),
+  skills: text("skills"),
+  isUrgent: boolean("is_urgent").default(false),
+  applicationCount: integer("application_count").default(0),
+  viewCount: integer("view_count").default(0),
+  upgradeCount: integer("upgrade_count").default(0),
+  isRemote: boolean("is_remote").default(false),
+  companySize: text("company_size"),
+  beeLevel: text("bee_level"),
+  agentGenerated: boolean("agent_generated").default(false),
 });
 
 export const insertAggregatedJobSchema = createInsertSchema(aggregatedJobs).omit({

@@ -26,6 +26,21 @@ The platform prioritizes a mobile-first, PWA-enabled design with strong accessib
 ### System Design Choices
 The architecture is designed for scalability and maintainability, with clear separation of concerns between frontend, backend, and data layers. The modular design supports the integration of advanced features such as the 2031 Vision Modules, which include blockchain credentials, NFT certifications, green impact scoring, DAO governance, and AI-driven insights. Edge case handlers are robustly implemented to manage complex scenarios like account deletion mid-escrow, high concurrent application queues, and dispute escalations. An admin platform provides comprehensive control and analytics over all aspects of the marketplace.
 
+## April 2026 — AI Job Intelligence Agent
+
+### AI Job Board (150+ live jobs on launch)
+- **`server/jobAgent.ts`**: Full AI Job Intelligence Agent — deterministic + OpenAI-powered SA job generation across all 9 provinces, 10 job portals (PNet, Career24, LinkedIn, Indeed SA, CareerJunction, OfferZen, Bizcommunity, JobMail, Government Vacancies, BestJobs), 30 job categories, ZAR salary ranges per category, BEE levels, AI quality scoring (0-100)
+- **Auto-lifecycle cron**: Seed on startup (100 jobs), expire overdue (every 30 min), generate fresh jobs (every 2 hours via OpenAI gpt-4o-mini), upgrade/bump quality jobs
+- **New DB columns** (`aggregated_jobs`): `ai_score`, `skills`, `is_urgent`, `application_count`, `view_count`, `upgrade_count`, `is_remote`, `company_size`, `bee_level`, `agent_generated`
+- **`server/aggregatedJobRoutes.ts`**: New API — `GET /api/aggregated-jobs` (full search/filter), `GET /api/aggregated-jobs/:id`, `POST /api/aggregated-jobs/sync`, `POST /api/aggregated-jobs/:id/apply`, `GET /api/aggregated-jobs/stats`
+- **`server/storage.ts`** new methods: `searchAggregatedJobs` (full-text + 7 filters), `getAggregatedJobById`, `expireOverdueAggregatedJobs`, `upgradeStaleAggregatedJobs`, `incrementAggregatedJobView`, `incrementAggregatedJobApplication`
+
+### World-Class Jobs Page (`client/src/pages/Jobs.tsx`)
+- **3-tab UI**: All Jobs, AI Job Board, Marketplace — combines Firebase user-posted jobs + PostgreSQL AI-aggregated jobs
+- **Advanced filters**: Province, Category, Job Type, Experience Level, Source portal, Urgent toggle, Remote toggle
+- **Real-time stats bar**: Total jobs, Urgent count, Remote count, AI-aggregated count (sticky header)
+- **`client/src/components/AggregatedJobCard.tsx`**: World-class card component with AI Score badge, coloured source badges, urgency/remote/boosted badges, salary in ZAR, skills chips, days-until-expiry countdown, social proof (views + applications), expand/collapse full description, instant apply + external link
+
 ## Recent Platform Upgrades (March 2026)
 
 ### Homepage Nuclear Upgrade
