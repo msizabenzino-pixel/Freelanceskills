@@ -10,7 +10,7 @@ import {
   Download, X, BadgeCheck, Globe, Star, Users, Briefcase, Smartphone
 } from "lucide-react";
 import { Link } from "wouter";
-import { loginWithEmail, loginWithGoogle } from "@/lib/firebaseAuth";
+import { loginWithEmail, loginWithGoogle, loginWithLinkedIn } from "@/lib/firebaseAuth";
 import { consumePendingAuthRedirect } from "@/lib/authRedirect";
 
 interface BeforeInstallPromptEvent extends Event {
@@ -123,11 +123,16 @@ export default function Login() {
   };
 
   const handleLinkedInLogin = async () => {
-    toast({
-      title: "LinkedIn sign-in is not available yet",
-      description: "Please use email, Google, or Apple to log in right now.",
-      variant: "destructive",
-    });
+    setAuthError(null);
+    try {
+      await loginWithLinkedIn();
+      toast({ title: "Welcome back!", description: "Signed in with LinkedIn." });
+      handlePostAuthRedirect();
+    } catch (err: any) {
+      const message = err?.message || "LinkedIn sign-in failed. Please try again.";
+      setAuthError(message);
+      toast({ title: "LinkedIn sign-in failed", description: message, variant: "destructive" });
+    }
   };
 
   return (
