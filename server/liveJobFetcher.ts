@@ -285,43 +285,63 @@ async function fetchTheMuse(): Promise<InsertAggregatedJob[]> {
 }
 
 // ── 5. Himalayas ──────────────────────────────────────────────────────────────
+// API schema confirmed: title, companyName, applicationLink, categories,
+// employmentType, minSalary, maxSalary, seniority, description, pubDate, guid
 
 async function fetchHimalayas(): Promise<InsertAggregatedJob[]> {
+  const allJobs: InsertAggregatedJob[] = [];
   try {
-    const res = await fetch("https://himalayas.app/jobs/api?limit=200&offset=0", {
-      headers: { "User-Agent": "FreelanceSkills.net Job Aggregator" },
-      signal: AbortSignal.timeout(18000),
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    const jobs: any[] = data.jobs || [];
-    return jobs.filter(j => j.applyUrl || j.url).map(j => {
-      const applyLink = j.applyUrl || j.url;
-      return {
-        ...base(),
-        title: j.title || "Remote Role",
-        company: j.companyName || j.company?.name || "Company",
-        description: stripHtml(j.description || j.title || ""),
-        location: "Remote — Worldwide",
-        country: "Remote",
-        salaryMin: j.salary?.min || null,
-        salaryMax: j.salary?.max || null,
-        salaryPeriod: "year",
-        source: "Himalayas",
-        sourceUrl: j.url || applyLink,
-        applyUrl: applyLink,
-        liveSource: "himalayas",
-        category: mapCategory(j.skills || [], j.title || "", j.description || ""),
-        jobType: mapJobType(j.jobType || ""),
-        skills: (j.skills || []).slice(0, 10).join(", "),
-        postedDate: j.publishedAt ? new Date(j.publishedAt) : new Date(),
-        isRemote: true,
-      } satisfies InsertAggregatedJob;
-    });
+    const pageSize = 100;
+    for (let offset = 0; offset < 400; offset += pageSize) {
+      const res = await fetch(
+        `https://himalayas.app/jobs/api?limit=${pageSize}&offset=${offset}`,
+        {
+          headers: { "User-Agent": "FreelanceSkills.net Job Aggregator +https://freelanceskills.net" },
+          signal: AbortSignal.timeout(20000),
+        },
+      );
+      if (!res.ok) break;
+      const data = await res.json();
+      const jobs: any[] = data.jobs || [];
+      if (jobs.length === 0) break;
+      for (const j of jobs) {
+        const applyUrl = j.applicationLink || null;
+        if (!applyUrl) continue;
+        const profileUrl = j.companySlug
+          ? `https://himalayas.app/companies/${j.companySlug}`
+          : applyUrl;
+        allJobs.push({
+          ...base(),
+          title: j.title || "Remote Role",
+          company: j.companyName || "Company",
+          description: stripHtml(j.description || j.excerpt || j.title || ""),
+          location: (j.locationRestrictions || []).join(", ") || "Remote — Worldwide",
+          country: "Remote",
+          salaryMin: j.minSalary || null,
+          salaryMax: j.maxSalary || null,
+          salaryPeriod: "year",
+          source: "Himalayas",
+          sourceUrl: profileUrl,
+          applyUrl,
+          liveSource: "himalayas",
+          category: mapCategory(
+            j.categories || [],
+            j.title || "",
+            j.description || "",
+          ),
+          jobType: mapJobType(j.employmentType || ""),
+          experienceLevel: mapExperience((j.seniority || [])[0] || ""),
+          skills: (j.categories || []).slice(0, 10).join(", "),
+          postedDate: j.pubDate ? new Date(j.pubDate) : new Date(),
+          isRemote: true,
+        } satisfies InsertAggregatedJob);
+      }
+      if (jobs.length < pageSize) break;
+    }
   } catch (err: any) {
     log(`[LiveFetcher] Himalayas: ${err.message}`, "warn");
-    return [];
   }
+  return allJobs;
 }
 
 // ── 6. Working Nomads ─────────────────────────────────────────────────────────
@@ -357,59 +377,67 @@ async function fetchWorkingNomads(): Promise<InsertAggregatedJob[]> {
 }
 
 // ── 7. Jobicy ─────────────────────────────────────────────────────────────────
-// Free JSON API, no auth. Curated remote jobs across all sectors.
+// Free JSON API, no auth. Curated remote jobs — up to 50 per call.
+// Confirmed schema: id, url, jobTitle, companyName, jobIndustry (array),
+//   jobType (array), jobGeo, jobLevel, jobExcerpt, jobDescription,
+//   pubDate, salaryMin, salaryMax, salaryCurrency, salaryPeriod
 
 async function fetchJobicy(): Promise<InsertAggregatedJob[]> {
   try {
-    const res = await fetch("https://jobicy.com/api/v2/remote-jobs?count=50&geo=any", {
+    const res = await fetch("https://jobicy.com/api/v2/remote-jobs?count=50", {
       headers: { "User-Agent": "FreelanceSkills.net Job Aggregator +https://freelanceskills.net" },
       signal: AbortSignal.timeout(15000),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    const jobs: any[] = data.jobs || data.data || (Array.isArray(data) ? data : []);
-    return jobs.filter(j => (j.url || j.jobUrl || j.apply_url) && (j.title || j.jobTitle)).map(j => {
-      const title = j.jobTitle || j.title || "Remote Role";
-      const company = j.companyName || j.company_name || j.company || "Company";
-      const applyUrl = j.url || j.jobUrl || j.apply_url;
-      return {
-        ...base(),
-        title,
-        company,
-        description: stripHtml(j.jobDescription || j.description || title),
-        location: j.jobGeo || "Remote — Worldwide",
-        country: "Remote",
-        source: "Jobicy",
-        sourceUrl: applyUrl,
-        applyUrl,
-        liveSource: "jobicy",
-        category: mapCategory(
-          (j.jobIndustry || j.tags || []),
-          title,
-          j.jobDescription || "",
-        ),
-        jobType: mapJobType(j.jobType || ""),
-        skills: Array.isArray(j.jobIndustry) ? j.jobIndustry.join(", ") : (j.jobIndustry || ""),
-        postedDate: j.pubDate ? new Date(j.pubDate) : new Date(),
-        isRemote: true,
-      } satisfies InsertAggregatedJob;
-    });
+    const jobs: any[] = data.jobs || [];
+    return jobs.filter(j => j.url && j.jobTitle).map(j => ({
+      ...base(),
+      title: j.jobTitle,
+      company: j.companyName || "Company",
+      description: stripHtml(j.jobDescription || j.jobExcerpt || j.jobTitle),
+      location: j.jobGeo || "Remote — Worldwide",
+      country: "Remote",
+      salaryMin: j.salaryMin ? parseInt(j.salaryMin) || null : null,
+      salaryMax: j.salaryMax ? parseInt(j.salaryMax) || null : null,
+      salaryPeriod: j.salaryPeriod || "year",
+      source: "Jobicy",
+      sourceUrl: j.url,
+      applyUrl: j.url,
+      liveSource: "jobicy",
+      category: mapCategory(
+        Array.isArray(j.jobIndustry) ? j.jobIndustry : [j.jobIndustry || ""],
+        j.jobTitle,
+        j.jobDescription || "",
+      ),
+      jobType: mapJobType(
+        Array.isArray(j.jobType) ? j.jobType[0] || "" : j.jobType || "",
+      ),
+      experienceLevel: mapExperience(j.jobLevel || ""),
+      skills: Array.isArray(j.jobIndustry) ? j.jobIndustry.join(", ") : (j.jobIndustry || ""),
+      postedDate: j.pubDate ? new Date(j.pubDate) : new Date(),
+      isRemote: true,
+    } satisfies InsertAggregatedJob));
   } catch (err: any) {
     log(`[LiveFetcher] Jobicy: ${err.message}`, "warn");
     return [];
   }
 }
 
-// ── 8, 9, 10. Adzuna (SA + UK + AU) ──────────────────────────────────────────
+// ── 8-12. Adzuna (SA + UK + AU + CA + IN) ────────────────────────────────────
 // ADZUNA_APP_ID + ADZUNA_APP_KEY required (free at developer.adzuna.com)
-// SA: 20 pages × 50 = up to 1,000 South African jobs
-// UK: 5 pages × 50 = up to 250 remote-eligible UK jobs
-// AU: 3 pages × 50 = up to 150 remote-eligible AU jobs
+// SA: 20 pages × 50 = up to 1,000 South African jobs   (most relevant — all jobs)
+// UK: 5 pages × 50 = up to 250 remote-eligible UK jobs  (remote only)
+// AU: 3 pages × 50 = up to 150 remote-eligible AU jobs  (remote only)
+// CA: 4 pages × 50 = up to 200 remote-eligible CA jobs  (remote only)
+// IN: 3 pages × 50 = up to 150 remote-eligible IN jobs  (remote only)
 
 const ADZUNA_CONFIGS: { country: string; label: string; maxPages: number; filterRemote: boolean }[] = [
-  { country: "za", label: "South Africa", maxPages: 20, filterRemote: false },
-  { country: "gb", label: "United Kingdom", maxPages: 5, filterRemote: true },
-  { country: "au", label: "Australia", maxPages: 3, filterRemote: true },
+  { country: "za", label: "South Africa",   maxPages: 20, filterRemote: false },
+  { country: "gb", label: "United Kingdom", maxPages: 5,  filterRemote: true  },
+  { country: "au", label: "Australia",      maxPages: 3,  filterRemote: true  },
+  { country: "ca", label: "Canada",         maxPages: 4,  filterRemote: true  },
+  { country: "in", label: "India",          maxPages: 3,  filterRemote: true  },
 ];
 
 async function fetchAdzunaConfig(
@@ -482,9 +510,10 @@ export interface LiveFetchResult {
 }
 
 export async function fetchAndStoreLiveJobs(): Promise<LiveFetchResult> {
-  log("[LiveFetcher] Launching 10-source REAL job fetch...", "jobs");
+  log("[LiveFetcher] Launching 12-source REAL job fetch...", "jobs");
 
-  const [remotive, remoteok, arbeitnow, muse, himalayas, nomads, jobicy, ...adzunaResults] =
+  // ── Non-Adzuna sources — run in parallel (different hosts, no rate conflict) ─
+  const [remotive, remoteok, arbeitnow, muse, himalayas, nomads, jobicy] =
     await Promise.all([
       fetchRemotive(),
       fetchRemoteOK(),
@@ -493,10 +522,16 @@ export async function fetchAndStoreLiveJobs(): Promise<LiveFetchResult> {
       fetchHimalayas(),
       fetchWorkingNomads(),
       fetchJobicy(),
-      ...ADZUNA_CONFIGS.map(fetchAdzunaConfig),
     ]);
 
-  const [adzunaSA, adzunaUK, adzunaAU] = adzunaResults;
+  // ── Adzuna — run SEQUENTIALLY to avoid rate-limit collisions across countries ─
+  const adzunaByCountry: Record<string, InsertAggregatedJob[]> = {};
+  for (const cfg of ADZUNA_CONFIGS) {
+    adzunaByCountry[cfg.country] = await fetchAdzunaConfig(cfg);
+    if (ADZUNA_CONFIGS.indexOf(cfg) < ADZUNA_CONFIGS.length - 1) {
+      await new Promise(r => setTimeout(r, 500)); // 500ms gap between countries
+    }
+  }
 
   const sourceCounts: Record<string, number> = {
     remotive: remotive.length,
@@ -506,15 +541,17 @@ export async function fetchAndStoreLiveJobs(): Promise<LiveFetchResult> {
     himalayas: himalayas.length,
     workingnomads: nomads.length,
     jobicy: jobicy.length,
-    adzuna_za: adzunaSA?.length || 0,
-    adzuna_gb: adzunaUK?.length || 0,
-    adzuna_au: adzunaAU?.length || 0,
+    ...Object.fromEntries(
+      Object.entries(adzunaByCountry).map(([k, v]) => [`adzuna_${k}`, v.length]),
+    ),
   };
+
+  const allAdzuna = Object.values(adzunaByCountry).flat();
 
   const allLive = [
     ...remotive, ...remoteok, ...arbeitnow,
     ...muse, ...himalayas, ...nomads, ...jobicy,
-    ...(adzunaSA || []), ...(adzunaUK || []), ...(adzunaAU || []),
+    ...allAdzuna,
   ];
 
   log(
