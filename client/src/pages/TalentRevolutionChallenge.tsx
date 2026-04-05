@@ -36,10 +36,10 @@ function Counter({ end, duration = 2200, suffix = "", prefix = "" }: {
 }
 
 // ── Day-count since challenge start ──────────────────────────────────────────
-const CHALLENGE_START = new Date("2026-04-07T00:00:00+02:00");
+const CHALLENGE_START = new Date("2026-04-05T00:00:00+02:00");
 function getDayCount() {
   const now = new Date();
-  if (now < CHALLENGE_START) return 0;
+  if (now < CHALLENGE_START) return 1;
   const diff = now.getTime() - CHALLENGE_START.getTime();
   return Math.min(Math.floor(diff / 86400000) + 1, 30);
 }

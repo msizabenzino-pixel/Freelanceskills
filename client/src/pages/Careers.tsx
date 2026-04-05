@@ -18,7 +18,7 @@ const OPEN_ROLES = [
     location: "Cape Town / Remote",
     icon: Code,
     color: "bg-blue-100 dark:bg-blue-900/30 text-blue-600",
-    description: "Build the core marketplace platform — API design, React frontend, real-time notifications, and AI integrations. You'll own high-impact features used by 10,000+ users.",
+    description: "Build the core marketplace platform — API design, React frontend, real-time notifications, and AI integrations. You'll own high-impact features used by thousands of users.",
     skills: ["React", "TypeScript", "Node.js", "PostgreSQL", "Drizzle ORM", "Redis"],
     urgency: "Urgent"
   },
@@ -30,7 +30,7 @@ const OPEN_ROLES = [
     location: "Cape Town (Camps Bay office)",
     icon: Brain,
     color: "bg-purple-100 dark:bg-purple-900/30 text-purple-600",
-    description: "Power the Vuma AI super-agent — smart job matching, AI proposal generation, fraud detection, and the world's first Africa-first freelance intelligence engine.",
+    description: "Power the Vuma AI assistant — smart job matching, AI proposal generation, fraud detection, and an Africa-first freelance intelligence engine.",
     skills: ["Python", "OpenAI API", "LangChain", "Vector DBs", "Fine-tuning", "FastAPI"],
     urgency: "High Priority"
   },
@@ -42,7 +42,7 @@ const OPEN_ROLES = [
     location: "South Africa",
     icon: TrendingUp,
     color: "bg-amber-100 dark:bg-amber-900/30 text-amber-600",
-    description: "Own our entire growth funnel — from SEO and content to paid acquisition and referral loops. Target: 1 million registered users by 2028.",
+    description: "Own our growth funnel — from SEO and content to paid acquisition and referral loops. Target: 1 million registered users by 2031.",
     skills: ["SEO", "Google Ads", "Meta Ads", "Analytics", "Copywriting", "CRO"],
     urgency: null
   },
@@ -54,7 +54,7 @@ const OPEN_ROLES = [
     location: "South Africa",
     icon: Users,
     color: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600",
-    description: "Build and manage South Africa's largest freelance community. Produce the 480+ blog article roadmap. Host webinars, WhatsApp groups, and live Q&As.",
+    description: "Build and manage the freelance community. Produce the blog roadmap. Host webinars, WhatsApp groups, and live Q&As.",
     skills: ["Content Writing", "Community Building", "SA Market Knowledge", "Social Media", "Canva"],
     urgency: null
   },
@@ -66,7 +66,7 @@ const OPEN_ROLES = [
     location: "Johannesburg / Cape Town",
     icon: Headphones,
     color: "bg-rose-100 dark:bg-rose-900/30 text-rose-600",
-    description: "Be the first voice our clients and freelancers hear. Resolve disputes, onboard power users, and build the SA freelance community's trust in the platform.",
+    description: "Be the first voice our clients and freelancers hear. Resolve disputes, onboard power users, and build trust in the platform.",
     skills: ["Customer Service", "Conflict Resolution", "CRM Tools", "Empathy", "SA Languages a plus"],
     urgency: null
   },
@@ -78,7 +78,7 @@ const OPEN_ROLES = [
     location: "South Africa",
     icon: GraduationCap,
     color: "bg-teal-100 dark:bg-teal-900/30 text-teal-600",
-    description: "Design the 50+ AI upskilling courses that will transform township plumbers and unemployed graduates into digital economy earners. Africa's most impactful learning content.",
+    description: "Design the AI upskilling courses that help more people earn in the digital economy. Build impactful learning content for Africa.",
     skills: ["Instructional Design", "AI Knowledge", "Video Production", "LMS Tools", "SA Context"],
     urgency: null
   },
@@ -110,9 +110,9 @@ export default function Careers() {
       <Navbar />
 
       {/* Hero */}
-      <section className="pt-32 pb-20 bg-gradient-to-br from-primary via-primary/90 to-primary/70 text-white relative overflow-hidden">
+      <section className="pt-32 pb-20 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-accent/10 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3 pointer-events-none" />
         <div className="container mx-auto px-4 md:px-6 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
