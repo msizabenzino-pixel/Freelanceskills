@@ -215,12 +215,12 @@ async function fetchArbeitnow(): Promise<InsertAggregatedJob[]> {
 }
 
 // ── 4. The Muse ───────────────────────────────────────────────────────────────
-// Free, no auth required. 20 jobs per page, paginate 5 pages = up to 100 jobs.
+// Free, no auth required. 20 jobs per page, paginate 15 pages = up to 300 jobs.
 
 async function fetchTheMuse(): Promise<InsertAggregatedJob[]> {
   const allJobs: InsertAggregatedJob[] = [];
   try {
-    for (let page = 0; page < 5; page++) {
+    for (let page = 0; page < 15; page++) {
       const res = await fetch(
         `https://www.themuse.com/api/public/jobs?page=${page}&descending=true`,
         { signal: AbortSignal.timeout(15000) },
@@ -345,6 +345,7 @@ async function fetchWorkingNomads(): Promise<InsertAggregatedJob[]> {
 async function fetchAdzunaCountry(
   country: string,
   countryLabel: string,
+  maxPages = 10,
 ): Promise<InsertAggregatedJob[]> {
   const appId = process.env.ADZUNA_APP_ID;
   const appKey = process.env.ADZUNA_APP_KEY;
@@ -352,7 +353,7 @@ async function fetchAdzunaCountry(
 
   const allJobs: InsertAggregatedJob[] = [];
   try {
-    for (let page = 1; page <= 4; page++) {
+    for (let page = 1; page <= maxPages; page++) {
       const url = `https://api.adzuna.com/v1/api/jobs/${country}/search/${page}?app_id=${appId}&app_key=${appKey}&results_per_page=50&content-type=application/json&sort_by=date`;
       const res = await fetch(url, { signal: AbortSignal.timeout(15000) });
       if (!res.ok) break;
@@ -412,8 +413,8 @@ export async function fetchAndStoreLiveJobs(): Promise<LiveFetchResult> {
       fetchTheMuse(),
       fetchHimalayas(),
       fetchWorkingNomads(),
-      fetchAdzunaCountry("za", "South Africa"),
-      fetchAdzunaCountry("ng", "Nigeria"),
+      fetchAdzunaCountry("za", "South Africa", 10),
+      fetchAdzunaCountry("ng", "Nigeria", 4),
     ]);
 
   const sourceCounts: Record<string, number> = {
