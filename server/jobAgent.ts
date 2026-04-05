@@ -737,6 +737,15 @@ export async function getAgentStats() {
     return acc;
   }, {} as Record<string, number>);
 
+  // Country-level counts for all non-SA African countries
+  const OTHER_COUNTRIES = ["Nigeria","Kenya","Ghana","Egypt","Morocco","Ethiopia","Tanzania","Uganda","Rwanda","Senegal","Côte d'Ivoire","Zimbabwe","Zambia","Botswana","Namibia","Mozambique"];
+  const byCountry: Record<string, number> = {};
+  // SA count = sum of provinces
+  byCountry["South Africa"] = SA_PROVINCES.reduce((s, p) => s + (byProvince[p] || 0), 0);
+  for (const country of OTHER_COUNTRIES) {
+    byCountry[country] = allJobs.filter(j => (j as any).country === country).length;
+  }
+
   const byCategory = CATEGORIES.reduce((acc, c) => {
     const count = allJobs.filter(j => j.category === c).length;
     if (count > 0) acc[c] = count;
@@ -751,6 +760,7 @@ export async function getAgentStats() {
     avgScore,
     bySource,
     byProvince,
+    byCountry,
     byCategory,
     lastUpdated: new Date().toISOString(),
   };

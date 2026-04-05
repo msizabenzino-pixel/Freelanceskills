@@ -14,12 +14,13 @@ export function registerAggregatedJobRoutes(app: Express) {
   app.get("/api/aggregated-jobs", async (req: Request, res: Response) => {
     try {
       const {
-        province, category, source, jobType, experienceLevel,
+        province, country, category, source, jobType, experienceLevel,
         isUrgent, isRemote, search, limit,
       } = req.query as Record<string, string>;
 
       const jobs = await storage.searchAggregatedJobs({
         province: province || undefined,
+        country: country || undefined,
         category: category || undefined,
         source: source || undefined,
         jobType: jobType || undefined,

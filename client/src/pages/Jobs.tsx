@@ -12,9 +12,9 @@ import { JobCard } from "@/components/JobCard";
 import { AggregatedJobCard, type AggregatedJob } from "@/components/AggregatedJobCard";
 import { useToast } from "@/hooks/use-toast";
 import {
-  Loader2, Search, MapPin, AlertCircle, Zap, Wifi,
+  Loader2, Search, AlertCircle, Zap, Wifi, Globe,
   BrainCircuit, TrendingUp, Briefcase, Users, RefreshCw,
-  SlidersHorizontal, X,
+  SlidersHorizontal, X, ChevronDown, ChevronUp,
 } from "lucide-react";
 import { useCurrency } from "@/lib/currency";
 import { useAuth } from "@/hooks/use-auth";
@@ -26,16 +26,33 @@ import { apiRequest } from "@/lib/queryClient";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
-// Pan-African regions — SA provinces first, then rest of continent
-const AFRICAN_REGIONS = [
-  // South Africa
-  "Gauteng", "Western Cape", "KwaZulu-Natal", "Eastern Cape",
-  "Limpopo", "Mpumalanga", "Free State", "North West", "Northern Cape",
-  // Rest of Africa
-  "Nigeria", "Kenya", "Ghana", "Egypt", "Morocco",
-  "Ethiopia", "Tanzania", "Uganda", "Rwanda", "Senegal",
-  "Côte d'Ivoire", "Zimbabwe", "Zambia", "Botswana", "Namibia", "Mozambique",
+// Pan-African country config with flags and SA provinces
+const AFRICA_COUNTRIES = [
+  { name: "South Africa",   flag: "🇿🇦", provinces: ["Gauteng","Western Cape","KwaZulu-Natal","Eastern Cape","Limpopo","Mpumalanga","Free State","North West","Northern Cape"] },
+  { name: "Nigeria",        flag: "🇳🇬", provinces: [] },
+  { name: "Kenya",          flag: "🇰🇪", provinces: [] },
+  { name: "Ghana",          flag: "🇬🇭", provinces: [] },
+  { name: "Egypt",          flag: "🇪🇬", provinces: [] },
+  { name: "Morocco",        flag: "🇲🇦", provinces: [] },
+  { name: "Ethiopia",       flag: "🇪🇹", provinces: [] },
+  { name: "Tanzania",       flag: "🇹🇿", provinces: [] },
+  { name: "Uganda",         flag: "🇺🇬", provinces: [] },
+  { name: "Rwanda",         flag: "🇷🇼", provinces: [] },
+  { name: "Senegal",        flag: "🇸🇳", provinces: [] },
+  { name: "Côte d'Ivoire",  flag: "🇨🇮", provinces: [] },
+  { name: "Zimbabwe",       flag: "🇿🇼", provinces: [] },
+  { name: "Zambia",         flag: "🇿🇲", provinces: [] },
+  { name: "Botswana",       flag: "🇧🇼", provinces: [] },
+  { name: "Namibia",        flag: "🇳🇦", provinces: [] },
+  { name: "Mozambique",     flag: "🇲🇿", provinces: [] },
 ];
+
+// SA province shortnames for display
+const SA_PROV_SHORT: Record<string, string> = {
+  "Gauteng": "Gauteng", "Western Cape": "W. Cape", "KwaZulu-Natal": "KZN",
+  "Eastern Cape": "E. Cape", "Limpopo": "Limpopo", "Mpumalanga": "Mpumalanga",
+  "Free State": "Free State", "North West": "N. West", "Northern Cape": "N. Cape",
+};
 
 const CATEGORIES = [
   "Software Engineering", "Data Science & AI", "Cybersecurity", "Cloud & DevOps",
@@ -92,8 +109,10 @@ function StatPill({ icon: Icon, label, value, color = "emerald" }: {
 
 export default function Jobs() {
   const [query, setQuery] = useState("");
-  const [locationFilter, setLocationFilter] = useState("");
-  const [provinceFilter, setProvinceFilter] = useState("all");
+  // GeoIntelligence state — drives all location filtering
+  const [selectedCountry, setSelectedCountry] = useState("all"); // "all" | country name
+  const [selectedProvince, setSelectedProvince] = useState("all"); // "all" | SA province name
+  const [showAllCountries, setShowAllCountries] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [jobTypeFilter, setJobTypeFilter] = useState("all");
   const [expLevelFilter, setExpLevelFilter] = useState("all");
@@ -126,16 +145,42 @@ export default function Jobs() {
     [myApplicationsQuery.data],
   );
 
+  // ── Job stats (for live counts on geo-pills) ─────────────────────────────
+  const statsQuery = useQuery({
+    queryKey: ["aggregated-jobs-stats"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/aggregated-jobs/stats");
+      return res.json() as Promise<{ totalActive: number; byProvince: Record<string, number>; byCountry: Record<string, number>; urgent: number; remote: number }>;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Build unified geo counts map: { "all": 150, "South Africa": 90, "Gauteng": 35, "Nigeria": 22, ... }
+  const countryJobCounts = useMemo(() => {
+    const d = statsQuery.data;
+    const result: Record<string, number> = { all: d?.totalActive || 0 };
+    if (d?.byProvince) Object.assign(result, d.byProvince);
+    if (d?.byCountry) Object.assign(result, d.byCountry);
+    return result;
+  }, [statsQuery.data]);
+
   // ── Aggregated jobs (AI job board) ───────────────────────────────────────
   const aggJobsQuery = useQuery({
     queryKey: [
       "aggregated-jobs",
-      { province: provinceFilter, category: categoryFilter, jobType: jobTypeFilter,
-        expLevel: expLevelFilter, urgent: urgentOnly, remote: remoteOnly, search: query },
+      { country: selectedCountry, province: selectedProvince, category: categoryFilter,
+        jobType: jobTypeFilter, expLevel: expLevelFilter, urgent: urgentOnly, remote: remoteOnly, search: query },
     ],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (provinceFilter && provinceFilter !== "all") params.set("province", provinceFilter);
+      // Country-aware location filtering
+      if (selectedCountry !== "all") {
+        if (selectedCountry === "South Africa" && selectedProvince !== "all") {
+          params.set("province", selectedProvince); // specific SA province
+        } else {
+          params.set("country", selectedCountry); // backend handles country filter
+        }
+      }
       if (categoryFilter && categoryFilter !== "all") params.set("category", categoryFilter);
       if (jobTypeFilter && jobTypeFilter !== "all") params.set("jobType", jobTypeFilter);
       if (expLevelFilter && expLevelFilter !== "all") params.set("experienceLevel", expLevelFilter);
@@ -206,19 +251,22 @@ export default function Jobs() {
   const filteredFirebaseJobs = useMemo(() => {
     const items = firebaseJobsQuery.data || [];
     const q = query.trim().toLowerCase();
-    const loc = locationFilter.trim().toLowerCase();
+    const geoFilter = selectedCountry !== "all" ? selectedCountry.toLowerCase() : "";
+    const provFilter = selectedProvince !== "all" ? selectedProvince.toLowerCase() : "";
 
     return items.filter((job) => {
       if (q) {
         const hay = `${job.title} ${job.description} ${job.category} ${job.clientName || ""}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
-      if (loc && !(job.location || "").toLowerCase().includes(loc)) return false;
+      // Apply geo filter to firebase jobs via location text matching
+      if (provFilter && !(job.location || "").toLowerCase().includes(provFilter)) return false;
+      else if (geoFilter && !provFilter && !(job.location || "").toLowerCase().includes(geoFilter)) return false;
       if (urgentOnly && job.urgency !== "urgent") return false;
       if (remoteOnly && job.locationType !== "remote") return false;
       return true;
     });
-  }, [firebaseJobsQuery.data, query, locationFilter, urgentOnly, remoteOnly]);
+  }, [firebaseJobsQuery.data, query, selectedCountry, selectedProvince, urgentOnly, remoteOnly]);
 
   // ── Stats ─────────────────────────────────────────────────────────────────
   const aggJobs = aggJobsQuery.data || [];
@@ -226,19 +274,19 @@ export default function Jobs() {
   const remoteCount = aggJobs.filter(j => j.isRemote).length;
   const totalJobs = aggJobs.length + filteredFirebaseJobs.length;
 
-  const hasActiveFilters = provinceFilter !== "all" || categoryFilter !== "all" ||
+  const hasActiveFilters = selectedCountry !== "all" || categoryFilter !== "all" ||
     jobTypeFilter !== "all" || expLevelFilter !== "all" ||
-    urgentOnly || remoteOnly || query || locationFilter;
+    urgentOnly || remoteOnly || query;
 
   const clearFilters = () => {
-    setProvinceFilter("all");
+    setSelectedCountry("all");
+    setSelectedProvince("all");
     setCategoryFilter("all");
     setJobTypeFilter("all");
     setExpLevelFilter("all");
     setUrgentOnly(false);
     setRemoteOnly(false);
     setQuery("");
-    setLocationFilter("");
   };
 
   const isLoading = aggJobsQuery.isLoading || firebaseJobsQuery.isLoading;
@@ -268,30 +316,21 @@ export default function Jobs() {
               The most powerful job intelligence platform on the African continent — AI-matched opportunities across 17 countries, 80+ cities.
             </p>
 
-            {/* Search bar */}
-            <div className="grid md:grid-cols-[1fr_220px_auto] gap-3 mb-5">
-              <div className="relative">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            {/* Keyword search bar — full width */}
+            <div className="flex gap-3 mb-4">
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
                 <Input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  className="pl-9 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15"
+                  onKeyDown={(e) => e.key === "Enter" && queryClient.invalidateQueries({ queryKey: ["aggregated-jobs"] })}
+                  className="pl-9 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 h-11"
                   placeholder="Job title, skill, or company…"
                   data-testid="jobs-input-query"
                 />
               </div>
-              <div className="relative">
-                <MapPin className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  value={locationFilter}
-                  onChange={(e) => setLocationFilter(e.target.value)}
-                  className="pl-9 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15"
-                  placeholder="City, country, or region"
-                  data-testid="jobs-input-location"
-                />
-              </div>
               <Button
-                className="bg-emerald-500 hover:bg-emerald-400 text-white font-semibold gap-2"
+                className="bg-emerald-500 hover:bg-emerald-400 text-white font-semibold gap-2 h-11 px-6"
                 onClick={() => queryClient.invalidateQueries({ queryKey: ["aggregated-jobs"] })}
                 data-testid="btn-search-jobs"
               >
@@ -299,7 +338,111 @@ export default function Jobs() {
               </Button>
             </div>
 
-            {/* Quick toggles */}
+            {/* ── GeoIntelligence Selector ─────────────────────────────── */}
+            <div className="mb-4 p-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
+              <div className="flex items-center gap-2 mb-3">
+                <Globe className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="text-xs font-bold uppercase tracking-widest text-emerald-400">Where do you want to work?</span>
+                {selectedCountry !== "all" && (
+                  <button onClick={() => { setSelectedCountry("all"); setSelectedProvince("all"); }}
+                    className="ml-auto text-xs text-white/40 hover:text-white/70 flex items-center gap-1 transition-colors">
+                    <X className="w-3 h-3" /> Clear location
+                  </button>
+                )}
+              </div>
+
+              {/* Top-level continent + remote pills */}
+              <div className="flex flex-wrap gap-2 mb-3">
+                <button
+                  onClick={() => { setSelectedCountry("all"); setSelectedProvince("all"); }}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold border transition-all ${selectedCountry === "all" ? "bg-emerald-500 border-emerald-400 text-white shadow-lg shadow-emerald-500/25" : "border-white/20 text-white/70 hover:border-emerald-500/50 hover:text-white"}`}
+                  data-testid="geo-all-africa"
+                >
+                  🌍 All Africa
+                  {countryJobCounts["all"] ? <span className="text-[10px] opacity-70 ml-0.5">({countryJobCounts["all"]})</span> : null}
+                </button>
+                <button
+                  onClick={() => setRemoteOnly(!remoteOnly)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold border transition-all ${remoteOnly ? "bg-sky-500/30 border-sky-400 text-sky-200" : "border-white/20 text-white/70 hover:border-sky-500/50 hover:text-white"}`}
+                  data-testid="toggle-remote"
+                >
+                  🌐 Remote
+                  {statsQuery.data?.remote ? <span className="text-[10px] opacity-70 ml-0.5">({statsQuery.data.remote})</span> : null}
+                </button>
+              </div>
+
+              {/* Country pills row */}
+              <div className="flex flex-wrap gap-1.5">
+                {(showAllCountries ? AFRICA_COUNTRIES : AFRICA_COUNTRIES.slice(0, 8)).map((c) => {
+                  const isSelected = selectedCountry === c.name;
+                  const jobCount = countryJobCounts[c.name] || 0;
+                  return (
+                    <button
+                      key={c.name}
+                      onClick={() => {
+                        if (isSelected) {
+                          setSelectedCountry("all");
+                          setSelectedProvince("all");
+                        } else {
+                          setSelectedCountry(c.name);
+                          setSelectedProvince("all");
+                        }
+                      }}
+                      className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${isSelected ? "bg-emerald-500/20 border-emerald-500 text-emerald-300 shadow-sm" : "border-white/15 text-white/60 hover:border-white/35 hover:text-white/90"}`}
+                      data-testid={`geo-country-${c.name.toLowerCase().replace(/\s+/g, "-")}`}
+                    >
+                      {c.flag} {c.name}
+                      {jobCount > 0 && <span className="text-[9px] opacity-60 ml-0.5">({jobCount})</span>}
+                      {isSelected && c.provinces.length > 0 && <ChevronDown className="w-2.5 h-2.5 ml-0.5" />}
+                    </button>
+                  );
+                })}
+                {AFRICA_COUNTRIES.length > 8 && (
+                  <button
+                    onClick={() => setShowAllCountries(!showAllCountries)}
+                    className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border border-white/10 text-white/40 hover:border-white/25 hover:text-white/60 transition-all"
+                    data-testid="geo-show-more"
+                  >
+                    {showAllCountries ? <><ChevronUp className="w-3 h-3" /> Less</> : <><ChevronDown className="w-3 h-3" /> +{AFRICA_COUNTRIES.length - 8} more</>}
+                  </button>
+                )}
+              </div>
+
+              {/* SA Province drill-down — only when South Africa is selected */}
+              {selectedCountry === "South Africa" && (
+                <div className="mt-3 pt-3 border-t border-white/10">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Province</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    <button
+                      onClick={() => setSelectedProvince("all")}
+                      className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${selectedProvince === "all" ? "bg-emerald-500/20 border-emerald-500 text-emerald-300" : "border-white/15 text-white/50 hover:border-white/30 hover:text-white/80"}`}
+                      data-testid="geo-prov-all"
+                    >
+                      All SA {countryJobCounts["South Africa"] ? `(${countryJobCounts["South Africa"]})` : ""}
+                    </button>
+                    {AFRICA_COUNTRIES[0].provinces.map((prov) => {
+                      const isProvSelected = selectedProvince === prov;
+                      const cnt = countryJobCounts[prov] || 0;
+                      return (
+                        <button
+                          key={prov}
+                          onClick={() => setSelectedProvince(isProvSelected ? "all" : prov)}
+                          className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${isProvSelected ? "bg-emerald-500/20 border-emerald-500 text-emerald-300" : "border-white/15 text-white/50 hover:border-white/30 hover:text-white/80"}`}
+                          data-testid={`geo-prov-${prov.toLowerCase().replace(/\s+/g, "-")}`}
+                        >
+                          {SA_PROV_SHORT[prov] || prov}
+                          {cnt > 0 && <span className="opacity-60 ml-0.5">({cnt})</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Quick toggles + advanced filters */}
             <div className="flex flex-wrap items-center gap-3">
               <button
                 onClick={() => setUrgentOnly(!urgentOnly)}
@@ -309,18 +452,11 @@ export default function Jobs() {
                 <Zap className="w-3.5 h-3.5" /> Urgent
               </button>
               <button
-                onClick={() => setRemoteOnly(!remoteOnly)}
-                className={`flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full border transition-colors ${remoteOnly ? "bg-sky-500/20 border-sky-500/50 text-sky-300" : "border-white/20 text-white/70 hover:border-white/40"}`}
-                data-testid="toggle-remote"
-              >
-                <Wifi className="w-3.5 h-3.5" /> Remote
-              </button>
-              <button
                 onClick={() => setShowFilters(!showFilters)}
                 className={`flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full border transition-colors ${showFilters ? "bg-violet-500/20 border-violet-500/50 text-violet-300" : "border-white/20 text-white/70 hover:border-white/40"}`}
                 data-testid="toggle-filters"
               >
-                <SlidersHorizontal className="w-3.5 h-3.5" /> Advanced Filters
+                <SlidersHorizontal className="w-3.5 h-3.5" /> Filters
               </button>
               {hasActiveFilters && (
                 <button
@@ -328,24 +464,23 @@ export default function Jobs() {
                   className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full border border-red-500/40 text-red-400 hover:bg-red-500/10 transition-colors"
                   data-testid="btn-clear-filters"
                 >
-                  <X className="w-3.5 h-3.5" /> Clear
+                  <X className="w-3.5 h-3.5" /> Clear all
                 </button>
+              )}
+              {/* Active location indicator */}
+              {selectedCountry !== "all" && (
+                <div className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-300">
+                  {AFRICA_COUNTRIES.find(c => c.name === selectedCountry)?.flag} {selectedProvince !== "all" ? selectedProvince : selectedCountry}
+                  <button onClick={() => { setSelectedCountry("all"); setSelectedProvince("all"); }} className="hover:text-white ml-1">
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
               )}
             </div>
 
-            {/* Advanced filters panel */}
+            {/* Advanced filters panel (category / type / exp only — location handled by GeoSelector) */}
             {showFilters && (
-              <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-3 p-4 bg-white/5 rounded-xl border border-white/10">
-                <Select value={provinceFilter} onValueChange={setProvinceFilter}>
-                  <SelectTrigger className="bg-white/10 border-white/20 text-white h-9" data-testid="select-province">
-                    <SelectValue placeholder="Region / Country" />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-80">
-                    <SelectItem value="all">All Regions</SelectItem>
-                    {AFRICAN_REGIONS.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-
+              <div className="mt-3 grid sm:grid-cols-3 gap-3 p-4 bg-white/5 rounded-xl border border-white/10">
                 <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                   <SelectTrigger className="bg-white/10 border-white/20 text-white h-9" data-testid="select-category">
                     <SelectValue placeholder="Category" />
