@@ -1,0 +1,31 @@
+You are the undisputed world #1 principal frontend architect and conversion perfectionist. Your standards are merciless, untouchable, and non-negotiable. “Best or nothing” is the only acceptable outcome. Anything less than 12/10 — beyond any competitor on Earth in 2026 — is total and immediate failure. You will rewrite until freelanceskills.net is the single best freelance marketplace on the planet.
+
+Perform a complete A-Z nuclear rebuild of the three core pages for https://freelanceskills.net using EVERY single requirement we have developed over all these days.
+
+MANDATORY RULES — ZERO EXCEPTIONS, ZERO TRACES, ZERO MERCY:
+- 100% platform-first and mission-driven on every single page. DELETE EVERY TRACE of any founder, person, or personal story: no "BM Founder", no "Ben Msiza", no "11 Years Eskom", no GCC-certified, no B-Tech, no UNISA, no personal photo, no quote, no "I resigned", no "Read the Full Story", no CIPC tied to an individual.
+- Remove ALL pre-launch elements on every page: no countdown timers, no "Launching Soon", no "07 April 2026", no "Some functionalities are not going to work fully until launch day", no "Got it, continue browsing" banners, no temporary overlays.
+- Premium consistent dark theme across all pages: deep navy/slate base (#0f172a), emerald accent (#10b981).
+- Use Tailwind CSS 3.4+ via CDN only.
+- Absolute 100% mobile-first responsiveness (320px to 4K) — native-app feel, 48px+ touch targets, no layout shifts, no overflow, buttery smooth on every device.
+- Fully functional PWA install promotion on every page (beforeinstallprompt API + smart fallback modal with crystal-clear 2-step instructions for Chrome/Android and Safari/iOS).
+- Consistent sticky navbar and minimal footer on ALL pages (Home, Browse Talent, Post a Job, About, How it Works, Academy, Pricing). Fully working slide-in mobile menu with backdrop and smooth close.
+- Core vision: "The Future of Skilled Work in Africa and Beyond" + skills-first AI-powered marketplace connecting verified African talent with businesses, 10% transparent fees, PayFast escrow, POPIA compliant, 24/7 SA support, empower 1 million Africans by 2031.
+
+OUTPUT EXACTLY THESE THREE COMPLETE PRODUCTION-READY HTML FILES (clearly labeled):
+
+1. <!-- FILE: index.html --> — Elite homepage with powerful full-viewport hero, trust bar with live stats (47K+ freelancers, R2.3B+ escrow, 92K+ projects, 4.9★), Why FreelanceSkills grid, How It Works, Popular Skills/Categories, Impact & Trust section, Premium PWA promotion, final CTA.
+2. <!-- FILE: about.html --> — Mission-first About page with hero, vision paragraphs, mission cards, Nuclear Vetting System, Why Choose grid, trust & impact stats, final CTA.
+3. <!-- FILE: login.html --> — Beautiful split-screen login (inspiring left benefit panel + premium right form card). Social logins first (Google, Apple, LinkedIn), email/password form with show/hide, remember me, forgot password, full PWA section below form, trust bar.
+
+For every file:
+- Perfect accessibility, hover/focus states, micro-animations, and lightning-fast loading.
+- Make every page feel confident, live, and 12/10 premium — 10× better than Upwork, Fiverr, or Toptal in trust, clarity, conversion, and mobile experience.
+
+COMMAND IMPLEMENTATION RIGHT AFTER GENERATION:
+- Self-audit every file ruthlessly: confirm zero founder content, zero pre-launch elements, 100% responsiveness at every breakpoint, PWA button works perfectly on all browsers, navbar/footer identical everywhere, no console errors.
+- This must be the single best freelance marketplace site on the planet — untouchable, conversion-optimized, and ready to dominate from the first second a visitor lands.
+
+Output ONLY the three complete HTML files. Each must start with <!DOCTYPE html> and end with </html>. Clearly label them with the comment <!-- FILE: filename.html --> at the top of each. No explanations, no intro text, no extra comments.
+
+Generate now with untouchable nuclear precision.
