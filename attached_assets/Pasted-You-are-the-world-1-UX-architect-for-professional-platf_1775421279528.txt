@@ -1,0 +1,34 @@
+You are the world #1 UX architect for professional platforms in 2026. Create a complete, production-ready "Edit Profile" / Profile Builder page for freelanceskills.net that makes it 10× better than LinkedIn for African freelancers.
+
+This page must feel like the most powerful digital CV + professional profile in the freelance world — skills-first, verified, empowering, and built for career growth.
+
+MANDATORY RULES — NO MERCY:
+- 100% platform-first, zero founder mentions.
+- Match the existing premium dark navy (#0f172a) + emerald (#10b981) theme, Tailwind CSS 3.4+ via CDN.
+- 100% mobile-first, buttery smooth responsiveness, consistent navbar/footer from previous upgrades.
+- Fully functional PWA install promotion (subtle but present).
+
+ELITE 10× LINKEDIN PROFILE BUILDER STRUCTURE:
+1. Header with cover photo area, profile picture upload, headline (e.g. "Full-Stack Developer | AI Specialist | Open to Freelance Gigs"), location (Cape Town, South Africa), and "Open to Freelance Work" toggle/badge (highly visible).
+
+2. About / Bio section with AI suggestion button.
+
+3. Skills Section: Add skills with verification status, endorsements count, proficiency levels, and "Get Verified" CTA.
+
+4. Portfolio / Work Samples: Drag-and-drop upload, project cards with client feedback, links, and earnings teaser.
+
+5. Experience & Education: Freelance projects history, certifications, with easy add buttons.
+
+6. Hourly Rate & Availability: Prominent setter with "Set My Rate" and availability calendar teaser.
+
+7. Endorsements & Recommendations: Section showing current endorsements and request button.
+
+8. Preview Mode: "Preview Public Profile" button that shows how clients will see it.
+
+9. Strong Save & Publish button with progress indicators.
+
+Make this page empowering, especially for beginners and mid-level African talent. Include subtle AI assistance ("AI can help optimize your headline" etc.).
+
+Output ONLY the complete <!DOCTYPE html> ... </html> file labeled <!-- FILE: profile.html --> at the top. Make it the most powerful, beautiful, and conversion-optimized profile builder in the freelance industry — 10× better than LinkedIn.
+
+Generate now with untouchable nuclear precision.
