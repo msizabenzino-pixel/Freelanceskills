@@ -1,248 +1,64 @@
 import { Navbar } from "@/components/Navbar";
-import { Hero } from "@/components/Hero";
-import { JobCard } from "@/components/JobCard";
-import { FreelancerCard } from "@/components/FreelancerCard";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users, Gift, Building2, Brain, Link2, Wallet, BarChart3, Leaf, Globe, ChevronRight, ShieldCheck, Lock, FileText, Headphones, Star, Quote, Send, Zap, Bell, Newspaper, Mail, Clock, CheckCheck, Activity, X, Flame, Cpu, MapPin } from "lucide-react";
+import {
+  ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users,
+  Gift, Building2, Brain, Link2, Wallet, BarChart3, Leaf, Globe, ShieldCheck,
+  Lock, FileText, Headphones, Star, Quote, Send, Zap, Bell, Clock, CheckCheck,
+  Activity, X, Flame, Cpu, MapPin, Briefcase, Search, ChevronRight, Play,
+  BadgeCheck, Banknote, Award, Target, Rocket, ExternalLink
+} from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { useCurrency } from "@/lib/currency";
-import { SERVICE_CATEGORIES } from "@shared/categories";
-import { Code, Wrench, Heart, Hammer, Home as HomeIcon, Waves, Car, Shield as ShieldIcon, Palette, PenTool, Briefcase, PartyPopper, Sparkles as SparklesIcon, Bot } from "lucide-react";
 import { useState, useEffect, useRef, type FormEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { motion, AnimatePresence } from "framer-motion";
 
-// ── Instant Apply Modal ────────────────────────────────────────────────────────
-function InstantApplyModal({ job, onClose }: { job: { title: string; company: string; budget: string; location: string } | null; onClose: () => void }) {
-  const [step, setStep] = useState<"form" | "success">("form");
-  const [note, setNote] = useState("");
-  const confettiRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (step === "success" && confettiRef.current) {
-      const colors = ["#10b981", "#f59e0b", "#3b82f6", "#8b5cf6", "#ef4444"];
-      for (let i = 0; i < 80; i++) {
-        const el = document.createElement("div");
-        el.style.cssText = `
-          position:absolute;width:8px;height:8px;border-radius:2px;
-          background:${colors[i % colors.length]};
-          left:${Math.random() * 100}%;
-          top:${Math.random() * 30}%;
-          animation:confettiFall ${1 + Math.random() * 2}s ease-out forwards;
-          transform:rotate(${Math.random() * 360}deg);
-          animation-delay:${Math.random() * 0.5}s;
-        `;
-        confettiRef.current.appendChild(el);
-      }
-    }
-  }, [step]);
-
-  if (!job) return null;
-
-  return (
-    <AnimatePresence>
-      <motion.div
-        className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onClose}
-        data-testid="modal-instant-apply"
-      >
-        <motion.div
-          className="relative w-full max-w-md bg-card border border-border rounded-2xl shadow-2xl overflow-hidden"
-          initial={{ y: 60, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 60, opacity: 0 }}
-          onClick={e => e.stopPropagation()}
-        >
-          {step === "success" ? (
-            <div ref={confettiRef} className="relative p-8 text-center overflow-hidden">
-              <style>{`@keyframes confettiFall{to{transform:translateY(200px) rotate(720deg);opacity:0;}}`}</style>
-              <div className="text-5xl mb-4">🎉</div>
-              <h3 className="text-2xl font-black text-foreground mb-2" data-testid="text-apply-success-title">Application Sent!</h3>
-              <p className="text-muted-foreground text-sm mb-2">Your proposal for <span className="font-semibold text-foreground">{job.title}</span> has been sent.</p>
-              <p className="text-emerald-500 text-xs font-semibold mb-6">Verified freelancers get responses 3× faster. Start your vetting →</p>
-              <div className="flex gap-3">
-                <Link href="/vetting" className="flex-1 py-3 rounded-xl bg-emerald-500 text-slate-950 font-bold text-sm text-center hover:bg-emerald-400 transition-all" data-testid="button-apply-success-verify">Get Verified</Link>
-                <button onClick={onClose} className="flex-1 py-3 rounded-xl border border-border text-sm font-semibold hover:bg-muted transition-all" data-testid="button-apply-success-close">Done</button>
-              </div>
-            </div>
-          ) : (
-            <div className="p-6">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h3 className="font-bold text-lg text-foreground leading-tight" data-testid="text-apply-modal-title">{job.title}</h3>
-                  <p className="text-sm text-muted-foreground">{job.company}</p>
-                </div>
-                <button onClick={onClose} className="p-1 rounded-lg hover:bg-muted transition-all" aria-label="Close" data-testid="button-apply-modal-close"><X className="w-5 h-5 text-muted-foreground" /></button>
-              </div>
-              <div className="flex gap-3 text-xs text-muted-foreground mb-5">
-                <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{job.location}</span>
-                <span className="flex items-center gap-1 text-emerald-600 font-semibold"><Flame className="w-3.5 h-3.5" />{job.budget}</span>
-              </div>
-              <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3 mb-5 flex items-start gap-3">
-                <Cpu className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
-                <div className="text-xs">
-                  <div className="font-semibold text-emerald-600 mb-0.5">AI Pre-filled Proposal</div>
-                  <div className="text-muted-foreground">Based on your profile, skills, and SA market rates. Edit before sending.</div>
-                </div>
-              </div>
-              <textarea
-                value={note}
-                onChange={e => setNote(e.target.value)}
-                className="w-full h-28 text-sm rounded-xl border border-border bg-muted/40 p-3 resize-none focus:outline-none focus:ring-2 focus:ring-primary/30 mb-4"
-                placeholder="Hi, I'm interested in this role. I have 5+ years experience in..."
-                data-testid="textarea-apply-proposal"
-              />
-              <button
-                onClick={() => { if (!note.trim()) setNote("Hi, I have the skills and availability to deliver this project on time and within budget. I'd love to discuss further."); setStep("success"); }}
-                className="w-full py-3.5 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-sm transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
-                data-testid="button-apply-submit"
-              >
-                <Send className="w-4 h-4" /> Send Application
-              </button>
-              <p className="text-xs text-muted-foreground text-center mt-3">Verified freelancers get 3× more interview invites</p>
-            </div>
-          )}
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
-  );
-}
-
-function PWAInstallButton() {
-  const [installState, setInstallState] = useState<"idle" | "available" | "installed" | "fallback">("idle");
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [showFallback, setShowFallback] = useState(false);
-
-  useEffect(() => {
-    const handler = (e: any) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-      setInstallState("available");
-    };
-    window.addEventListener("beforeinstallprompt", handler);
-    window.addEventListener("appinstalled", () => setInstallState("installed"));
-    return () => {
-      window.removeEventListener("beforeinstallprompt", handler);
-    };
-  }, []);
-
-  const handleInstall = async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === "accepted") setInstallState("installed");
-      setDeferredPrompt(null);
-    } else {
-      setShowFallback(true);
-    }
-  };
-
-  if (installState === "installed") {
-    return (
-      <div className="inline-flex items-center gap-3 px-6 py-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400">
-        <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
-        <span className="font-bold">App installed! Open from your home screen.</span>
-      </div>
-    );
-  }
-
-  return (
-    <>
-      <div className="flex flex-col sm:flex-row gap-3">
-        <button
-          onClick={handleInstall}
-          className="inline-flex items-center justify-center gap-2.5 px-7 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-base shadow-xl shadow-emerald-500/30 transition-all hover:scale-[1.02] active:scale-[0.98] min-h-[52px]"
-          data-testid="button-pwa-install"
-        >
-          <Zap className="w-5 h-5" />
-          Install FreelanceSkills App
-        </button>
-        <div className="flex flex-col justify-center">
-          <p className="text-white/45 text-xs">Free · No app store · Works offline</p>
-          <p className="text-white/30 text-xs">Android, iOS, Windows, Mac</p>
-        </div>
-      </div>
-      {showFallback && (
-        <div className="mt-4 p-4 rounded-xl bg-white/8 border border-white/15 text-white/75 text-sm">
-          <p className="font-semibold mb-2 text-white">How to install:</p>
-          <ul className="space-y-1 text-white/60 text-xs">
-            <li>• <strong className="text-white/80">Chrome/Android:</strong> Tap the menu (⋮) → "Add to Home Screen"</li>
-            <li>• <strong className="text-white/80">Safari/iOS:</strong> Tap Share (↑) → "Add to Home Screen"</li>
-            <li>• <strong className="text-white/80">Desktop:</strong> Click the install icon (⊕) in your browser address bar</li>
-          </ul>
-          <button onClick={() => setShowFallback(false)} className="mt-3 text-xs text-emerald-400 hover:text-emerald-300">Close</button>
-        </div>
-      )}
-    </>
-  );
-}
-
-const ICON_MAP: Record<string, any> = {
-  Code, Wrench, Heart, Hammer, Home: HomeIcon, Waves, Car, Shield: ShieldIcon, Palette, PenTool, 
-  Briefcase, PartyPopper, GraduationCap, TrendingUp, Sparkles: SparklesIcon, Bot
-};
-
+// ── Live Activity Ticker ───────────────────────────────────────────────────────
 const LIVE_ACTIVITIES = [
-  { emoji: "🔧", text: "Sipho from Soweto just hired a Plumber", time: "2m ago", color: "text-emerald-600" },
-  { emoji: "💰", text: "Lerato M. completed a Branding project · R4,500 earned", time: "5m ago", color: "text-blue-600" },
-  { emoji: "📋", text: "Johan D. posted a new tender worth R85,000", time: "8m ago", color: "text-amber-600" },
-  { emoji: "🎓", text: "Fatima P. from Durban just enrolled in AI Academy", time: "11m ago", color: "text-purple-600" },
-  { emoji: "⭐", text: "Elena R. received a 5-star review from FinTech client", time: "14m ago", color: "text-yellow-600" },
-  { emoji: "🤝", text: "David K. just closed a R22,000 mobile app contract", time: "17m ago", color: "text-primary" },
-  { emoji: "🆕", text: "Zanele M. from Cape Town just joined FreelanceSkills", time: "20m ago", color: "text-rose-600" },
-  { emoji: "💳", text: "Thabo N. received a ZAR payout of R12,500", time: "23m ago", color: "text-emerald-600" },
-  { emoji: "📝", text: "Nandi Z. won her first government tender · R45,000", time: "26m ago", color: "text-blue-600" },
-  { emoji: "🚀", text: "Kevin I. upgraded to Premium · profile views up 400%", time: "30m ago", color: "text-violet-600" },
+  { emoji: "🔧", text: "Sipho from Soweto just hired a Plumber", time: "2m ago" },
+  { emoji: "💰", text: "Lerato M. completed a Branding project · R4,500 earned", time: "5m ago" },
+  { emoji: "📋", text: "Johan D. posted a new tender worth R85,000", time: "8m ago" },
+  { emoji: "🎓", text: "Fatima P. from Durban enrolled in AI Academy", time: "11m ago" },
+  { emoji: "⭐", text: "Elena R. received a 5-star review from FinTech client", time: "14m ago" },
+  { emoji: "🤝", text: "David K. just closed a R22,000 mobile app contract", time: "17m ago" },
+  { emoji: "🆕", text: "Zanele M. from Cape Town just joined FreelanceSkills", time: "20m ago" },
+  { emoji: "💳", text: "Thabo N. received a ZAR payout of R12,500", time: "23m ago" },
+  { emoji: "📝", text: "Nandi Z. won her first government tender · R45,000", time: "26m ago" },
+  { emoji: "🚀", text: "Kevin I. upgraded to Premium · profile views up 400%", time: "30m ago" },
 ];
 
 function LiveActivityTicker() {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(true);
-
   useEffect(() => {
-    const interval = setInterval(() => {
+    const iv = setInterval(() => {
       setVisible(false);
-      setTimeout(() => {
-        setCurrentIndex((prev) => (prev + 1) % LIVE_ACTIVITIES.length);
-        setVisible(true);
-      }, 300);
+      setTimeout(() => { setIndex(p => (p + 1) % LIVE_ACTIVITIES.length); setVisible(true); }, 280);
     }, 4000);
-    return () => clearInterval(interval);
+    return () => clearInterval(iv);
   }, []);
-
-  const activity = LIVE_ACTIVITIES[currentIndex];
-
+  const a = LIVE_ACTIVITIES[index];
   return (
-    <div className="bg-emerald-50 dark:bg-emerald-950/30 border-b border-emerald-200 dark:border-emerald-900/50 py-2.5 px-4 overflow-hidden" aria-live="polite" aria-label="Live platform activity">
+    <div className="bg-emerald-950/60 border-b border-emerald-900/50 py-2.5 px-4 overflow-hidden" aria-live="polite">
       <div className="container mx-auto flex items-center justify-center gap-3">
         <div className="flex items-center gap-1.5 flex-shrink-0">
-          <span className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-600" />
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
           </span>
-          <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 hidden sm:inline">Live</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-emerald-400 hidden sm:inline">Live</span>
         </div>
         <AnimatePresence mode="wait">
           {visible && (
-            <motion.div
-              key={currentIndex}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.28 }}
-              className="flex items-center gap-2 text-sm"
-            >
-              <span>{activity.emoji}</span>
-              <span className="text-foreground/80 font-medium">{activity.text}</span>
-              <span className="text-muted-foreground text-xs flex-shrink-0">· {activity.time}</span>
+            <motion.div key={index} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }} transition={{ duration: 0.25 }}
+              className="flex items-center gap-2 text-sm">
+              <span>{a.emoji}</span>
+              <span className="text-white/80 font-medium">{a.text}</span>
+              <span className="text-white/35 text-xs flex-shrink-0">· {a.time}</span>
             </motion.div>
           )}
         </AnimatePresence>
@@ -251,93 +67,229 @@ function LiveActivityTicker() {
   );
 }
 
-function TrustStrip() {
+// ── Instant Apply Modal ────────────────────────────────────────────────────────
+function InstantApplyModal({ job, onClose }: { job: { title: string; company: string; budget: string; location: string } | null; onClose: () => void }) {
+  const [step, setStep] = useState<"form" | "success">("form");
+  const [note, setNote] = useState("");
+  const confettiRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (step === "success" && confettiRef.current) {
+      const colors = ["#10b981", "#f59e0b", "#3b82f6", "#8b5cf6"];
+      for (let i = 0; i < 60; i++) {
+        const el = document.createElement("div");
+        el.style.cssText = `position:absolute;width:7px;height:7px;border-radius:2px;background:${colors[i % colors.length]};left:${Math.random()*100}%;top:${Math.random()*30}%;animation:confettiFall ${1+Math.random()*2}s ease-out forwards;transform:rotate(${Math.random()*360}deg);animation-delay:${Math.random()*0.5}s;`;
+        confettiRef.current.appendChild(el);
+      }
+    }
+  }, [step]);
+  if (!job) return null;
   return (
-    <div className="py-5 bg-background border-b border-border" aria-label="Platform trust signals">
-      <div className="container mx-auto px-4 md:px-6">
-        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-          {[
-            { icon: ShieldCheck, label: "POPIA Compliant", color: "text-emerald-500" },
-            { icon: Lock, label: "Escrow Protected", color: "text-blue-500" },
-            { icon: Clock, label: "14-Day Money-Back", color: "text-amber-500" },
-            { icon: CheckCheck, label: "CIPC Registered", color: "text-violet-500" },
-            { icon: Shield, label: "ID Verified Talent", color: "text-primary" },
-            { icon: Activity, label: "48h Dispute Resolution", color: "text-rose-500" },
-          ].map(({ icon: Icon, label, color }, i) => (
-            <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground" data-testid={`trust-strip-${i}`}>
-              <Icon className={`w-4 h-4 ${color} flex-shrink-0`} aria-hidden="true" />
-              <span className="font-medium whitespace-nowrap">{label}</span>
+    <AnimatePresence>
+      <motion.div className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} data-testid="modal-instant-apply">
+        <motion.div className="relative w-full max-w-md bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden"
+          initial={{ y: 60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 60, opacity: 0 }} onClick={e => e.stopPropagation()}>
+          <style>{`@keyframes confettiFall{to{transform:translateY(200px) rotate(720deg);opacity:0;}}`}</style>
+          {step === "success" ? (
+            <div ref={confettiRef} className="relative p-8 text-center overflow-hidden">
+              <div className="text-5xl mb-4">🎉</div>
+              <h3 className="text-2xl font-black text-white mb-2" data-testid="text-apply-success-title">Application Sent!</h3>
+              <p className="text-slate-400 text-sm mb-2">Your proposal for <span className="font-semibold text-white">{job.title}</span> has been sent.</p>
+              <p className="text-emerald-400 text-xs font-semibold mb-6">Verified freelancers get responses 3× faster →</p>
+              <div className="flex gap-3">
+                <Link href="/vetting" className="flex-1 py-3 rounded-xl bg-emerald-500 text-slate-950 font-bold text-sm text-center hover:bg-emerald-400 transition-all" data-testid="button-apply-success-verify">Get Verified</Link>
+                <button onClick={onClose} className="flex-1 py-3 rounded-xl border border-slate-700 text-slate-300 text-sm font-semibold hover:bg-slate-800 transition-all" data-testid="button-apply-success-close">Done</button>
+              </div>
             </div>
+          ) : (
+            <div className="p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h3 className="font-bold text-lg text-white leading-tight" data-testid="text-apply-modal-title">{job.title}</h3>
+                  <p className="text-sm text-slate-400">{job.company}</p>
+                </div>
+                <button onClick={onClose} className="p-1 rounded-lg hover:bg-slate-800 transition-all" data-testid="button-apply-modal-close"><X className="w-5 h-5 text-slate-400" /></button>
+              </div>
+              <div className="flex gap-3 text-xs text-slate-400 mb-5">
+                <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{job.location}</span>
+                <span className="flex items-center gap-1 text-emerald-400 font-semibold"><Flame className="w-3.5 h-3.5" />{job.budget}</span>
+              </div>
+              <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 mb-5 flex items-start gap-3">
+                <Cpu className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                <div className="text-xs">
+                  <div className="font-semibold text-emerald-400 mb-0.5">AI Pre-filled Proposal</div>
+                  <div className="text-slate-400">Based on your profile, skills, and SA market rates.</div>
+                </div>
+              </div>
+              <textarea value={note} onChange={e => setNote(e.target.value)}
+                className="w-full h-24 text-sm rounded-xl border border-slate-700 bg-slate-800 text-white p-3 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500/30 mb-4 placeholder:text-slate-500"
+                placeholder="Hi, I'm interested in this role..." data-testid="textarea-apply-proposal" />
+              <button onClick={() => { if (!note.trim()) setNote("I have the skills and availability to deliver this project on time."); setStep("success"); }}
+                className="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-all flex items-center justify-center gap-2" data-testid="button-apply-submit">
+                <Send className="w-4 h-4" /> Send Application
+              </button>
+              <p className="text-xs text-slate-500 text-center mt-3">Verified freelancers get 3× more interview invites</p>
+            </div>
+          )}
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+// ── PWA Install Button ─────────────────────────────────────────────────────────
+function PWAInstallButton() {
+  const [installState, setInstallState] = useState<"idle" | "available" | "installed">("idle");
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showFallback, setShowFallback] = useState(false);
+  useEffect(() => {
+    const handler = (e: any) => { e.preventDefault(); setDeferredPrompt(e); setInstallState("available"); };
+    window.addEventListener("beforeinstallprompt", handler);
+    window.addEventListener("appinstalled", () => setInstallState("installed"));
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
+  const handleInstall = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === "accepted") setInstallState("installed");
+      setDeferredPrompt(null);
+    } else { setShowFallback(true); }
+  };
+  if (installState === "installed") return (
+    <div className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-sm font-bold">
+      <CheckCircle2 className="w-4 h-4" /> App installed! Open from your home screen.
+    </div>
+  );
+  return (
+    <>
+      <button onClick={handleInstall}
+        className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm shadow-lg shadow-emerald-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
+        data-testid="button-pwa-install">
+        <Zap className="w-4 h-4" /> Install the App — Free
+      </button>
+      {showFallback && (
+        <div className="mt-4 p-4 rounded-xl bg-white/5 border border-white/10 text-white/70 text-sm">
+          <p className="font-semibold mb-2 text-white">How to install:</p>
+          <ul className="space-y-1 text-white/50 text-xs">
+            <li>• <strong className="text-white/70">Chrome/Android:</strong> Menu (⋮) → "Add to Home Screen"</li>
+            <li>• <strong className="text-white/70">Safari/iOS:</strong> Share (↑) → "Add to Home Screen"</li>
+            <li>• <strong className="text-white/70">Desktop:</strong> Click install icon (⊕) in address bar</li>
+          </ul>
+          <button onClick={() => setShowFallback(false)} className="mt-3 text-xs text-emerald-400">Close</button>
+        </div>
+      )}
+    </>
+  );
+}
+
+// ── Animated Counter ──────────────────────────────────────────────────────────
+function AnimatedCounter({ value, duration = 1800 }: { value: number; duration?: number }) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    let start = 0; const end = value;
+    if (start === end) return;
+    const step = Math.max(10, duration / end * 2);
+    const inc = Math.ceil(end / (duration / step));
+    const timer = setInterval(() => {
+      start += inc;
+      if (start >= end) { setCount(end); clearInterval(timer); } else { setCount(start); }
+    }, step);
+    return () => clearInterval(timer);
+  }, [value, duration]);
+  return <span>{count.toLocaleString()}</span>;
+}
+
+// ── Real Job Card ──────────────────────────────────────────────────────────────
+function RealJobCard({ job, onApply }: { job: any; onApply: () => void }) {
+  const timeAgo = (dateStr: string) => {
+    if (!dateStr) return "Recently";
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const hours = Math.floor(diff / 3_600_000);
+    if (hours < 1) return "Just now";
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `${days}d ago`;
+    return `${Math.floor(days / 7)}w ago`;
+  };
+
+  const salaryLabel = () => {
+    if (job.salaryMin && job.salaryMax) return `R${(job.salaryMin / 100).toLocaleString()}–R${(job.salaryMax / 100).toLocaleString()}`;
+    if (job.salaryMin) return `From R${(job.salaryMin / 100).toLocaleString()}`;
+    return "Competitive";
+  };
+
+  const skills = Array.isArray(job.skills) ? job.skills.slice(0, 3) : [];
+
+  return (
+    <div className="group bg-slate-900/60 border border-slate-800 hover:border-emerald-500/40 rounded-2xl p-5 transition-all duration-200 hover:shadow-xl hover:shadow-emerald-500/5 hover:-translate-y-0.5 flex flex-col gap-3" data-testid={`card-real-job-${job.id}`}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap mb-1">
+            {job.isUrgent && <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-red-500/15 text-red-400 border border-red-500/20">Urgent</span>}
+            {job.isRemote && <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/20">Remote</span>}
+            {job.experienceLevel === "entry" && <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">Entry Level</span>}
+          </div>
+          <h3 className="font-bold text-white text-sm leading-snug group-hover:text-emerald-400 transition-colors line-clamp-2">{job.title}</h3>
+          <p className="text-slate-400 text-xs mt-1 font-medium">{job.company}</p>
+        </div>
+        <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 border border-emerald-500/20 flex items-center justify-center">
+          <Briefcase className="w-4 h-4 text-emerald-400" />
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3 text-xs text-slate-500 flex-wrap">
+        <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{job.location || job.country || "Worldwide"}</span>
+        <span className="flex items-center gap-1 text-emerald-400 font-semibold"><Banknote className="w-3 h-3" />{salaryLabel()}</span>
+        <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{timeAgo(job.postedDate)}</span>
+      </div>
+
+      {skills.length > 0 && (
+        <div className="flex gap-1.5 flex-wrap">
+          {skills.map((s: string, i: number) => (
+            <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-400">{s}</span>
           ))}
         </div>
+      )}
+
+      <div className="flex gap-2 pt-1">
+        <a href={job.applyUrl} target="_blank" rel="noopener noreferrer"
+          className="flex-1 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs text-center transition-all flex items-center justify-center gap-1.5"
+          data-testid={`button-apply-job-${job.id}`}>
+          <ExternalLink className="w-3.5 h-3.5" /> Apply Now
+        </a>
+        <button onClick={onApply}
+          className="flex-1 py-2.5 rounded-xl border border-slate-700 hover:border-emerald-500/50 text-slate-300 hover:text-emerald-400 font-bold text-xs transition-all"
+          data-testid={`button-quick-apply-${job.id}`}>
+          Quick Apply
+        </button>
       </div>
     </div>
   );
 }
 
-function PressLogosSA() {
-  const logos = [
-    { name: "TechCabal", abbr: "TC", color: "from-blue-600 to-blue-800" },
-    { name: "Daily Maverick", abbr: "DM", color: "from-slate-600 to-slate-800" },
-    { name: "Fin24", abbr: "F24", color: "from-green-600 to-green-800" },
-    { name: "MyBroadband", abbr: "MB", color: "from-orange-500 to-red-600" },
-    { name: "Business Insider SA", abbr: "BI", color: "from-primary to-primary/70" },
-    { name: "ITWeb", abbr: "IW", color: "from-violet-600 to-violet-800" },
-  ];
-
-  return (
-    <section className="py-10 border-b border-border bg-muted/20" aria-labelledby="press-heading">
-      <div className="container mx-auto px-4 md:px-6">
-        <p id="press-heading" className="text-center text-xs font-bold uppercase tracking-[0.15em] text-muted-foreground mb-8">As featured in South African media</p>
-        <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10 grayscale opacity-60 hover:opacity-80 transition-opacity">
-          {logos.map((logo, i) => (
-            <div key={i} className="flex items-center gap-2" data-testid={`press-logo-${i}`} title={logo.name}>
-              <div className={`w-7 h-7 rounded-md bg-gradient-to-br ${logo.color} flex items-center justify-center`}>
-                <span className="text-white text-[8px] font-black leading-none">{logo.abbr}</span>
-              </div>
-              <span className="text-sm font-bold text-foreground hidden sm:inline">{logo.name}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function AnimatedCounter({ value, duration = 2000 }: { value: number; duration?: number }) {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    let start = 0;
-    const end = value;
-    if (start === end) return;
-
-    let totalMiliseconds = duration;
-    let incrementTime = (totalMiliseconds / end) > 10 ? (totalMiliseconds / end) : 10;
-
-    let timer = setInterval(() => {
-      start += Math.ceil(end / (duration / incrementTime));
-      if (start >= end) {
-        setCount(end);
-        clearInterval(timer);
-      } else {
-        setCount(start);
-      }
-    }, incrementTime);
-
-    return () => clearInterval(timer);
-  }, [value, duration]);
-
-  return <span>{count.toLocaleString()}</span>;
-}
-
-
+// ── Main Home Component ────────────────────────────────────────────────────────
 export default function Home() {
-  const { formatAmount, formatRange, formatRate, formatRateRange } = useCurrency();
+  const { formatAmount } = useCurrency();
   const [, navigate] = useLocation();
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterStatus, setNewsletterStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [newsletterMsg, setNewsletterMsg] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [applyJob, setApplyJob] = useState<{ title: string; company: string; budget: string; location: string } | null>(null);
+
+  // Real jobs from the live DB
+  const { data: realJobsData } = useQuery<any>({
+    queryKey: ["/api/aggregated-jobs", { limit: 6, sortBy: "recent" }],
+    queryFn: async () => {
+      const res = await fetch("/api/aggregated-jobs?limit=6&sortBy=recent");
+      if (!res.ok) return { jobs: [], total: 0 };
+      return res.json();
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+  const realJobs: any[] = realJobsData?.jobs || [];
+  const totalJobs: number = realJobsData?.total || 11400;
 
   const { data: liveBlogPosts } = useQuery<any[]>({
     queryKey: ["/api/blog/posts", { limit: 3, featured: true }],
@@ -356,1160 +308,769 @@ export default function Home() {
     setNewsletterStatus("loading");
     try {
       const res = await fetch("/api/newsletter/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: newsletterEmail, source: "homepage" }),
       });
       const data = await res.json();
-      if (res.ok && data.success) {
-        setNewsletterStatus("success");
-        setNewsletterMsg(data.message || "You're subscribed!");
-        setNewsletterEmail("");
-      } else {
-        setNewsletterStatus("error");
-        setNewsletterMsg(data.error || "Something went wrong. Please try again.");
-      }
-    } catch {
-      setNewsletterStatus("error");
-      setNewsletterMsg("Network error. Please try again.");
-    }
+      if (res.ok && data.success) { setNewsletterStatus("success"); setNewsletterMsg(data.message || "You're subscribed!"); setNewsletterEmail(""); }
+      else { setNewsletterStatus("error"); setNewsletterMsg(data.error || "Something went wrong. Please try again."); }
+    } catch { setNewsletterStatus("error"); setNewsletterMsg("Network error. Please try again."); }
   };
 
-  const featuredJobs = [
-    {
-      title: "Certified Safety Officer (6 Months)",
-      company: "Construction Co. (Tender Project)",
-      type: "On-site",
-      budget: formatRate(25000, "month"),
-      location: "Pretoria East (5km away)",
-      postedAt: "1h ago",
-      tags: ["Safety Officer", "Construction", "OHS"],
-      description: "Looking for a certified Safety Officer for a government tender project in Pretoria East. Must have SACPCMP registration.",
-      aiMatchScore: 94,
-      applicants: 7,
-      urgent: false,
-    },
-    {
-      title: "Emergency Plumber Needed",
-      company: "Private Household",
-      type: "Urgent",
-      budget: formatRange(850, 1200),
-      location: "Sandton (2km away)",
-      postedAt: "15m ago",
-      tags: ["Plumbing", "Maintenance", "Urgent"],
-      description: "Geyser burst in the garage. Need someone immediately to assist with shutoff and repair.",
-      aiMatchScore: 88,
-      applicants: 3,
-      urgent: true,
-    },
-    {
-      title: "Senior React Developer for Fintech App",
-      company: "Capitec Bank (via FreelanceSkills Enterprise)",
-      type: "Remote",
-      budget: formatRateRange(650, 850, "hr"),
-      location: "Cape Town / Remote",
-      postedAt: "2h ago",
-      tags: ["React", "TypeScript", "Node.js"],
-      description: "We are looking for an experienced Senior React Developer to join our digital transformation team. You will be building secure, high-performance banking interfaces.",
-      aiMatchScore: 97,
-      applicants: 12,
-      urgent: false,
-    },
-    {
-      title: "Tender Documentation Consultant",
-      company: "SME Logistics",
-      type: "Contract",
-      budget: formatRate(15000, "project"),
-      location: "Durban / Remote",
-      postedAt: "4h ago",
-      tags: ["Tender Compliance", "Writing", "Government"],
-      description: "Need expert assistance in compiling a compliant bid for a municipal transport tender.",
-      aiMatchScore: 82,
-      applicants: 5,
-      urgent: false,
-    }
-  ];
-
-  const topFreelancers = [
-    {
-      name: "Thabo M.",
-      title: "Senior Software Engineer",
-      rate: formatAmount(750),
-      rating: 5.0,
-      reviews: 42,
-      skills: ["Python", "Django", "AWS", "React"],
-      imageUrl: "https://images.unsplash.com/photo-1531384441138-2736e62e0919?auto=format&fit=crop&q=80&w=200&h=200",
-      verified: true
-    },
-    {
-      name: "Sarah L.",
-      title: "Brand Strategist & Designer",
-      rate: formatAmount(600),
-      rating: 4.9,
-      reviews: 85,
-      skills: ["Branding", "Logo Design", "Adobe CC"],
-      imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200&h=200",
-      verified: true
-    },
-    {
-      name: "David K.",
-      title: "Mobile App Developer",
-      rate: formatAmount(800),
-      rating: 4.8,
-      reviews: 29,
-      skills: ["Flutter", "iOS", "Android", "Firebase"],
-      imageUrl: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&q=80&w=200&h=200",
-      verified: true
-    },
-    {
-      name: "Nandi Z.",
-      title: "Digital Marketing Specialist",
-      rate: formatAmount(450),
-      rating: 5.0,
-      reviews: 63,
-      skills: ["SEO", "Google Ads", "Social Media"],
-      imageUrl: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=200&h=200",
-      verified: true
-    }
-  ];
-
-  const topChromeOffset = 56;
-  type FeaturedJob = { title: string; company: string; budget: string; location: string; type: string; postedAt: string; tags: string[]; description: string; aiMatchScore: number; applicants: number; urgent: boolean };
-  const [applyJob, setApplyJob] = useState<FeaturedJob | null>(null);
+  const handleSearch = (e: FormEvent) => {
+    e.preventDefault();
+    navigate(searchQuery.trim() ? `/jobs?q=${encodeURIComponent(searchQuery.trim())}` : "/jobs");
+  };
 
   return (
-    <div
-      className="min-h-screen bg-background font-sans flex flex-col overflow-x-hidden"
-      style={{ paddingTop: `${topChromeOffset}px` }}
-    >
-      {/* Instant Apply Modal */}
+    <div className="min-h-screen bg-slate-950 text-white font-sans flex flex-col overflow-x-hidden" style={{ paddingTop: 56 }}>
       {applyJob && <InstantApplyModal job={applyJob} onClose={() => setApplyJob(null)} />}
-
       <Navbar topOffset={0} />
-      <Hero />
-      <LiveActivityTicker />
-      <TrustStrip />
-      <main id="main-content" role="main">
-        {/* Featured Jobs */}
-        <section className="py-20 md:py-24 bg-muted/30" aria-labelledby="latest-opportunities">
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
-              <div>
-                <h2 id="latest-opportunities" className="text-3xl md:text-4xl font-bold text-primary mb-3">Latest Opportunities</h2>
-                <p className="text-muted-foreground text-lg">Find high-paying projects from verified local businesses.</p>
+
+      {/* ── HERO ───────────────────────────────────────────────────────────────── */}
+      <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden" data-testid="section-hero">
+        {/* Background layers */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-950 to-emerald-950/20" />
+        <div className="absolute inset-0 opacity-[0.035]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2310b981' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
+        <div className="absolute top-1/4 -left-20 w-[600px] h-[600px] bg-emerald-500/6 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute bottom-1/4 -right-20 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
+
+        <div className="container relative z-10 px-4 md:px-6 py-24 md:py-32">
+          <div className="max-w-4xl mx-auto text-center">
+            {/* Badge */}
+            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-sm font-semibold mb-8 shadow-lg">
+              <span className="relative flex h-2 w-2 mr-1">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              <AnimatedCounter value={totalJobs} duration={1500} />+ Real Jobs Live · Africa's #1 Professional Freelance Network
+            </motion.div>
+
+            {/* Headline */}
+            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.08] mb-6">
+              <span className="text-white">Land High-Value</span><br />
+              <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500 bg-clip-text text-transparent">
+                Freelance Work
+              </span><br />
+              <span className="text-white/90">Across Africa</span>
+            </motion.h1>
+
+            {/* Sub */}
+            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+              Verified skills, secure escrow payments, AI matching — the professional network built for African freelancers and clients. 
+              <span className="text-emerald-400 font-semibold"> 10% transparent fees. 100% real opportunities.</span>
+            </motion.p>
+
+            {/* Search Bar */}
+            <motion.form initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}
+              onSubmit={handleSearch} className="relative max-w-2xl mx-auto mb-8" data-testid="form-hero-search">
+              <div className="flex items-center gap-3 bg-slate-900/80 backdrop-blur-sm border border-slate-700 hover:border-emerald-500/40 focus-within:border-emerald-500/60 rounded-2xl px-4 py-3 shadow-2xl transition-all">
+                <Search className="w-5 h-5 text-slate-500 flex-shrink-0" />
+                <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
+                  placeholder="Search jobs, skills, or companies..."
+                  className="flex-1 bg-transparent text-white placeholder:text-slate-500 text-base focus:outline-none"
+                  data-testid="input-hero-search" />
+                <button type="submit" className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-all flex-shrink-0" data-testid="button-hero-search">
+                  Search
+                </button>
               </div>
-              <Button variant="outline" className="gap-2 group" onClick={() => navigate("/jobs")} data-testid="button-view-all-jobs" aria-label="View all jobs">
-                  View All Jobs <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
-                </Button>
-            </div>
+            </motion.form>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {featuredJobs.map((job, i) => (
-              <div
-                key={i}
-                className="bg-card rounded-2xl border border-border hover:border-primary/30 hover:shadow-xl transition-all duration-300 p-5 md:p-6 group relative"
-                data-testid={`card-featured-job-${i}`}
-              >
-                {/* AI Match Score Badge */}
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    {job.urgent && (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400" data-testid={`badge-urgent-${i}`}>
-                        🔴 Urgent
-                      </span>
-                    )}
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                      {job.type}
-                    </span>
-                  </div>
-                  <div
-                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-black bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 flex-shrink-0"
-                    data-testid={`badge-ai-match-${i}`}
-                    title="AI Match Score — how well this matches your profile"
-                  >
-                    <Cpu className="w-3 h-3" />
-                    {job.aiMatchScore}% AI Match
-                  </div>
-                </div>
+            {/* CTAs */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }}
+              className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10 flex-wrap">
+              <Link href="/freelancer-onboarding"
+                className="group inline-flex items-center gap-2.5 px-7 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-base shadow-xl shadow-emerald-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                data-testid="button-hero-create-profile">
+                <BadgeCheck className="w-5 h-5" /> Create Free Profile
+              </Link>
+              <Link href="/jobs"
+                className="group inline-flex items-center gap-2.5 px-7 py-4 rounded-2xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 text-white font-bold text-base backdrop-blur-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+                data-testid="button-hero-browse-jobs">
+                Browse Opportunities <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+              <Link href="/post-job"
+                className="group inline-flex items-center gap-2.5 px-7 py-4 rounded-2xl border border-slate-700 hover:border-emerald-500/40 text-slate-300 hover:text-emerald-400 font-semibold text-base transition-all hover:bg-emerald-500/5"
+                data-testid="button-hero-post-project">
+                <Briefcase className="w-5 h-5" /> Post a Project
+              </Link>
+            </motion.div>
 
-                <h3 className="font-bold text-lg text-foreground mb-1 leading-tight group-hover:text-primary transition-colors" data-testid={`text-job-title-${i}`}>
-                  {job.title}
-                </h3>
-                <p className="text-sm text-muted-foreground mb-3 font-medium">{job.company}</p>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-4 line-clamp-2">{job.description}</p>
-
-                <div className="flex items-center gap-4 text-xs text-muted-foreground mb-4">
-                  <span className="flex items-center gap-1">📍 {job.location}</span>
-                  <span className="flex items-center gap-1">⏰ {job.postedAt}</span>
-                  <span className="flex items-center gap-1">👥 {job.applicants} applied</span>
-                </div>
-
-                <div className="flex flex-wrap gap-1.5 mb-5">
-                  {job.tags.map(tag => (
-                    <span key={tag} className="px-2.5 py-1 rounded-full text-xs font-semibold bg-muted text-muted-foreground border border-border">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-
-                <div className="flex items-center justify-between gap-3 pt-4 border-t border-border">
-                  <span className="text-lg font-black text-primary" data-testid={`text-job-budget-${i}`}>{job.budget}</span>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-xs"
-                      onClick={() => navigate("/jobs")}
-                      data-testid={`button-view-job-${i}`}
-                    >
-                      View
-                    </Button>
-                    <Button
-                      size="sm"
-                      className="text-xs bg-primary hover:bg-primary/90 text-white gap-1.5"
-                      onClick={() => setApplyJob(job)}
-                      data-testid={`button-quick-apply-${i}`}
-                    >
-                      <Send className="w-3 h-3" /> Quick Apply
-                    </Button>
-                  </div>
-                </div>
+            {/* Open to Freelance badge teaser */}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.55 }}
+              className="flex items-center justify-center gap-2 text-sm text-slate-500">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900/60 border border-slate-800 hover:border-emerald-500/30 transition-all cursor-pointer" onClick={() => navigate("/freelancer-onboarding")} data-testid="badge-open-to-work">
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-slate-400 text-xs font-medium">Set yourself as <span className="text-emerald-400 font-bold">Open to Freelance Work</span></span>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
               </div>
-            ))}
+            </motion.div>
           </div>
+        </div>
 
-          {/* 30-Day Challenge CTA */}
-          <div className="mt-8 p-5 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 border border-emerald-500/20 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">🔥</span>
-              <div>
-                <div className="font-bold text-sm text-foreground">30-Day African Talent Revolution is Live!</div>
-                <div className="text-xs text-muted-foreground">47,470+ verified freelancers · 92,340+ projects completed · R2.3B+ escrow released</div>
-              </div>
+        {/* Stats bar at bottom of hero */}
+        <div className="absolute bottom-0 left-0 right-0 border-t border-slate-800/60 bg-slate-950/80 backdrop-blur-sm">
+          <div className="container mx-auto px-4 md:px-6 py-4">
+            <div className="flex flex-wrap justify-center gap-x-10 gap-y-2">
+              {[
+                { value: 11400, suffix: "+", label: "Live Jobs" },
+                { value: 12, suffix: " Sources", label: "Verified Job Sources" },
+                { value: 54, suffix: " Countries", label: "African Reach" },
+                { value: 10, suffix: "%", label: "Transparent Fees" },
+              ].map((stat, i) => (
+                <div key={i} className="text-center" data-testid={`stat-hero-${i}`}>
+                  <div className="text-lg font-black text-emerald-400"><AnimatedCounter value={stat.value} duration={2000} />{stat.suffix}</div>
+                  <div className="text-[10px] text-slate-500 uppercase tracking-wider font-medium">{stat.label}</div>
+                </div>
+              ))}
             </div>
-            <Link href="/challenge" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-sm hover:bg-emerald-400 transition-all flex-shrink-0" data-testid="link-challenge-cta">
-              View Dashboard <ArrowRight className="w-4 h-4" />
-            </Link>
           </div>
         </div>
       </section>
 
-      {/* Value Proposition */}
-      <section className="py-20 bg-primary text-white overflow-hidden relative">
-        {/* Abstract Shapes */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -translate-x-1/3 translate-y-1/3" />
+      {/* Live Activity Ticker */}
+      <LiveActivityTicker />
 
-        <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-accent text-sm font-medium">
-                <Shield className="w-4 h-4" /> Secure & Reliable
+      {/* ── TRUST STRIP ───────────────────────────────────────────────────────── */}
+      <div className="py-4 bg-slate-900/50 border-b border-slate-800/60" aria-label="Trust signals">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
+            {[
+              { icon: ShieldCheck, label: "POPIA Compliant", color: "text-emerald-400" },
+              { icon: Lock, label: "Escrow Protected", color: "text-blue-400" },
+              { icon: Clock, label: "14-Day Money-Back", color: "text-amber-400" },
+              { icon: CheckCheck, label: "CIPC Registered", color: "text-violet-400" },
+              { icon: Shield, label: "ID Verified Talent", color: "text-emerald-400" },
+              { icon: Activity, label: "48h Dispute Resolution", color: "text-rose-400" },
+            ].map(({ icon: Icon, label, color }, i) => (
+              <div key={i} className="flex items-center gap-1.5 text-xs text-slate-400" data-testid={`trust-${i}`}>
+                <Icon className={`w-3.5 h-3.5 ${color}`} />
+                <span className="font-medium whitespace-nowrap">{label}</span>
               </div>
-              <h2 className="text-3xl md:text-5xl font-bold leading-tight">
-                Why businesses choose <span className="text-accent">FreelanceSkills</span>
-              </h2>
-              <p className="text-white/80 text-lg leading-relaxed">
-                We've built a platform specifically for the South African market, addressing the unique challenges of trust, payment security, and quality verification.
-              </p>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-                {[
-                  { icon: ShieldCheck, title: "Verified Identity", desc: "Every freelancer is ID-verified and skills-vetted." },
-                  { icon: Lock, title: "Escrow Payments", desc: "Funds held securely until the project is complete." },
-                  { icon: FileText, title: "Tax Invoicing", desc: "Automated SARS-compliant invoicing for every job." },
-                  { icon: Headphones, title: "24/7 Local Support", desc: "Human support from our teams in SA." }
-                ].map((item, i) => (
-                  <div key={i} className="p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors" data-testid={`trust-badge-${i}`}>
-                    <item.icon className="w-8 h-8 text-accent mb-3" />
-                    <h3 className="font-bold text-lg mb-1">{item.title}</h3>
-                    <p className="text-sm text-white/70">{item.desc}</p>
-                  </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <main id="main-content" role="main">
+
+        {/* ── RECOMMENDED JOBS (Real Data) ──────────────────────────────────────── */}
+        <section className="py-20 bg-slate-950" aria-labelledby="recommended-jobs-heading" data-testid="section-recommended-jobs">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-4">
+                  <Sparkles className="w-3.5 h-3.5" /> Real Opportunities — Updated Every 30 Minutes
+                </div>
+                <h2 id="recommended-jobs-heading" className="text-3xl md:text-4xl font-black text-white mb-2">
+                  Recommended for You
+                </h2>
+                <p className="text-slate-400 text-base">AI-matched opportunities from <span className="text-emerald-400 font-semibold">{totalJobs.toLocaleString()}+ live jobs</span> across Africa and globally.</p>
+              </div>
+              <button onClick={() => navigate("/jobs")} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-700 hover:border-emerald-500/40 text-slate-300 hover:text-emerald-400 font-semibold text-sm transition-all" data-testid="button-view-all-jobs">
+                View All Jobs <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Job Cards Grid */}
+            {realJobs.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {realJobs.map((job: any) => (
+                  <RealJobCard key={job.id} job={job}
+                    onApply={() => setApplyJob({ title: job.title, company: job.company, budget: job.salaryMin ? `R${(job.salaryMin/100).toLocaleString()}+` : "Competitive", location: job.location || job.country || "Remote" })} />
                 ))}
               </div>
+            ) : (
+              /* Skeleton fallback while loading */
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 animate-pulse h-52" />
+                ))}
+              </div>
+            )}
 
-              <div className="flex items-center gap-3 pt-4">
-                <div className="flex px-3 py-1.5 rounded-full bg-white/10 border border-white/20 items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-accent" />
-                  <span className="text-xs font-bold uppercase tracking-wider">POPIA Compliant</span>
-                </div>
-              </div>
-
-              <Button size="lg" className="bg-white text-primary hover:bg-white/90 font-bold mt-4" onClick={() => navigate("/services")} data-testid="button-hire-talent">
-                Hire Talent Now
-              </Button>
-            </div>
-            
-            <div className="relative">
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/10 shadow-2xl">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-16 h-16 rounded-full bg-accent flex items-center justify-center font-bold text-primary text-2xl shadow-inner">
-                    <span className="flex items-center">4.9<Star className="w-4 h-4 fill-primary ml-0.5" /></span>
-                  </div>
-                  <div>
-                    <div className="font-bold text-xl mb-1">Excellent Rating</div>
-                    <div className="text-white/70 text-sm">
-                      <div className="flex items-center gap-1 text-accent mb-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="w-4 h-4 fill-accent" />
-                        ))}
-                      </div>
-                      Based on <span className="font-bold text-white"><AnimatedCounter value={10000} />+</span> completed projects
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-                    <div className="h-full bg-accent w-[98%]" />
-                  </div>
-                  <div className="flex justify-between text-sm font-medium">
-                    <span>Client Satisfaction</span>
-                    <span className="text-accent">98%</span>
-                  </div>
-                </div>
-              </div>
-              {/* Floating Element */}
-              <div className="absolute -bottom-6 -right-6 bg-accent text-primary p-6 rounded-xl shadow-xl font-bold max-w-[220px] transform rotate-3 hover:rotate-0 transition-transform cursor-default">
-                "The most reliable platform for verified SA talent."
-              </div>
+            {/* Quick filter chips */}
+            <div className="flex flex-wrap gap-2 mt-8" aria-label="Job category filters">
+              {["Remote", "South Africa", "Entry Level", "Tech & Dev", "Design", "Marketing", "Finance", "Writing"].map((chip, i) => (
+                <button key={i} onClick={() => navigate(`/jobs?q=${encodeURIComponent(chip)}`)}
+                  className="px-4 py-2 rounded-full border border-slate-800 hover:border-emerald-500/40 text-slate-400 hover:text-emerald-400 text-sm font-medium transition-all hover:bg-emerald-500/5"
+                  data-testid={`chip-category-${i}`}>
+                  {chip}
+                </button>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Escrow Payment Explainer */}
-      <section className="py-20 bg-background border-b border-border" data-testid="section-escrow-explainer">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">How Secure Escrow Works</h2>
-            <p className="text-muted-foreground text-lg">Your money is safe with us. We ensure freelancers get paid and clients get the work they expect.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
-            {/* Connecting lines for desktop */}
-            <div className="hidden md:block absolute top-1/4 left-[15%] right-[15%] h-0.5 bg-border -z-10" />
-            
-            {[
-              { 
-                icon: Wallet, 
-                title: "1. Deposit Funds", 
-                desc: "Client posts a job and deposits project funds into our secure escrow account.",
-                testid: "escrow-step-1"
-              },
-              { 
-                icon: Lock, 
-                title: "2. Held Securely", 
-                desc: "Funds are held safely in escrow. The freelancer starts working with peace of mind.",
-                testid: "escrow-step-2"
-              },
-              { 
-                icon: CheckCircle2, 
-                title: "3. Work Completed", 
-                desc: "The freelancer submits the completed work for the client's review and approval.",
-                testid: "escrow-step-3"
-              },
-              { 
-                icon: Send, 
-                title: "4. Payment Released", 
-                desc: "Once the client is satisfied, funds are released instantly to the freelancer.",
-                testid: "escrow-step-4"
-              }
-            ].map((step, i) => (
-              <div key={i} className="flex flex-col items-center text-center group" data-testid={step.testid}>
-                <div className="w-16 h-16 rounded-full bg-primary/5 border-2 border-primary/20 flex items-center justify-center mb-6 group-hover:border-primary group-hover:bg-primary/10 transition-all duration-300">
-                  <step.icon className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="font-bold text-xl mb-3 text-foreground">{step.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{step.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-20 p-8 rounded-2xl bg-muted/30 border border-border flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-emerald-600 font-bold">
-                <ShieldCheck className="w-5 h-5" />
-                <span>Instant ZAR payouts to freelancers</span>
-              </div>
-              <p className="text-muted-foreground">We support all major SA banks for fast, reliable local transfers.</p>
+        {/* ── VALUE PILLARS ─────────────────────────────────────────────────────── */}
+        <section className="py-20 bg-gradient-to-b from-slate-900/40 to-slate-950 border-y border-slate-800/50" aria-labelledby="pillars-heading" data-testid="section-value-pillars">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="text-center max-w-2xl mx-auto mb-14">
+              <h2 id="pillars-heading" className="text-3xl md:text-4xl font-black text-white mb-4">Why FreelanceSkills Beats LinkedIn for Freelancers</h2>
+              <p className="text-slate-400 text-lg">Every feature was built for Africa's reality — not Silicon Valley's assumptions.</p>
             </div>
-            <div className="flex items-center gap-6 grayscale opacity-70">
-              <div className="flex flex-col items-center gap-1">
-                <span className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Powered by</span>
-                <div className="flex items-center gap-1 font-bold text-xl text-[#00457C]">
-                  <svg viewBox="0 0 40 40" className="w-8 h-8 fill-current">
-                    <rect width="40" height="40" rx="8" fill="currentColor"/>
-                    <text x="50%" y="55%" dominantBaseline="middle" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold">PF</text>
-                  </svg>
-                  PayFast
-                </div>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {[
+                {
+                  icon: BadgeCheck, color: "from-emerald-500/20 to-teal-500/10 border-emerald-500/20", iconColor: "text-emerald-400",
+                  title: "Verified Skills & Portfolio", badge: "Stronger than endorsements",
+                  desc: "Every freelancer undergoes multi-layer verification: ID, skills assessments, and portfolio review. Clients hire with confidence. Freelancers earn more.",
+                },
+                {
+                  icon: Lock, color: "from-blue-500/20 to-indigo-500/10 border-blue-500/20", iconColor: "text-blue-400",
+                  title: "Secure Escrow & Instant ZAR Payouts", badge: "100% payment protection",
+                  desc: "Funds are held in escrow until work is approved. No more ghost clients or unpaid invoices. Instant bank transfers in South African Rand — no crypto required.",
+                },
+                {
+                  icon: Brain, color: "from-violet-500/20 to-purple-500/10 border-violet-500/20", iconColor: "text-violet-400",
+                  title: "AI Smart Matching + Skills Path", badge: "Your personal career AI",
+                  desc: "Our AI analyses your skills, experience, and market demand to surface the highest-ROI opportunities — plus a personalised learning path to get there faster.",
+                },
+                {
+                  icon: Banknote, color: "from-amber-500/20 to-orange-500/10 border-amber-500/20", iconColor: "text-amber-400",
+                  title: "Transparent 10% Fees Only", badge: "No hidden charges, ever",
+                  desc: "LinkedIn charges recruiters thousands for access. We charge a flat 10% on successful projects — nothing until you earn. Compare that to Upwork's 20%.",
+                },
+                {
+                  icon: Globe, color: "from-teal-500/20 to-emerald-500/10 border-teal-500/20", iconColor: "text-teal-400",
+                  title: "Built for Africa — Local + Global", badge: "54 countries, one platform",
+                  desc: "South African escrow, Kenyan mobile money, Nigerian bank transfers. We handle the complexity of cross-border African payments so you don't have to.",
+                },
+                {
+                  icon: Headphones, color: "from-rose-500/20 to-pink-500/10 border-rose-500/20", iconColor: "text-rose-400",
+                  title: "24/7 SA Support + 48h Disputes", badge: "Real humans, real help",
+                  desc: "Call us, WhatsApp us, or chat live. Our support team is South African, understands SARS, CIPC, and BEE — and resolves disputes in under 48 hours.",
+                },
+              ].map((pillar, i) => (
+                <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
+                  className={`bg-gradient-to-br ${pillar.color} border rounded-2xl p-6 hover:shadow-xl transition-all duration-200`} data-testid={`card-pillar-${i}`}>
+                  <div className={`w-11 h-11 rounded-xl bg-slate-950/60 flex items-center justify-center mb-4`}>
+                    <pillar.icon className={`w-5 h-5 ${pillar.iconColor}`} />
+                  </div>
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">{pillar.badge}</div>
+                  <h3 className="font-black text-white text-lg mb-3 leading-snug">{pillar.title}</h3>
+                  <p className="text-slate-400 text-sm leading-relaxed">{pillar.desc}</p>
+                </motion.div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* How It Works & Pricing Transparency */}
-      <section className="py-20 bg-background border-y border-border" data-testid="section-how-it-works-pricing">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">How FreelanceSkills Works</h2>
-            <p className="text-muted-foreground text-lg">A simple, secure process designed for the South African market.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
-            {[
-              {
-                step: "1",
-                title: "Post a Job or Browse Talent",
-                desc: "Tell us what you need or explore our directory of verified experts across 100+ categories.",
-                icon: FileText
-              },
-              {
-                step: "2",
-                title: "AI Matches & Secure Escrow",
-                desc: "Our AI finds the best fit. Once you hire, funds are held securely in our protected escrow system.",
-                icon: Sparkles
-              },
-              {
-                step: "3",
-                title: "Get Results, Release Payment",
-                desc: "Review the work. Once you're 100% satisfied, release the payment to the freelancer instantly.",
-                icon: CheckCircle2
-              }
-            ].map((item, i) => (
-              <div key={i} className="relative p-8 rounded-2xl bg-card border border-border hover:shadow-md transition-all text-center group" data-testid={`step-how-it-works-${i}`}>
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm shadow-lg">
-                  {item.step}
+        {/* ── FOR BEGINNERS ─────────────────────────────────────────────────────── */}
+        <section className="py-20 bg-slate-950" aria-labelledby="beginners-heading" data-testid="section-for-beginners">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="flex flex-col lg:flex-row gap-12 items-center">
+              {/* Left: Text */}
+              <div className="flex-1">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-wider mb-5">
+                  <Rocket className="w-3.5 h-3.5" /> Perfect for Beginners
                 </div>
-                <div className="mb-6 inline-flex p-4 rounded-xl bg-primary/5 text-primary group-hover:scale-110 transition-transform">
-                  <item.icon className="w-8 h-8" />
-                </div>
-                <h3 className="text-xl font-bold mb-3">{item.title}</h3>
-                <p className="text-muted-foreground">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="bg-primary/5 rounded-3xl p-8 md:p-12 border border-primary/10">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div>
-                <h3 className="text-2xl md:text-3xl font-bold text-primary mb-4">Transparent Pricing</h3>
-                <p className="text-lg text-muted-foreground mb-6">
-                  No hidden fees. We believe in fair pricing that empowers both businesses and freelancers in South Africa.
+                <h2 id="beginners-heading" className="text-3xl md:text-4xl font-black text-white mb-5 leading-tight">
+                  Land Your First Paid Gig — <span className="text-amber-400">No Experience Required</span>
+                </h2>
+                <p className="text-slate-400 text-lg mb-8 leading-relaxed">
+                  Everyone starts somewhere. FreelanceSkills has hundreds of entry-level projects designed specifically for first-timers. Build your portfolio. Earn real money. Grow from there.
                 </p>
                 <div className="space-y-4 mb-8">
-                  <div className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-500 mt-1 flex-shrink-0" />
-                    <div>
-                      <span className="font-bold text-foreground">Clients: 10% platform fee</span>
-                      <p className="text-sm text-muted-foreground">Significantly lower than the global 20% average.</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-500 mt-1 flex-shrink-0" />
-                    <div>
-                      <span className="font-bold text-foreground">Freelancers: Free to join</span>
-                      <p className="text-sm text-muted-foreground">Create your profile and start bidding at zero cost.</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-500 mt-1 flex-shrink-0" />
-                    <div>
-                      <span className="font-bold text-foreground">Premium: R79/mo</span>
-                      <p className="text-sm text-muted-foreground">Optional priority placement and enhanced visibility.</p>
-                    </div>
-                  </div>
-                </div>
-                <Button size="lg" className="bg-primary hover:bg-primary/90" onClick={() => navigate("/pricing")} data-testid="button-see-full-pricing">
-                  See Full Pricing
-                </Button>
-              </div>
-              <div className="relative">
-                <div className="bg-white dark:bg-zinc-900 rounded-2xl p-6 shadow-xl border border-border">
-                  <div className="text-center mb-6">
-                    <div className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-1">Estimated Savings</div>
-                    <div className="text-4xl font-bold text-primary">Save up to 50%</div>
-                    <div className="text-sm text-muted-foreground">on platform fees vs. international sites</div>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center p-3 rounded-lg bg-muted/50">
-                      <span className="text-sm font-medium">FreelanceSkills</span>
-                      <span className="font-bold text-emerald-600">10%</span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 rounded-lg border border-dashed border-border opacity-60">
-                      <span className="text-sm font-medium">Typical Platform</span>
-                      <span className="font-bold">20%</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Top Freelancers */}
-      <section className="py-20 md:py-24">
-        <div className="container mx-auto px-4 md:px-6">
-           <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">Meet Top Talent</h2>
-            <p className="text-muted-foreground text-lg">Expert freelancers ready to start your project today.</p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {topFreelancers.map((freelancer, i) => (
-              <FreelancerCard key={i} {...freelancer} />
-            ))}
-          </div>
-
-          <div className="text-center mt-12">
-            <Button size="lg" className="bg-primary text-white hover:bg-primary/90 px-8" onClick={() => navigate("/explore")} data-testid="button-view-all-talent">
-                View All Talent
-              </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Categories Grid */}
-      <section className="py-20 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">Explore by Category</h2>
-            <p className="text-muted-foreground text-lg">Find the right expert for your specific needs</p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
-            {SERVICE_CATEGORIES.slice(0, 8).map((category) => {
-              const IconComponent = ICON_MAP[category.icon] || Briefcase;
-              return (
-                <Link key={category.id} href={`/explore?category=${category.id}`}>
-                  <button
-                    className="w-full p-4 bg-card rounded-xl border border-border hover:border-primary hover:shadow-lg transition-all text-center group"
-                    data-testid={`button-home-category-${category.id}`}
-                  >
-                    <div className={`w-12 h-12 ${category.color} rounded-xl flex items-center justify-center text-white mb-3 group-hover:scale-110 transition-transform mx-auto`}>
-                      <IconComponent className="h-6 w-6" />
-                    </div>
-                    <h3 className="font-semibold text-xs mb-1 line-clamp-1">{category.name}</h3>
-                  </button>
-                </Link>
-              );
-            })}
-          </div>
-          <div className="text-center mt-10">
-            <Button variant="outline" onClick={() => navigate("/explore")} data-testid="button-home-view-all-categories">
-              View All Categories <ChevronRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Impact Metrics Banner */}
-      <section className="py-16 bg-gradient-to-r from-emerald-600 to-teal-600 text-white" data-testid="section-impact-banner">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">Our Impact on Africa</h2>
-            <p className="text-white/80 text-lg">Empowering 1 Million Africans by 2031</p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-            {[
-              { value: "12,847", label: "Jobs Created", icon: TrendingUp },
-              { value: formatAmount(47200000), label: "Income Generated", icon: TrendingUp },
-              { value: "8,432", label: "Freelancers Empowered", icon: Users },
-              { value: "156", label: "Communities Reached", icon: Users },
-            ].map((stat, i) => (
-              <div key={i} className="text-center" data-testid={`stat-impact-${i}`}>
-                <stat.icon className="h-6 w-6 mx-auto mb-2 text-white/70" />
-                <div className="text-2xl md:text-3xl font-bold">{stat.value}</div>
-                <div className="text-white/70 text-sm">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-          <div className="text-center mt-8">
-            <Button variant="outline" className="border-white text-white hover:bg-white hover:text-emerald-700 gap-2" data-testid="button-view-impact" onClick={() => navigate("/impact")}>
-                View Full Impact Dashboard <ArrowRight className="w-4 h-4" />
-              </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Platform Trust Signal — Platform-first, no personal content */}
-      <section className="py-16 bg-muted/20 border-y border-border" data-testid="section-platform-trust">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-10">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/8 border border-primary/15 text-primary text-xs font-semibold tracking-wider uppercase mb-4">
-                Built for South Africa, Built for Africa
-              </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground leading-tight mb-3">
-                A platform born from the real challenges of hiring and getting hired in Africa
-              </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                FreelanceSkills was designed from the ground up to address the unique trust, payment security, and quality verification challenges facing African professionals and businesses.
-              </p>
-            </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {[
-                { icon: ShieldCheck, label: "POPIA Compliant", sub: "Full data privacy protection", color: "text-emerald-500", bg: "bg-emerald-500/10" },
-                { icon: Lock, label: "PayFast Escrow", sub: "R2.3B+ held securely", color: "text-blue-500", bg: "bg-blue-500/10" },
-                { icon: CheckCheck, label: "CIPC Registered", sub: "2026/070509/09", color: "text-violet-500", bg: "bg-violet-500/10" },
-                { icon: Headphones, label: "SA-Based Support", sub: "24/7 local human support", color: "text-amber-500", bg: "bg-amber-500/10" },
-              ].map(({ icon: Icon, label, sub, color, bg }, i) => (
-                <div key={i} className={`flex items-center gap-4 p-5 rounded-2xl border border-border ${bg}/30 hover:border-primary/20 transition-colors`} data-testid={`platform-trust-badge-${i}`}>
-                  <div className={`p-2.5 rounded-xl ${bg} flex-shrink-0`}>
-                    <Icon className={`w-5 h-5 ${color}`} />
-                  </div>
-                  <div>
-                    <div className="font-bold text-foreground text-sm">{label}</div>
-                    <div className="text-xs text-muted-foreground">{sub}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Success Stories Section */}
-      <section className="py-20 bg-background" data-testid="section-success-stories">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">Success Stories</h2>
-            <p className="text-muted-foreground text-lg">Real impact from the FreelanceSkills community across South Africa.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                name: "Sipho M.",
-                location: "Soweto, Gauteng",
-                title: "From township plumber to R50k/mo",
-                before: "Struggling to find consistent local work through word-of-mouth.",
-                after: "Running a registered maintenance business with 3 employees.",
-                growth: "500% revenue increase",
-                quote: "FreelanceSkills gave me the professional platform I needed to reach high-value clients in Sandton and beyond.",
-                image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200&h=200"
-              },
-              {
-                name: "Elena R.",
-                location: "Cape Town, WC",
-                title: "Global clients from Cape Town",
-                before: "Local junior developer with limited exposure to international projects.",
-                after: "Senior full-stack contractor for European fintech firms.",
-                growth: "R850/hr average rate",
-                quote: "The identity verification and secure escrow gave international clients the confidence to hire me remotely.",
-                image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=200&h=200"
-              },
-              {
-                name: "Zanele K.",
-                location: "Durban, KZN",
-                title: "First-time entrepreneur",
-                before: "Unemployed graduate looking for a way to start a cleaning service.",
-                after: "Top-rated service provider with 45+ verified 5-star reviews.",
-                growth: "100+ projects completed",
-                quote: "I started with one vacuum cleaner and the FreelanceSkills app. Today, I'm my own boss and financially independent.",
-                image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=200&h=200"
-              }
-            ].map((story, i) => (
-              <Card key={i} className="border-border/50 overflow-hidden hover:shadow-xl transition-shadow flex flex-col" data-testid={`card-success-story-${i}`}>
-                <CardContent className="p-0 flex flex-col h-full">
-                  <div className="p-8 flex-1">
-                    <div className="flex items-center gap-4 mb-6">
-                      <Avatar className="h-16 w-16 border-2 border-primary/10">
-                        <AvatarImage src={story.image} alt={story.name} />
-                        <AvatarFallback>{story.name[0]}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <h3 className="font-bold text-lg leading-tight">{story.name}</h3>
-                        <p className="text-sm text-muted-foreground">{story.location}</p>
-                      </div>
-                    </div>
-                    
-                    <h4 className="font-bold text-primary text-xl mb-4 italic leading-tight">"{story.title}"</h4>
-                    
-                    <div className="space-y-4 mb-6">
-                      <div className="flex gap-3">
-                        <div className="mt-1"><div className="w-2 h-2 rounded-full bg-red-400" /></div>
-                        <div>
-                          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1">Before</p>
-                          <p className="text-sm leading-relaxed">{story.before}</p>
-                        </div>
-                      </div>
-                      <div className="flex gap-3">
-                        <div className="mt-1"><div className="w-2 h-2 rounded-full bg-emerald-400" /></div>
-                        <div>
-                          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1">After</p>
-                          <p className="text-sm leading-relaxed">{story.after}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-sm font-bold mb-6">
-                      <TrendingUp className="w-4 h-4" /> {story.growth}
-                    </div>
-
-                    <div className="relative">
-                      <Quote className="absolute -top-2 -left-2 w-8 h-8 text-primary/10 -z-10" />
-                      <p className="text-muted-foreground italic relative z-10">"{story.quote}"</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Press / Media Trust Section */}
-      <PressLogosSA />
-
-      {/* Academy & Strategic CTAs */}
-      <section className="py-20 bg-muted/30">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">More Than a Marketplace</h2>
-            <p className="text-muted-foreground text-lg">We're building Africa's economic revolution — upskilling, connecting, and empowering.</p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-card rounded-2xl p-8 border border-border card-glow transition-all" data-testid="card-academy-cta">
-              <div className="p-3 rounded-xl bg-purple-100 dark:bg-purple-900/30 w-fit mb-4 group-hover:scale-110 transition-transform">
-                <GraduationCap className="h-8 w-8 text-purple-600 dark:text-purple-400" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground mb-2">AI Upskilling Academy</h3>
-              <p className="text-muted-foreground mb-6">Free AI-powered courses for African freelancers. From plumbing to programming — master AI tools that 10x your earnings.</p>
-              <Button variant="outline" className="gap-2 group hover:bg-primary hover:text-white hover:border-primary transition-all" data-testid="button-academy-cta" onClick={() => navigate("/academy")}>
-                Start Learning Free <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-              </Button>
-            </div>
-            <div className="bg-card rounded-2xl p-8 border border-border card-glow transition-all" data-testid="card-enterprise-cta">
-              <div className="p-3 rounded-xl bg-blue-100 dark:bg-blue-900/30 w-fit mb-4">
-                <Building2 className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground mb-2">Enterprise Solutions</h3>
-              <p className="text-muted-foreground mb-6">Bulk hiring, tender integration, and youth employment programs for corporates and government partners.</p>
-              <Button variant="outline" className="gap-2 group hover:bg-primary hover:text-white hover:border-primary transition-all" data-testid="button-enterprise-cta" onClick={() => navigate("/enterprise")}>
-                Learn More <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-              </Button>
-            </div>
-            <div className="bg-card rounded-2xl p-8 border border-border card-glow transition-all" data-testid="card-referral-cta">
-              <div className="p-3 rounded-xl bg-amber-100 dark:bg-amber-900/30 w-fit mb-4">
-                <Gift className="h-8 w-8 text-amber-600 dark:text-amber-400" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground mb-2">Refer & Earn</h3>
-              <p className="text-muted-foreground mb-6">Share FreelanceSkills with friends and earn up to R250 per referral. Build a community, get rewarded.</p>
-              <Button variant="outline" className="gap-2 group hover:bg-primary hover:text-white hover:border-primary transition-all" data-testid="button-referral-cta" onClick={() => navigate("/referral")}>
-                Get Your Link <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Innovation Lab - 2031 Vision */}
-      <section className="py-24 relative overflow-hidden bg-gradient-to-b from-background via-muted/20 to-muted/40">
-        <div className="absolute inset-0 bg-grid opacity-40 pointer-events-none" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/4 rounded-full blur-3xl pointer-events-none" />
-        <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="text-center max-w-2xl mx-auto mb-4">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-violet-500/10 to-blue-500/10 border border-violet-500/20 text-violet-600 dark:text-violet-400 text-sm font-semibold mb-5 shadow-sm">
-              <Brain className="w-4 h-4" /> 2031 Vision
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">Innovation Lab</h2>
-            <p className="text-muted-foreground text-lg">Cutting-edge technology powering Africa's future of work.</p>
-          </div>
-          <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4 mt-12">
-            {[
-              { icon: Brain, title: "AI Smart Matching", desc: "Autonomous AI agents find your perfect hire", href: "/ai-match", color: "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400", glow: "hover:shadow-blue-500/10" },
-              { icon: Link2, title: "Blockchain Credentials", desc: "Verified skills on-chain, tamper-proof", href: "/credentials", color: "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400", glow: "hover:shadow-purple-500/10" },
-              { icon: Wallet, title: "Crypto Payments", desc: "Multi-currency & mobile money", href: "/payments-hub", color: "bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400", glow: "hover:shadow-amber-500/10" },
-              { icon: BarChart3, title: "Analytics", desc: "AI-powered earning insights", href: "/analytics", color: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400", glow: "hover:shadow-emerald-500/10" },
-              { icon: Leaf, title: "Green Impact", desc: "Carbon tracking for remote work", href: "/sustainability", color: "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400", glow: "hover:shadow-green-500/10" },
-              { icon: Globe, title: "14 Languages", desc: "Accessibility for all Africans", href: "/accessibility", color: "bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400", glow: "hover:shadow-rose-500/10" },
-            ].map((item, i) => (
-              <button
-                key={i}
-                onClick={() => navigate(item.href)}
-                className={`bg-card rounded-2xl p-5 border border-border shadow-sm hover:shadow-xl ${item.glow} transition-all duration-300 hover:-translate-y-1.5 text-left group card-glow`}
-                data-testid={`card-innovation-${i}`}
-              >
-                <div className={`p-2.5 rounded-xl ${item.color} w-fit mb-3 group-hover:scale-110 transition-transform duration-200`}>
-                  <item.icon className="h-5 w-5" />
-                </div>
-                <h3 className="font-bold text-foreground text-sm mb-1.5 group-hover:text-primary transition-colors">{item.title}</h3>
-                <p className="text-muted-foreground text-xs leading-relaxed">{item.desc}</p>
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Blog & Knowledge Hub Teaser */}
-      <section className="py-20 bg-background border-y border-border" data-testid="section-blog-teaser">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 text-xs font-semibold tracking-wider uppercase mb-4">
-                <TrendingUp className="w-3.5 h-3.5" /> #1 SA Freelance Knowledge Hub
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-primary mb-3">Learn. Earn. Grow.</h2>
-              <p className="text-muted-foreground text-lg max-w-xl">South Africa's most practical freelancing guides — from winning your first tender to filing for SARS as a solo professional.</p>
-            </div>
-            <Button variant="outline" className="gap-2 group whitespace-nowrap" onClick={() => navigate("/blog")} data-testid="button-view-blog">
-              Visit the Blog <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {(liveBlogPosts && liveBlogPosts.length > 0
-              ? liveBlogPosts.slice(0, 3).map((post: any, i: number) => ({
-                  category: post.category_name || post.category?.name || "Freelancing",
-                  title: post.title,
-                  excerpt: post.excerpt || post.meta_description || "",
-                  readTime: `${post.read_time_minutes || post.readTimeMinutes || 5} min read`,
-                  color: ["bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400", "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400", "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400"][i],
-                  href: `/blog/${post.slug}`,
-                }))
-              : [
-                  {
-                    category: "AI Tools",
-                    title: "10 AI Tools That Will 10x Your Freelance Income in 2026",
-                    excerpt: "ChatGPT, Midjourney, and Copilot are the basics. We break down 10 advanced AI tools that SA freelancers are using right now to double their output and triple their rates.",
-                    readTime: "8 min read",
-                    color: "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400",
-                    href: "/blog/10-ai-tools-freelance-income-2026"
-                  },
-                  {
-                    category: "SA Tax & Legal",
-                    title: "The Complete SARS Tax Guide for South African Freelancers",
-                    excerpt: "Provisional tax, VAT registration, allowable deductions — everything you need to stay legal and keep more of your hard-earned money.",
-                    readTime: "12 min read",
-                    color: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400",
-                    href: "/blog/sars-tax-guide-south-african-freelancers"
-                  },
-                  {
-                    category: "Tenders & Government",
-                    title: "How to Win Your First Government Tender as a Freelancer",
-                    excerpt: "A step-by-step walkthrough of registering on the Central Supplier Database (CSD), finding open tenders, and crafting a compliant bid that stands out.",
-                    readTime: "15 min read",
-                    color: "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400",
-                    href: "/blog/win-first-government-tender-south-africa"
-                  }
-                ]
-            ).map((article, i) => (
-              <button
-                key={i}
-                className="text-left bg-card border border-border rounded-2xl p-6 hover:shadow-lg hover:border-primary/30 transition-all group"
-                onClick={() => navigate(article.href)}
-                data-testid={`card-blog-teaser-${i}`}
-              >
-                <span className={`inline-block text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full mb-4 ${article.color}`}>
-                  {article.category}
-                </span>
-                <h3 className="font-bold text-foreground text-lg mb-3 leading-tight group-hover:text-primary transition-colors line-clamp-2">
-                  {article.title}
-                </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed mb-4 line-clamp-3">
-                  {article.excerpt}
-                </p>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span className="font-medium">{article.readTime}</span>
-                  <span>·</span>
-                  <span className="text-primary font-semibold group-hover:underline">Read article →</span>
-                </div>
-              </button>
-            ))}
-          </div>
-
-          <div className="mt-12 p-6 md:p-8 rounded-2xl bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/10 flex flex-col md:flex-row items-center justify-between gap-6" data-testid="section-academy-funnel">
-            <div className="space-y-1">
-              <div className="text-xs font-bold uppercase tracking-wider text-primary mb-2">Blog → Academy → Jobs Funnel</div>
-              <h3 className="text-xl font-bold text-foreground">Read an article. Take a course. Land a job.</h3>
-              <p className="text-muted-foreground text-sm">Every blog post links to a free Academy course. Every course links to live job listings. Your growth path, automated.</p>
-            </div>
-            <div className="flex gap-3 flex-shrink-0">
-              <Button variant="outline" onClick={() => navigate("/blog")} data-testid="button-funnel-blog">
-                Browse Articles
-              </Button>
-              <Button className="bg-primary hover:bg-primary/90" onClick={() => navigate("/academy")} data-testid="button-funnel-academy">
-                <GraduationCap className="w-4 h-4 mr-2" /> Start Learning
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="py-20 bg-background overflow-hidden">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">Trusted by Thousands across SA</h2>
-            <p className="text-muted-foreground text-lg">Hear from the freelancers and businesses growing with us.</p>
-          </div>
-          
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            className="w-full max-w-5xl mx-auto"
-            data-testid="carousel-testimonials"
-          >
-            <CarouselContent>
-              {[
-                {
-                  name: "Sipho Khumalo",
-                  role: "General Contractor",
-                  location: "Soweto, GP",
-                  rating: 5,
-                  quote: "FreelanceSkills changed my business. I used to struggle with payments, now everything is secure through escrow.",
-                  photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=120&h=120",
-                },
-                {
-                  name: "Lerato Mokoena",
-                  role: "Graphic Designer",
-                  location: "Sandton, GP",
-                  rating: 5,
-                  quote: "The AI profile builder helped me showcase my skills perfectly. I landed my first big corporate client within a week.",
-                  photo: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=120&h=120",
-                },
-                {
-                  name: "Johan van der Merwe",
-                  role: "SME Owner",
-                  location: "Stellenbosch, WC",
-                  rating: 4,
-                  quote: "Finding reliable developers in South Africa was a challenge until I found this platform. Highly recommended for businesses.",
-                  photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=120&h=120",
-                },
-                {
-                  name: "Fatima Patel",
-                  role: "Digital Marketer",
-                  location: "Durban, KZN",
-                  rating: 5,
-                  quote: "I love the local support team. They actually understand the SA market and help whenever I have questions about tax invoicing.",
-                  photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=120&h=120",
-                },
-                {
-                  name: "Thandiwe Dlamini",
-                  role: "Content Writer",
-                  location: "Mbombela, MP",
-                  rating: 5,
-                  quote: "As a remote freelancer, having a platform that handles South African bank transfers easily is a lifesaver.",
-                  photo: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=120&h=120",
-                },
-                {
-                  name: "Kevin Naidoo",
-                  role: "IT Consultant",
-                  location: "Umhlanga, KZN",
-                  rating: 5,
-                  quote: "The verification process adds so much trust. Clients know they're hiring a professional, not just anyone.",
-                  photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=120&h=120",
-                },
-                {
-                  name: "Zanele Mbeki",
-                  role: "Event Planner",
-                  location: "Port Elizabeth, EC",
-                  rating: 4,
-                  quote: "The variety of talent here is amazing. From photographers to security, I find everything I need for my events.",
-                  photo: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=120&h=120",
-                },
-                {
-                  name: "Pieter Botha",
-                  role: "Software Architect",
-                  location: "Pretoria, GP",
-                  rating: 5,
-                  quote: "Technical projects require specialized talent. This platform consistently delivers high-quality candidates.",
-                  photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=120&h=120",
-                }
-              ].map((testimonial, i) => (
-                <CarouselItem key={i} className="md:basis-1/2 lg:basis-1/3 pl-4">
-                  <Card className="h-full border-border/50 shadow-sm" data-testid={`card-testimonial-${i}`}>
-                    <CardContent className="p-6 flex flex-col h-full">
-                      <div className="flex gap-1 mb-4">
-                        {[...Array(5)].map((_, index) => (
-                          <Star
-                            key={index}
-                            className={`w-4 h-4 ${index < testimonial.rating ? "fill-accent text-accent" : "text-muted"}`}
-                          />
-                        ))}
-                      </div>
-                      <Quote className="w-8 h-8 text-primary/10 mb-4 shrink-0" />
-                      <p className="text-muted-foreground italic mb-6 flex-grow">"{testimonial.quote}"</p>
-                      <div className="flex items-center gap-4 mt-auto">
-                        <Avatar className="h-12 w-12 border-2 border-emerald-500/30 shadow-sm">
-                          <AvatarImage src={testimonial.photo} alt={testimonial.name} />
-                          <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white font-bold text-sm">{testimonial.name.split(' ').map((n: string) => n[0]).join('')}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="font-bold text-foreground text-sm" data-testid={`text-testimonial-name-${i}`}>{testimonial.name}</div>
-                          <div className="text-xs text-muted-foreground">{testimonial.role} • {testimonial.location}</div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <div className="hidden md:block">
-              <CarouselPrevious className="-left-12" />
-              <CarouselNext className="-right-12" />
-            </div>
-          </Carousel>
-        </div>
-      </section>
-
-      {/* PWA Install Section */}
-      <section className="py-20 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white overflow-hidden relative" data-testid="section-pwa-install">
-        <div className="absolute inset-0 opacity-[0.06] pointer-events-none" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2310b981' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }} />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/8 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-500/8 rounded-full blur-3xl -translate-x-1/4 translate-y-1/4 pointer-events-none" />
-        <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="max-w-5xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-6">
-                  <Zap className="w-3.5 h-3.5" /> Install Free App
-                </div>
-                <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight mb-4">
-                  Take FreelanceSkills{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">
-                    everywhere you go
-                  </span>
-                </h2>
-                <p className="text-white/65 text-lg leading-relaxed mb-8">
-                  Install our progressive web app for instant access to jobs, clients, and payments — even with limited data. Works offline. No app store required.
-                </p>
-                <div className="space-y-3 mb-8">
                   {[
-                    { icon: "⚡", text: "Lightning-fast, native app feel on any device" },
-                    { icon: "📶", text: "Works offline — browse jobs even without data" },
-                    { icon: "🔔", text: "Instant push notifications for new job matches" },
-                    { icon: "🌍", text: "Optimised for SA mobile networks including USSD" },
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-3 text-white/75 text-sm">
-                      <span className="text-base flex-shrink-0">{item.icon}</span>
-                      <span>{item.text}</span>
+                    { icon: Target, text: "Browse 'No Experience Required' projects", color: "text-emerald-400" },
+                    { icon: GraduationCap, text: "Take free micro-courses to qualify instantly", color: "text-blue-400" },
+                    { icon: BadgeCheck, text: "Build your verified profile in under 10 minutes", color: "text-violet-400" },
+                    { icon: Award, text: "Earn your first 5-star review and unlock better gigs", color: "text-amber-400" },
+                  ].map(({ icon: Icon, text, color }, i) => (
+                    <div key={i} className="flex items-center gap-3" data-testid={`beginner-step-${i}`}>
+                      <div className="w-8 h-8 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center flex-shrink-0">
+                        <Icon className={`w-4 h-4 ${color}`} />
+                      </div>
+                      <span className="text-slate-300 font-medium text-sm">{text}</span>
                     </div>
                   ))}
                 </div>
-                <PWAInstallButton />
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button onClick={() => navigate("/jobs?level=entry")}
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02]"
+                    data-testid="button-beginner-browse">
+                    Browse Entry-Level Jobs <ArrowRight className="w-4 h-4" />
+                  </button>
+                  <button onClick={() => navigate("/academy")}
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border border-slate-700 hover:border-amber-500/40 text-slate-300 hover:text-amber-400 font-semibold text-sm transition-all"
+                    data-testid="button-beginner-learn">
+                    <GraduationCap className="w-4 h-4" /> Learn & Earn
+                  </button>
+                </div>
               </div>
-              <div className="relative flex justify-center">
-                <div className="relative w-72 h-80">
-                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-teal-500/10 rounded-3xl border border-white/10 backdrop-blur-sm shadow-2xl flex flex-col overflow-hidden">
-                    <div className="flex items-center gap-2 px-4 py-3 bg-white/5 border-b border-white/10">
-                      <div className="flex gap-1.5">
-                        <div className="w-3 h-3 rounded-full bg-red-400/60" />
-                        <div className="w-3 h-3 rounded-full bg-amber-400/60" />
-                        <div className="w-3 h-3 rounded-full bg-emerald-400/60" />
+
+              {/* Right: Quick-start cards */}
+              <div className="flex-1 w-full max-w-md">
+                <div className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-4">Quick-Start Projects — Zero Experience Needed</div>
+                <div className="space-y-3">
+                  {[
+                    { title: "Data Entry & Admin Support", pay: "R250–R800/hr", badge: "Beginner", color: "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" },
+                    { title: "Social Media Content Creator", pay: "R1,500–R5,000/project", badge: "Beginner", color: "bg-blue-500/10 border-blue-500/20 text-blue-400" },
+                    { title: "Junior Logo & Brand Design", pay: "R500–R2,000/project", badge: "Learn & Earn", color: "bg-violet-500/10 border-violet-500/20 text-violet-400" },
+                    { title: "Virtual Assistant (Remote)", pay: "R150–R400/hr", badge: "No Experience", color: "bg-amber-500/10 border-amber-500/20 text-amber-400" },
+                    { title: "Article & Blog Writing", pay: "R200–R600/article", badge: "Beginner", color: "bg-rose-500/10 border-rose-500/20 text-rose-400" },
+                  ].map((item, i) => (
+                    <button key={i} onClick={() => navigate("/jobs")}
+                      className="w-full flex items-center justify-between p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500/30 hover:bg-slate-800/60 transition-all text-left group"
+                      data-testid={`card-quick-start-${i}`}>
+                      <div>
+                        <div className="font-semibold text-white text-sm group-hover:text-emerald-400 transition-colors">{item.title}</div>
+                        <div className="text-slate-500 text-xs mt-0.5">{item.pay}</div>
                       </div>
-                      <div className="flex-1 bg-white/10 rounded-lg h-5 mx-2 flex items-center px-2">
-                        <span className="text-white/40 text-[9px] font-mono truncate">freelanceskills.net</span>
-                      </div>
+                      <span className={`text-[10px] font-bold px-2 py-1 rounded-full border ${item.color} flex-shrink-0`}>{item.badge}</span>
+                    </button>
+                  ))}
+                </div>
+                <button onClick={() => navigate("/jobs?level=entry")} className="w-full mt-4 py-3 rounded-xl border border-slate-800 text-slate-500 hover:text-emerald-400 hover:border-emerald-500/30 text-sm font-medium transition-all" data-testid="button-see-all-beginner">
+                  See all beginner opportunities →
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── TOP FREELANCERS ───────────────────────────────────────────────────── */}
+        <section className="py-20 bg-slate-900/30 border-y border-slate-800/50" aria-labelledby="top-freelancers-heading" data-testid="section-top-freelancers">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-wider mb-4">
+                  <Award className="w-3.5 h-3.5" /> Verified Top Talent
+                </div>
+                <h2 id="top-freelancers-heading" className="text-3xl md:text-4xl font-black text-white mb-2">Africa's Best Freelancers</h2>
+                <p className="text-slate-400">ID-verified. Skills-tested. Ready to deliver.</p>
+              </div>
+              <button onClick={() => navigate("/find-talent")} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-700 hover:border-blue-500/40 text-slate-300 hover:text-blue-400 font-semibold text-sm transition-all" data-testid="button-browse-talent">
+                Browse All Talent <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {[
+                { name: "Thabo M.", title: "Senior Software Engineer", rate: formatAmount(750), rating: 5.0, reviews: 42, skills: ["Python", "Django", "React"], img: "https://images.unsplash.com/photo-1531384441138-2736e62e0919?auto=format&fit=crop&q=80&w=200&h=200", badge: "Top Rated" },
+                { name: "Sarah L.", title: "Brand Strategist & Designer", rate: formatAmount(600), rating: 4.9, reviews: 85, skills: ["Branding", "Logo Design", "Adobe CC"], img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200&h=200", badge: "Expert" },
+                { name: "David K.", title: "Mobile App Developer", rate: formatAmount(800), rating: 4.8, reviews: 29, skills: ["Flutter", "iOS", "Firebase"], img: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&q=80&w=200&h=200", badge: "Rising Star" },
+                { name: "Nandi Z.", title: "Digital Marketing Specialist", rate: formatAmount(450), rating: 5.0, reviews: 63, skills: ["SEO", "Google Ads", "Social"], img: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=200&h=200", badge: "Top Rated" },
+              ].map((f, i) => (
+                <button key={i} onClick={() => navigate("/find-talent")}
+                  className="group bg-slate-900 border border-slate-800 hover:border-emerald-500/30 rounded-2xl p-5 text-left transition-all duration-200 hover:shadow-xl hover:shadow-emerald-500/5 hover:-translate-y-0.5"
+                  data-testid={`card-freelancer-${i}`}>
+                  <div className="flex items-start justify-between mb-4">
+                    <Avatar className="h-14 w-14 border-2 border-emerald-500/20 shadow-md">
+                      <AvatarImage src={f.img} alt={f.name} />
+                      <AvatarFallback className="bg-emerald-900 text-emerald-300 font-bold">{f.name[0]}</AvatarFallback>
+                    </Avatar>
+                    <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">{f.badge}</span>
+                  </div>
+                  <h3 className="font-bold text-white text-sm group-hover:text-emerald-400 transition-colors">{f.name}</h3>
+                  <p className="text-slate-500 text-xs mt-0.5 mb-3">{f.title}</p>
+                  <div className="flex items-center gap-1 mb-3">
+                    {[...Array(5)].map((_, j) => <Star key={j} className={`w-3 h-3 ${j < Math.floor(f.rating) ? "fill-amber-400 text-amber-400" : "text-slate-700"}`} />)}
+                    <span className="text-slate-500 text-xs ml-1">{f.rating} ({f.reviews})</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1 mb-4">
+                    {f.skills.map((s, j) => <span key={j} className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-400">{s}</span>)}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-emerald-400 font-black text-sm">{f.rate}/hr</span>
+                    <span className="text-xs text-slate-600 group-hover:text-emerald-500 font-medium transition-colors">Hire →</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── SUCCESS STORIES ────────────────────────────────────────────────────── */}
+        <section className="py-20 bg-slate-950" aria-labelledby="success-heading" data-testid="section-success-stories">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="text-center max-w-2xl mx-auto mb-14">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400 text-xs font-bold uppercase tracking-wider mb-5">
+                <TrendingUp className="w-3.5 h-3.5" /> Real Wins, Real People
+              </div>
+              <h2 id="success-heading" className="text-3xl md:text-4xl font-black text-white mb-4">Professional Network Highlights</h2>
+              <p className="text-slate-400 text-lg">From unemployed graduate to six-figure freelancer. These are real African stories.</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {[
+                {
+                  name: "Thabo Nkosi", location: "Johannesburg, GP", emoji: "🧑‍💻",
+                  before: "Unemployed developer, 8 months job hunting with no results.",
+                  after: "R120,000/month remote senior dev — working for a UK FinTech from Soweto.",
+                  growth: "R0 → R120k/month in 6 months",
+                  quote: "The AI matched me to jobs I didn't even know I was qualified for. The escrow made my first international client trust me immediately.",
+                  color: "border-emerald-500/20"
+                },
+                {
+                  name: "Lerato Dlamini", location: "Cape Town, WC", emoji: "🎨",
+                  before: "Freelance designer charging R150/hr with no way to prove her skills.",
+                  after: "Top-rated brand designer with a verified portfolio and R45,000/month average.",
+                  growth: "R150/hr → R650/hr",
+                  quote: "The verification badge changed everything. Clients stopped negotiating my rates — they just hired me.",
+                  color: "border-blue-500/20"
+                },
+                {
+                  name: "Zanele Khoza", location: "Durban, KZN", emoji: "🧹",
+                  before: "Started with one vacuum cleaner and a dream to be her own boss.",
+                  after: "CEO of a 12-person cleaning company with R800k annual turnover.",
+                  growth: "1 person → 12-person company",
+                  quote: "I started with one vacuum cleaner and the FreelanceSkills app. Today I'm financially independent and employing other women.",
+                  color: "border-amber-500/20"
+                },
+              ].map((story, i) => (
+                <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                  className={`bg-slate-900 border ${story.color} rounded-2xl p-6 flex flex-col`} data-testid={`card-success-${i}`}>
+                  <div className="text-4xl mb-4">{story.emoji}</div>
+                  <div className="mb-4">
+                    <h3 className="font-black text-white text-lg">{story.name}</h3>
+                    <p className="text-slate-500 text-sm">{story.location}</p>
+                  </div>
+                  <div className="space-y-3 mb-5 flex-1">
+                    <div className="flex gap-3">
+                      <div className="w-2 h-2 rounded-full bg-red-400 mt-1.5 flex-shrink-0" />
+                      <p className="text-slate-400 text-sm leading-relaxed">{story.before}</p>
                     </div>
-                    <div className="flex-1 p-4 flex flex-col gap-3">
-                      <div className="flex items-center gap-3 p-3 bg-white/8 rounded-xl border border-white/10">
-                        <div className="w-8 h-8 rounded-lg bg-emerald-500/30 flex items-center justify-center flex-shrink-0">
-                          <Zap className="w-4 h-4 text-emerald-400" />
-                        </div>
-                        <div>
-                          <div className="text-white text-xs font-bold mb-0.5">New Job Match!</div>
-                          <div className="text-white/50 text-[10px]">97% AI match · R850/hr</div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3 p-3 bg-white/8 rounded-xl border border-white/10">
-                        <div className="w-8 h-8 rounded-lg bg-blue-500/30 flex items-center justify-center flex-shrink-0">
-                          <CheckCircle2 className="w-4 h-4 text-blue-400" />
-                        </div>
-                        <div>
-                          <div className="text-white text-xs font-bold mb-0.5">Escrow Released!</div>
-                          <div className="text-white/50 text-[10px]">R12,500 on its way to you</div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3 p-3 bg-white/8 rounded-xl border border-white/10">
-                        <div className="w-8 h-8 rounded-lg bg-violet-500/30 flex items-center justify-center flex-shrink-0">
-                          <Star className="w-4 h-4 text-violet-400" />
-                        </div>
-                        <div>
-                          <div className="text-white text-xs font-bold mb-0.5">5-Star Review!</div>
-                          <div className="text-white/50 text-[10px]">FinTech client · "Outstanding work"</div>
-                        </div>
-                      </div>
-                      <div className="mt-auto pt-2">
-                        <div className="h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
-                          <span className="text-emerald-400 text-xs font-bold">✓ Installed · Always Available</span>
-                        </div>
-                      </div>
+                    <div className="flex gap-3">
+                      <div className="w-2 h-2 rounded-full bg-emerald-400 mt-1.5 flex-shrink-0" />
+                      <p className="text-slate-300 text-sm leading-relaxed font-medium">{story.after}</p>
                     </div>
                   </div>
-                  <div className="absolute -bottom-3 -right-3 w-16 h-16 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-xl shadow-emerald-500/40 rotate-6 hover:rotate-0 transition-transform">
-                    <span className="text-2xl">📱</span>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold mb-4">
+                    <TrendingUp className="w-3.5 h-3.5" /> {story.growth}
+                  </div>
+                  <div className="border-t border-slate-800 pt-4">
+                    <Quote className="w-5 h-5 text-slate-700 mb-2" />
+                    <p className="text-slate-400 italic text-sm leading-relaxed">"{story.quote}"</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── AFRICA COVERAGE ───────────────────────────────────────────────────── */}
+        <section className="py-16 bg-gradient-to-b from-slate-900/30 to-slate-950 border-y border-slate-800/50" data-testid="section-africa-coverage">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="flex flex-col md:flex-row gap-10 items-center">
+              <div className="flex-1">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-bold uppercase tracking-wider mb-5">
+                  <Globe className="w-3.5 h-3.5" /> Pan-African Reach
+                </div>
+                <h2 className="text-3xl md:text-4xl font-black text-white mb-4">Local. Continental. Global.</h2>
+                <p className="text-slate-400 text-lg mb-6 leading-relaxed">
+                  FreelanceSkills connects talent across the continent — with localised payment rails, currency support, and compliance for each market.
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { country: "🇿🇦 South Africa", status: "Full support · ZAR · PayFast", primary: true },
+                    { country: "🇰🇪 Kenya", status: "M-Pesa · KES · Live", primary: true },
+                    { country: "🇳🇬 Nigeria", status: "NGN · Bank Transfer", primary: true },
+                    { country: "🇬🇭 Ghana", status: "GHS · Mobile Money", primary: false },
+                    { country: "🇪🇬 Egypt", status: "EGP · Coming Soon", primary: false },
+                    { country: "🌍 + 49 Countries", status: "Global Remote Jobs", primary: false },
+                  ].map((c, i) => (
+                    <div key={i} className={`p-3 rounded-xl border ${c.primary ? "border-emerald-500/20 bg-emerald-500/5" : "border-slate-800 bg-slate-900/50"} text-sm`} data-testid={`coverage-country-${i}`}>
+                      <div className="font-bold text-white text-sm">{c.country}</div>
+                      <div className="text-slate-500 text-xs mt-0.5">{c.status}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex-1 max-w-sm mx-auto">
+                {/* Stats grid */}
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    { val: "11,400+", label: "Live Jobs", color: "text-emerald-400" },
+                    { val: "54", label: "Countries Covered", color: "text-blue-400" },
+                    { val: "R2.4M+", label: "Paid Out Monthly", color: "text-amber-400" },
+                    { val: "1M", label: "African Freelancers by 2031", color: "text-violet-400" },
+                  ].map((stat, i) => (
+                    <div key={i} className="bg-slate-900 border border-slate-800 rounded-2xl p-5 text-center" data-testid={`coverage-stat-${i}`}>
+                      <div className={`text-2xl font-black ${stat.color} mb-1`}>{stat.val}</div>
+                      <div className="text-slate-500 text-xs leading-snug">{stat.label}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── TESTIMONIALS ──────────────────────────────────────────────────────── */}
+        <section className="py-20 bg-slate-950 overflow-hidden" data-testid="section-testimonials">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <h2 className="text-3xl md:text-4xl font-black text-white mb-4">Trusted by Thousands Across SA</h2>
+              <p className="text-slate-400 text-lg">Freelancers and businesses growing together.</p>
+            </div>
+            <Carousel opts={{ align: "start", loop: true }} className="w-full max-w-5xl mx-auto" data-testid="carousel-testimonials">
+              <CarouselContent>
+                {[
+                  { name: "Sipho Khumalo", role: "General Contractor", location: "Soweto, GP", rating: 5, quote: "FreelanceSkills changed my business. I used to struggle with payments — now everything is secure through escrow.", photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=120&h=120" },
+                  { name: "Lerato Mokoena", role: "Graphic Designer", location: "Sandton, GP", rating: 5, quote: "The AI profile builder helped me showcase my skills perfectly. I landed my first big corporate client within a week.", photo: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=120&h=120" },
+                  { name: "Johan van der Merwe", role: "SME Owner", location: "Stellenbosch, WC", rating: 4, quote: "Finding reliable developers in South Africa was a challenge until I found this platform. Highly recommended.", photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=120&h=120" },
+                  { name: "Fatima Patel", role: "Digital Marketer", location: "Durban, KZN", rating: 5, quote: "I love the local support team. They actually understand the SA market and help with tax invoicing.", photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=120&h=120" },
+                  { name: "Thandiwe Dlamini", role: "Content Writer", location: "Mbombela, MP", rating: 5, quote: "As a remote freelancer, having a platform that handles South African bank transfers easily is a lifesaver.", photo: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=120&h=120" },
+                  { name: "Kevin Naidoo", role: "IT Consultant", location: "Umhlanga, KZN", rating: 5, quote: "The verification process adds so much trust. Clients know they're hiring a professional, not just anyone.", photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=120&h=120" },
+                ].map((t, i) => (
+                  <CarouselItem key={i} className="md:basis-1/2 lg:basis-1/3 pl-4">
+                    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 h-full flex flex-col" data-testid={`card-testimonial-${i}`}>
+                      <div className="flex gap-1 mb-4">
+                        {[...Array(5)].map((_, j) => <Star key={j} className={`w-3.5 h-3.5 ${j < t.rating ? "fill-amber-400 text-amber-400" : "text-slate-700"}`} />)}
+                      </div>
+                      <p className="text-slate-400 italic text-sm leading-relaxed flex-1 mb-5">"{t.quote}"</p>
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-10 w-10 border border-emerald-500/20">
+                          <AvatarImage src={t.photo} alt={t.name} />
+                          <AvatarFallback className="bg-emerald-900 text-emerald-300 font-bold text-sm">{t.name.split(" ").map(n => n[0]).join("")}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="font-bold text-white text-sm" data-testid={`text-testimonial-name-${i}`}>{t.name}</div>
+                          <div className="text-slate-500 text-xs">{t.role} · {t.location}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <div className="hidden md:block"><CarouselPrevious className="-left-12 border-slate-700 bg-slate-900 text-white hover:bg-slate-800" /><CarouselNext className="-right-12 border-slate-700 bg-slate-900 text-white hover:bg-slate-800" /></div>
+            </Carousel>
+          </div>
+        </section>
+
+        {/* ── PRESS LOGOS ────────────────────────────────────────────────────────── */}
+        <section className="py-10 border-y border-slate-800/50 bg-slate-900/20" data-testid="section-press">
+          <div className="container mx-auto px-4 md:px-6">
+            <p className="text-center text-[10px] font-bold uppercase tracking-[0.2em] text-slate-600 mb-6">As featured in South African media</p>
+            <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
+              {[
+                { name: "TechCabal", abbr: "TC", color: "from-blue-600 to-blue-800" },
+                { name: "Daily Maverick", abbr: "DM", color: "from-slate-600 to-slate-800" },
+                { name: "Fin24", abbr: "F24", color: "from-green-600 to-green-800" },
+                { name: "MyBroadband", abbr: "MB", color: "from-orange-500 to-red-600" },
+                { name: "Business Insider SA", abbr: "BI", color: "from-blue-500 to-blue-700" },
+                { name: "ITWeb", abbr: "IW", color: "from-violet-600 to-violet-800" },
+              ].map((logo, i) => (
+                <div key={i} className="flex items-center gap-2 opacity-40 hover:opacity-60 transition-opacity" data-testid={`press-logo-${i}`} title={logo.name}>
+                  <div className={`w-7 h-7 rounded-md bg-gradient-to-br ${logo.color} flex items-center justify-center`}>
+                    <span className="text-white text-[8px] font-black">{logo.abbr}</span>
+                  </div>
+                  <span className="text-sm font-bold text-slate-400 hidden sm:inline">{logo.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── PWA SECTION ────────────────────────────────────────────────────────── */}
+        <section className="py-20 bg-gradient-to-br from-slate-950 via-emerald-950/15 to-slate-950 relative overflow-hidden" data-testid="section-pwa">
+          <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2310b981' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/6 rounded-full blur-3xl pointer-events-none" />
+          <div className="container mx-auto px-4 md:px-6 relative z-10">
+            <div className="max-w-4xl mx-auto">
+              <div className="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-6">
+                    <Zap className="w-3.5 h-3.5" /> Progressive Web App
+                  </div>
+                  <h2 className="text-3xl md:text-4xl font-black text-white mb-4 leading-tight">
+                    Use FreelanceSkills as a Native App
+                  </h2>
+                  <p className="text-slate-400 text-lg mb-6 leading-relaxed">
+                    Install in seconds — no app store required. Works offline, loads instantly, and sends you real-time job notifications. The fastest way to stay ahead of the competition.
+                  </p>
+                  <div className="grid grid-cols-2 gap-3 mb-8">
+                    {[
+                      { icon: Zap, text: "Loads 10× faster than the website" },
+                      { icon: Bell, text: "Instant job match notifications" },
+                      { icon: Globe, text: "Works offline — browse saved jobs" },
+                      { icon: Shield, text: "No app store tracking" },
+                    ].map(({ icon: Icon, text }, i) => (
+                      <div key={i} className="flex items-center gap-2 text-sm text-slate-400">
+                        <Icon className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                        <span>{text}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <PWAInstallButton />
+                  <p className="text-slate-600 text-xs mt-3">Android · iOS · Windows · macOS · Linux</p>
+                </div>
+                <div className="hidden md:flex items-center justify-center">
+                  <div className="w-52 h-[420px] bg-slate-900 border border-slate-700 rounded-[3rem] shadow-2xl shadow-black/50 overflow-hidden relative">
+                    <div className="absolute top-6 left-1/2 -translate-x-1/2 w-24 h-5 bg-slate-800 rounded-full" />
+                    <div className="absolute inset-3 top-14 bg-slate-950 rounded-[2.5rem] overflow-hidden flex flex-col">
+                      <div className="bg-emerald-500 h-14 flex items-center justify-center">
+                        <span className="text-slate-950 font-black text-sm">FreelanceSkills</span>
+                      </div>
+                      <div className="flex-1 p-3 space-y-2.5">
+                        {[...Array(4)].map((_, i) => (
+                          <div key={i} className="bg-slate-800 rounded-xl p-3">
+                            <div className="h-2 bg-slate-700 rounded w-3/4 mb-1.5" />
+                            <div className="h-1.5 bg-slate-700/60 rounded w-1/2" />
+                          </div>
+                        ))}
+                      </div>
+                      <div className="h-14 bg-slate-900 border-t border-slate-800 flex items-center justify-around px-6">
+                        {[...Array(4)].map((_, i) => <div key={i} className="w-5 h-5 bg-slate-700 rounded-md" />)}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Newsletter Signup Section */}
-      <section className="py-16 md:py-20 bg-gradient-to-br from-primary via-primary to-primary/90 text-white overflow-hidden relative" data-testid="section-newsletter">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -translate-x-1/3 translate-y-1/3 pointer-events-none" />
-        <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="max-w-2xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-accent text-sm font-semibold mb-6">
-              <Bell className="w-4 h-4" /> Free Weekly Newsletter
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">
-              Join 47,000+ SA Freelancers<br className="hidden md:block" /> Growing Their Income
-            </h2>
-            <p className="text-white/80 text-lg mb-8 leading-relaxed">
-              Get weekly income strategies, high-paying job alerts, SARS tax tips, and AI tools — all free, all South Africa-focused.
-            </p>
-
-            {newsletterStatus === "success" ? (
-              <div className="flex items-center justify-center gap-3 p-5 bg-white/10 border border-white/20 rounded-2xl">
-                <CheckCheck className="w-6 h-6 text-accent flex-shrink-0" />
-                <p className="text-white font-semibold">{newsletterMsg}</p>
+        {/* ── BLOG ───────────────────────────────────────────────────────────────── */}
+        <section className="py-20 bg-slate-900/20 border-y border-slate-800/50" data-testid="section-blog">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-wider mb-4">
+                  <TrendingUp className="w-3.5 h-3.5" /> Knowledge Hub
+                </div>
+                <h2 className="text-3xl md:text-4xl font-black text-white mb-2">Learn. Earn. Grow.</h2>
+                <p className="text-slate-400 text-base max-w-xl">South Africa's most practical freelancing guides — from winning your first tender to filing for SARS.</p>
               </div>
-            ) : (
-              <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" data-testid="form-newsletter">
-                <Input
-                  type="email"
-                  placeholder="your@email.co.za"
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  required
-                  className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-accent focus:ring-accent"
-                  data-testid="input-newsletter-email"
-                />
-                <Button
-                  type="submit"
-                  disabled={newsletterStatus === "loading"}
-                  className="bg-accent text-primary hover:bg-accent/90 font-bold px-6 flex-shrink-0"
-                  data-testid="button-newsletter-subscribe"
-                >
-                  {newsletterStatus === "loading" ? "Subscribing..." : "Subscribe Free"}
-                </Button>
-              </form>
-            )}
+              <button onClick={() => navigate("/blog")} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-700 hover:border-amber-500/40 text-slate-300 hover:text-amber-400 font-semibold text-sm transition-all" data-testid="button-view-blog">
+                Visit Blog <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {(liveBlogPosts && liveBlogPosts.length > 0
+                ? liveBlogPosts.slice(0, 3).map((post: any, i: number) => ({
+                    category: post.category_name || "Freelancing",
+                    title: post.title,
+                    excerpt: post.excerpt || post.meta_description || "",
+                    readTime: `${post.read_time_minutes || 5} min read`,
+                    color: ["text-blue-400 bg-blue-500/10 border-blue-500/20", "text-emerald-400 bg-emerald-500/10 border-emerald-500/20", "text-violet-400 bg-violet-500/10 border-violet-500/20"][i],
+                    href: `/blog/${post.slug}`,
+                  }))
+                : [
+                    { category: "AI Tools", title: "10 AI Tools That Will 10x Your Freelance Income in 2026", excerpt: "ChatGPT, Midjourney, and Copilot are the basics. We break down 10 advanced AI tools SA freelancers use to triple their rates.", readTime: "8 min read", color: "text-blue-400 bg-blue-500/10 border-blue-500/20", href: "/blog" },
+                    { category: "SA Tax & Legal", title: "The Complete SARS Tax Guide for South African Freelancers", excerpt: "Provisional tax, VAT, allowable deductions — everything you need to stay legal and keep more of your money.", readTime: "12 min read", color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20", href: "/blog" },
+                    { category: "Tenders & Government", title: "How to Win Your First Government Tender as a Freelancer", excerpt: "Step-by-step: CSD registration, finding open tenders, and crafting a compliant bid that stands out.", readTime: "15 min read", color: "text-violet-400 bg-violet-500/10 border-violet-500/20", href: "/blog" },
+                  ]
+              ).map((article, i) => (
+                <button key={i} onClick={() => navigate(article.href)}
+                  className="text-left bg-slate-900 border border-slate-800 hover:border-emerald-500/30 rounded-2xl p-6 hover:shadow-lg transition-all group"
+                  data-testid={`card-blog-${i}`}>
+                  <span className={`inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full mb-4 border ${article.color}`}>{article.category}</span>
+                  <h3 className="font-bold text-white text-base mb-3 leading-snug group-hover:text-emerald-400 transition-colors line-clamp-2">{article.title}</h3>
+                  <p className="text-slate-500 text-sm mb-4 line-clamp-2">{article.excerpt}</p>
+                  <div className="flex items-center gap-2 text-xs text-slate-600">
+                    <span>{article.readTime}</span><span>·</span>
+                    <span className="text-emerald-500 font-semibold group-hover:underline">Read →</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
 
-            {newsletterStatus === "error" && (
-              <p className="mt-3 text-red-300 text-sm">{newsletterMsg}</p>
-            )}
-
-            <p className="mt-5 text-white/50 text-xs">
-              POPIA compliant · No spam · Unsubscribe anytime · By subscribing you agree to our{" "}
-              <button onClick={() => navigate("/privacy")} className="underline hover:text-white/80">Privacy Policy</button>
+        {/* ── FINAL CTA ─────────────────────────────────────────────────────────── */}
+        <section className="py-24 bg-slate-950 relative overflow-hidden" data-testid="section-final-cta">
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-950/20 via-slate-950 to-slate-950" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="container mx-auto px-4 md:px-6 relative z-10">
+            <div className="text-center max-w-3xl mx-auto mb-14">
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-5 leading-tight">
+                Your Professional Future <span className="text-emerald-400">Starts Here</span>
+              </h2>
+              <p className="text-slate-400 text-xl leading-relaxed">
+                Join Africa's fastest-growing professional network. Whether you're a freelancer looking for your next gig, or a business looking for top talent — we've got you covered.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-5 max-w-3xl mx-auto">
+              {/* Freelancers */}
+              <div className="bg-gradient-to-br from-emerald-950/50 to-slate-900 border border-emerald-500/20 rounded-2xl p-8 flex flex-col" data-testid="cta-card-freelancer">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center mb-5">
+                  <Users className="w-6 h-6 text-emerald-400" />
+                </div>
+                <div className="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-3">For Freelancers</div>
+                <h3 className="text-2xl font-black text-white mb-3">Start Earning Today</h3>
+                <p className="text-slate-400 text-sm leading-relaxed mb-6 flex-1">
+                  Create your free verified profile, get AI-matched to the best opportunities, and start earning in ZAR or global currencies — all with escrow protection.
+                </p>
+                <ul className="space-y-2 mb-6">
+                  {["Free profile forever", "AI job matching", "Escrow-protected payments", "Skills verification badge"].map((item, i) => (
+                    <li key={i} className="flex items-center gap-2 text-sm text-slate-300">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" /> {item}
+                    </li>
+                  ))}
+                </ul>
+                <button onClick={() => navigate("/freelancer-onboarding")}
+                  className="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm transition-all hover:shadow-lg hover:shadow-emerald-500/20"
+                  data-testid="button-cta-freelancer">
+                  Create Free Profile →
+                </button>
+              </div>
+              {/* Clients */}
+              <div className="bg-gradient-to-br from-blue-950/40 to-slate-900 border border-blue-500/20 rounded-2xl p-8 flex flex-col" data-testid="cta-card-client">
+                <div className="w-12 h-12 rounded-2xl bg-blue-500/15 border border-blue-500/20 flex items-center justify-center mb-5">
+                  <Building2 className="w-6 h-6 text-blue-400" />
+                </div>
+                <div className="text-xs font-bold uppercase tracking-wider text-blue-400 mb-3">For Clients & Businesses</div>
+                <h3 className="text-2xl font-black text-white mb-3">Hire Verified Talent</h3>
+                <p className="text-slate-400 text-sm leading-relaxed mb-6 flex-1">
+                  Post a project in minutes and receive proposals from verified South African and African freelancers. Secure escrow, clear contracts, real results.
+                </p>
+                <ul className="space-y-2 mb-6">
+                  {["Post free — pay only on hire", "ID-verified freelancers only", "Escrow payment protection", "24/7 SA support team"].map((item, i) => (
+                    <li key={i} className="flex items-center gap-2 text-sm text-slate-300">
+                      <CheckCircle2 className="w-4 h-4 text-blue-400 flex-shrink-0" /> {item}
+                    </li>
+                  ))}
+                </ul>
+                <button onClick={() => navigate("/post-job")}
+                  className="w-full py-3.5 rounded-xl bg-blue-500 hover:bg-blue-400 text-white font-black text-sm transition-all hover:shadow-lg hover:shadow-blue-500/20"
+                  data-testid="button-cta-client">
+                  Post a Project →
+                </button>
+              </div>
+            </div>
+            {/* CIPC legal */}
+            <p className="text-center text-slate-600 text-xs mt-10">
+              FreelanceSkills (Pty) Ltd · CIPC Reg: 2026/070509/09 · POPIA Compliant · All rights reserved © {new Date().getFullYear()}
             </p>
           </div>
-        </div>
-      </section>
+        </section>
+
+        {/* ── NEWSLETTER ────────────────────────────────────────────────────────── */}
+        <section className="py-14 border-t border-slate-800/60 bg-slate-950" data-testid="section-newsletter">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="max-w-xl mx-auto text-center">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-slate-400 text-xs font-semibold mb-4">
+                <Bell className="w-3.5 h-3.5 text-emerald-400" /> Weekly SA Freelance Digest
+              </div>
+              <h3 className="text-xl font-black text-white mb-2">Stay Ahead of the Market</h3>
+              <p className="text-slate-500 text-sm mb-6">Top jobs, rate benchmarks, and freelance strategy — straight to your inbox every Monday.</p>
+              <form onSubmit={handleNewsletterSubmit} className="flex gap-2" data-testid="form-newsletter">
+                <input value={newsletterEmail} onChange={e => setNewsletterEmail(e.target.value)} type="email"
+                  placeholder="your@email.com" required
+                  className="flex-1 px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 focus:border-emerald-500/50 text-white placeholder:text-slate-600 text-sm focus:outline-none transition-colors"
+                  data-testid="input-newsletter-email" />
+                <button type="submit" disabled={newsletterStatus === "loading"}
+                  className="px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-60 text-slate-950 font-bold text-sm transition-all flex-shrink-0"
+                  data-testid="button-newsletter-submit">
+                  {newsletterStatus === "loading" ? "..." : "Subscribe"}
+                </button>
+              </form>
+              {newsletterMsg && (
+                <p className={`text-xs mt-3 ${newsletterStatus === "success" ? "text-emerald-400" : "text-red-400"}`} data-testid="text-newsletter-message">
+                  {newsletterMsg}
+                </p>
+              )}
+              <p className="text-slate-700 text-xs mt-3">No spam. Unsubscribe anytime. POPIA compliant.</p>
+            </div>
+          </div>
+        </section>
 
       </main>
+
       <Footer />
     </div>
   );

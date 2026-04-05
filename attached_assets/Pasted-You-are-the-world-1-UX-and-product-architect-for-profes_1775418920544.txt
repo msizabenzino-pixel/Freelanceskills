@@ -1,0 +1,34 @@
+You are the world #1 UX and product architect for professional platforms in 2026. Turn freelanceskills.net into "LinkedIn for African Freelancers — but 10 times better".
+
+Rebuild the homepage as a complete, single-file, production-ready HTML that combines the best of LinkedIn (professional networking, profiles as digital CVs, endorsements, "Open to Work" equivalent, personalized feed) with the best of a freelance marketplace (verified skills, AI matching, secure escrow, PayFast payouts, 10% fees, PWA).
+
+MANDATORY RULES — NO MERCY:
+- 100% platform-first, zero founder mentions.
+- Match the existing premium dark navy (#0f172a) + emerald (#10b981) theme and Tailwind CSS.
+- 100% mobile-first, buttery-smooth responsiveness, consistent navbar/footer from previous nuclear upgrades.
+- Fully functional PWA install promotion.
+- Make it feel 10× cleaner, faster, more empowering, and more trustworthy than LinkedIn for freelancers in Africa.
+
+ELITE 10× LINKEDIN STRUCTURE:
+1. Hero: Bold, personalized feel — Headline: "Your Professional Freelance Future Starts Here" or "Build Your Career as a Verified African Freelancer". Sub: "Skills-first network. AI matching. Secure payments. Real opportunity."
+   - CTAs: "Create Free Professional Profile" (with "Open to Freelance Gigs" badge teaser), "Browse Opportunities", "Post a Project".
+
+2. Personalized Opportunity Feed Teaser: "Recommended for You" — skills-matched gigs, beginner-friendly projects, high-value remote work.
+
+3. Professional Profile Spotlight: "Meet Top Verified Professionals" with LinkedIn-style cards (photo, headline, skills, hourly rate, ratings, "View Profile", endorsement-style badges).
+
+4. "Open to Gigs" Network Layer: Teaser for digital CV/profile builder, endorsements, skills validation, and "Open to Freelance Work" visibility.
+
+5. For Beginners / First Gig Section: Clean, empowering section inspired by FirstJobly but fully freelance-focused ("Land Your First Paid Gig", no-experience filters, profile builder teaser).
+
+6. Core Value Pillars (visual grid): Verified Skills & Endorsements, Secure Escrow & Instant ZAR Payouts, AI Smart Matching, Transparent 10% Fees, Africa-First Network + Global Reach.
+
+7. Success Stories with professional growth angle.
+
+8. Premium PWA Section.
+
+9. Final strong CTA for freelancers and clients.
+
+Output ONLY the complete <!DOCTYPE html> ... </html> file labeled <!-- FILE: index.html -->. Make this the most powerful, addictive, and conversion-optimized professional freelance network homepage possible — 10× better than LinkedIn for African talent.
+
+Generate now with untouchable nuclear precision.

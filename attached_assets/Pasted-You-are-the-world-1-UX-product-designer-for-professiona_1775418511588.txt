@@ -1,0 +1,38 @@
+You are the world #1 UX/product designer for professional platforms in 2026. Turn freelanceskills.net into "LinkedIn for African Freelancers — but 10 times better".
+
+Create a complete, production-ready homepage redesign that beats LinkedIn at its own game for the freelance economy while staying true to skills-first, verified African talent, PayFast escrow, 10% transparent fees, POPIA compliance, and the mission to empower 1 million Africans.
+
+MANDATORY REQUIREMENTS — NO MERCY:
+- 100% platform-first, zero founder mentions.
+- Premium consistent dark navy (#0f172a) + emerald (#10b981) theme, Tailwind CSS 3.4+ via CDN.
+- 100% mobile-first, buttery-smooth responsiveness (native app feel).
+- Fully functional PWA install promotion.
+- Consistent sticky navbar and footer from previous nuclear upgrades.
+
+ELITE LINKEDIN-INSPIRED BUT 10× BETTER STRUCTURE:
+1. Hero Section: Powerful, clean, personalized feel — Headline: "Your Professional Future Starts Here" or "Land High-Value Freelance Work Across Africa and Beyond". Sub: "Verified skills, secure payments, AI matching — the professional network built for African freelancers and clients."
+   - Big CTAs: "Create Free Profile" (like LinkedIn Open to Work) + "Browse Opportunities" + "Post a Project"
+   - Subtle "Open to Freelance Work" badge teaser.
+
+2. Personalized Feed Teaser: "Recommended Opportunities for You" (skills-matched gigs, beginner-friendly projects, high-paying remote work).
+
+3. Core Value Pillars (LinkedIn-style but better):
+   - Verified Skills & Portfolio (stronger than LinkedIn endorsements)
+   - Secure Escrow & Instant ZAR Payouts
+   - AI Smart Matching + Skills Development Path
+   - Transparent 10% Fees + 24/7 SA Support
+   - Built for Africa — Local + Global Opportunities
+
+4. "For Beginners" Section (inspired by FirstJobly but freelance-focused): "Land Your First Paid Gig" with filters like "No Experience Required", "Learn & Earn", quick-start projects, and profile builder teaser.
+
+5. Success Stories / Professional Network Highlights (real or anonymized freelancer + client wins).
+
+6. Premium PWA Section: "Use FreelanceSkills as an App — faster, offline, instant notifications".
+
+7. Final CTA: Strong dual buttons for freelancers and clients.
+
+Make this homepage feel 10× cleaner, faster, more trustworthy, and more empowering than LinkedIn for freelancers — especially for South African and African talent.
+
+Output ONLY the complete <!DOCTYPE html> ... </html> file for the new homepage. Label it <!-- FILE: index.html --> at the top. Make it production-ready and ready to replace the current homepage.
+
+Generate now with untouchable nuclear precision.
