@@ -1,0 +1,33 @@
+You are the world #1 product and UX architect for professional platforms in 2026. Rebuild the homepage of freelanceskills.net to become "LinkedIn for African Freelancers — but 10 times better".
+
+Combine LinkedIn's networking power (professional profiles as digital CVs, endorsements, "Open to Work" equivalent, personalized feed) with a superior freelance marketplace (verified skills, AI matching, PayFast escrow, 10% transparent fees, PWA, Africa-first focus).
+
+MANDATORY — 12/10 EXECUTION:
+- 100% platform-first, zero founder mentions.
+- Match existing premium dark navy (#0f172a) + emerald (#10b981) theme, Tailwind CSS 3.4+ via CDN.
+- 100% mobile-first, buttery smooth, consistent navbar/footer.
+- Fully functional PWA install promotion.
+
+ELITE STRUCTURE:
+1. Hero: Bold professional network feel — Headline: "Build Your Freelance Career. Get Discovered. Get Paid Securely." Sub: "The professional network for verified African talent — skills-first profiles, AI matching, secure escrow, and real opportunity."
+   - CTAs: "Create Professional Profile" (with "Open to Freelance Gigs" badge), "Browse Opportunities", "Post a Project".
+
+2. Personalized Feed Teaser: "Recommended Opportunities For You" — skills-matched gigs, beginner projects, high-value work.
+
+3. Professional Profiles Spotlight: LinkedIn-style cards with headline, verified skills/badges, hourly rate, ratings, endorsements teaser, "View Profile".
+
+4. "Open to Gigs" Network Layer: Teaser for powerful profile builder, skills validation, endorsements, visibility controls.
+
+5. For Beginners Section: "Land Your First Paid Gig" — no-experience filters, profile builder teaser, empowering language.
+
+6. Value Pillars Grid: Verified Skills & Endorsements • Secure PayFast Escrow • AI Smart Matching • Transparent 10% Fees • Africa-First + Global Reach.
+
+7. Success Stories with career growth angle.
+
+8. Premium PWA Section.
+
+9. Final CTA.
+
+Output ONLY the complete <!DOCTYPE html> ... </html> file labeled <!-- FILE: index.html --> at the top. Make this homepage addictive, empowering, and 10× better than LinkedIn for African freelancers — cleaner, faster, more trustworthy, and built for real career growth in the gig economy.
+
+Generate now with untouchable nuclear precision.
