@@ -399,7 +399,7 @@ export default function Home() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
               </span>
-              <AnimatedCounter value={totalJobs} duration={1500} />+ Real Jobs · Updated Every 30 Min · Africa's #1 Professional Network
+              <AnimatedCounter value={totalJobs} duration={1500} />+ Real Jobs · Updated Every 30 Min · Verified Marketplace
             </motion.div>
 
             {/* Headline */}
@@ -416,7 +416,7 @@ export default function Home() {
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
               className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
               Skills-first network. AI matching. Secure escrow payments. Real opportunity.<br />
-              <span className="text-emerald-400 font-semibold">10% transparent fees. 100% real opportunities.</span>
+              <span className="text-emerald-400 font-semibold">Find work. Hire fast. Get paid safely.</span>
             </motion.p>
 
             {/* Search */}
@@ -458,7 +458,7 @@ export default function Home() {
               <Link href="/post-job"
                 className="group inline-flex items-center gap-2.5 px-7 py-4 rounded-2xl border border-slate-700 hover:border-emerald-500/40 text-slate-300 hover:text-emerald-400 font-semibold text-base transition-all hover:bg-emerald-500/5"
                 data-testid="button-hero-post-project">
-                <Briefcase className="w-5 h-5" /> Post a Project
+                <Briefcase className="w-5 h-5" /> Hire Verified Talent
               </Link>
             </motion.div>
 
@@ -537,7 +537,7 @@ export default function Home() {
                   Not Just a Profile — <span className="text-blue-400">Your Digital Freelance CV</span>
                 </h2>
                 <p className="text-slate-400 text-lg mb-8 leading-relaxed">
-                  LinkedIn shows your job history. FreelanceSkills shows your <em className="text-white not-italic font-semibold">proven skills, verified income, real reviews</em>, and live "Open to Gigs" status — so clients hire you with confidence on day one.
+                  Show verified skills, reviews, and availability so clients can hire you fast.
                 </p>
                 <div className="space-y-4 mb-8">
                   {[
@@ -808,7 +808,7 @@ export default function Home() {
                   {[
                     { icon: Target, text: "Browse 'No Experience Required' projects", color: "text-emerald-400" },
                     { icon: GraduationCap, text: "Free micro-courses to qualify for gigs instantly", color: "text-blue-400" },
-                    { icon: BadgeCheck, text: "AI builds your verified profile in under 10 minutes", color: "text-violet-400" },
+                    { icon: BadgeCheck, text: "Build a verified profile in minutes", color: "text-violet-400" },
                     { icon: Award, text: "Earn your first 5-star review — unlock higher-paying gigs", color: "text-amber-400" },
                   ].map(({ icon: Icon, text, color }, i) => (
                     <div key={i} className="flex items-center gap-3" data-testid={`beginner-step-${i}`}>
