@@ -5,7 +5,7 @@
 
 import { type Express, type Request, type Response } from "express";
 import { storage } from "./storage";
-import { log } from "./index";
+import { log } from "./logger";
 
 export function registerAggregatedJobRoutes(app: Express) {
 

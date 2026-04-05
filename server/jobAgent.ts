@@ -16,7 +16,7 @@
 
 import OpenAI from "openai";
 import { storage } from "./storage";
-import { log } from "./index";
+import { log } from "./logger";
 import type { InsertAggregatedJob } from "@shared/models/jobs";
 
 const openai = new OpenAI({
@@ -47,6 +47,20 @@ const JOB_SOURCES = [
   "PNet", "Career24", "LinkedIn", "Indeed SA", "CareerJunction",
   "OfferZen", "Bizcommunity", "JobMail", "Government Vacancies", "BestJobs",
 ];
+
+// Correct, real-world SA job portal URLs
+const SOURCE_URLS: Record<string, string> = {
+  "PNet": "https://www.pnet.co.za",
+  "Career24": "https://www.career24.com",
+  "LinkedIn": "https://za.linkedin.com/jobs",
+  "Indeed SA": "https://za.indeed.com",
+  "CareerJunction": "https://www.careerjunction.co.za",
+  "OfferZen": "https://www.offerzen.com/jobs",
+  "Bizcommunity": "https://www.bizcommunity.com/Vacancies",
+  "JobMail": "https://www.jobmail.co.za",
+  "Government Vacancies": "https://www.dpsa.gov.za/dpsa2g/vacancies.asp",
+  "BestJobs": "https://www.bestjobs.eu/en/jobs/c/south-africa",
+};
 
 const CATEGORIES = [
   "Software Engineering", "Data Science & AI", "Cybersecurity", "Cloud & DevOps",
@@ -100,40 +114,109 @@ const SALARY_RANGES: Record<string, [number, number]> = {
   "Government & Public Sector": [14000, 60000],
 };
 
-// ── AI Score Calculator ───────────────────────────────────────────────────────
+// ── Experience Level Inference ────────────────────────────────────────────────
 
-function calculateAIScore(job: Partial<InsertAggregatedJob>): number {
-  let score = 50;
+/**
+ * Infers experience level from job title to ensure title/level consistency.
+ * Falls back to a random level if no keyword match is found.
+ */
+function inferExperienceLevelFromTitle(title: string): string {
+  const t = title.toLowerCase();
+  if (/\b(chief|cto|cfo|coo|ceo|vp |vice president|director|head of|gm |general manager)\b/.test(t)) return "executive";
+  if (/\b(senior|lead|principal|specialist|manager|architect|expert|master)\b/.test(t)) return "senior";
+  if (/\b(junior|graduate|trainee|intern|learner|entry|entry-level|associate)\b/.test(t)) return "entry";
+  if (/\b(assistant|coordinator)\b/.test(t)) return "junior";
+  // Default: mid for untitled / generic roles
+  const mids = ["mid", "senior", "junior"]; // weighted toward mid
+  return mids[Math.floor(Math.random() * mids.length)];
+}
 
-  // Description quality
-  if (job.description && job.description.length > 300) score += 10;
-  if (job.description && job.description.length > 600) score += 5;
+// ── AI Score Calculator (Realistic Bell Curve) ────────────────────────────────
 
-  // Requirements provided
-  if (job.requirements && job.requirements.length > 100) score += 8;
+/**
+ * Produces a realistic score distribution:
+ *  • Most jobs: 65–82 (good, not exceptional)
+ *  • Strong jobs: 82–90 (competitive salary, complete data)
+ *  • Top jobs: 90–95 (rare, truly standout listings)
+ *  • No job scores > 95 — nothing is perfect
+ *
+ * Key factors: salary competitiveness, description depth, skills specificity,
+ *              data consistency (title vs level), category desirability.
+ */
+function calculateAIScore(job: Partial<InsertAggregatedJob & { category?: string }>): number {
+  // Base: 42 — below-average starting point
+  let score = 42;
 
-  // Salary transparency
-  if (job.salaryMin && job.salaryMax) score += 12;
-  if (job.salaryMin && !job.salaryMax) score += 5;
+  // ── 1. Salary competitiveness vs category median (+0 to +20) ─────────────
+  if (job.salaryMin && job.salaryMax) {
+    const range = SALARY_RANGES[(job as any).category || ""] || [15000, 60000];
+    const categoryMid = (range[0] + range[1]) / 2;
+    const jobMid = (job.salaryMin + job.salaryMax) / 2;
+    const ratio = jobMid / categoryMid;
+    if (ratio >= 1.25) score += 20;       // Top-quartile pay
+    else if (ratio >= 1.05) score += 15;  // Above median
+    else if (ratio >= 0.85) score += 10;  // At median
+    else if (ratio >= 0.65) score += 5;   // Below median
+    else score += 1;                       // Low pay
+  } else if (job.salaryMin || job.salaryMax) {
+    score += 4;  // Partial salary — partial credit
+  }
 
-  // Skills listed
-  if (job.skills && job.skills.split(",").length >= 3) score += 8;
-  if (job.skills && job.skills.split(",").length >= 6) score += 4;
+  // ── 2. Description depth (+0 to +14) ─────────────────────────────────────
+  const descLen = job.description?.length ?? 0;
+  if (descLen > 900) score += 14;
+  else if (descLen > 600) score += 10;
+  else if (descLen > 350) score += 7;
+  else if (descLen > 150) score += 3;
 
-  // Experience level specified
-  if (job.experienceLevel) score += 5;
+  // ── 3. Skills specificity (+0 to +10) ─────────────────────────────────────
+  const skillCount = job.skills ? job.skills.split(",").filter(Boolean).length : 0;
+  if (skillCount >= 7) score += 10;
+  else if (skillCount >= 5) score += 8;
+  else if (skillCount >= 3) score += 5;
+  else if (skillCount >= 1) score += 2;
 
-  // Company size info
-  if (job.companySize) score += 3;
+  // ── 4. Requirements detail (+0 to +8) ─────────────────────────────────────
+  const reqLen = job.requirements?.length ?? 0;
+  if (reqLen > 400) score += 8;
+  else if (reqLen > 200) score += 5;
+  else if (reqLen > 80) score += 3;
 
-  // BEE level
-  if (job.beeLevel) score += 3;
+  // ── 5. Data completeness (+0 to +5) ──────────────────────────────────────
+  if (job.experienceLevel) score += 1;
+  if (job.companySize) score += 1;
+  if (job.beeLevel) score += 1;
+  if (job.jobType) score += 1;
+  if (job.isRemote !== undefined && job.isRemote !== null) score += 1;
 
-  // Urgency (creates urgency for applicants)
-  if (job.isUrgent) score += 2;
+  // ── 6. Natural variance to prevent clustering (±8) ────────────────────────
+  // Use seeded variance from company name length so it's deterministic per job
+  const seed = (job.company?.length ?? 5) + (job.title?.length ?? 8);
+  const variance = (seed % 17) - 8;  // -8 to +8
+  score += variance;
 
-  // Cap at 100
-  return Math.min(100, score);
+  // ── 7. Deductions for data quality issues ─────────────────────────────────
+  const title = (job.title || "").toLowerCase();
+  const level = job.experienceLevel || "";
+
+  // Title/level contradictions
+  const isJuniorTitle = /\b(junior|trainee|graduate|intern|entry)\b/.test(title);
+  const isSeniorTitle = /\b(senior|lead|principal|director|head of|chief|vp)\b/.test(title);
+
+  if (isJuniorTitle && (level === "senior" || level === "executive")) score -= 12;
+  if (isJuniorTitle && level === "mid") score -= 5;
+  if (isSeniorTitle && (level === "entry" || level === "junior")) score -= 10;
+
+  // Remote + hands-on trades = suspicious  
+  if (job.isRemote && title.includes("electrician")) score -= 6;
+  if (job.isRemote && title.includes("plumb")) score -= 6;
+  if (job.isRemote && title.includes("site")) score -= 4;
+
+  // Salary/seniority mismatch (senior title, entry salary)
+  if (isSeniorTitle && job.salaryMax && job.salaryMax < 25000) score -= 8;
+
+  // ── 8. Hard cap: min 45, max 95 ──────────────────────────────────────────
+  return Math.min(95, Math.max(45, score));
 }
 
 // ── OpenAI Job Generation ─────────────────────────────────────────────────────
@@ -268,15 +351,19 @@ function generateFallbackJob(category: string, province: string, source: string)
   const selectedSkills = skills.sort(() => Math.random() - 0.5).slice(0, Math.min(6, skills.length)).join(", ");
 
   const titlePrefixes: Record<string, string[]> = {
-    "entry": ["Junior", "Graduate", "Trainee", "Associate", "Entry-Level"],
-    "junior": ["Junior", "Associate", "Assistant"],
-    "mid": ["", "Experienced", "Specialist"],
+    "entry": ["Junior", "Graduate", "Trainee", "Associate"],
+    "junior": ["Junior", "Assistant", "Associate"],
+    "mid": ["", "Specialist", "Experienced"],
     "senior": ["Senior", "Lead", "Principal"],
     "executive": ["Head of", "Director of", "Chief", "VP of"],
   };
   const prefix = pickRandom(titlePrefixes[expLevel] || [""]);
-  const baseTitle = category.replace(/\s*\(.*\)/, "").split(" ").slice(-2).join(" ");
-  const title = prefix ? `${prefix} ${baseTitle} Specialist` : `${baseTitle} Specialist`;
+  // Strip parenthetical (Civil/Structural) then take the primary part before " & "
+  const baseCat = category.replace(/\s*\(.*\)/, "").split(" & ")[0].trim();
+  // For executive roles don't append "Specialist" — "Head of Finance" reads better than "Head of Finance Specialist"
+  const title = expLevel === "executive"
+    ? (prefix ? `${prefix} ${baseCat}` : `${baseCat} Director`)
+    : (prefix ? `${prefix} ${baseCat} Specialist` : `${baseCat} Specialist`);
 
   const description = `${company} is seeking a ${expLevel}-level ${title} to join our ${province} team${isRemote ? " (Remote)" : ` based in ${city}`}.
 
@@ -319,7 +406,7 @@ What We Offer:
     salaryMax: salMax,
     salaryPeriod: "month",
     source,
-    sourceUrl: `https://${source.toLowerCase().replace(/\s+/g, "")}.co.za/jobs`,
+    sourceUrl: SOURCE_URLS[source] || `https://www.${source.toLowerCase().replace(/\s+/g, "")}.co.za`,
     category,
     jobType,
     experienceLevel: expLevel,
@@ -338,7 +425,7 @@ What We Offer:
     agentGenerated: true,
   };
 
-  (job as any).aiScore = calculateAIScore(job);
+  (job as any).aiScore = calculateAIScore({ ...job, category });
   return job as InsertAggregatedJob;
 }
 
@@ -392,10 +479,10 @@ export async function runJobGenerationAgent(
             salaryMax: aj.salaryMax || salaryRange[1],
             salaryPeriod: "month",
             source,
-            sourceUrl: `https://${source.toLowerCase().replace(/\s+/g, "")}.co.za/jobs`,
+            sourceUrl: SOURCE_URLS[source] || `https://www.${source.toLowerCase().replace(/\s+/g, "")}.co.za`,
             category,
             jobType: pickRandom(JOB_TYPES as unknown as string[]),
-            experienceLevel: pickRandom(EXPERIENCE_LEVELS as unknown as string[]),
+            experienceLevel: inferExperienceLevelFromTitle(aj.title),
             postedDate: new Date(),
             expiresAt: new Date(Date.now() + (isUrgent ? 7 : Math.floor(Math.random() * 21) + 10) * 86400000),
             isActive: true,
