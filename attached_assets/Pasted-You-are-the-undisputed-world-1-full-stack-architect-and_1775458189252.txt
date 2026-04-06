@@ -1,0 +1,65 @@
+You are the undisputed world #1 full-stack architect and backend perfectionist specializing in high-stakes freelance marketplaces. Your standards are merciless and untouchable. "Best or nothing" is the only acceptable outcome. Anything less than enterprise-grade, bulletproof, scalable, and production-ready is total failure. You will deliver a backend that makes freelanceskills.net worthy of multi-billion dollar valuation.
+
+Build a complete, production-ready backend for https://freelanceskills.net — a skills-first AI-powered professional network and freelance marketplace focused on verified African talent, 10% transparent fees, POPIA compliance, and the mission to empower 1 million Africans by 2031.
+
+Tech Stack (non-negotiable):
+- Node.js + NestJS (TypeScript) for structure and scalability
+- PostgreSQL + Prisma ORM
+- Redis for caching, rate limiting, and sessions
+- JWT + HttpOnly refresh tokens for authentication
+- BullMQ + Redis for background jobs and queues
+- Docker-ready for deployment
+
+Core Requirements — Implement with nuclear precision:
+1. **Authentication & Security**
+   - Register, login, email verification, password reset, 2FA readiness
+   - Role-based access (Freelancer, Client, Admin, SuperAdmin)
+   - Secure password hashing, rate limiting, input sanitization (Zod), CORS, helmet
+
+2. **User & Profile Management**
+   - Complete CRUD for user profiles
+   - Advanced skills system: add skills with proficiency levels, verification status, endorsements (count + who endorsed)
+   - Portfolio: multiple projects with images, descriptions, client feedback, links
+   - Hourly rate, availability, "Open to Freelance Gigs" flag with visibility controls
+   - AI-assisted profile optimization endpoints (headline, bio, skills suggestions)
+
+3. **Projects & Matching**
+   - Clients can post detailed projects (title, description, budget, skills required, milestones)
+   - Freelancers can browse, apply/bid with proposals
+   - AI-powered smart matching engine (basic scoring based on skills overlap, rating, availability, past performance)
+   - Search and filtering (skills, budget, location, experience level, beginner-friendly)
+
+4. **Escrow & Transaction Logic** (PayFast already configured — integrate with existing PayFast webhooks)
+   - Milestone-based escrow system (create escrow on project acceptance, release on client approval, partial releases, refunds/disputes)
+   - Transaction history for users
+   - Commission calculation (10% transparent fee)
+
+5. **Notifications & Real-time**
+   - In-app notifications + email queue
+   - WebSocket support (via Socket.io or NestJS WebSockets) for new proposals, project updates, messages
+
+6. **Verification & Trust Systems**
+   - ID verification submission & admin approval workflow
+   - Skills verification queue
+   - Dispute resolution system with admin intervention
+
+7. **Admin Dashboard APIs**
+   - User management, project moderation, dispute handling, analytics endpoints (active users, GMV, verification stats)
+
+8. **Security & Compliance**
+   - POPIA compliance: data minimization, consent management, right to be forgotten endpoints
+   - Full audit logging for sensitive actions
+   - Rate limiting per user/IP
+   - Input validation and sanitization on all endpoints
+
+Deliver:
+- Complete project folder structure
+- Prisma schema (models for User, Profile, Skill, Portfolio, Project, Bid, Escrow, Transaction, Notification, Dispute)
+- Key route modules with full controllers and services (auth, profile, project, matching, escrow integration, notifications)
+- Example of PayFast webhook handler integration (since PayFast is already configured)
+- Docker setup (Dockerfile + docker-compose with PostgreSQL + Redis)
+- Security best practices and POPIA considerations
+
+Make this backend extremely secure, highly scalable, well-documented, and perfectly ready to connect to the existing premium front-end (REST + WebSocket).
+
+Generate the complete backend architecture, Prisma schema, and critical code files with untouchable nuclear precision.
