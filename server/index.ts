@@ -5,8 +5,9 @@ import { serveStatic } from "./static";
 import { createServer } from "http";
 import { setupSocket } from "./socket";
 import { securityHeaders, corsMiddleware, auditMiddleware, tieredRateLimiter, startCronScheduler, trackMetric } from "./fortify";
-import { pool } from "./db";
+import { pool, db } from "./db";
 import { runDbOptimizations } from "./dbOptimize";
+import { migrate } from "drizzle-orm/node-postgres/migrator";
 
 const app = express();
 app.disable("x-powered-by");
@@ -242,6 +243,19 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // ── Run schema migrations (production only) ───────────────────────────────
+  // Applies any unapplied migration files from ./migrations before traffic starts.
+  // In development, schema is managed directly via db:push so this is skipped.
+  if (process.env.NODE_ENV === "production") {
+    try {
+      await migrate(db, { migrationsFolder: "migrations" });
+      log("Schema migrations applied successfully", "db");
+    } catch (err: any) {
+      // Non-fatal: log but don't crash — the DB may already be up-to-date
+      log(`Migration warning (non-fatal): ${err.message}`, "db");
+    }
+  }
+
   // ── Run DB optimizations before accepting traffic ─────────────────────────
   // Creates all performance indexes + ANALYZE — safe to run on every boot.
   await runDbOptimizations();
