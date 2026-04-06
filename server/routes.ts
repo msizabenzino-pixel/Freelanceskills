@@ -1193,7 +1193,7 @@ Guidelines:
       }
 
       const systemPrompt = `You are the FreelanceSkills AI Support Bot. You help users with questions about the FreelanceSkills platform.
-FreelanceSkills is a South African freelance marketplace (similar to Upwork/TaskRabbit).
+FreelanceSkills is a South African freelance marketplace connecting local businesses with verified African freelancers.
 
 Pricing & Commission:
 - Free Plan: R0/month, 10% commission on completed jobs.
@@ -6135,7 +6135,7 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
       res.json({
         faqs: [
           { q: "How do I post a job on FreelanceSkills.net?", category: "Client" },
-          { q: "How much does FreelanceSkills charge vs Upwork?", category: "Pricing" },
+          { q: "What fees does FreelanceSkills charge?", category: "Pricing" },
           { q: "Is my payment protected?", category: "Payments" },
           { q: "How do I get verified and earn a blockchain badge?", category: "Freelancers" },
           { q: "Does FreelanceSkills support mobile money?", category: "Payments" },

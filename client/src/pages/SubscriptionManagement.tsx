@@ -947,7 +947,7 @@ export default function SubscriptionManagement() {
     <div className="space-y-5">
       <div>
         <h2 className="text-xl font-bold text-white flex items-center gap-2"><Coins className="w-6 h-6 text-yellow-400"/>Loyalty &amp; Tokenized Perks System</h2>
-        <p className="text-zinc-400 text-xs">Earn Skill Tokens on 8 actions. Redeem for 12 perks. Full economy that keeps users engaged every day. vs LinkedIn: they give points for posts. We give tokens redeemable for real platform power.</p>
+        <p className="text-zinc-400 text-xs">Earn Skill Tokens on 8 actions. Redeem for 12 perks. Full economy that keeps users engaged every day — tokens redeemable for real platform power: fee discounts, boosts, and badge upgrades.</p>
       </div>
 
       <div className="grid grid-cols-2 gap-5">
