@@ -3176,7 +3176,7 @@ This article was written by a platform. Weigh our conclusions accordingly. Our m
 
 **Strengths:** Largest global marketplace for gig-based services. Enormous buyer trust. USD earnings with SA exchange rate advantage.
 
-**Real earnings from SA Fiverr sellers (2025):**
+**Estimated earnings from SA Fiverr sellers (2025):**
 - Average Level 1 seller: $320/month (~R6,100)
 - Average Level 2 seller: $1,100/month (~R20,900)
 - Top Rated Sellers: $4,500 – $12,000/month (~R85,500 – R228,000)
@@ -3192,7 +3192,7 @@ This article was written by a platform. Weigh our conclusions accordingly. Our m
 
 ## Upwork: Best for High-Ticket Long-Term Contracts
 
-**Real earnings from SA Upwork contractors (2025):**
+**Estimated earnings from SA Upwork contractors (2025):**
 - Average freelancer: $1,400/month (~R26,600)
 - Top 10%: $5,500 – $14,000/month (~R104,500 – R266,000)
 
