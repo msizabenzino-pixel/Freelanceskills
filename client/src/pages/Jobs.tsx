@@ -203,7 +203,11 @@ export default function Jobs() {
 
       const res = await apiRequest("GET", `/api/aggregated-jobs?${params.toString()}`);
       const data = await res.json();
-      return data.jobs as AggregatedJob[];
+      return {
+        jobs: (data.jobs || []) as AggregatedJob[],
+        remoteFallback: data.remoteFallback as boolean,
+        remoteFallbackCountry: data.remoteFallbackCountry as string | undefined,
+      };
     },
     staleTime: 2 * 60 * 1000,
   });
@@ -262,7 +266,9 @@ export default function Jobs() {
   }, [firebaseJobsQuery.data, query, selectedCountry, selectedProvince, urgentOnly, remoteOnly]);
 
   // ── Stats ─────────────────────────────────────────────────────────────────
-  const aggJobs = aggJobsQuery.data || [];
+  const aggJobs = aggJobsQuery.data?.jobs || [];
+  const aggRemoteFallback = aggJobsQuery.data?.remoteFallback || false;
+  const aggRemoteFallbackCountry = aggJobsQuery.data?.remoteFallbackCountry;
   const urgentCount = aggJobs.filter(j => j.isUrgent).length;
   const remoteCount = aggJobs.filter(j => j.isRemote).length;
   const totalJobs = aggJobs.length + filteredFirebaseJobs.length;
@@ -657,16 +663,27 @@ export default function Jobs() {
                 ) : aggJobs.length === 0 ? (
                   <EmptyState onClear={clearFilters} hasFilters={!!hasActiveFilters} />
                 ) : (
-                  <div className="grid lg:grid-cols-2 gap-4" data-testid="aggregated-jobs-grid">
-                    {aggJobs.map((job) => (
-                      <AggregatedJobCard
-                        key={job.id}
-                        job={job}
-                        onApply={handleAggregatedApply}
-                        isApplying={applyingId === job.id}
-                      />
-                    ))}
-                  </div>
+                  <>
+                    {aggRemoteFallback && aggRemoteFallbackCountry && (
+                      <div className="mb-4 flex items-start gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm" data-testid="remote-fallback-banner">
+                        <Globe className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+                        <div>
+                          <span className="font-semibold text-emerald-300">No local listings for {aggRemoteFallbackCountry} yet.</span>
+                          <span className="ml-1 text-white/70">Showing <span className="font-medium text-white">{aggJobs.length.toLocaleString()} remote &amp; global jobs</span> you can apply for from {aggRemoteFallbackCountry}.</span>
+                        </div>
+                      </div>
+                    )}
+                    <div className="grid lg:grid-cols-2 gap-4" data-testid="aggregated-jobs-grid">
+                      {aggJobs.map((job) => (
+                        <AggregatedJobCard
+                          key={job.id}
+                          job={job}
+                          onApply={handleAggregatedApply}
+                          isApplying={applyingId === job.id}
+                        />
+                      ))}
+                    </div>
+                  </>
                 )}
               </TabsContent>
             )}

@@ -39,7 +39,26 @@ export function registerAggregatedJobRoutes(app: Express) {
         limit: limit ? parseInt(limit) : 500,
       });
 
-      res.json({ jobs, total: jobs.length });
+      // If a specific non-SA country was requested but returned no results,
+      // fall back to remote/global jobs (which are accessible from anywhere in Africa).
+      const hasCountryFilter = country && country !== "all" && country !== "South Africa";
+      let finalJobs = jobs;
+      let remoteFallback = false;
+
+      if (hasCountryFilter && jobs.length < 5) {
+        finalJobs = await storage.searchAggregatedJobs({
+          category: category || undefined,
+          source: source || undefined,
+          jobType: jobType || undefined,
+          experienceLevel: experienceLevel || undefined,
+          isRemote: true,
+          search: search || undefined,
+          limit: limit ? parseInt(limit) : 200,
+        });
+        remoteFallback = finalJobs.length > 0;
+      }
+
+      res.json({ jobs: finalJobs, total: finalJobs.length, remoteFallback, remoteFallbackCountry: remoteFallback ? country : undefined });
     } catch (err: any) {
       log(`GET /api/aggregated-jobs error: ${err.message}`, "error");
       res.status(500).json({ error: "Failed to fetch jobs" });
