@@ -124,7 +124,7 @@ function measureEventLoopLag() {
   const before = Date.now();
   setImmediate(() => { EVENT_LOOP_LAG = Date.now() - before; });
 }
-setInterval(measureEventLoopLag, 500);
+setInterval(measureEventLoopLag, 2000);
 
 // ─── API Instrumentation Middleware ───────────────────────────────────────────
 export function apiLatencyMiddleware(req: Request, res: Response, next: NextFunction) {
