@@ -470,7 +470,7 @@ export default function Home() {
                 data-testid="badge-open-to-work">
                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 <span className="text-slate-400 text-xs font-medium group-hover:text-slate-300 transition-colors">
-                  Set yourself as <span className="text-emerald-400 font-bold">"Open to Freelance Gigs"</span> — like LinkedIn's Open to Work, but for Africa
+                  Set yourself as <span className="text-emerald-400 font-bold">"Open to Freelance Gigs"</span> — signal your availability to clients across Africa
                 </span>
                 <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition-colors" />
               </button>
@@ -544,7 +544,7 @@ export default function Home() {
                     { icon: BadgeCheck, title: "Skills Endorsements", desc: "Peers and clients endorse your skills — stronger than LinkedIn recommendations", color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20" },
                     { icon: PenLine, title: "AI-Assisted Profile Builder", desc: "10-minute setup. AI writes your headline, summary, and skill tags from your experience", color: "text-blue-400", bg: "bg-blue-500/10 border-blue-500/20" },
                     { icon: BarChart2, title: "Profile Strength Score", desc: "Real-time score showing how discoverable you are to clients — with action tips", color: "text-violet-400", bg: "bg-violet-500/10 border-violet-500/20" },
-                    { icon: FileText, title: "Open to Freelance Gigs Badge", desc: "Signal availability like LinkedIn's Open to Work — but for freelance projects, not jobs", color: "text-amber-400", bg: "bg-amber-500/10 border-amber-500/20" },
+                    { icon: FileText, title: "Open to Freelance Gigs Badge", desc: "Signal your availability to clients and get matched to freelance projects — not just job listings", color: "text-amber-400", bg: "bg-amber-500/10 border-amber-500/20" },
                   ].map(({ icon: Icon, title, desc, color, bg }, i) => (
                     <div key={i} className="flex items-start gap-3" data-testid={`network-feature-${i}`}>
                       <div className={`w-9 h-9 rounded-xl border ${bg} flex items-center justify-center flex-shrink-0 mt-0.5`}>
@@ -709,55 +709,39 @@ export default function Home() {
         <section className="py-20 bg-gradient-to-b from-slate-900/40 to-slate-950 border-y border-slate-800/50" aria-labelledby="pillars-heading" data-testid="section-value-pillars">
           <div className="container mx-auto px-4 md:px-6">
             <div className="text-center max-w-2xl mx-auto mb-5">
-              <h2 id="pillars-heading" className="text-3xl md:text-4xl font-black text-white mb-4">Why FreelanceSkills Beats LinkedIn for Freelancers</h2>
+              <h2 id="pillars-heading" className="text-3xl md:text-4xl font-black text-white mb-4">Why Freelancers Choose FreelanceSkills</h2>
               <p className="text-slate-400 text-lg">Every feature was built for Africa's reality — not Silicon Valley's assumptions.</p>
-            </div>
-            {/* vs LinkedIn comparison row */}
-            <div className="flex items-center justify-center gap-4 mb-12">
-              <div className="h-px bg-slate-800 flex-1 max-w-[120px]" />
-              <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-slate-900 border border-slate-800">
-                <div className="text-xs text-slate-500 font-medium">LinkedIn</div>
-                <div className="text-slate-700">vs</div>
-                <div className="text-xs text-emerald-400 font-bold">FreelanceSkills ✓</div>
-              </div>
-              <div className="h-px bg-slate-800 flex-1 max-w-[120px]" />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {[
                 {
                   icon: BadgeCheck, color: "from-emerald-500/20 to-teal-500/10 border-emerald-500/20", iconColor: "text-emerald-400",
-                  title: "Verified Skills & Endorsements", badge: "Stronger than LinkedIn recommendations",
-                  vs: "LinkedIn: Anyone can endorse", ours: "We: Skills-tested + ID-verified",
-                  desc: "Multi-layer verification: ID, skills assessments, and portfolio review. Not just soft endorsements — real, tested proof.",
+                  title: "Verified Skills & Endorsements", badge: "Skills-tested + ID-verified",
+                  desc: "Multi-layer verification: ID, skills assessments, and portfolio review. Real, tested proof — not just soft endorsements.",
                 },
                 {
                   icon: Lock, color: "from-blue-500/20 to-indigo-500/10 border-blue-500/20", iconColor: "text-blue-400",
                   title: "Secure Escrow & Instant ZAR Payouts", badge: "100% payment protection",
-                  vs: "LinkedIn: No payment layer", ours: "We: Escrow → instant bank transfer",
                   desc: "Funds held in escrow until work is approved. Instant ZAR bank transfers. No ghost clients, no unpaid invoices.",
                 },
                 {
                   icon: Brain, color: "from-violet-500/20 to-purple-500/10 border-violet-500/20", iconColor: "text-violet-400",
                   title: "AI Smart Matching + Skills Path", badge: "Your personal career AI",
-                  vs: "LinkedIn: Algorithm shows you ads", ours: "We: AI matches you to revenue",
                   desc: "Our AI surfaces the highest-ROI opportunities + builds a personalised learning path to get you there faster.",
                 },
                 {
                   icon: Banknote, color: "from-amber-500/20 to-orange-500/10 border-amber-500/20", iconColor: "text-amber-400",
-                  title: "Transparent 10% Fees Only", badge: "No hidden charges, ever",
-                  vs: "LinkedIn Premium: R600+/month", ours: "We: Only 10% when you earn",
-                  desc: "Nothing until you get paid. Flat 10% on success. Industry-leading rates for African freelancers.",
+                  title: "Transparent Fees — Only When You Earn", badge: "No monthly fees, ever",
+                  desc: "Nothing until you get paid. Low success fee only on completed work. No subscriptions required to find clients.",
                 },
                 {
                   icon: Globe, color: "from-teal-500/20 to-emerald-500/10 border-teal-500/20", iconColor: "text-teal-400",
                   title: "Built for Africa — Local + Global", badge: "54 countries, one platform",
-                  vs: "LinkedIn: US-dollar payments", ours: "We: ZAR + M-Pesa + mobile money",
-                  desc: "SA escrow, Kenyan mobile money, Nigerian bank transfers. We handle cross-border African payments so you don't have to.",
+                  desc: "SA escrow, Kenyan mobile money, Nigerian bank transfers. ZAR + M-Pesa + mobile money. We handle cross-border African payments.",
                 },
                 {
                   icon: Headphones, color: "from-rose-500/20 to-pink-500/10 border-rose-500/20", iconColor: "text-rose-400",
                   title: "24/7 SA Support + 48h Disputes", badge: "Real humans, real help",
-                  vs: "LinkedIn: Chatbot only", ours: "We: SA humans, 48h resolution",
                   desc: "WhatsApp, call, or live chat. Our team understands SARS, CIPC, and BEE. Disputes resolved in under 48 hours.",
                 },
               ].map((pillar, i) => (
@@ -768,21 +752,6 @@ export default function Home() {
                   </div>
                   <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-3">{pillar.badge}</div>
                   <h3 className="font-black text-white text-lg mb-3 leading-snug">{pillar.title}</h3>
-                  {/* vs comparison */}
-                  <div className="space-y-1 mb-4">
-                    <div className="flex items-center gap-2 text-[11px]">
-                      <span className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/30 flex items-center justify-center flex-shrink-0">
-                        <span className="text-red-400 font-black text-[8px]">✕</span>
-                      </span>
-                      <span className="text-slate-500">{pillar.vs}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-[11px]">
-                      <span className="w-3 h-3 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
-                        <span className="text-emerald-400 font-black text-[8px]">✓</span>
-                      </span>
-                      <span className="text-emerald-400 font-semibold">{pillar.ours}</span>
-                    </div>
-                  </div>
                   <p className="text-slate-400 text-sm leading-relaxed">{pillar.desc}</p>
                 </motion.div>
               ))}

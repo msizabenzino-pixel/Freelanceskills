@@ -673,7 +673,7 @@ export default function AcademyAdmin() {
             {/* Earnings-lift scatter chart */}
             <div className="bg-white rounded-2xl border border-gray-200 p-6">
               <h3 className="text-sm font-bold text-gray-900 mb-1">💰 Earnings-Lift Correlation (Before vs After Certification)</h3>
-              <p className="text-xs text-gray-500 mb-4">Each dot = one freelancer. X-axis = monthly earnings before cert. Y-axis = monthly earnings after. Beats LinkedIn Learning's "no outcome data".</p>
+              <p className="text-xs text-gray-500 mb-4">Each dot = one freelancer. X-axis = monthly earnings before cert. Y-axis = monthly earnings after. Unlike platforms with no outcome tracking.</p>
               {liftPoints.length > 0 ? (
                 <ResponsiveContainer width="100%" height={260}>
                   <ScatterChart margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
@@ -777,7 +777,7 @@ export default function AcademyAdmin() {
               <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
                 <div>
                   <h3 className="text-sm font-bold text-gray-900">🔥 Top Rising Skills in Africa (2026–2028)</h3>
-                  <p className="text-xs text-gray-500 mt-1">Based on SA job postings + global trend data. Beats LinkedIn Learning's generic "trending" list.</p>
+                  <p className="text-xs text-gray-500 mt-1">Based on SA job postings + global trend data — live demand intelligence.</p>
                 </div>
                 <div className="space-y-3">
                   {skillList.slice(0, 10).map((s, i) => (
