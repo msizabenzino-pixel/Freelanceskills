@@ -562,30 +562,36 @@ class DatabaseStorage implements IStorage {
     isRemote?: boolean;
     search?: string;
     limit?: number;
+    // Cursor pagination: skip rows with ai_score < cursorScore (or equal score but id < cursorId)
+    cursorScore?: number;
+    cursorId?: string;
   }): Promise<AggregatedJob[]> {
     const conditions = [eq(aggregatedJobs.isActive, true)];
 
-    // Country-level filter (special handling for South Africa → IN query on provinces)
+    // ── Location filters ────────────────────────────────────────────────────
+    // Uses exact-match equality so the btree indexes on country/province are used.
     if (filters?.country && filters.country !== "all") {
       if (filters.country === "South Africa") {
-        conditions.push(sql`${aggregatedJobs.province} = ANY(ARRAY['Gauteng','Western Cape','KwaZulu-Natal','Eastern Cape','Limpopo','Mpumalanga','Free State','North West','Northern Cape']::text[])`);
-      } else {
+        // SA: match by province column (9 provinces)
         conditions.push(
-          or(
-            eq(aggregatedJobs.country, filters.country),
-            sql`${aggregatedJobs.country} ILIKE ${'%' + filters.country + '%'}`,
-            sql`${aggregatedJobs.location} ILIKE ${'%' + filters.country + '%'}`,
-          ),
+          sql`${aggregatedJobs.province} = ANY(ARRAY['Gauteng','Western Cape','KwaZulu-Natal','Eastern Cape','Limpopo','Mpumalanga','Free State','North West','Northern Cape']::text[])`,
         );
+      } else {
+        // International country: exact match (uses idx_agg_country btree index).
+        // The route layer handles the remote-fallback logic when this returns <5 results.
+        conditions.push(eq(aggregatedJobs.country, filters.country));
       }
     } else if (filters?.province) {
-      conditions.push(sql`${aggregatedJobs.province} ILIKE ${'%' + filters.province + '%'}`);
+      // SA province drill-down when country=South Africa is not passed explicitly
+      conditions.push(eq(aggregatedJobs.province, filters.province));
     }
+
+    // ── Categorical filters (exact equality → uses btree indexes) ────────────
     if (filters?.category) {
-      conditions.push(sql`${aggregatedJobs.category} ILIKE ${'%' + filters.category + '%'}`);
+      conditions.push(eq(aggregatedJobs.category, filters.category));
     }
     if (filters?.source) {
-      conditions.push(eq(aggregatedJobs.source, filters.source));
+      conditions.push(eq(aggregatedJobs.liveSource, filters.source));
     }
     if (filters?.jobType) {
       conditions.push(eq(aggregatedJobs.jobType, filters.jobType));
@@ -599,10 +605,37 @@ class DatabaseStorage implements IStorage {
     if (filters?.isRemote) {
       conditions.push(eq(aggregatedJobs.isRemote, true));
     }
+
+    // ── Full-text search — uses GIN tsvector index (idx_agg_fts_gin) ─────────
+    // plainto_tsquery handles raw user text (spaces → AND, no injection risk).
+    // Falls back to ILIKE on title+company only if query is very short (< 3 chars)
+    // to avoid empty tsquery for single-letter inputs.
     if (filters?.search) {
-      const q = `%${filters.search}%`;
+      const q = filters.search.trim();
+      if (q.length >= 3) {
+        conditions.push(
+          sql`to_tsvector('english',
+                coalesce(${aggregatedJobs.title},'') || ' ' ||
+                coalesce(${aggregatedJobs.company},'') || ' ' ||
+                coalesce(${aggregatedJobs.skills},'')
+              ) @@ plainto_tsquery('english', ${q})`,
+        );
+      } else {
+        // Short query: exact prefix match on title only (fast with partial index)
+        conditions.push(
+          sql`(${aggregatedJobs.title} ILIKE ${q + "%"} OR ${aggregatedJobs.company} ILIKE ${q + "%"})`,
+        );
+      }
+    }
+
+    // ── Cursor-based pagination ──────────────────────────────────────────────
+    // Client passes cursorScore + cursorId from the last item in the previous page.
+    // This lets us skip sorting 100k rows for page N > 1.
+    if (filters?.cursorScore !== undefined && filters?.cursorId) {
       conditions.push(
-        sql`(${aggregatedJobs.title} ILIKE ${q} OR ${aggregatedJobs.company} ILIKE ${q} OR ${aggregatedJobs.description} ILIKE ${q} OR ${aggregatedJobs.skills} ILIKE ${q})`,
+        sql`(${aggregatedJobs.aiScore} < ${filters.cursorScore}
+             OR (${aggregatedJobs.aiScore} = ${filters.cursorScore}
+                 AND ${aggregatedJobs.id} < ${filters.cursorId}))`,
       );
     }
 
