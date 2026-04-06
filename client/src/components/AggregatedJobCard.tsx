@@ -42,18 +42,32 @@ export interface AggregatedJob {
   agentGenerated?: boolean | null;
 }
 
-// Internal source quality tiers — generic labels only, no third-party brand names
+// Maps live job source names (as stored in DB) to badge colours
 const SOURCE_COLOURS: Record<string, string> = {
-  "FreelanceSkills AI":   "bg-emerald-600 text-white",
-  "Verified Employer":    "bg-blue-600 text-white",
-  "Featured Listing":     "bg-violet-600 text-white",
-  "Tech Hub Africa":      "bg-sky-600 text-white",
-  "Government Portal":    "bg-amber-600 text-black",
+  // Adzuna country feeds
+  "Adzuna South Africa":  "bg-emerald-600 text-white",
+  "Adzuna United Kingdom":"bg-blue-600 text-white",
+  "Adzuna United States": "bg-blue-700 text-white",
+  "Adzuna Canada":        "bg-red-700 text-white",
+  "Adzuna Australia":     "bg-orange-600 text-white",
+  "Adzuna India":         "bg-amber-600 text-black",
+  "Adzuna Germany":       "bg-indigo-600 text-white",
+  "Adzuna Netherlands":   "bg-sky-700 text-white",
+  "Adzuna Singapore":     "bg-rose-600 text-white",
+  // Tech & remote boards
+  "DevITJobs":            "bg-sky-600 text-white",
+  "The Muse":             "bg-violet-600 text-white",
+  "Himalayas":            "bg-purple-600 text-white",
+  "Remotive":             "bg-teal-600 text-white",
+  "Remotive (Extended)":  "bg-teal-700 text-white",
+  "RemoteOK":             "bg-cyan-600 text-white",
+  "We Work Remotely":     "bg-teal-500 text-white",
+  "Working Nomads":       "bg-green-700 text-white",
+  "Jobicy":               "bg-pink-600 text-white",
+  "Arbeitnow":            "bg-indigo-500 text-white",
   "Remote-First":         "bg-teal-600 text-white",
-  "Startup Ecosystem":    "bg-orange-500 text-white",
   "Enterprise Direct":    "bg-indigo-600 text-white",
-  "Professional Network": "bg-pink-600 text-white",
-  "Industry Partner":     "bg-rose-600 text-white",
+  "Landing.jobs":         "bg-blue-500 text-white",
 };
 
 function getSourceColour(source: string): string {

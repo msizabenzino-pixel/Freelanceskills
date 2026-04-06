@@ -103,6 +103,16 @@ function expiry(days = 30): Date {
   return d;
 }
 
+// Detects whether a job posting is urgent based on title/description keywords.
+// Applied to every job just before batch insert — the only place we have both fields.
+const URGENT_RE = /\b(urgent|urgently|immediate(?:ly)?|asap|start immediately|fill immediately|hire immediately|must start|immediate start|immediate hire|urgently hiring|immediate opening|critically needed|emergency hire)\b/i;
+
+function detectUrgency(title: string, description?: string | null): boolean {
+  if (URGENT_RE.test(title)) return true;
+  if (description && URGENT_RE.test(description.slice(0, 500))) return true;
+  return false;
+}
+
 function base(): Pick<InsertAggregatedJob,
   "requirements" | "province" | "country" | "salaryMin" | "salaryMax" | "salaryPeriod" |
   "experienceLevel" | "expiresAt" | "isActive" | "aiScore" | "isUrgent" |
@@ -1608,6 +1618,10 @@ export async function fetchAndStoreLiveJobs(): Promise<LiveFetchResult> {
     if (existingUrls.has(job.applyUrl)) continue;     // already in DB
     if (batchSeen.has(job.applyUrl)) continue;        // duplicate within this batch
     batchSeen.add(job.applyUrl);
+    // Auto-detect urgency from title/description keywords so the urgent filter works
+    if (detectUrgency(job.title ?? "", job.description)) {
+      (job as InsertAggregatedJob).isUrgent = true;
+    }
     newJobs.push(job);
   }
 
