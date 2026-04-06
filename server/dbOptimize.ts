@@ -104,10 +104,20 @@ const INDEXES: { name: string; sql: string }[] = [
   },
 
   // ── Apply URL dedup (used by live fetcher upsert) ─────────────────────────
+  // Full index on apply_url for point lookups (apply-by-URL, unique checks)
   {
     name: "idx_agg_apply_url",
     sql: `CREATE INDEX IF NOT EXISTS idx_agg_apply_url
           ON aggregated_jobs (apply_url)`,
+  },
+  // Partial covering index: allows PostgreSQL to perform an index-only scan when
+  // getExistingApplyUrls() does: SELECT apply_url FROM aggregated_jobs WHERE is_active = true
+  // Avoids heap fetches entirely — critical for fast dedup with 100k+ rows.
+  {
+    name: "idx_agg_active_apply_url",
+    sql: `CREATE INDEX IF NOT EXISTS idx_agg_active_apply_url
+          ON aggregated_jobs (apply_url)
+          WHERE is_active = true AND apply_url IS NOT NULL`,
   },
 
   // ── Full-text search — GIN tsvector expression index ──────────────────────

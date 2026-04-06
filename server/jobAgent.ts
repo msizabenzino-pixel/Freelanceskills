@@ -706,50 +706,32 @@ export async function seedInitialJobs(): Promise<void> {
  * Agent stats for admin dashboard.
  */
 export async function getAgentStats() {
-  const totalActive = await storage.getAggregatedJobCount();
-  const allJobs = await storage.getAggregatedJobs();
-  const urgent = allJobs.filter(j => (j as any).isUrgent).length;
-  const remote = allJobs.filter(j => (j as any).isRemote).length;
-  const aiGenerated = allJobs.filter(j => (j as any).agentGenerated).length;
-  const avgScore = allJobs.length > 0
-    ? Math.round(allJobs.reduce((s, j) => s + ((j as any).aiScore || 75), 0) / allJobs.length)
-    : 0;
+  // All African countries covered by the platform
+  const ALL_COUNTRIES = [
+    "Nigeria", "Kenya", "Ghana", "Egypt", "Morocco", "Ethiopia", "Tanzania",
+    "Uganda", "Rwanda", "Senegal", "Côte d'Ivoire", "Zimbabwe", "Zambia",
+    "Botswana", "Namibia", "Mozambique", "Cameroon", "Angola", "Tunisia",
+    "Algeria", "Malawi", "Lesotho", "Eswatini", "Libya", "Sudan",
+    "Remote", "Global",
+  ];
 
-  const bySource = JOB_SOURCES.reduce((acc, src) => {
-    acc[src] = allJobs.filter(j => j.source === src).length;
-    return acc;
-  }, {} as Record<string, number>);
+  // Use real SQL aggregates — never loads all rows into JS memory
+  const stats = await storage.getAggregatedJobStats(SA_PROVINCES, ALL_COUNTRIES, CATEGORIES);
 
-  const byProvince = SA_PROVINCES.reduce((acc, p) => {
-    acc[p] = allJobs.filter(j => j.province === p).length;
-    return acc;
-  }, {} as Record<string, number>);
-
-  // Country-level counts for all non-SA African countries
-  const OTHER_COUNTRIES = ["Nigeria","Kenya","Ghana","Egypt","Morocco","Ethiopia","Tanzania","Uganda","Rwanda","Senegal","Côte d'Ivoire","Zimbabwe","Zambia","Botswana","Namibia","Mozambique"];
-  const byCountry: Record<string, number> = {};
-  // SA count = sum of provinces
-  byCountry["South Africa"] = SA_PROVINCES.reduce((s, p) => s + (byProvince[p] || 0), 0);
-  for (const country of OTHER_COUNTRIES) {
-    byCountry[country] = allJobs.filter(j => (j as any).country === country).length;
-  }
-
-  const byCategory = CATEGORIES.reduce((acc, c) => {
-    const count = allJobs.filter(j => j.category === c).length;
-    if (count > 0) acc[c] = count;
-    return acc;
-  }, {} as Record<string, number>);
+  // SA total = sum of province counts
+  const saTotal = SA_PROVINCES.reduce((s, p) => s + (stats.byProvince[p] || 0), 0);
+  const byCountry = { ...stats.byCountry, "South Africa": saTotal };
 
   return {
-    totalActive,
-    urgent,
-    remote,
-    aiGenerated,
-    avgScore,
-    bySource,
-    byProvince,
+    totalActive:  stats.totalActive,
+    urgent:       stats.urgent,
+    remote:       stats.remote,
+    aiGenerated:  stats.aiGenerated,
+    avgScore:     stats.avgScore,
+    bySource:     {} as Record<string, number>, // Source breakdown removed — too expensive to calc in real-time
+    byProvince:   stats.byProvince,
     byCountry,
-    byCategory,
-    lastUpdated: new Date().toISOString(),
+    byCategory:   stats.byCategory,
+    lastUpdated:  new Date().toISOString(),
   };
 }

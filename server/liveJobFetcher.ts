@@ -1593,32 +1593,48 @@ export async function fetchAndStoreLiveJobs(): Promise<LiveFetchResult> {
     "jobs",
   );
 
-  // Efficient dedup: title+company key set from existing real jobs
-  const existing = await storage.getAggregatedJobs();
-  const existingKeys = new Set(
-    existing.map(j => `${j.title.toLowerCase().trim()}|${j.company.toLowerCase().trim()}`),
-  );
+  // ── Dedup: applyUrl-based against ALL rows in DB (no limit) ────────────────
+  // Uses the new getExistingApplyUrls() which does a single-column SELECT on the full table.
+  // This prevents duplicates that the previous title+company approach (limited to 100 rows)
+  // could not detect.
+  const existingUrls = await storage.getExistingApplyUrls();
 
-  // Also dedup within this batch (multiple sources can overlap)
+  // Secondary dedup within this batch (multiple sources can fetch the same posting)
   const batchSeen = new Set<string>();
-  let inserted = 0;
+  const newJobs: typeof allLive = [];
 
   for (const job of allLive) {
-    if (!job.applyUrl) continue;
-    const key = `${job.title.toLowerCase().trim()}|${job.company.toLowerCase().trim()}`;
-    if (existingKeys.has(key) || batchSeen.has(key)) continue;
-    batchSeen.add(key);
+    if (!job.applyUrl) continue;                       // no apply URL = useless to candidates
+    if (existingUrls.has(job.applyUrl)) continue;     // already in DB
+    if (batchSeen.has(job.applyUrl)) continue;        // duplicate within this batch
+    batchSeen.add(job.applyUrl);
+    newJobs.push(job);
+  }
+
+  // ── Batch insert in chunks of 200 — far faster than one-by-one INSERTs ─────
+  // Chunk size of 200 keeps individual queries fast and avoids Postgres parameter limits.
+  const CHUNK = 200;
+  let inserted = 0;
+  for (let i = 0; i < newJobs.length; i += CHUNK) {
+    const chunk = newJobs.slice(i, i + CHUNK);
     try {
-      await storage.createAggregatedJob(job);
-      existingKeys.add(key);
-      inserted++;
-    } catch {
-      // DB constraint duplicate — skip
+      const created = await storage.createManyAggregatedJobs(chunk);
+      inserted += created.length;
+    } catch (e: any) {
+      // If a batch fails (e.g. constraint violation from a race condition), fall back to per-row
+      for (const job of chunk) {
+        try {
+          await storage.createAggregatedJob(job);
+          inserted++;
+        } catch {
+          // Already exists from concurrent insert — skip
+        }
+      }
     }
   }
 
   const total = await storage.getAggregatedJobCount();
-  log(`[LiveFetcher] Done — +${inserted} new real jobs inserted, total in DB: ${total}`, "jobs");
+  log(`[LiveFetcher] Done — +${inserted} new real jobs inserted (${newJobs.length} unique, ${allLive.length - newJobs.length} dupes skipped), total in DB: ${total}`, "jobs");
   return { inserted, deleted: 0, total, sources: sourceCounts };
 }
 

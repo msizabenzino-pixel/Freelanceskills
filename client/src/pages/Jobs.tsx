@@ -1,5 +1,6 @@
 import { useMemo, useState, useCallback } from "react";
 import { useLocation } from "wouter";
+import { useDebounce } from "@/hooks/use-debounce";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -135,6 +136,10 @@ export default function Jobs() {
   const [applyModalJob, setApplyModalJob] = useState<AggregatedJob | null>(null);
   const [activeTab, setActiveTab] = useState("all");
 
+  // 400ms debounce prevents an API call on every keystroke.
+  // Users see results update smoothly ~400ms after they stop typing.
+  const debouncedQuery = useDebounce(query, 400);
+
   const { formatAmount } = useCurrency();
   const { user } = useAuth();
   const { toast } = useToast();
@@ -182,7 +187,9 @@ export default function Jobs() {
     queryKey: [
       "aggregated-jobs",
       { country: selectedCountry, province: selectedProvince, category: categoryFilter,
-        jobType: jobTypeFilter, expLevel: expLevelFilter, urgent: urgentOnly, remote: remoteOnly, search: query },
+        jobType: jobTypeFilter, expLevel: expLevelFilter, urgent: urgentOnly, remote: remoteOnly,
+        // debouncedQuery — NOT raw `query` — prevents a new request on every keystroke
+        search: debouncedQuery },
     ],
     queryFn: async () => {
       const params = new URLSearchParams();
@@ -199,7 +206,7 @@ export default function Jobs() {
       if (expLevelFilter && expLevelFilter !== "all") params.set("experienceLevel", expLevelFilter);
       if (urgentOnly) params.set("isUrgent", "true");
       if (remoteOnly) params.set("isRemote", "true");
-      if (query) params.set("search", query);
+      if (debouncedQuery) params.set("search", debouncedQuery);
       params.set("limit", "200");
 
       const res = await apiRequest("GET", `/api/aggregated-jobs?${params.toString()}`);
@@ -277,7 +284,7 @@ export default function Jobs() {
 
   const hasActiveFilters = selectedCountry !== "all" || categoryFilter !== "all" ||
     jobTypeFilter !== "all" || expLevelFilter !== "all" ||
-    urgentOnly || remoteOnly || query;
+    urgentOnly || remoteOnly || !!debouncedQuery;
 
   const clearFilters = () => {
     setSelectedCountry("all");

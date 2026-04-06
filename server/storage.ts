@@ -76,6 +76,8 @@ export interface IStorage {
   createManyAggregatedJobs(jobs: InsertAggregatedJob[]): Promise<AggregatedJob[]>;
   getAggregatedJobs(filters?: { province?: string; category?: string; source?: string; jobType?: string }): Promise<AggregatedJob[]>;
   getAggregatedJobCount(): Promise<number>;
+  getExistingApplyUrls(): Promise<Set<string>>;
+  getAggregatedJobStats(provinces: string[], countries: string[], categories: string[]): Promise<{ totalActive: number; urgent: number; remote: number; aiGenerated: number; avgScore: number; byProvince: Record<string, number>; byCountry: Record<string, number>; byCategory: Record<string, number> }>;
   clearOldAggregatedJobs(): Promise<void>;
   deleteAgentGeneratedJobs(): Promise<number>;
 
@@ -486,9 +488,112 @@ class DatabaseStorage implements IStorage {
     return result[0]?.count || 0;
   }
 
+  // Returns a Set of all existing apply_url values — used for efficient dedup during live fetch.
+  // Single-column scan with no LIMIT is fast because it only reads the btree index on apply_url.
+  async getExistingApplyUrls(): Promise<Set<string>> {
+    const rows = await db
+      .select({ applyUrl: aggregatedJobs.applyUrl })
+      .from(aggregatedJobs)
+      .where(eq(aggregatedJobs.isActive, true));
+    const s = new Set<string>();
+    for (const r of rows) {
+      if (r.applyUrl) s.add(r.applyUrl);
+    }
+    return s;
+  }
+
+  // Returns SQL aggregate stats over the entire table — never loads rows into JS memory.
+  async getAggregatedJobStats(provinces: string[], countries: string[], categories: string[]): Promise<{
+    totalActive: number;
+    urgent: number;
+    remote: number;
+    aiGenerated: number;
+    avgScore: number;
+    byProvince: Record<string, number>;
+    byCountry: Record<string, number>;
+    byCategory: Record<string, number>;
+  }> {
+    // Single aggregate query for scalar stats
+    const [scalars] = await db.select({
+      totalActive: sql<number>`cast(count(*) as integer)`,
+      urgent:      sql<number>`cast(count(*) filter (where ${aggregatedJobs.isUrgent} = true) as integer)`,
+      remote:      sql<number>`cast(count(*) filter (where ${aggregatedJobs.isRemote} = true) as integer)`,
+      aiGenerated: sql<number>`cast(count(*) filter (where ${aggregatedJobs.agentGenerated} = true) as integer)`,
+      avgScore:    sql<number>`cast(round(avg(${aggregatedJobs.aiScore})) as integer)`,
+    }).from(aggregatedJobs).where(eq(aggregatedJobs.isActive, true));
+
+    // Province breakdown — one query, one pass
+    const provinceRows = await db.select({
+      province: aggregatedJobs.province,
+      cnt: sql<number>`cast(count(*) as integer)`,
+    })
+      .from(aggregatedJobs)
+      .where(and(
+        eq(aggregatedJobs.isActive, true),
+        sql`${aggregatedJobs.province} = ANY(${sql.raw(`ARRAY[${provinces.map(p => `'${p.replace(/'/g, "''")}'`).join(",")}]::text[]`)})`,
+      ))
+      .groupBy(aggregatedJobs.province);
+
+    const byProvince: Record<string, number> = {};
+    for (const r of provinceRows) {
+      if (r.province) byProvince[r.province] = r.cnt;
+    }
+
+    // Country breakdown — one query, one pass
+    const countryRows = await db.select({
+      country: aggregatedJobs.country,
+      cnt: sql<number>`cast(count(*) as integer)`,
+    })
+      .from(aggregatedJobs)
+      .where(and(
+        eq(aggregatedJobs.isActive, true),
+        sql`${aggregatedJobs.country} = ANY(${sql.raw(`ARRAY[${countries.map(c => `'${c.replace(/'/g, "''")}'`).join(",")}]::text[]`)})`,
+      ))
+      .groupBy(aggregatedJobs.country);
+
+    const byCountry: Record<string, number> = {};
+    for (const r of countryRows) {
+      if (r.country) byCountry[r.country] = r.cnt;
+    }
+
+    // Category breakdown — one query, one pass
+    const categoryRows = await db.select({
+      category: aggregatedJobs.category,
+      cnt: sql<number>`cast(count(*) as integer)`,
+    })
+      .from(aggregatedJobs)
+      .where(and(
+        eq(aggregatedJobs.isActive, true),
+        sql`${aggregatedJobs.category} = ANY(${sql.raw(`ARRAY[${categories.map(c => `'${c.replace(/'/g, "''")}'`).join(",")}]::text[]`)})`,
+      ))
+      .groupBy(aggregatedJobs.category);
+
+    const byCategory: Record<string, number> = {};
+    for (const r of categoryRows) {
+      if (r.category && r.cnt > 0) byCategory[r.category] = r.cnt;
+    }
+
+    return {
+      totalActive: scalars?.totalActive || 0,
+      urgent:      scalars?.urgent || 0,
+      remote:      scalars?.remote || 0,
+      aiGenerated: scalars?.aiGenerated || 0,
+      avgScore:    scalars?.avgScore || 0,
+      byProvince,
+      byCountry,
+      byCategory,
+    };
+  }
+
   async clearOldAggregatedJobs(): Promise<void> {
-    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    await db.delete(aggregatedJobs).where(sql`${aggregatedJobs.createdAt} < ${thirtyDaysAgo}`);
+    // Delete jobs whose expiresAt has passed (not createdAt — we never delete fresh active jobs)
+    const now = new Date();
+    await db.delete(aggregatedJobs).where(
+      and(
+        sql`${aggregatedJobs.expiresAt} IS NOT NULL`,
+        sql`${aggregatedJobs.expiresAt} < ${now}`,
+      ),
+    );
   }
 
   async deleteAgentGeneratedJobs(): Promise<number> {

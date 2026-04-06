@@ -16,11 +16,14 @@ export interface AggregatedJob {
   requirements?: string | null;
   location: string;
   province: string;
+  country?: string | null;
   salaryMin?: number | null;
   salaryMax?: number | null;
   salaryPeriod?: string | null;
   source: string;
   sourceUrl?: string | null;
+  applyUrl?: string | null;
+  liveSource?: string | null;
   category: string;
   jobType: string;
   experienceLevel?: string | null;
@@ -278,12 +281,12 @@ export function AggregatedJobCard({ job, onApply, isApplying }: Props) {
           >
             {isApplying ? "Applying…" : "Apply Now"}
           </Button>
-          {job.sourceUrl && (
+          {(job.applyUrl || job.sourceUrl) && (
             <Button
               size="sm"
               variant="outline"
               className="gap-1"
-              onClick={() => window.open(job.sourceUrl!, "_blank", "noopener")}
+              onClick={() => window.open((job.applyUrl || job.sourceUrl)!, "_blank", "noopener,noreferrer")}
               data-testid={`btn-external-${job.id}`}
             >
               <ExternalLink className="w-3.5 h-3.5" />
