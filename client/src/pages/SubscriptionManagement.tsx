@@ -567,7 +567,7 @@ export default function SubscriptionManagement() {
               We calculate EXACT ROI per user and show personalised payback period in days.
             </div>
             <div className="p-3 bg-purple-900/20 border border-purple-800 rounded text-xs text-zinc-300">
-              <strong className="text-purple-300">vs LinkedIn Premium ($39.99/mo):</strong> "See who viewed your profile." We show: "Upgrade pays back in 11 days based on your R12,000/mo earnings."
+              <strong className="text-purple-300">vs generic subscription platforms:</strong> "See who viewed your profile." We show: "Upgrade pays back in 11 days based on your R12,000/mo earnings."
             </div>
           </CardContent>
         </Card>

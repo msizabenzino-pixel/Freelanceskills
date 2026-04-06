@@ -977,7 +977,7 @@ export default function NotificationsManagement() {
           <TabsContent value="preferences">
             <div className="space-y-5">
               <h2 className="text-lg font-bold text-gray-900">👤 User Preference Engine 2.0</h2>
-              <p className="text-sm text-gray-500 -mt-3">Per-channel, per-category toggles with AI-suggested defaults. Every opt-in/out is audit-logged for POPIA/GDPR compliance. No competitor has this granularity.</p>
+              <p className="text-sm text-gray-500 -mt-3">Per-channel, per-category toggles with AI-suggested defaults. Every opt-in/out is audit-logged for POPIA/GDPR compliance.</p>
 
               {prefData && (
                 <>

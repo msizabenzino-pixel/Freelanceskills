@@ -202,7 +202,7 @@ export default function VumaLive() {
             Vuma War Room 🔥
           </h1>
           <p className="text-gray-400 max-w-xl mb-6">
-            Africa's first real-time freelance intelligence dashboard. Built for the grinders. Built for the builders. <span className="text-emerald-400">No competitor has anything close.</span>
+            Africa's first real-time freelance intelligence dashboard. Built for the grinders. Built for the builders. <span className="text-emerald-400">Africa-first. Built different.</span>
           </p>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -253,7 +253,7 @@ export default function VumaLive() {
             </div>
             <div>
               <h2 className="text-xl font-bold">Fee Battle Calculator</h2>
-              <p className="text-sm text-gray-400">The transparency tool no competitor dares to build. See exactly what you keep.</p>
+              <p className="text-sm text-gray-400">Full fee transparency — see exactly what you keep on every transaction.</p>
             </div>
           </div>
 

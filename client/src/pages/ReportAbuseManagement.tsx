@@ -431,7 +431,7 @@ export default function ReportAbuseManagement() {
                 <div className="grid lg:grid-cols-2 gap-5">
                   <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
                     <h3 className="font-bold text-gray-900">🤖 7-Dimension Predictive Risk Engine</h3>
-                    <p className="text-[10px] text-gray-500">No competitor performs this depth of analysis. X/Twitter does binary flagging. We do 7-dimensional predictive modelling.</p>
+                    <p className="text-[10px] text-gray-500">Multi-dimensional predictive risk modelling — 7 factors scored in real time before any harm occurs.</p>
                     {[
                       { label: "Severity Score",           value: d.risk.severityScore,           color: "#dc2626" },
                       { label: "Recidivism Risk",          value: d.risk.recidivismRisk,           color: "#7c3aed" },

@@ -419,7 +419,7 @@ function TestingArenaTab() {
     "dispute-predict": '{"orderDetails":{"id":"ORD-001","totalAmount":8500,"deadline":"2026-03-25","milestones":2},"messages":[{"sentiment":"frustrated","content":"This is taking too long"},{"sentiment":"defensive","content":"I already sent the files"}],"milestones":[{"name":"Design","status":"overdue","daysLate":3}]}',
     "ltv-churn": '{"userProfile":{"type":"freelancer","joinDate":"2024-01-15","location":"Nigeria","skills":["Python","ML"],"completedJobs":12,"avgRating":4.7,"subscriptionTier":"pro"},"activityHistory":[{"month":"2026-01","earnings":8500},{"month":"2026-02","earnings":12000},{"month":"2026-03","earnings":3000}]}',
     "red-team": '{"targetDefense":"FraudDetector","attackCategory":"mobile_money_fraud","numVariants":3}',
-    "dynamic-pricing": '{"category":"Web Development","currentRate":350,"location":"South Africa","demand":"high","competitorRates":[{"platform":"Upwork","avgRate":25},{"platform":"Fiverr","avgRate":300}]}',
+    "dynamic-pricing": '{"category":"Web Development","currentRate":350,"location":"South Africa","demand":"high","marketRates":[{"tier":"entry","avgRate":150},{"tier":"mid","avgRate":300},{"tier":"senior","avgRate":500}]}',
     "notification-engine": '{"userSegment":"churning_freelancer","trigger":"3_days_no_login","userData":{"name":"Sipho","preferredChannel":"whatsapp","location":"Johannesburg","lastEarning":8500,"skills":["React","Node.js"]}}',
   };
 
@@ -620,7 +620,7 @@ function CostCarbonTab() {
     <div className="space-y-6">
       <div className="p-4 bg-yellow-950/20 border border-yellow-700/30 rounded-xl">
         <div className="flex items-center gap-2 mb-1"><Leaf size={14} className="text-green-400" /><span className="text-yellow-300 font-semibold text-sm">Cost &amp; Carbon Intelligence</span></div>
-        <p className="text-gray-500 text-xs">GPT-4o-mini: $0.000150/1K input tokens · $0.000600/1K output tokens. CO₂: ~0.0017g per API call. Our entire AI brain costs less than a cup of coffee per 300 inferences. Datadog costs $31/host/mo just for monitoring.</p>
+        <p className="text-gray-500 text-xs">GPT-4o-mini: $0.000150/1K input tokens · $0.000600/1K output tokens. CO₂: ~0.0017g per API call. Our entire AI brain costs less than a cup of coffee per 300 inferences.</p>
       </div>
 
       {/* Headline Cards */}

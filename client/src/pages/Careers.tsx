@@ -131,7 +131,7 @@ export default function Careers() {
               </span>
             </h1>
             <p className="text-xl text-white/80 leading-relaxed max-w-2xl mb-10">
-              We're a small team doing something massive — connecting millions of South Africans to economic opportunity through the world's most advanced freelance platform. If you want your work to matter, you're in the right place.
+              We're a small team doing something massive — connecting millions of South Africans to economic opportunity through Africa's leading freelance marketplace. If you want your work to matter, you're in the right place.
             </p>
             <div className="flex flex-wrap gap-6">
               {[

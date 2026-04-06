@@ -541,7 +541,7 @@ export default function Home() {
                 </p>
                 <div className="space-y-4 mb-8">
                   {[
-                    { icon: BadgeCheck, title: "Skills Endorsements", desc: "Peers and clients endorse your skills — stronger than LinkedIn recommendations", color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20" },
+                    { icon: BadgeCheck, title: "Skills Endorsements", desc: "Peers and clients endorse your skills — backed by real skills tests and ID verification", color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20" },
                     { icon: PenLine, title: "AI-Assisted Profile Builder", desc: "10-minute setup. AI writes your headline, summary, and skill tags from your experience", color: "text-blue-400", bg: "bg-blue-500/10 border-blue-500/20" },
                     { icon: BarChart2, title: "Profile Strength Score", desc: "Real-time score showing how discoverable you are to clients — with action tips", color: "text-violet-400", bg: "bg-violet-500/10 border-violet-500/20" },
                     { icon: FileText, title: "Open to Freelance Gigs Badge", desc: "Signal your availability to clients and get matched to freelance projects — not just job listings", color: "text-amber-400", bg: "bg-amber-500/10 border-amber-500/20" },
