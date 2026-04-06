@@ -77,7 +77,7 @@ export interface IStorage {
   getAggregatedJobs(filters?: { province?: string; category?: string; source?: string; jobType?: string }): Promise<AggregatedJob[]>;
   getAggregatedJobCount(): Promise<number>;
   getExistingApplyUrls(): Promise<Set<string>>;
-  getAggregatedJobStats(provinces: string[], countries: string[], categories: string[]): Promise<{ totalActive: number; urgent: number; remote: number; aiGenerated: number; avgScore: number; byProvince: Record<string, number>; byCountry: Record<string, number>; byCategory: Record<string, number> }>;
+  getAggregatedJobStats(provinces: string[], countries: string[], categories: string[]): Promise<{ totalActive: number; urgent: number; remote: number; aiGenerated: number; avgScore: number; byProvince: Record<string, number>; byCountry: Record<string, number>; byCategory: Record<string, number>; bySource: Record<string, number> }>;
   clearOldAggregatedJobs(): Promise<void>;
   deleteAgentGeneratedJobs(): Promise<number>;
 
@@ -512,6 +512,7 @@ class DatabaseStorage implements IStorage {
     byProvince: Record<string, number>;
     byCountry: Record<string, number>;
     byCategory: Record<string, number>;
+    bySource: Record<string, number>;
   }> {
     // Single aggregate query for scalar stats
     const [scalars] = await db.select({
@@ -573,6 +574,22 @@ class DatabaseStorage implements IStorage {
       if (r.category && r.cnt > 0) byCategory[r.category] = r.cnt;
     }
 
+    // Source breakdown — top 20 sources by count, using partial index idx_agg_source_partial
+    const sourceRows = await db.select({
+      source: aggregatedJobs.source,
+      cnt: sql<number>`cast(count(*) as integer)`,
+    })
+      .from(aggregatedJobs)
+      .where(eq(aggregatedJobs.isActive, true))
+      .groupBy(aggregatedJobs.source)
+      .orderBy(sql`count(*) desc`)
+      .limit(20);
+
+    const bySource: Record<string, number> = {};
+    for (const r of sourceRows) {
+      if (r.source) bySource[r.source] = r.cnt;
+    }
+
     return {
       totalActive: scalars?.totalActive || 0,
       urgent:      scalars?.urgent || 0,
@@ -582,6 +599,7 @@ class DatabaseStorage implements IStorage {
       byProvince,
       byCountry,
       byCategory,
+      bySource,
     };
   }
 

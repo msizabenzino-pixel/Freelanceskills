@@ -187,7 +187,7 @@ export function registerAggregatedJobRoutes(app: Express) {
   // ── GET /api/aggregated-jobs/stats ────────────────────────────────────────
   // Expensive aggregate query — cache for 5 minutes.
   app.get("/api/aggregated-jobs/stats", async (_req: Request, res: Response) => {
-    const STATS_CACHE_KEY = "jobs:stats:v1";
+    const STATS_CACHE_KEY = "jobs:stats:v2";
     const cached = cache.get<unknown>(STATS_CACHE_KEY);
     if (cached) {
       res.setHeader("X-Cache", "HIT");

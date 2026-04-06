@@ -120,6 +120,15 @@ const INDEXES: { name: string; sql: string }[] = [
           WHERE is_active = true AND apply_url IS NOT NULL`,
   },
 
+  // ── Source breakdown (bySource stats query) ───────────────────────────────
+  // Allows GROUP BY source WHERE is_active=true to use an index-only scan.
+  {
+    name: "idx_agg_source_partial",
+    sql: `CREATE INDEX IF NOT EXISTS idx_agg_source_partial
+          ON aggregated_jobs (source, id)
+          WHERE is_active = true`,
+  },
+
   // ── Full-text search — GIN tsvector expression index ──────────────────────
   // Replaces ILIKE '%query%' scans (always full-table) with an indexed FTS lookup.
   // plainto_tsquery handles raw user input safely (no operator injection).

@@ -728,7 +728,7 @@ export async function getAgentStats() {
     remote:       stats.remote,
     aiGenerated:  stats.aiGenerated,
     avgScore:     stats.avgScore,
-    bySource:     {} as Record<string, number>, // Source breakdown removed — too expensive to calc in real-time
+    bySource:     stats.bySource,
     byProvince:   stats.byProvince,
     byCountry,
     byCategory:   stats.byCategory,

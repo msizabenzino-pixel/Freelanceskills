@@ -113,6 +113,28 @@ function detectUrgency(title: string, description?: string | null): boolean {
   return false;
 }
 
+// Signal-based quality score — replaces the pure random 70-94 range.
+// Scores correlate with real job quality signals, giving candidates meaningful ranking.
+//   Base: 65
+//   +8 salary transparency (salary_min or salary_max present)
+//   +5 skill clarity (skills list > 15 chars)
+//   +4 detailed description (> 400 chars)
+//   +3 requirements listed
+//   +3 remote opportunity
+//   +2 specific experience level (not generic 'mid')
+//   +0–7 natural variance  →  range: 65–97
+function smartScore(job: InsertAggregatedJob): number {
+  let score = 65;
+  if (job.salaryMin || job.salaryMax) score += 8;
+  if (job.skills && job.skills.length > 15) score += 5;
+  if (job.description && job.description.length > 400) score += 4;
+  if (job.requirements) score += 3;
+  if (job.isRemote) score += 3;
+  if (job.experienceLevel && job.experienceLevel !== "mid") score += 2;
+  score += Math.floor(Math.random() * 8);
+  return Math.min(score, 97);
+}
+
 function base(): Pick<InsertAggregatedJob,
   "requirements" | "province" | "country" | "salaryMin" | "salaryMax" | "salaryPeriod" |
   "experienceLevel" | "expiresAt" | "isActive" | "aiScore" | "isUrgent" |
@@ -1622,6 +1644,8 @@ export async function fetchAndStoreLiveJobs(): Promise<LiveFetchResult> {
     if (detectUrgency(job.title ?? "", job.description)) {
       (job as InsertAggregatedJob).isUrgent = true;
     }
+    // Signal-based quality score — replaces the uniform random assigned in base()
+    (job as InsertAggregatedJob).aiScore = smartScore(job as InsertAggregatedJob);
     newJobs.push(job);
   }
 
