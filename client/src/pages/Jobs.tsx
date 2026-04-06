@@ -57,6 +57,7 @@ const AFRICA_COUNTRIES = [
   { name: "Sudan",          flag: "🇸🇩", provinces: [] },
   { name: "Remote",         flag: "🌍", provinces: [] },
 ];
+const AFRICA_COUNTRY_NAMES = new Set(AFRICA_COUNTRIES.map((country) => country.name).filter((name) => name !== "Remote"));
 
 // SA province shortnames for display
 const SA_PROV_SHORT: Record<string, string> = {
@@ -269,6 +270,7 @@ export default function Jobs() {
   const aggJobs = aggJobsQuery.data?.jobs || [];
   const aggRemoteFallback = aggJobsQuery.data?.remoteFallback || false;
   const aggRemoteFallbackCountry = aggJobsQuery.data?.remoteFallbackCountry;
+  const showAfricaFallbackBanner = !!aggRemoteFallback && !!aggRemoteFallbackCountry && AFRICA_COUNTRY_NAMES.has(aggRemoteFallbackCountry);
   const urgentCount = aggJobs.filter(j => j.isUrgent).length;
   const remoteCount = aggJobs.filter(j => j.isRemote).length;
   const totalJobs = aggJobs.length + filteredFirebaseJobs.length;
@@ -664,7 +666,7 @@ export default function Jobs() {
                   <EmptyState onClear={clearFilters} hasFilters={!!hasActiveFilters} />
                 ) : (
                   <>
-                    {aggRemoteFallback && aggRemoteFallbackCountry && (
+                    {showAfricaFallbackBanner && (
                       <div className="mb-4 flex items-start gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm" data-testid="remote-fallback-banner">
                         <Globe className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
                         <div>

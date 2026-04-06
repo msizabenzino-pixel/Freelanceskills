@@ -39,13 +39,17 @@ export function registerAggregatedJobRoutes(app: Express) {
         limit: limit ? parseInt(limit) : 500,
       });
 
-      // If a specific non-SA country was requested but returned no results,
-      // fall back to remote/global jobs (which are accessible from anywhere in Africa).
-      const hasCountryFilter = country && country !== "all" && country !== "South Africa";
+      const AFRICAN_COUNTRIES = new Set([
+        "Nigeria","Kenya","Ghana","Egypt","Morocco","Ethiopia","Tanzania","Uganda","Rwanda",
+        "Senegal","Côte d'Ivoire","Zimbabwe","Zambia","Botswana","Namibia","Mozambique",
+        "Cameroon","Angola","Tunisia","Algeria","Malawi","Lesotho","Eswatini","Libya","Sudan",
+      ]);
+      const hasCountryFilter = !!country && country !== "all";
+      const isAfricanCountry = country === "South Africa" || (country ? AFRICAN_COUNTRIES.has(country) : false);
       let finalJobs = jobs;
       let remoteFallback = false;
 
-      if (hasCountryFilter && jobs.length < 5) {
+      if (hasCountryFilter && isAfricanCountry && country !== "South Africa" && jobs.length < 5) {
         finalJobs = await storage.searchAggregatedJobs({
           category: category || undefined,
           source: source || undefined,
