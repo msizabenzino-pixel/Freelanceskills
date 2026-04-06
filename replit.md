@@ -26,6 +26,36 @@ The platform prioritizes a mobile-first, PWA-enabled design with strong accessib
 ### System Design Choices
 The architecture is designed for scalability and maintainability, with clear separation of concerns between frontend, backend, and data layers. The modular design supports the integration of advanced features such as the 2031 Vision Modules, which include blockchain credentials, NFT certifications, green impact scoring, DAO governance, and AI-driven insights. Edge case handlers are robustly implemented to manage complex scenarios like account deletion mid-escrow, high concurrent application queues, and dispute escalations. An admin platform provides comprehensive control and analytics over all aspects of the marketplace.
 
+## April 2026 — Live Job Engine v5.0 (34-source, 7,689 jobs/cycle, 75,000+ DB total)
+
+### Confirmed Working Sources (per cycle)
+- **DevITJobs**: 3,475 tech jobs via public JSON API (`/api/jobsLight`)
+- **Adzuna SA**: 1,000 South African jobs (20 pages)
+- **The Muse**: 400 curated jobs
+- **Adzuna US**: 500 US remote-eligible jobs
+- **Adzuna GB/AU/CA/IN/DE/NL/SG**: 250-400 each (6 new markets added)
+- **We Work Remotely**: 165 jobs across 4 RSS category feeds
+- **Arbeitnow**: 100 curated European remote jobs
+- **Jobicy**: 50 remote jobs
+- **RemoteOK**: 97 tech remote jobs
+- **Remotive**: 20 + extended categories 20
+- **Working Nomads**: 29 curated remote
+- **Himalayas**: 20 remote
+- **Landing.jobs**: 13 European tech jobs
+
+### Sources That Block Server Requests (kept in code, return 0)
+- Indeed Africa, Jobberman, BrighterMonday, Fuzu, MyJobMag, Careers24, CareerJunction, AfricaWork, EthioJobs, AyaJob — all require browser/JS or block datacenter IPs
+
+### Adzuna Country Notes
+- **Supported**: za, us, gb, au, ca, in, de, nl, sg ✅
+- **NOT supported** (removed): ng, ke, gh, eg, ma, tz, ug, rw, zw, zm, bw, na, mz, sn, ci — Adzuna doesn't index these African markets
+
+### Critical Rules (NEVER violate)
+- ALL jobs MUST be real with real `applyUrl` — `agentGenerated` always `false`
+- Do NOT import `loginWithLinkedIn` from `firebaseAuth.ts` (function doesn't exist)
+- Build with `npm run build` THEN restart (dist/ is what runs in production)
+- Logger: `import { log } from "./logger"` — not from ./index
+
 ## April 2026 — AI Job Intelligence Agent
 
 ### AI Job Board (150+ live jobs on launch)

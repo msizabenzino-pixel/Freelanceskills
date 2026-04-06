@@ -46,6 +46,16 @@ const AFRICA_COUNTRIES = [
   { name: "Botswana",       flag: "🇧🇼", provinces: [] },
   { name: "Namibia",        flag: "🇳🇦", provinces: [] },
   { name: "Mozambique",     flag: "🇲🇿", provinces: [] },
+  { name: "Cameroon",       flag: "🇨🇲", provinces: [] },
+  { name: "Angola",         flag: "🇦🇴", provinces: [] },
+  { name: "Tunisia",        flag: "🇹🇳", provinces: [] },
+  { name: "Algeria",        flag: "🇩🇿", provinces: [] },
+  { name: "Malawi",         flag: "🇲🇼", provinces: [] },
+  { name: "Lesotho",        flag: "🇱🇸", provinces: [] },
+  { name: "Eswatini",       flag: "🇸🇿", provinces: [] },
+  { name: "Libya",          flag: "🇱🇾", provinces: [] },
+  { name: "Sudan",          flag: "🇸🇩", provinces: [] },
+  { name: "Remote",         flag: "🌍", provinces: [] },
 ];
 
 // SA province shortnames for display
