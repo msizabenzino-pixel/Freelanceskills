@@ -1,7 +1,7 @@
 /**
  * ╔══════════════════════════════════════════════════════════════════════════════╗
  * ║  SUBSCRIPTION MANAGEMENT v4.0 — ELON MUSK 200% INTELLIGENCE FULL UPGRADE    ║
- * ║  Revenue & loyalty backbone obliterating Upwork Plus, Fiverr Pro/Business,  ║
+ * ║  Revenue & loyalty backbone — Africa's most comprehensive subscription system    ║
  * ║  Patreon, Substack, LinkedIn Premium until 2029                             ║
  * ╚══════════════════════════════════════════════════════════════════════════════╝
  *
@@ -534,7 +534,7 @@ export default function SubscriptionManagement() {
         </Card>
 
         <Card className="bg-zinc-900 border-zinc-800">
-          <CardHeader className="pb-3"><CardTitle className="text-base">AI Signal Analysis — How We Out-Engineer Upwork</CardTitle></CardHeader>
+          <CardHeader className="pb-3"><CardTitle className="text-base">AI Signal Analysis — Personalised Subscription Intelligence</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div>
@@ -564,7 +564,7 @@ export default function SubscriptionManagement() {
               </div>
             </div>
             <div className="p-3 bg-cyan-900/20 border border-cyan-800 rounded text-xs text-zinc-300">
-              <strong className="text-cyan-300">vs Upwork ($49.99/mo "Boosted Profile"):</strong> Static feature page. Zero personalization. We calculate EXACT ROI per user and show payback period in days.
+              We calculate EXACT ROI per user and show personalised payback period in days.
             </div>
             <div className="p-3 bg-purple-900/20 border border-purple-800 rounded text-xs text-zinc-300">
               <strong className="text-purple-300">vs LinkedIn Premium ($39.99/mo):</strong> "See who viewed your profile." We show: "Upgrade pays back in 11 days based on your R12,000/mo earnings."
@@ -619,7 +619,7 @@ export default function SubscriptionManagement() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-white flex items-center gap-2"><AlertTriangle className="w-6 h-6 text-orange-400"/>Predictive Churn Prevention + Dynamic Pricing</h2>
-          <p className="text-zinc-400 text-xs">9-signal churn model. Auto-adjust price/perks. Loyalty token injections. vs Fiverr: they send 1 email. We offer personalized AI interventions.</p>
+          <p className="text-zinc-400 text-xs">9-signal churn model. Auto-adjust price/perks. Loyalty token injections. We offer personalised AI interventions.</p>
         </div>
         <div className="flex gap-2">
           <Select value={churnFilter} onValueChange={setChurnFilter}>
@@ -740,8 +740,8 @@ export default function SubscriptionManagement() {
               </table>
             </div>
             <div className="p-3 bg-orange-900/20 border border-orange-800 rounded text-xs text-zinc-300">
-              <strong className="text-orange-300 block mb-2">How we obliterate Fiverr Pro ($29.99/mo):</strong>
-              Fiverr sends one generic "we miss you" email. We:
+              <strong className="text-orange-300 block mb-2">Why our Pro plan delivers real value:</strong>
+              Generic platforms send one email. We:
               <ul className="mt-2 space-y-1 text-zinc-400">
                 <li>• Score user on 9 behavioral signals in real-time</li>
                 <li>• Calculate personalized discount based on risk</li>
@@ -819,9 +819,9 @@ export default function SubscriptionManagement() {
         <CardContent>
           <div className="grid grid-cols-3 gap-4">
             {[
-              {title:"Fixed Base (Subscription)", desc:"Predictable recurring revenue. Users commit monthly/annually. Upwork/Fiverr only have this.", color:"bg-emerald-900/20 border-emerald-800", tc:"text-emerald-400"},
+              {title:"Fixed Base (Subscription)", desc:"Predictable recurring revenue. Users commit monthly/annually.", color:"bg-emerald-900/20 border-emerald-800", tc:"text-emerald-400"},
               {title:"Metered Overages (Per-Use)", desc:"Charge per proposal beyond limit, per featured gig day, per API call. Captures upside from power users.", color:"bg-purple-900/20 border-purple-800", tc:"text-purple-400"},
-              {title:"Hybrid = Maximum Revenue", desc:"AWS Model: fixed base + pay-as-you-go. Captures 100% of user value. No competitor freelance platform has this.", color:"bg-blue-900/20 border-blue-800", tc:"text-blue-400"},
+              {title:"Hybrid = Maximum Revenue", desc:"AWS Model: fixed base + pay-as-you-go. Captures 100% of user value. A truly unique hybrid model on the African market.", color:"bg-blue-900/20 border-blue-800", tc:"text-blue-400"},
             ].map((item,i)=>(
               <div key={i} className={`${item.color} border rounded p-4`}>
                 <div className={`${item.tc} font-semibold text-sm mb-2`}>{item.title}</div>
@@ -849,7 +849,7 @@ export default function SubscriptionManagement() {
     <div className="space-y-5">
       <div>
         <h2 className="text-xl font-bold text-white flex items-center gap-2"><Building2 className="w-6 h-6 text-indigo-400"/>Advanced Agency / Team Suite</h2>
-        <p className="text-zinc-400 text-xs">Sub-accounts, granular roles, shared analytics, invoice splitting, white-label portals. vs Fiverr Business: basic team management only.</p>
+        <p className="text-zinc-400 text-xs">Sub-accounts, granular roles, shared analytics, invoice splitting, white-label portals. Full enterprise-grade team management.</p>
       </div>
 
       <div className="grid grid-cols-2 gap-5">
@@ -908,9 +908,9 @@ export default function SubscriptionManagement() {
               <thead><tr className="border-b border-zinc-800">
                 <th className="text-left py-2 px-3 text-zinc-300">Feature</th>
                 <th className="text-center py-2 px-3 text-emerald-400">FreelanceSkills</th>
-                <th className="text-center py-2 px-3 text-zinc-400">Upwork Enterprise</th>
-                <th className="text-center py-2 px-3 text-zinc-400">Fiverr Business</th>
-                <th className="text-center py-2 px-3 text-zinc-400">Toptal</th>
+                <th className="text-center py-2 px-3 text-zinc-400">Platform A</th>
+                <th className="text-center py-2 px-3 text-zinc-400">Platform B</th>
+                <th className="text-center py-2 px-3 text-zinc-400">Platform C</th>
               </tr></thead>
               <tbody>
                 {[
@@ -1042,7 +1042,7 @@ export default function SubscriptionManagement() {
       <div className="space-y-5">
         <div>
           <h2 className="text-xl font-bold text-white flex items-center gap-2"><BarChart3 className="w-6 h-6 text-emerald-400"/>Cohort Revenue Analytics</h2>
-          <p className="text-zinc-400 text-xs">MRR/ARR real-time, LTV per cohort, 36-month forecast, plan performance heatmaps. vs All competitors: none expose this to operators.</p>
+          <p className="text-zinc-400 text-xs">MRR/ARR real-time, LTV per cohort, 36-month forecast, plan performance heatmaps — full operator visibility.</p>
         </div>
 
         <div className="grid grid-cols-4 gap-4">
@@ -1129,7 +1129,7 @@ export default function SubscriptionManagement() {
     <div className="space-y-5">
       <div>
         <h2 className="text-xl font-bold text-white flex items-center gap-2"><Globe className="w-6 h-6 text-yellow-400"/>Africa-Optimized Micro &amp; Flexible Billing</h2>
-        <p className="text-zinc-400 text-xs">USSD signup, mobile money, daily/weekly tiers, grace periods, airtime billing. Reaching 800M+ users that Upwork/Fiverr/Substack completely ignore.</p>
+        <p className="text-zinc-400 text-xs">USSD signup, mobile money, daily/weekly tiers, grace periods, airtime billing. Reaching 800M+ users across Africa.</p>
       </div>
 
       <div className="grid grid-cols-2 gap-5">
@@ -1188,7 +1188,7 @@ export default function SubscriptionManagement() {
 
             <div className="p-3 bg-yellow-900/20 border border-yellow-800 rounded text-xs text-zinc-300">
               <strong className="text-yellow-300 block mb-1">Market Opportunity:</strong>
-              Upwork/Fiverr require credit cards. We accept M-PESA, airtime, and bank transfer. Tapping 800M Africans with limited banking access.
+              We accept M-PESA, airtime, and bank transfer. Reaching 800M Africans with limited banking access.
             </div>
           </CardContent>
         </Card>
@@ -1328,7 +1328,7 @@ export default function SubscriptionManagement() {
             <Badge className="bg-emerald-600">200% INTELLIGENCE</Badge>
             <Badge className="bg-purple-700">v4.0 FULL UPGRADE</Badge>
           </div>
-          <p className="text-zinc-400 text-sm">Revenue &amp; loyalty backbone obliterating Upwork Plus + Fiverr Pro/Business + Patreon + Substack + LinkedIn Premium until 2029</p>
+          <p className="text-zinc-400 text-sm">Revenue &amp; loyalty backbone — Africa's most comprehensive subscription platform until 2029</p>
           <div className="mt-2 flex flex-wrap gap-1.5">
             {["Agentic AI Engine","Predictive Churn Prevention","Dynamic Pricing","Hybrid Billing","Agency Suite","Skill Tokens","Cohort Analytics","Grace Periods","Africa Hub","10 Integration Hooks"].map(s=>(
               <Badge key={s} variant="outline" className="text-zinc-300 border-zinc-600 text-xs">{s}</Badge>

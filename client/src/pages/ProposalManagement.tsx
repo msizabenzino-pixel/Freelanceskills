@@ -2,7 +2,7 @@
  * PROPOSAL MANAGEMENT ADMIN — /admin/proposals
  *
  * 200% INTELLIGENCE: AI Quality Score, Win Probability, Spam Detection, Academy Correlation
- * 10 Elon Musk features surpassing Upwork (JSS) + Fiverr (requests) + Toptal (screening):
+
  *
  * 1. ✅ AI Quality Score + Predictive Win Probability (real-time, explainable)
  * 2. ✅ Academy Earnings-Lift Correlation (scatter chart + ROI forecasting)

@@ -172,7 +172,7 @@ function ChatTab() {
       id: "intro",
       role: "assistant",
       content: "**Sawubona! I'm VUMA-NUCLEAR 🔥**\n\nFreelanceSkills.net's official AI — built to end youth unemployment in Africa. I'm not a support bot. I'm a truth-seeking, income-creating weapon.\n\n**10,247 projects · R18.4M earned · 3,240 youth hired · 4.9★**\n\nAsk me anything — and I'll be brutally honest with you. Let's go!",
-      suggestions: ["How do I start earning as a freelancer?", "How do your fees compare to Upwork?", "What is the Free AI Academy?"],
+      suggestions: ["How do I start earning as a freelancer?", "How do your fees work?", "What is the Free AI Academy?"],
       ts: Date.now(),
     },
   ]);
@@ -306,7 +306,7 @@ function ChatTab() {
 
       <div className="border-t border-gray-700 pt-4">
         <div className="flex flex-wrap gap-2 mb-3">
-          {["Post a job", "Compare to Upwork", "How does escrow work?", "Start free course"].map(q => (
+          {["Post a job", "How do our fees work?", "How does escrow work?", "Start free course"].map(q => (
             <button key={q} onClick={() => sendMessage.mutate(q)} data-testid={`quick-q-${q.slice(0, 10)}`}
               className="px-3 py-1 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 text-xs rounded-full transition-colors">
               {q}

@@ -1062,7 +1062,7 @@ export default function RolePermissionSystem() {
               <h1 className="text-xl font-bold text-zinc-100">Role &amp; Permission System v2.0</h1>
               <span className="text-[10px] bg-red-700/20 border border-red-700/40 text-red-300 px-2 py-0.5 rounded-full">200% ELON MUSK INTELLIGENCE</span>
             </div>
-            <div className="text-xs text-zinc-500 mt-0.5">37 endpoints · 5 core roles · 137 permissions · 25 depts · Immutable audit · Africa-first · Predictive risk · Beats Salesforce+Okta+Auth0+Permit.io+Casbin until 2029</div>
+            <div className="text-xs text-zinc-500 mt-0.5">37 endpoints · 5 core roles · 137 permissions · 25 depts · Immutable audit · Africa-first · Predictive risk until 2029</div>
           </div>
         </div>
         <div className="flex gap-1 flex-wrap">

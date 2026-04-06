@@ -899,5 +899,5 @@ Return JSON:
     } catch (err: any) { res.status(500).json({ message: "Auto-winner failed" }); }
   });
 
-  console.log("[routes] Feature Flags Department v2.0 — 200% ELON MUSK INTELLIGENCE MASTERPIECE registered: /api/feature-flags/* | 32 Endpoints: Flags-CRUD·Enable·Disable·Rollout·Canary·Lock·Schedule·History·Rollback·Evaluate(7D-Targeting)·AI-Impact-Predictor(confidence+churn)·Compliance-Checker(POPIA/NDPR/PCI)·Monitoring·Africa-Dashboard·AI-Targeting-Suggest·Statistical-Significance·Multivariate-Experiments·Auto-Winner·Bulk-Ops·Integration-Status·Seed·Stats | 30 Built-in Flags | Africa-First: USSD·Mobile-Money·Multi-Currency·WhatsApp·Low-Data | Beats LaunchDarkly+Split+Unleash+Flagsmith+Shopify until 2029");
+  console.log("[routes] Feature Flags Department v2.0 — 200% ELON MUSK INTELLIGENCE MASTERPIECE registered: /api/feature-flags/* | 32 Endpoints: Flags-CRUD·Enable·Disable·Rollout·Canary·Lock·Schedule·History·Rollback·Evaluate(7D-Targeting)·AI-Impact-Predictor(confidence+churn)·Compliance-Checker(POPIA/NDPR/PCI)·Monitoring·Africa-Dashboard·AI-Targeting-Suggest·Statistical-Significance·Multivariate-Experiments·Auto-Winner·Bulk-Ops·Integration-Status·Seed·Stats | 30 Built-in Flags | Africa-First: USSD·Mobile-Money·Multi-Currency·WhatsApp·Low-Data");
 }

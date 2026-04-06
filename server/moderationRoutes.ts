@@ -726,5 +726,5 @@ export function registerModerationRoutes(app: Express) {
     } catch (e: any) { res.status(500).json({ message: e.message }); }
   });
 
-  console.log("[routes] Content Moderation Department — 200% INTELLIGENCE registered: /api/moderation/* (10 Superpowers: 6D-AI-Scan·Smart-Quarantine·Rewrite-Engine·Post-Publish-Monitor·Image-Vault+OCR·Transparent-Appeals·Repeat-Offender-Engine·Africa-First·Integration-Hooks·Education-Loop | Obliterates Upwork+Fiverr+Toptal+PeoplePerHour)");
+  console.log("[routes] Content Moderation Department — 200% INTELLIGENCE registered: /api/moderation/* (10 Superpowers: 6D-AI-Scan·Smart-Quarantine·Rewrite-Engine·Post-Publish-Monitor·Image-Vault+OCR·Transparent-Appeals·Repeat-Offender-Engine·Africa-First·Integration-Hooks·Education-Loop)");
 }

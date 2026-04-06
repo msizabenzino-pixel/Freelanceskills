@@ -1436,5 +1436,5 @@ export function registerAnalyticsRoutes(app: Express, isAuthenticated: any) {
     } catch (e: any) { res.status(500).json({ error: e.message }); }
   });
 
-  console.log("[routes] Analytics & Reporting Department v2.0 — 200% ELON MUSK INTELLIGENCE registered: /api/analytics/* | 15 Endpoints: Overview·Users·Marketplace·Financial·Academy·Geo·Reports·AI-NLP-Analyst·Predictive-Regression·Export-POPIA·Funnel·Cohort·Africa-v2·Anomaly-Detection·Executive-Summary·Department-Hooks·Custom-Builder·Attribution·Africa-SDG·Saved-Templates | Beats Upwork+Fiverr+Shopify+Mixpanel+PowerBI+Looker+Tableau until 2029");
+  console.log("[routes] Analytics & Reporting Department v2.0 — 200% ELON MUSK INTELLIGENCE registered: /api/analytics/* | 15 Endpoints: Overview·Users·Marketplace·Financial·Academy·Geo·Reports·AI-NLP-Analyst·Predictive-Regression·Export-POPIA·Funnel·Cohort·Africa-v2·Anomaly-Detection·Executive-Summary·Department-Hooks·Custom-Builder·Attribution·Africa-SDG·Saved-Templates");
 }

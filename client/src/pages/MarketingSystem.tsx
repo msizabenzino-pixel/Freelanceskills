@@ -3,7 +3,7 @@
  * ║  MARKETING SYSTEM v3.0 — ELON MUSK 200% INTELLIGENCE DASHBOARD              ║
  * ║  10 Magnificent Tabs · 30 Superpowers · Stays ahead until 2031               ║
  * ╚══════════════════════════════════════════════════════════════════════════════╝
- * Obliterates: Fiverr · Upwork · Klaviyo · Shopify · Airbnb
+
  */
 import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
@@ -327,7 +327,7 @@ function ReferralsTab() {
           <div className="text-right text-xs text-gray-400">
             <p>Target: k ≥ 1.0</p>
             <p className="mt-1">k = invite_rate × conversion_rate</p>
-            <p className="mt-1 text-[10px]">Fiverr: ~0.2 | Upwork: ~0.1</p>
+            <p className="mt-1 text-[10px]">Industry avg: ~0.15</p>
             <p className="text-[10px]" style={{ color: G }}>FreelanceSkills target: 1.5</p>
           </div>
         </div>
@@ -1347,17 +1347,17 @@ function IntegrationsTab() {
 
       {/* Competitor Comparison */}
       <div className="bg-white rounded-xl border border-gray-100 p-5">
-        <h3 className="font-bold text-sm mb-4">🏆 How We Out-Engineer Every Competitor</h3>
+        <h3 className="font-bold text-sm mb-4">🏆 FreelanceSkills Marketing — Feature Comparison</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
               <tr className="bg-gray-50">
                 <th className="px-3 py-2 text-left font-bold text-gray-600">Feature</th>
                 <th className="px-3 py-2 text-center font-bold" style={{ color: G }}>FreelanceSkills</th>
-                <th className="px-3 py-2 text-center font-bold text-gray-400">Fiverr</th>
-                <th className="px-3 py-2 text-center font-bold text-gray-400">Upwork</th>
-                <th className="px-3 py-2 text-center font-bold text-gray-400">Klaviyo</th>
-                <th className="px-3 py-2 text-center font-bold text-gray-400">Airbnb</th>
+                <th className="px-3 py-2 text-center font-bold text-gray-400">Platform A</th>
+                <th className="px-3 py-2 text-center font-bold text-gray-400">Platform B</th>
+                <th className="px-3 py-2 text-center font-bold text-gray-400">Platform C</th>
+                <th className="px-3 py-2 text-center font-bold text-gray-400">Platform D</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -1417,7 +1417,7 @@ export default function MarketingSystem() {
           <button onClick={() => navigate("/admin")} className="text-gray-400 hover:text-white transition-colors text-sm">← Admin</button>
           <div className="flex-1">
             <h1 className="text-white font-black text-lg leading-none">💰 Marketing System <span className="text-green-400 text-xs font-semibold ml-2">v3.0</span></h1>
-            <p className="text-gray-400 text-xs mt-0.5">Elon Musk 200% Intelligence · 30 Superpowers · Obliterates Fiverr+Upwork+Klaviyo+Shopify+Airbnb until 2031</p>
+            <p className="text-gray-400 text-xs mt-0.5">Africa-First Marketing Intelligence · 30 Superpowers</p>
           </div>
           <div className="text-right text-xs text-gray-400">
             <p className="font-semibold text-white">{user?.username}</p>

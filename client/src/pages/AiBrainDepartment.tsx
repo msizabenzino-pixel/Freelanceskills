@@ -535,7 +535,7 @@ function SelfImprovementTab() {
     <div className="space-y-6">
       <div className="p-4 bg-blue-950/20 border border-blue-700/30 rounded-xl">
         <div className="flex items-center gap-2 mb-1"><Sparkles size={14} className="text-blue-400" /><span className="text-blue-300 font-semibold text-sm">Self-Improving RLHF Loop</span></div>
-        <p className="text-gray-500 text-xs">Every thumbs-up/down, outcome rating, and dispute resolution feeds back into agent improvement signals. This is how FreelanceSkills.net AI gets smarter every day — Upwork Uma took 18 months to reach this, we do it continuously.</p>
+        <p className="text-gray-500 text-xs">Every thumbs-up/down, outcome rating, and dispute resolution feeds back into agent improvement signals. This is how FreelanceSkills.net AI gets smarter every day — continuously and automatically.</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -690,17 +690,17 @@ function CostCarbonTab() {
 
       {/* Competitor Cost Comparison */}
       <div className="bg-gray-900/40 border border-gray-700/40 rounded-xl p-4">
-        <h3 className="text-gray-300 font-semibold text-sm mb-3">Why We Beat Competitors on Cost</h3>
+        <h3 className="text-gray-300 font-semibold text-sm mb-3">FreelanceSkills AI Cost Efficiency</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
-            <thead><tr className="text-gray-500 text-left"><th className="pb-2">Platform</th><th className="pb-2">AI Feature</th><th className="pb-2">Their Cost</th><th className="pb-2">Our Cost</th><th className="pb-2">Saving</th></tr></thead>
+            <thead><tr className="text-gray-500 text-left"><th className="pb-2">AI Use Case</th><th className="pb-2">Feature</th><th className="pb-2">Industry Cost</th><th className="pb-2">Our Cost</th><th className="pb-2">Saving</th></tr></thead>
             <tbody className="divide-y divide-gray-800/50">
               {[
-                { platform: "Upwork Uma", feature: "Proposal ranking", theirCost: "$3–5/ranking", ourCost: "$0.00015", saving: "99.9%" },
-                { platform: "Salesforce Einstein", feature: "Lead scoring (LTV)", theirCost: "$75/user/mo", ourCost: "$0.0002/inference", saving: "99.99%" },
-                { platform: "Vellum", feature: "AI pipeline hosting", theirCost: "$0.10/1K tokens", ourCost: "$0.00015/1K", saving: "99.85%" },
-                { platform: "Toptal AI Screen", feature: "Candidate evaluation", theirCost: "$200–500/hire", ourCost: "$0.0003 swarm", saving: "99.99%" },
-                { platform: "Fiverr Neo", feature: "Smart matching", theirCost: "$2–3 per order", ourCost: "$0.0001", saving: "99.99%" },
+                { platform: "Proposal Ranking AI", feature: "Proposal ranking", theirCost: "$3–5/ranking", ourCost: "$0.00015", saving: "99.9%" },
+                { platform: "LTV Scoring AI", feature: "Lead scoring (LTV)", theirCost: "$75/user/mo", ourCost: "$0.0002/inference", saving: "99.99%" },
+                { platform: "AI Pipeline", feature: "AI pipeline hosting", theirCost: "$0.10/1K tokens", ourCost: "$0.00015/1K", saving: "99.85%" },
+                { platform: "Vetting AI", feature: "Candidate evaluation", theirCost: "$200–500/hire", ourCost: "$0.0003 swarm", saving: "99.99%" },
+                { platform: "Smart Matching AI", feature: "Smart matching", theirCost: "$2–3 per order", ourCost: "$0.0001", saving: "99.99%" },
               ].map((row, i) => (
                 <tr key={i} className="text-gray-400">
                   <td className="py-2 font-medium">{row.platform}</td>
@@ -1024,7 +1024,7 @@ function DeptTurboTab() {
     <div className="space-y-6">
       <div className="p-4 bg-rose-950/20 border border-rose-700/30 rounded-xl">
         <div className="flex items-center gap-2 mb-1"><Network size={14} className="text-rose-400" /><span className="text-rose-300 font-semibold text-sm">Department AI Turbo Buttons — One-Click AI Intelligence for Every Admin Section</span></div>
-        <p className="text-gray-500 text-xs">Every admin department now has an AI turbo button. Give it context and get instant, department-specific AI intelligence — without leaving the admin panel. Upwork has none of this built-in. Fiverr has none. These are paid add-ons ($75–$300/user/mo elsewhere).</p>
+        <p className="text-gray-500 text-xs">Every admin department now has an AI turbo button. Give it context and get instant, department-specific AI intelligence — without leaving the admin panel. Purpose-built for the African freelance market.</p>
       </div>
 
       {/* Department Selector */}

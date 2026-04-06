@@ -275,7 +275,7 @@ Google Professional Cloud Developer (2022)`;
                 <span className="text-emerald-400"> Winning Profile</span>
               </h1>
               <p className="text-lg md:text-xl text-white/80 mb-8 leading-relaxed">
-                Upload or paste your CV — our AI extracts your skills, writes your bio, benchmarks your rate and builds your profile in seconds. Inspired by LinkedIn, Toptal & Upwork.
+                Upload or paste your CV — our AI extracts your skills, writes your bio, benchmarks your rate and builds your profile in seconds.
               </p>
               {/* Steps */}
               <div className="flex items-center justify-center gap-2 flex-wrap text-sm text-white/70">

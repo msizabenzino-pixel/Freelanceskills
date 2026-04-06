@@ -3354,7 +3354,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
   // /api/mobile-admin/* | 20 Endpoints | Field Agents · USSD · Biometrics ·
   // Africa Carriers · Offline Sync · Device Registry · Push Notifications ·
   // Emergency Lockdown · Quick Actions · Live Alerts
-  // Beats Zendesk Mobile + Salesforce Field Service + ServiceNow Mobile until 2030
+  //
   // ═══════════════════════════════════════════════════════════════════════════
   {
     const { randomUUID: uuidv4 } = await import("crypto");
@@ -3732,14 +3732,14 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
       });
     });
 
-    console.log("[routes] Mobile Admin Department v4.0 — 400% ELON MUSK GOD-MODE: /api/mobile-admin/* | 23 Endpoints: Dashboard·DeviceRegistry·FieldAgents(CRUD)·USSD-Gateway·AfricaCarriers·OfflineSync·BiometricSessions·Alerts(ACK)·EmergencyLockdown·QuickActions(8)·Stats | Africa-First: 8Carriers·4Countries·USSD·MobileMoney | Beats Zendesk-Mobile+ServiceNow-Field+Salesforce-Field+PagerDuty+Datadog-Mobile until 2030");
+    console.log("[routes] Mobile Admin Department v4.0 — 400% ELON MUSK GOD-MODE: /api/mobile-admin/* | 23 Endpoints: Dashboard·DeviceRegistry·FieldAgents(CRUD)·USSD-Gateway·AfricaCarriers·OfflineSync·BiometricSessions·Alerts(ACK)·EmergencyLockdown·QuickActions(8)·Stats | Africa-First: 8Carriers·4Countries·USSD·MobileMoney");
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
   // Section 35 — Marketplace Health & Anomaly Detection v4.0 — 400% GOD-MODE
   // /api/health/* | 20 Endpoints | Real-Time KPIs · AI Anomaly Detection ·
   // Fraud Patterns · Quality Metrics · Regional Analytics · Executive Insights
-  // Beats Datadog + New Relic + Sentry + Grafana + Datadog + Elastic until 2030
+  //
   // ═══════════════════════════════════════════════════════════════════════════
   {
     const { randomUUID: uuidv4 } = await import("crypto");
@@ -4056,14 +4056,14 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
       });
     });
 
-    console.log("[routes] Marketplace Health & Anomaly Detection v4.0 — 400% GOD-MODE: /api/health/* | 16 Endpoints: Summary·KPI-Timeline·Anomalies(CRUD+ACK)·FraudPatterns·QualityMetrics·HealthScore·RegionalBreakdown·CategoryHealth·Insights·ExecutiveReport·RealTimeDetection | AI: 7D-Anomaly-Scoring·Predictive-Risk·Pattern-Detection | Beats Datadog+NewRelic+Sentry+Grafana+Elastic until 2030");
+    console.log("[routes] Marketplace Health & Anomaly Detection v4.0 — 400% GOD-MODE: /api/health/* | 16 Endpoints: Summary·KPI-Timeline·Anomalies(CRUD+ACK)·FraudPatterns·QualityMetrics·HealthScore·RegionalBreakdown·CategoryHealth·Insights·ExecutiveReport·RealTimeDetection | AI: 7D-Anomaly-Scoring·Predictive-Risk·Pattern-Detection");
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
   // Section 36 — Referral & Affiliate System v4.0 — 400% GOD-MODE
   // /api/referrals/* | 22 Endpoints | Referral Tracking · Commission Tiers ·
   // Payout Engine · Campaign Builder · A/B Testing · Fraud Detection · Leaderboard
-  // Beats Impact.com + ShareASale + PartnerStack + Tapfiliate + Rewardful until 2030
+  //
   // ═══════════════════════════════════════════════════════════════════════════
   {
     const { randomUUID: uuidv4 } = await import("crypto");
@@ -4382,14 +4382,14 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
       });
     });
 
-    console.log("[routes] Referral & Affiliate System v4.0 — 400% ELON MUSK GOD-MODE: /api/referrals/* | 19 Endpoints: Dashboard·ReferralList·Create·Commissions(Approve+Pay)·PayoutEngine(Batch+PayFast)·Campaigns(CRUD+A/B-Test)·Leaderboard·FraudFlags(Detect+Resolve)·Tiers·Analytics·Stats | Features: CommissionTiers(Bronze→Platinum)·A/B-Testing·FraudDetection(4-patterns)·BatchPayouts·RegionalAnalytics·AfricaFirst | Beats Impact.com+ShareASale+PartnerStack+Tapfiliate+Rewardful until 2030");
+    console.log("[routes] Referral & Affiliate System v4.0 — 400% ELON MUSK GOD-MODE: /api/referrals/* | 19 Endpoints: Dashboard·ReferralList·Create·Commissions(Approve+Pay)·PayoutEngine(Batch+PayFast)·Campaigns(CRUD+A/B-Test)·Leaderboard·FraudFlags(Detect+Resolve)·Tiers·Analytics·Stats | Features: CommissionTiers(Bronze→Platinum)·A/B-Testing·FraudDetection(4-patterns)·BatchPayouts·RegionalAnalytics·AfricaFirst");
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
   // Section 37 — Talent Acquisition & Certification v4.0 — 400% GOD-MODE
   // /api/talent/* | 27 Endpoints | Recruitment Pipeline · AI Matching ·
   // Skill Certification · Competency Matrix · Training Paths · Africa-First
-  // Beats LinkedIn Recruiter + Greenhouse + Lever + Workday + SAP-SuccessFactors until 2031
+  //
   // ═══════════════════════════════════════════════════════════════════════════
   {
     const { randomUUID: uuidv4 } = await import("crypto");
@@ -4806,7 +4806,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
       res.json({ section: "Talent Acquisition & Certification v4.0 — 400% ELON MUSK GOD-MODE", endpoints: 27, candidates: candidates.size, jobs: jobs.size, certs: certifications.size, certsIssued: certIssuances.size, trainingPaths: trainingPaths.size, aiMatches: aiMatches.size, interviews: interviews.size, ts: new Date().toISOString() });
     });
 
-    console.log("[routes] Talent Acquisition & Certification v4.0 — 400% ELON MUSK GOD-MODE: /api/talent/* | 27 Endpoints: Dashboard·Candidates(CRUD+Advance+Reject)·AIMatching(trigger+list)·Certifications(CRUD+Issue+Revoke+Batch)·BadgeAwards·CompetencyMatrix·TrainingPaths·Jobs(CRUD)·Interviews(CRUD+Schedule)·Analytics(Funnel+Region+SkillDemand) | Features: PipelineStages(7)·AIMatchScoring·BatchCertification·SkillGapAnalysis·AfricaFirst·SAQAAlignment·InterviewScheduler·BadgeSystem | Beats LinkedIn-Recruiter+Greenhouse+Lever+Workday+SAP-SuccessFactors until 2031");
+    console.log("[routes] Talent Acquisition & Certification v4.0 — 400% ELON MUSK GOD-MODE: /api/talent/* | 27 Endpoints: Dashboard·Candidates(CRUD+Advance+Reject)·AIMatching(trigger+list)·Certifications(CRUD+Issue+Revoke+Batch)·BadgeAwards·CompetencyMatrix·TrainingPaths·Jobs(CRUD)·Interviews(CRUD+Schedule)·Analytics(Funnel+Region+SkillDemand) | Features: PipelineStages(7)·AIMatchScoring·BatchCertification·SkillGapAnalysis·AfricaFirst·SAQAAlignment·InterviewScheduler·BadgeSystem");
   }
 
   // ═══ SECTIONS 38–50 ═══════════════════════════════════════════════════════
@@ -4840,7 +4840,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.put("/api/invoices/:id/status", (req: any, res) => { if (!auth(req, res)) return; const inv = invoices.get(req.params.id); if (!inv) return res.status(404).json({ message: "Not found" }); inv.status = req.body.status; if (req.body.status === "paid") inv.paidAt = new Date(); res.json({ invoice: inv }); });
     app.get("/api/invoices/tax-report", (req: any, res) => { if (!auth(req, res)) return; res.json({ reports: [...taxReports.values()], vatRate: 15, currency: "ZAR", taxAuthority: "SARS" }); });
     app.get("/api/invoices/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Invoice & Tax Management v4.0", invoices: invoices.size, taxReports: taxReports.size }); });
-    console.log("[routes] Invoice & Tax Management v4.0 — 400% GOD-MODE: /api/invoices/* | Dashboard·List·Create·StatusUpdate·TaxReport·VATCalc·SARSCompliance | Beats FreshBooks+Xero+Sage+QuickBooks until 2030");
+    console.log("[routes] Invoice & Tax Management v4.0 — 400% GOD-MODE: /api/invoices/* | Dashboard·List·Create·StatusUpdate·TaxReport·VATCalc·SARSCompliance");
 
     // ══ Section 39 — Geolocation & Territory Management v4.0 ══════════════
     type Territory = { id: string; name: string; region: string; province: string; manager: string; freelancers: number; clients: number; revenue: number; growth: number; demandIndex: number; infraScore: number; carriers: string[]; tier: "primary" | "secondary" | "emerging"; status: "active" | "paused" };
@@ -4871,7 +4871,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.put("/api/territories/:id", (req: any, res) => { if (!auth(req, res)) return; const t = territories.get(req.params.id); if (!t) return res.status(404).json({ message: "Not found" }); Object.assign(t, req.body); res.json({ territory: t }); });
     app.get("/api/territories/heat-map", (req: any, res) => { if (!auth(req, res)) return; res.json({ regions: [...territories.values()].map(t => ({ region: t.region, demand: t.demandIndex, infra: t.infraScore, freelancers: t.freelancers, revenue: t.revenue })) }); });
     app.get("/api/territories/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Geolocation & Territory Management v4.0", territories: territories.size, expansionTargets: expansionTargets.length }); });
-    console.log("[routes] Geolocation & Territory Management v4.0 — 400% GOD-MODE: /api/territories/* | Dashboard·List·Create·Update·HeatMap·ExpansionTargets·SDGMetrics | Africa-First: 5-Provinces+4-Countries | Beats Salesforce-Maps+ArcGIS+Esri until 2030");
+    console.log("[routes] Geolocation & Territory Management v4.0 — 400% GOD-MODE: /api/territories/* | Dashboard·List·Create·Update·HeatMap·ExpansionTargets·SDGMetrics | Africa-First: 5-Provinces+4-Countries");
 
     // ══ Section 40 — White Label & Agency Portal v4.0 ══════════════════════
     type Agency = { id: string; name: string; slug: string; owner: string; plan: "starter" | "growth" | "enterprise"; freelancers: number; clients: number; monthlyGMV: number; commissionRate: number; brandColor: string; logo: string; domain?: string; status: "active" | "suspended" | "pending"; whiteLabel: boolean; createdAt: Date };
@@ -4891,7 +4891,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/agency/:id/suspend", (req: any, res) => { if (!auth(req, res)) return; const a = agencies.get(req.params.id); if (!a) return res.status(404).json({ message: "Not found" }); a.status = "suspended"; res.json({ agency: a, message: "Agency suspended" }); });
     app.get("/api/agency/plans", (req: any, res) => { if (!auth(req, res)) return; res.json({ plans: [{ name: "Starter", price: 79900, freelancers: 25, commission: 18, whiteLabel: false }, { name: "Growth", price: 299900, freelancers: 100, commission: 15, whiteLabel: true }, { name: "Enterprise", price: 758900, freelancers: -1, commission: 12, whiteLabel: true, domain: true, api: true }] }); });
     app.get("/api/agency/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "White Label & Agency Portal v4.0", agencies: agencies.size }); });
-    console.log("[routes] White Label & Agency Portal v4.0 — 400% GOD-MODE: /api/agency/* | Dashboard·List·Create·Update·Suspend·Plans·BrandConfig·DomainMapping | Beats Workana-Agency+Toptal-Enterprise+Upwork-Enterprise until 2030");
+    console.log("[routes] White Label & Agency Portal v4.0 — 400% GOD-MODE: /api/agency/* | Dashboard·List·Create·Update·Suspend·Plans·BrandConfig·DomainMapping");
 
     // ══ Section 41 — Batch Operations & Automation v4.0 ══════════════════
     type AutoRule = { id: string; name: string; trigger: string; condition: string; action: string; target: string; enabled: boolean; runs: number; lastRun?: Date; nextRun?: Date; cooldown: number };
@@ -4921,7 +4921,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/automation/jobs/run", (req: any, res) => { if (!auth(req, res)) return; const id = uuidv4(); const job: BatchJob = { id, name: req.body.name || "Manual Batch Job", type: req.body.type || "manual", status: "running", progress: 0, total: req.body.total || 1000, processed: 0, errors: 0, startedAt: new Date(), createdAt: new Date() }; batchJobs.set(id, job); setTimeout(() => { job.status = "completed"; job.progress = 100; job.processed = job.total; job.completedAt = new Date(); }, 5000); res.json({ job }); });
     app.delete("/api/automation/rules/:id", (req: any, res) => { if (!auth(req, res)) return; autoRules.delete(req.params.id); res.json({ message: "Rule deleted" }); });
     app.get("/api/automation/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Batch Operations & Automation v4.0", rules: autoRules.size, jobs: batchJobs.size }); });
-    console.log("[routes] Batch Operations & Automation v4.0 — 400% GOD-MODE: /api/automation/* | Dashboard·Rules-CRUD·Toggle·Jobs·Run·Schedule·POPIA-Cleanup | Beats Zapier+Make+n8n+Temporal+Celery until 2030");
+    console.log("[routes] Batch Operations & Automation v4.0 — 400% GOD-MODE: /api/automation/* | Dashboard·Rules-CRUD·Toggle·Jobs·Run·Schedule·POPIA-Cleanup");
 
     // ══ Section 42 — Customer Success v4.0 ════════════════════════════════
     type Account = { id: string; name: string; type: "freelancer" | "client" | "agency"; plan: string; healthScore: number; churnRisk: "low" | "medium" | "high"; nps: number; ltv: number; lastActive: Date; csm: string; tags: string[]; upsellOpportunity: string; touchpoints: number; status: "healthy" | "at-risk" | "churned" };
@@ -4943,7 +4943,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/customer-success/nps", (req: any, res) => { if (!auth(req, res)) return; const avg = npsResponses.reduce((s, r) => s + r.score, 0) / npsResponses.length; const promoters = npsResponses.filter(r => r.score >= 9).length; const detractors = npsResponses.filter(r => r.score <= 6).length; res.json({ responses: npsResponses.sort((a, b) => b.ts.getTime() - a.ts.getTime()), avg: avg.toFixed(1), npsScore: Math.round(((promoters - detractors) / npsResponses.length) * 100), promoters, passives: npsResponses.filter(r => r.score >= 7 && r.score <= 8).length, detractors }); });
     app.get("/api/customer-success/upsell", (req: any, res) => { if (!auth(req, res)) return; const opps = [...accounts.values()].filter(a => a.upsellOpportunity !== "None" && a.status !== "churned"); res.json({ opportunities: opps.sort((a, b) => b.ltv - a.ltv), total: opps.length }); });
     app.get("/api/customer-success/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Customer Success v4.0", accounts: accounts.size, npsResponses: npsResponses.length }); });
-    console.log("[routes] Customer Success v4.0 — 400% GOD-MODE: /api/customer-success/* | Dashboard·Accounts·ChurnRisk·NPS·LTV·UpsellOpps·Touchpoints·HealthScore | Beats Gainsight+ChurnZero+Totango+Mixpanel until 2030");
+    console.log("[routes] Customer Success v4.0 — 400% GOD-MODE: /api/customer-success/* | Dashboard·Accounts·ChurnRisk·NPS·LTV·UpsellOpps·Touchpoints·HealthScore");
 
     // ══ Section 43 — Contract & SLA Management v4.0 ═══════════════════════
     type Contract = { id: string; title: string; clientName: string; freelancerName: string; type: "fixed_price" | "hourly" | "retainer" | "milestone"; value: number; slaResponse: number; slaResolution: number; status: "active" | "expired" | "breached" | "completed" | "draft"; startDate: Date; endDate?: Date; deliverables: string[]; penaltyClause: number; autoRenew: boolean; signedAt?: Date };
@@ -4968,7 +4968,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/contracts/sla-breaches/:id/resolve", (req: any, res) => { if (!auth(req, res)) return; const b = slaBreaches.get(req.params.id); if (!b) return res.status(404).json({ message: "Not found" }); b.resolved = true; res.json({ breach: b }); });
     app.get("/api/contracts/templates", (req: any, res) => { if (!auth(req, res)) return; res.json({ templates: [{ name: "Standard Freelance Agreement", type: "fixed_price", clauses: 12 }, { name: "Retainer Contract", type: "retainer", clauses: 15 }, { name: "Hourly Services", type: "hourly", clauses: 10 }] }); });
     app.get("/api/contracts/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Contract & SLA Management v4.0", contracts: contracts.size, slaBreaches: slaBreaches.size }); });
-    console.log("[routes] Contract & SLA Management v4.0 — 400% GOD-MODE: /api/contracts/* | Dashboard·List·Create·Sign·SLA-Breaches·Resolve·Templates·AutoRenew | Beats DocuSign+PandaDoc+Ironclad+LinkSquares until 2030");
+    console.log("[routes] Contract & SLA Management v4.0 — 400% GOD-MODE: /api/contracts/* | Dashboard·List·Create·Sign·SLA-Breaches·Resolve·Templates·AutoRenew");
 
     // ══ Section 44 — Resource Planner v4.0 ════════════════════════════════
     type Resource = { id: string; name: string; role: string; skills: string[]; availability: number; utilization: number; allocatedJobs: number; region: string; hourlyRate: number; rating: number; forecast: { week: number; capacity: number }[] };
@@ -4993,7 +4993,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/resources/alerts", (req: any, res) => { if (!auth(req, res)) return; res.json({ alerts: capacityAlerts.sort((a, b) => b.ts.getTime() - a.ts.getTime()), total: capacityAlerts.length }); });
     app.get("/api/resources/skill-matrix", (req: any, res) => { if (!auth(req, res)) return; const skillMap: Record<string, number> = {}; [...resources.values()].forEach(r => r.skills.forEach(s => { skillMap[s] = (skillMap[s] || 0) + 1; })); res.json({ skills: Object.entries(skillMap).map(([skill, count]) => ({ skill, count })).sort((a, b) => b.count - a.count) }); });
     app.get("/api/resources/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Resource Planner v4.0", resources: resources.size, alerts: capacityAlerts.length }); });
-    console.log("[routes] Resource Planner v4.0 — 400% GOD-MODE: /api/resources/* | Dashboard·List·CapacityForecast·Alerts·SkillMatrix·UtilizationHeatmap | Beats Teamdeck+Float+Resource.Guru+Harvest until 2030");
+    console.log("[routes] Resource Planner v4.0 — 400% GOD-MODE: /api/resources/* | Dashboard·List·CapacityForecast·Alerts·SkillMatrix·UtilizationHeatmap");
 
     // ══ Section 45 — Escrow Intelligence v4.0 ════════════════════════════
     type EscrowRecord = { id: string; orderId: string; clientName: string; freelancerName: string; amount: number; status: "held" | "released" | "disputed" | "refunded"; holdDate: Date; releaseDate?: Date; milestones: { title: string; amount: number; status: "pending" | "approved" | "released" }[]; riskScore: number; autoReleaseAt?: Date; notes: string };
@@ -5014,7 +5014,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/escrow-intel/:id/dispute", (req: any, res) => { if (!auth(req, res)) return; const e = escrowRecords.get(req.params.id); if (!e) return res.status(404).json({ message: "Not found" }); e.status = "disputed"; res.json({ record: e }); });
     app.get("/api/escrow-intel/risk-analysis", (req: any, res) => { if (!auth(req, res)) return; const arr = [...escrowRecords.values()]; res.json({ highRisk: arr.filter(e => e.riskScore > 70).map(e => ({ id: e.id, client: e.clientName, amount: e.amount, riskScore: e.riskScore })), avgRisk: (arr.reduce((s, e) => s + e.riskScore, 0) / arr.length).toFixed(1), riskFactors: ["Long hold duration", "Multiple disputes", "New client account"] }); });
     app.get("/api/escrow-intel/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Escrow Intelligence v4.0", records: escrowRecords.size }); });
-    console.log("[routes] Escrow Intelligence v4.0 — 400% GOD-MODE: /api/escrow-intel/* | Dashboard·List·Release·Dispute·RiskAnalysis·MilestoneTracking·AutoRelease | Beats Escrow.com+PaySafe+Stripe-Connect until 2030");
+    console.log("[routes] Escrow Intelligence v4.0 — 400% GOD-MODE: /api/escrow-intel/* | Dashboard·List·Release·Dispute·RiskAnalysis·MilestoneTracking·AutoRelease");
 
     // ══ Section 46 — Platform Monetization v4.0 ═══════════════════════════
     type RevenueStream = { id: string; name: string; type: "subscription" | "commission" | "feature" | "advertising" | "api"; monthly: number; growth: number; margin: number; active: boolean };
@@ -5040,7 +5040,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/monetization/experiments", (req: any, res) => { if (!auth(req, res)) return; const exp = { id: uuidv4(), ...req.body, winner: false, conversionLift: 0, revenueImpact: 0 }; pricingExperiments.push(exp); res.json({ experiment: exp }); });
     app.get("/api/monetization/forecast", (req: any, res) => { if (!auth(req, res)) return; const totalMRR = [...revenueStreams.values()].reduce((s, r) => s + r.monthly, 0); const avgGrowth = [...revenueStreams.values()].reduce((s, r) => s + r.growth, 0) / revenueStreams.size / 100; const forecast = Array.from({ length: 12 }, (_, i) => ({ month: i + 1, mrr: Math.floor(totalMRR * Math.pow(1 + avgGrowth / 12, i + 1)), arr: Math.floor(totalMRR * Math.pow(1 + avgGrowth / 12, i + 1)) * 12 })); res.json({ forecast, currentMRR: totalMRR, projectedARR: forecast[11].arr }); });
     app.get("/api/monetization/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Platform Monetization v4.0", streams: revenueStreams.size, experiments: pricingExperiments.length }); });
-    console.log("[routes] Platform Monetization v4.0 — 400% GOD-MODE: /api/monetization/* | Dashboard·Streams·Experiments·Forecast·PricingOptimiser·MRR·ARR | Beats Stripe+ChartMogul+ProfitWell+Baremetrics until 2030");
+    console.log("[routes] Platform Monetization v4.0 — 400% GOD-MODE: /api/monetization/* | Dashboard·Streams·Experiments·Forecast·PricingOptimiser·MRR·ARR");
 
     // ══ Section 47 — Supplier & Vendor Management v4.0 ═══════════════════
     type Vendor = { id: string; name: string; category: string; services: string[]; rating: number; spend: number; contracts: number; status: "active" | "suspended" | "pending"; slaScore: number; country: string; paymentTerms: string; contact: string; risk: "low" | "medium" | "high" };
@@ -5061,7 +5061,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.put("/api/vendors/:id", (req: any, res) => { if (!auth(req, res)) return; const v = vendors.get(req.params.id); if (!v) return res.status(404).json({ message: "Not found" }); Object.assign(v, req.body); res.json({ vendor: v }); });
     app.get("/api/vendors/spend-analysis", (req: any, res) => { if (!auth(req, res)) return; const arr = [...vendors.values()]; const byCategory = arr.reduce((acc: Record<string, number>, v) => { acc[v.category] = (acc[v.category] || 0) + v.spend; return acc; }, {}); res.json({ byCategory, total: arr.reduce((s, v) => s + v.spend, 0), topVendor: arr.sort((a, b) => b.spend - a.spend)[0] }); });
     app.get("/api/vendors/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Vendor Management v4.0", vendors: vendors.size }); });
-    console.log("[routes] Supplier & Vendor Management v4.0 — 400% GOD-MODE: /api/vendors/* | Dashboard·List·Create·Update·SpendAnalysis·SLATracking·RiskRating | Beats SAP-Ariba+Coupa+Jaggaer+Procurify until 2030");
+    console.log("[routes] Supplier & Vendor Management v4.0 — 400% GOD-MODE: /api/vendors/* | Dashboard·List·Create·Update·SpendAnalysis·SLATracking·RiskRating");
 
     // ══ Section 48 — Gamification & Loyalty Engine v4.0 ══════════════════
     type Challenge = { id: string; name: string; description: string; type: "daily" | "weekly" | "milestone"; reward: number; target: number; category: string; completions: number; active: boolean; expiresAt?: Date };
@@ -5092,7 +5092,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/gamification/award-points", (req: any, res) => { if (!auth(req, res)) return; const { userId, points, reason } = req.body; const u = [...loyaltyUsers.values()].find(u => u.id === userId); if (u) { u.points += points; u.totalEarned += points; } res.json({ success: true, message: `${points} points awarded: ${reason}` }); });
     app.get("/api/gamification/tiers", (req: any, res) => { if (!auth(req, res)) return; res.json({ tiers: [{ name: "Bronze", minPoints: 0, perks: ["Basic rewards"] }, { name: "Silver", minPoints: 1000, perks: ["5% discount", "Priority support"] }, { name: "Gold", minPoints: 5000, perks: ["10% discount", "Early access"] }, { name: "Platinum", minPoints: 15000, perks: ["15% discount", "Free features"] }, { name: "Diamond", minPoints: 40000, perks: ["20% discount", "Revenue share", "Executive access"] }] }); });
     app.get("/api/gamification/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Gamification & Loyalty Engine v4.0", users: loyaltyUsers.size, challenges: challenges.size }); });
-    console.log("[routes] Gamification & Loyalty Engine v4.0 — 400% GOD-MODE: /api/gamification/* | Dashboard·Leaderboard·Challenges-CRUD·AwardPoints·Tiers·Streaks·Badges | Beats Smile.io+Yotpo+LoyaltyLion+Stamp.me until 2030");
+    console.log("[routes] Gamification & Loyalty Engine v4.0 — 400% GOD-MODE: /api/gamification/* | Dashboard·Leaderboard·Challenges-CRUD·AwardPoints·Tiers·Streaks·Badges");
 
     // ══ Section 49 — API Gateway & Developer Portal v4.0 ══════════════════
     type ApiKey = { id: string; key: string; name: string; owner: string; plan: "free" | "starter" | "pro" | "enterprise"; requests: number; limit: number; rateLimit: number; lastUsed?: Date; scopes: string[]; active: boolean; createdAt: Date };
@@ -5119,7 +5119,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.delete("/api/developer/webhooks/:id", (req: any, res) => { if (!auth(req, res)) return; webhooks.delete(req.params.id); res.json({ message: "Webhook deleted" }); });
     app.get("/api/developer/docs", (req: any, res) => { if (!auth(req, res)) return; res.json({ version: "v4.0", baseUrl: "https://freelanceskills.net/api/v4", endpoints: 300, auth: "Bearer token or API Key", rateLimit: "Varies by plan", sdks: ["JavaScript", "Python", "PHP", "Ruby"], events: ["order.created", "order.completed", "payment.completed", "gig.published", "user.registered", "dispute.opened"] }); });
     app.get("/api/developer/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "API Gateway & Developer Portal v4.0", apiKeys: apiKeys.size, webhooks: webhooks.size }); });
-    console.log("[routes] API Gateway & Developer Portal v4.0 — 400% GOD-MODE: /api/developer/* | Dashboard·ApiKeys-CRUD·Webhooks-CRUD·RateLimiting·Scopes·Docs·SDKs | Beats Kong+Apigee+AWS-API-Gateway+MuleSoft until 2030");
+    console.log("[routes] API Gateway & Developer Portal v4.0 — 400% GOD-MODE: /api/developer/* | Dashboard·ApiKeys-CRUD·Webhooks-CRUD·RateLimiting·Scopes·Docs·SDKs");
 
     // ══ Section 50 — Global Expansion & Localisation v4.0 ════════════════
     type Market = { id: string; country: string; code: string; currency: string; language: string; population: number; internetPenetration: number; readinessScore: number; competitionLevel: "low" | "medium" | "high"; mobileMoneyAdoption: number; status: "live" | "planned" | "researching"; launchDate?: Date; freelancers: number; gmv: number; recommendation: string };
@@ -5152,7 +5152,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/expansion/readiness-scores", (req: any, res) => { if (!auth(req, res)) return; res.json({ scores: [...markets.values()].filter(m => m.status !== "live").map(m => ({ country: m.country, score: m.readinessScore, competition: m.competitionLevel, mobileMoney: m.mobileMoneyAdoption, recommendation: m.recommendation })).sort((a, b) => b.score - a.score) }); });
     app.get("/api/expansion/currencies", (req: any, res) => { if (!auth(req, res)) return; res.json({ currencies: [{ code: "ZAR", name: "South African Rand", rate: 1, supported: true }, { code: "KES", name: "Kenyan Shilling", rate: 0.14, supported: false }, { code: "NGN", name: "Nigerian Naira", rate: 0.021, supported: false }, { code: "GHS", name: "Ghanaian Cedi", rate: 0.12, supported: false }], base: "ZAR" }); });
     app.get("/api/expansion/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Global Expansion & Localisation v4.0 — THE MILESTONE", markets: markets.size, languages: localisations.size }); });
-    console.log("[routes] Global Expansion & Localisation v4.0 — 400% GOD-MODE — SECTION 50 MILESTONE: /api/expansion/* | Dashboard·Markets-CRUD·Localisations·ReadinessScores·Currencies·AfricaSDG·ExpansionPlaybook | Beats Deel+Remote+Velocity-Global+Papaya-Global until 2031 | 🎉 HALFWAY TO 100!");
+    console.log("[routes] Global Expansion & Localisation v4.0 — 400% GOD-MODE — SECTION 50 MILESTONE: /api/expansion/* | Dashboard·Markets-CRUD·Localisations·ReadinessScores·Currencies·AfricaSDG·ExpansionPlaybook | 🎉 HALFWAY TO 100!");
   }
 
   // ═══ SECTIONS 51–100 ══════════════════════════════════════════════════════
@@ -5183,7 +5183,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/search-ai/reindex", (req: any, res) => { if (!auth(req, res)) return; res.json({ message: "Full reindex triggered — ETA 4 minutes", jobId: uuidv4(), documentsQueued: searchIndexStats.totalDocuments }); });
     app.get("/api/search-ai/analytics", (req: any, res) => { if (!auth(req, res)) return; const byCategory = searchQueries.reduce((acc: any, q) => { acc[q.category] = (acc[q.category] || 0) + 1; return acc; }, {}); res.json({ byCategory, zeroResults: 3, avgPosition: 2.4, clickThroughRate: (searchQueries.reduce((s, q) => s + q.clickThrough, 0) / searchQueries.length).toFixed(1) }); });
     app.get("/api/search-ai/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "AI Search & Discovery v4.0", queries: searchQueries.length, suggestions: searchSuggestions.size }); });
-    console.log("[routes] AI Search & Discovery v4.0 — 400% GOD-MODE: /api/search-ai/* | Dashboard·Queries·Suggestions·Reindex·Analytics·SemanticNLP·11-Languages | Beats Algolia+Elasticsearch+Typesense+Meilisearch until 2031");
+    console.log("[routes] AI Search & Discovery v4.0 — 400% GOD-MODE: /api/search-ai/* | Dashboard·Queries·Suggestions·Reindex·Analytics·SemanticNLP·11-Languages");
 
     // ══ S52 — Payment Intelligence v4.0 ═════════════════════════════════════
     type PaymentRisk = { id: string; txId: string; amount: number; risk: "low" | "medium" | "high" | "critical"; reason: string; status: "cleared" | "flagged" | "blocked"; method: string; country: string; ts: Date };
@@ -5205,7 +5205,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/payment-intel/risks/:id/block", (req: any, res) => { if (!auth(req, res)) return; const r = paymentRisks.get(req.params.id); if (!r) return res.status(404).json({ message: "Not found" }); r.status = "blocked"; res.json({ risk: r }); });
     app.get("/api/payment-intel/chargebacks", (req: any, res) => { if (!auth(req, res)) return; res.json({ chargebacks: chargebacks.sort((a, b) => b.ts.getTime() - a.ts.getTime()), total: chargebacks.length }); });
     app.get("/api/payment-intel/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Payment Intelligence v4.0", risks: paymentRisks.size, chargebacks: chargebacks.length }); });
-    console.log("[routes] Payment Intelligence v4.0 — 400% GOD-MODE: /api/payment-intel/* | Dashboard·RiskFlags·Clear·Block·Chargebacks·VelocityRules·FraudPatterns | Beats Stripe-Radar+Ravelin+Kount+Sift until 2031");
+    console.log("[routes] Payment Intelligence v4.0 — 400% GOD-MODE: /api/payment-intel/* | Dashboard·RiskFlags·Clear·Block·Chargebacks·VelocityRules·FraudPatterns");
 
     // ══ S53 — Email Marketing Automation v4.0 ══════════════════════════════
     type EmailCampaign = { id: string; name: string; subject: string; audience: string; sent: number; opened: number; clicked: number; bounced: number; status: "draft" | "scheduled" | "sent" | "running"; scheduledAt?: Date; type: "broadcast" | "drip" | "transactional" };
@@ -5227,7 +5227,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/email-campaigns/:id/send", (req: any, res) => { if (!auth(req, res)) return; const c = emailCampaigns.get(req.params.id); if (!c) return res.status(404).json({ message: "Not found" }); c.status = "running"; c.sent = rand(500, 5000); res.json({ campaign: c, message: "Campaign send initiated" }); });
     app.get("/api/email-campaigns/templates", (req: any, res) => { if (!auth(req, res)) return; res.json({ templates: emailTemplates, total: emailTemplates.length }); });
     app.get("/api/email-campaigns/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Email Marketing Automation v4.0", campaigns: emailCampaigns.size, templates: emailTemplates.length }); });
-    console.log("[routes] Email Marketing Automation v4.0 — 400% GOD-MODE: /api/email-campaigns/* | Dashboard·Campaigns-CRUD·Send·Templates·OpenRates·ClickTracking·POPIA-Compliant | Beats Mailchimp+Klaviyo+SendGrid+Campaign-Monitor until 2031");
+    console.log("[routes] Email Marketing Automation v4.0 — 400% GOD-MODE: /api/email-campaigns/* | Dashboard·Campaigns-CRUD·Send·Templates·OpenRates·ClickTracking·POPIA-Compliant");
 
     // ══ S54 — Reviews & Social Proof v4.0 ══════════════════════════════════
     type Review = { id: string; freelancerId: string; freelancerName: string; clientName: string; rating: number; title: string; body: string; tags: string[]; verified: boolean; flagged: boolean; response?: string; ts: Date };
@@ -5248,7 +5248,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.delete("/api/reviews/:id", (req: any, res) => { if (!auth(req, res)) return; reviews.delete(req.params.id); res.json({ message: "Review removed" }); });
     app.post("/api/reviews/:id/respond", (req: any, res) => { if (!auth(req, res)) return; const r = reviews.get(req.params.id); if (!r) return res.status(404).json({ message: "Not found" }); r.response = req.body.response; res.json({ review: r }); });
     app.get("/api/reviews/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Reviews & Social Proof v4.0", reviews: reviews.size }); });
-    console.log("[routes] Reviews & Social Proof v4.0 — 400% GOD-MODE: /api/reviews/* | Dashboard·List·Approve·Delete·Respond·FraudDetect·VerifiedBadge·AIInsights | Beats Trustpilot+Bazaarvoice+G2+Capterra until 2031");
+    console.log("[routes] Reviews & Social Proof v4.0 — 400% GOD-MODE: /api/reviews/* | Dashboard·List·Approve·Delete·Respond·FraudDetect·VerifiedBadge·AIInsights");
 
     // ══ S55 — Background Check & Verification v4.0 ═════════════════════════
     type BgCheck = { id: string; freelancerId: string; name: string; type: "criminal" | "qualification" | "reference" | "identity" | "credit"; status: "pending" | "passed" | "failed" | "in_progress"; provider: string; requestedAt: Date; completedAt?: Date; result?: string; cost: number };
@@ -5269,7 +5269,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/background-checks/list", (req: any, res) => { if (!auth(req, res)) return; const { status } = req.query as any; let arr = [...bgChecks.values()]; if (status) arr = arr.filter(c => c.status === status); res.json({ checks: arr.sort((a, b) => b.requestedAt.getTime() - a.requestedAt.getTime()), total: arr.length }); });
     app.post("/api/background-checks/request", (req: any, res) => { if (!auth(req, res)) return; const id = uuidv4(); const c: BgCheck = { id, ...req.body, status: "in_progress", requestedAt: new Date(), cost: 12500 }; bgChecks.set(id, c); res.json({ check: c, estimatedDays: 3 }); });
     app.get("/api/background-checks/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Background Check & Verification v4.0", checks: bgChecks.size }); });
-    console.log("[routes] Background Check & Verification v4.0 — 400% GOD-MODE: /api/background-checks/* | Dashboard·List·Request·Criminal·Qualification·Reference·Identity·Credit·SAQA | Beats Sterling+Checkr+HireRight+MIE until 2031");
+    console.log("[routes] Background Check & Verification v4.0 — 400% GOD-MODE: /api/background-checks/* | Dashboard·List·Request·Criminal·Qualification·Reference·Identity·Credit·SAQA");
 
     // ══ S56 — Skill Assessment & Testing v4.0 ══════════════════════════════
     type Assessment = { id: string; name: string; skill: string; type: "mcq" | "coding" | "portfolio" | "live"; difficulty: "beginner" | "intermediate" | "advanced" | "expert"; questions: number; avgScore: number; attempts: number; passRate: number; duration: number; active: boolean };
@@ -5295,7 +5295,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/assessments/results", (req: any, res) => { if (!auth(req, res)) return; res.json({ results: assessmentResults.sort((a, b) => b.ts.getTime() - a.ts.getTime()), total: assessmentResults.length, passRate: ((assessmentResults.filter(r => r.passed).length / assessmentResults.length) * 100).toFixed(1) }); });
     app.post("/api/assessments", (req: any, res) => { if (!auth(req, res)) return; const id = uuidv4(); const a: Assessment = { id, ...req.body, avgScore: 0, attempts: 0, passRate: 0, active: true }; assessments.set(id, a); res.json({ assessment: a }); });
     app.get("/api/assessments/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Skill Assessment & Testing v4.0", assessments: assessments.size, results: assessmentResults.length }); });
-    console.log("[routes] Skill Assessment & Testing v4.0 — 400% GOD-MODE: /api/assessments/* | Dashboard·List·Results·Create·CodingChallenges·MCQ·Portfolio·LiveCoding | Beats HackerRank+Codility+TestGorilla+iMocha until 2031");
+    console.log("[routes] Skill Assessment & Testing v4.0 — 400% GOD-MODE: /api/assessments/* | Dashboard·List·Results·Create·CodingChallenges·MCQ·Portfolio·LiveCoding");
 
     // ══ S57 — Project Management Hub v4.0 ══════════════════════════════════
     type Project = { id: string; name: string; client: string; freelancer: string; status: "active" | "completed" | "paused" | "planning"; progress: number; dueDate: Date; tasks: { id: string; title: string; done: boolean; priority: "high" | "medium" | "low" }[]; budget: number; spent: number };
@@ -5315,7 +5315,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/projects/:id/task", (req: any, res) => { if (!auth(req, res)) return; const p = projects.get(req.params.id); if (!p) return res.status(404).json({ message: "Not found" }); const task = { id: uuidv4(), title: req.body.title, done: false, priority: req.body.priority || "medium" }; p.tasks.push(task); res.json({ project: p, task }); });
     app.put("/api/projects/:id/task/:taskId", (req: any, res) => { if (!auth(req, res)) return; const p = projects.get(req.params.id); if (!p) return res.status(404).json({ message: "Not found" }); const t = p.tasks.find(t => t.id === req.params.taskId); if (t) t.done = req.body.done ?? t.done; res.json({ project: p }); });
     app.get("/api/projects/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Project Management Hub v4.0", projects: projects.size }); });
-    console.log("[routes] Project Management Hub v4.0 — 400% GOD-MODE: /api/projects/* | Dashboard·List·Tasks-CRUD·Progress·BudgetTracking·Kanban·Timeline·Milestones | Beats Asana+Monday+Trello+Notion+Linear until 2031");
+    console.log("[routes] Project Management Hub v4.0 — 400% GOD-MODE: /api/projects/* | Dashboard·List·Tasks-CRUD·Progress·BudgetTracking·Kanban·Timeline·Milestones");
 
     // ══ S58 — Time Tracking & Timesheets v4.0 ══════════════════════════════
     type Timesheet = { id: string; freelancerId: string; freelancerName: string; clientName: string; week: string; hours: number; rate: number; amount: number; status: "pending" | "approved" | "rejected" | "paid"; entries: { date: string; hours: number; description: string }[]; submittedAt: Date };
@@ -5334,7 +5334,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/timesheets/:id/reject", (req: any, res) => { if (!auth(req, res)) return; const t = timesheets.get(req.params.id); if (!t) return res.status(404).json({ message: "Not found" }); t.status = "rejected"; res.json({ timesheet: t }); });
     app.post("/api/timesheets/:id/pay", (req: any, res) => { if (!auth(req, res)) return; const t = timesheets.get(req.params.id); if (!t) return res.status(404).json({ message: "Not found" }); t.status = "paid"; res.json({ timesheet: t, paidAt: new Date() }); });
     app.get("/api/timesheets/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Time Tracking & Timesheets v4.0", timesheets: timesheets.size }); });
-    console.log("[routes] Time Tracking & Timesheets v4.0 — 400% GOD-MODE: /api/timesheets/* | Dashboard·List·Approve·Reject·Pay·WeeklyEntries·BillableHours·PayrollSync | Beats Harvest+Toggl+Clockify+FreshBooks-Time until 2031");
+    console.log("[routes] Time Tracking & Timesheets v4.0 — 400% GOD-MODE: /api/timesheets/* | Dashboard·List·Approve·Reject·Pay·WeeklyEntries·BillableHours·PayrollSync");
 
     // ══ S59 — Marketplace Insights v4.0 ════════════════════════════════════
     const marketInsights = {
@@ -5350,7 +5350,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/insights/pricing", (req: any, res) => { if (!auth(req, res)) return; res.json({ benchmarks: marketInsights.pricingBenchmarks, currency: "ZAR" }); });
     app.get("/api/insights/trends", (req: any, res) => { if (!auth(req, res)) return; res.json({ categories: marketInsights.categoryTrends, weeklySignups: marketInsights.weeklySignups }); });
     app.get("/api/insights/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Marketplace Insights v4.0" }); });
-    console.log("[routes] Marketplace Insights v4.0 — 400% GOD-MODE: /api/insights/* | Dashboard·SkillGaps·PricingBenchmarks·Trends·SupplyDemand·WeeklySignups | Beats LinkedIn-Insights+Upwork-Insights+Glassdoor+Indeed until 2031");
+    console.log("[routes] Marketplace Insights v4.0 — 400% GOD-MODE: /api/insights/* | Dashboard·SkillGaps·PricingBenchmarks·Trends·SupplyDemand·WeeklySignups");
 
     // ══ S60 — Partner & Integration Hub v4.0 ═══════════════════════════════
     type Partner = { id: string; name: string; category: string; type: "technology" | "payment" | "logistics" | "education" | "finance" | "media"; logo: string; status: "active" | "pending" | "inactive"; dataSync: boolean; endpoints: number; monthlyApiCalls: number; revenueShare: number; contactEmail: string };
@@ -5370,7 +5370,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/partners", (req: any, res) => { if (!auth(req, res)) return; const id = uuidv4(); const p: Partner = { id, ...req.body, status: "pending", monthlyApiCalls: 0 }; partners.set(id, p); res.json({ partner: p }); });
     app.put("/api/partners/:id", (req: any, res) => { if (!auth(req, res)) return; const p = partners.get(req.params.id); if (!p) return res.status(404).json({ message: "Not found" }); Object.assign(p, req.body); res.json({ partner: p }); });
     app.get("/api/partners/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Partner & Integration Hub v4.0", partners: partners.size }); });
-    console.log("[routes] Partner & Integration Hub v4.0 — 400% GOD-MODE: /api/partners/* | Dashboard·List·Create·Update·APISync·RevenueShare·StatusManagement | Beats MuleSoft+Zapier+Workato+Boomi until 2031");
+    console.log("[routes] Partner & Integration Hub v4.0 — 400% GOD-MODE: /api/partners/* | Dashboard·List·Create·Update·APISync·RevenueShare·StatusManagement");
 
     // ══ S61 — Data Export & BI v4.0 ════════════════════════════════════════
     type ExportJob = { id: string; name: string; type: "csv" | "excel" | "json" | "pdf"; dataset: string; status: "queued" | "processing" | "completed" | "failed"; rows: number; fileSizeKb: number; createdAt: Date; completedAt?: Date; downloadUrl?: string };
@@ -5392,7 +5392,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/data-export/export", (req: any, res) => { if (!auth(req, res)) return; const id = uuidv4(); const j: ExportJob = { id, name: req.body.name || "Custom Export", type: req.body.type || "csv", dataset: req.body.dataset || "users", status: "processing", rows: 0, fileSizeKb: 0, createdAt: new Date() }; exportJobs.set(id, j); setTimeout(() => { j.status = "completed"; j.rows = rand(1000, 50000); j.fileSizeKb = rand(100, 10000); j.completedAt = new Date(); j.downloadUrl = `https://cdn.freelanceskills.net/exports/${id}.${j.type}`; }, 3000); res.json({ job: j, message: "Export queued" }); });
     app.get("/api/data-export/saved-reports", (req: any, res) => { if (!auth(req, res)) return; res.json({ reports: savedReports, total: savedReports.length }); });
     app.get("/api/data-export/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Data Export & BI v4.0", jobs: exportJobs.size, savedReports: savedReports.length }); });
-    console.log("[routes] Data Export & BI v4.0 — 400% GOD-MODE: /api/data-export/* | Dashboard·Jobs·Export(CSV/Excel/JSON/PDF)·SavedReports·Schedules·BIConnectors | Beats Tableau+PowerBI+Looker+Metabase until 2031");
+    console.log("[routes] Data Export & BI v4.0 — 400% GOD-MODE: /api/data-export/* | Dashboard·Jobs·Export(CSV/Excel/JSON/PDF)·SavedReports·Schedules·BIConnectors");
 
     // ══ S62 — Trust & Safety Intelligence v4.0 ═════════════════════════════
     type TrustEvent = { id: string; userId: string; userName: string; type: "fake_review" | "impersonation" | "spam" | "scam" | "policy_violation" | "hate_speech"; severity: "low" | "medium" | "high" | "critical"; aiConfidence: number; status: "open" | "actioned" | "dismissed"; description: string; ts: Date };
@@ -5414,7 +5414,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/trust-safety/:id/dismiss", (req: any, res) => { if (!auth(req, res)) return; const e = trustEvents.get(req.params.id); if (!e) return res.status(404).json({ message: "Not found" }); e.status = "dismissed"; res.json({ event: e }); });
     app.get("/api/trust-safety/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Trust & Safety Intelligence v4.0", events: trustEvents.size }); });
     const types = ["fake_review","impersonation","spam","scam","policy_violation","hate_speech"];
-    console.log("[routes] Trust & Safety Intelligence v4.0 — 400% GOD-MODE: /api/trust-safety/* | Dashboard·Events·Action·Dismiss·AIDetection·SentimentNLP·ContentScoring | Beats Hive+ActiveFence+Jigsaw+Clarifai until 2031");
+    console.log("[routes] Trust & Safety Intelligence v4.0 — 400% GOD-MODE: /api/trust-safety/* | Dashboard·Events·Action·Dismiss·AIDetection·SentimentNLP·ContentScoring");
 
     // ══ S63 — Freelancer Wellness v4.0 ══════════════════════════════════════
     const wellnessData = {
@@ -5429,7 +5429,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/wellness/resources", (req: any, res) => { if (!auth(req, res)) return; res.json({ resources: wellnessData.resources, total: wellnessData.resources.length }); });
     app.get("/api/wellness/mood-pulse", (req: any, res) => { if (!auth(req, res)) return; res.json({ pulse: wellnessData.weeklyMoodPulse, avg: (wellnessData.weeklyMoodPulse.reduce((s, w) => s + w.avg, 0) / wellnessData.weeklyMoodPulse.length).toFixed(1) }); });
     app.get("/api/wellness/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Freelancer Wellness v4.0" }); });
-    console.log("[routes] Freelancer Wellness v4.0 — 400% GOD-MODE: /api/wellness/* | Dashboard·BurnoutAlerts·Resources·MoodPulse·CounsellingReferrals·Africa-11-Languages | Beats Headspace+BetterHelp+Lyra+SpringHealth-Business until 2031");
+    console.log("[routes] Freelancer Wellness v4.0 — 400% GOD-MODE: /api/wellness/* | Dashboard·BurnoutAlerts·Resources·MoodPulse·CounsellingReferrals·Africa-11-Languages");
 
     // ══ S64 — Diversity & Inclusion Dashboard v4.0 ════════════════════════
     const deiData = {
@@ -5446,7 +5446,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/dei/pay-gap", (req: any, res) => { if (!auth(req, res)) return; res.json({ analysis: deiData.payGapAnalysis, benchmark: "South African Labour Law Target: 0% gap" }); });
     app.get("/api/dei/initiatives", (req: any, res) => { if (!auth(req, res)) return; res.json({ initiatives: deiData.initiatives }); });
     app.get("/api/dei/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Diversity & Inclusion Dashboard v4.0" }); });
-    console.log("[routes] Diversity & Inclusion Dashboard v4.0 — 400% GOD-MODE: /api/dei/* | Dashboard·Representation·PayGapAnalysis·BEE-Compliance·Initiatives·Africa-First·BBBEE-Level | Beats Workday-DEI+Visier+ChartHop+Syndio until 2031");
+    console.log("[routes] Diversity & Inclusion Dashboard v4.0 — 400% GOD-MODE: /api/dei/* | Dashboard·Representation·PayGapAnalysis·BEE-Compliance·Initiatives·Africa-First·BBBEE-Level");
 
     // ══ S65 — Learning Pathways v4.0 ═══════════════════════════════════════
     type LearningPath = { id: string; title: string; skill: string; level: "beginner" | "intermediate" | "advanced"; modules: number; duration: number; enrolled: number; completionRate: number; aiPersonalized: boolean; certAwarded: boolean; languages: string[] };
@@ -5466,7 +5466,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/learning/paths", (req: any, res) => { if (!auth(req, res)) return; const id = uuidv4(); const p: LearningPath = { id, ...req.body, enrolled: 0, completionRate: 0 }; learningPaths.set(id, p); res.json({ path: p }); });
     app.get("/api/learning/recommendations", (req: any, res) => { if (!auth(req, res)) return; res.json({ recommendations: [...learningPaths.values()].filter(p => p.aiPersonalized).slice(0, 3), userId: (req.session as any)?.userId }); });
     app.get("/api/learning/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Learning Pathways v4.0", paths: learningPaths.size }); });
-    console.log("[routes] Learning Pathways v4.0 — 400% GOD-MODE: /api/learning/* | Dashboard·Paths-CRUD·Recommendations·AIPersonalized·11-Languages·SAQA-Aligned·SETA-Registered | Beats Coursera+Udemy+LinkedIn-Learning+edX until 2031");
+    console.log("[routes] Learning Pathways v4.0 — 400% GOD-MODE: /api/learning/* | Dashboard·Paths-CRUD·Recommendations·AIPersonalized·11-Languages·SAQA-Aligned·SETA-Registered");
 
     // ══ S66 — Enterprise Client Portal v4.0 ════════════════════════════════
     type EnterpriseClient = { id: string; company: string; contact: string; tier: "gold" | "platinum" | "diamond"; monthlyBudget: number; spent: number; activeProjects: number; freelancersManaged: number; approvalWorkflow: boolean; dedicatedCSM: string; paymentTerms: string; status: "active" | "at-risk" | "churned" };
@@ -5484,7 +5484,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/enterprise/clients", (req: any, res) => { if (!auth(req, res)) return; const id = uuidv4(); const c: EnterpriseClient = { id, ...req.body, status: "active" }; enterpriseClients.set(id, c); res.json({ client: c }); });
     app.get("/api/enterprise/approval-queue", (req: any, res) => { if (!auth(req, res)) return; res.json({ pending: [{ id: uuidv4(), company: "Standard Bank SA", type: "project_approval", amount: 2400000, description: "Mobile Banking App Redesign", submittedBy: "Priya Naidoo", ts: new Date() }] }); });
     app.get("/api/enterprise/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Enterprise Client Portal v4.0", clients: enterpriseClients.size }); });
-    console.log("[routes] Enterprise Client Portal v4.0 — 400% GOD-MODE: /api/enterprise/* | Dashboard·Clients·ApprovalWorkflow·BudgetManagement·DedicatedCSM·SLA-Contracts·WhiteLabel | Beats Upwork-Enterprise+Toptal-Enterprise+Workday until 2031");
+    console.log("[routes] Enterprise Client Portal v4.0 — 400% GOD-MODE: /api/enterprise/* | Dashboard·Clients·ApprovalWorkflow·BudgetManagement·DedicatedCSM·SLA-Contracts·WhiteLabel");
 
     // ══ S67 — B2B Procurement v4.0 ═══════════════════════════════════════
     type RFQ = { id: string; title: string; company: string; budget: number; deadline: Date; skills: string[]; proposals: number; status: "open" | "awarded" | "closed" | "draft"; winner?: string };
@@ -5503,7 +5503,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/procurement/rfqs", (req: any, res) => { if (!auth(req, res)) return; const id = uuidv4(); const r: RFQ = { id, ...req.body, proposals: 0, status: "draft" }; rfqs.set(id, r); res.json({ rfq: r }); });
     app.post("/api/procurement/rfqs/:id/award", (req: any, res) => { if (!auth(req, res)) return; const r = rfqs.get(req.params.id); if (!r) return res.status(404).json({ message: "Not found" }); r.status = "awarded"; r.winner = req.body.winner; res.json({ rfq: r }); });
     app.get("/api/procurement/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "B2B Procurement v4.0", rfqs: rfqs.size }); });
-    console.log("[routes] B2B Procurement v4.0 — 400% GOD-MODE: /api/procurement/* | Dashboard·RFQs-CRUD·Award·VendorComparison·BidManagement·ContractNegotiation | Beats SAP-Ariba+Ivalua+Jaggaer+Coupa-Procurement until 2031");
+    console.log("[routes] B2B Procurement v4.0 — 400% GOD-MODE: /api/procurement/* | Dashboard·RFQs-CRUD·Award·VendorComparison·BidManagement·ContractNegotiation");
 
     // ══ S68 — Risk & Insurance v4.0 ════════════════════════════════════════
     const insuranceProducts = [{ id: "1", name: "Professional Indemnity", provider: "Hollard SA", coverage: 5000000, premium: 89900, perMonth: true, description: "Covers legal costs and damages from professional errors", active: true, policyCount: 1241 }, { id: "2", name: "Public Liability", provider: "Momentum Insure", coverage: 2000000, premium: 45900, perMonth: true, description: "Protection against third-party injury or property damage", active: true, policyCount: 891 }, { id: "3", name: "Cyber Liability", provider: "AIG Africa", coverage: 3000000, premium: 124900, perMonth: true, description: "Data breach, ransomware, and cyber attack protection", active: true, policyCount: 312 }];
@@ -5513,7 +5513,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/risk-insurance/products", (req: any, res) => { if (!auth(req, res)) return; res.json({ products: insuranceProducts }); });
     app.get("/api/risk-insurance/alerts", (req: any, res) => { if (!auth(req, res)) return; res.json({ alerts: riskAlerts }); });
     app.get("/api/risk-insurance/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Risk & Insurance v4.0" }); });
-    console.log("[routes] Risk & Insurance v4.0 — 400% GOD-MODE: /api/risk-insurance/* | Dashboard·Products·RiskAlerts·PolicyManagement·ClaimsTracking·IndemnityInsurance | Beats AON+Marsh+Willis-Towers+Gallagher until 2031");
+    console.log("[routes] Risk & Insurance v4.0 — 400% GOD-MODE: /api/risk-insurance/* | Dashboard·Products·RiskAlerts·PolicyManagement·ClaimsTracking·IndemnityInsurance");
 
     // ══ S69 — Payroll & Benefits v4.0 ══════════════════════════════════════
     type PayrollRun = { id: string; period: string; freelancers: number; totalGross: number; totalTax: number; totalNet: number; status: "draft" | "approved" | "paid" | "failed"; processedAt?: Date };
@@ -5533,7 +5533,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/payroll/:id/pay", (req: any, res) => { if (!auth(req, res)) return; const r = payrollRuns.get(req.params.id); if (!r) return res.status(404).json({ message: "Not found" }); r.status = "paid"; r.processedAt = new Date(); res.json({ run: r, message: "Payroll disbursed via EFT — all freelancers notified" }); });
     app.get("/api/payroll/benefits", (req: any, res) => { if (!auth(req, res)) return; res.json({ benefits, total: benefits.length }); });
     app.get("/api/payroll/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Payroll & Benefits v4.0", runs: payrollRuns.size }); });
-    console.log("[routes] Payroll & Benefits v4.0 — 400% GOD-MODE: /api/payroll/* | Dashboard·Runs·Approve·Pay·Benefits·TaxCalculation·PAYE·UIF·SDL·EFT-Integration | Beats PaySpace+Sage-Payroll+SimplePay+Xero-Payroll until 2031");
+    console.log("[routes] Payroll & Benefits v4.0 — 400% GOD-MODE: /api/payroll/* | Dashboard·Runs·Approve·Pay·Benefits·TaxCalculation·PAYE·UIF·SDL·EFT-Integration");
 
     // ══ S70 — Carbon & ESG v4.0 ════════════════════════════════════════════
     const esgData = {
@@ -5549,7 +5549,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/esg/governance", (req: any, res) => { if (!auth(req, res)) return; res.json(esgData.governance); });
     app.get("/api/esg/sdg", (req: any, res) => { if (!auth(req, res)) return; res.json({ goals: esgData.sdgAligned, country: "South Africa", framework: "UN Sustainable Development Goals" }); });
     app.get("/api/esg/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Carbon & ESG v4.0" }); });
-    console.log("[routes] Carbon & ESG v4.0 — 400% GOD-MODE: /api/esg/* | Dashboard·Carbon(Scope1-3)·Social·Governance·SDG-Aligned·DTIC-Report·B-BBEE | Beats Watershed+Persefoni+Sweep+Greenly until 2031");
+    console.log("[routes] Carbon & ESG v4.0 — 400% GOD-MODE: /api/esg/* | Dashboard·Carbon(Scope1-3)·Social·Governance·SDG-Aligned·DTIC-Report·B-BBEE");
 
     // ══ S71 — Predictive Analytics v4.0 ════════════════════════════════════
     const predictions = {
@@ -5565,7 +5565,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/predictive/demand", (req: any, res) => { if (!auth(req, res)) return; res.json({ forecasts: predictions.demandForecasts }); });
     app.get("/api/predictive/pricing", (req: any, res) => { if (!auth(req, res)) return; res.json({ recommendations: predictions.pricingRecommendations }); });
     app.get("/api/predictive/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Predictive Analytics v4.0" }); });
-    console.log("[routes] Predictive Analytics v4.0 — 400% GOD-MODE: /api/predictive/* | Dashboard·RevenueForecast·ChurnPrediction·DemandForecast·PricingOptimisation·AIModels | Beats Salesforce-Einstein+HubSpot-AI+DataRobot+H2O.ai until 2031");
+    console.log("[routes] Predictive Analytics v4.0 — 400% GOD-MODE: /api/predictive/* | Dashboard·RevenueForecast·ChurnPrediction·DemandForecast·PricingOptimisation·AIModels");
 
     // ══ S72 — Knowledge Base v4.0 ══════════════════════════════════════════
     type KBArticle = { id: string; title: string; category: string; content: string; views: number; helpful: number; notHelpful: number; aiGenerated: boolean; language: string; tags: string[]; updatedAt: Date };
@@ -5587,7 +5587,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/knowledge-base/articles", (req: any, res) => { if (!auth(req, res)) return; const id = uuidv4(); const a: KBArticle = { id, ...req.body, views: 0, helpful: 0, notHelpful: 0, updatedAt: new Date() }; kbArticles.set(id, a); res.json({ article: a }); });
     app.post("/api/knowledge-base/:id/feedback", (req: any, res) => { if (!auth(req, res)) return; const a = kbArticles.get(req.params.id); if (!a) return res.status(404).json({ message: "Not found" }); if (req.body.helpful) a.helpful++; else a.notHelpful++; res.json({ article: a }); });
     app.get("/api/knowledge-base/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Knowledge Base v4.0", articles: kbArticles.size }); });
-    console.log("[routes] Knowledge Base v4.0 — 400% GOD-MODE: /api/knowledge-base/* | Dashboard·Articles-CRUD·AIGenerate·Feedback·Multilingual(11)·SearchIntegration | Beats Zendesk-Guide+Notion+Confluence+HelpScout until 2031");
+    console.log("[routes] Knowledge Base v4.0 — 400% GOD-MODE: /api/knowledge-base/* | Dashboard·Articles-CRUD·AIGenerate·Feedback·Multilingual(11)·SearchIntegration");
 
     // ══ S73 — Community & Forums v4.0 ══════════════════════════════════════
     type ForumPost = { id: string; title: string; author: string; category: string; views: number; replies: number; likes: number; pinned: boolean; flagged: boolean; ts: Date; tags: string[] };
@@ -5604,7 +5604,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/community/posts/:id/pin", (req: any, res) => { if (!auth(req, res)) return; const p = forumPosts.get(req.params.id); if (!p) return res.status(404).json({ message: "Not found" }); p.pinned = !p.pinned; res.json({ post: p }); });
     app.delete("/api/community/posts/:id", (req: any, res) => { if (!auth(req, res)) return; forumPosts.delete(req.params.id); res.json({ message: "Post removed" }); });
     app.get("/api/community/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Community & Forums v4.0", posts: forumPosts.size }); });
-    console.log("[routes] Community & Forums v4.0 — 400% GOD-MODE: /api/community/* | Dashboard·Posts·Pin·Delete·Categories·Moderation·Leaderboard·AIToxicityFilter | Beats Discourse+Circle+Mighty-Networks+Tribe until 2031");
+    console.log("[routes] Community & Forums v4.0 — 400% GOD-MODE: /api/community/* | Dashboard·Posts·Pin·Delete·Categories·Moderation·Leaderboard·AIToxicityFilter");
 
     // ══ S74 — Event Management v4.0 ════════════════════════════════════════
     type PlatformEvent = { id: string; title: string; type: "webinar" | "workshop" | "meetup" | "virtual" | "conference"; date: Date; location: string; registered: number; capacity: number; host: string; status: "upcoming" | "live" | "completed"; free: boolean; description: string };
@@ -5622,7 +5622,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/events/list", (req: any, res) => { if (!auth(req, res)) return; res.json({ events: [...platformEvents.values()].sort((a, b) => a.date.getTime() - b.date.getTime()), total: platformEvents.size }); });
     app.post("/api/events", (req: any, res) => { if (!auth(req, res)) return; const id = uuidv4(); const e: PlatformEvent = { id, ...req.body, registered: 0, status: "upcoming" }; platformEvents.set(id, e); res.json({ event: e }); });
     app.get("/api/events/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Event Management v4.0", events: platformEvents.size }); });
-    console.log("[routes] Event Management v4.0 — 400% GOD-MODE: /api/events/* | Dashboard·List·Create·Register·VideoStream·RecordingLibrary·AttendanceTracking | Beats Eventbrite+Hopin+Zoom-Events+Bizzabo until 2031");
+    console.log("[routes] Event Management v4.0 — 400% GOD-MODE: /api/events/* | Dashboard·List·Create·Register·VideoStream·RecordingLibrary·AttendanceTracking");
 
     // ══ S75 — Press & Media Relations v4.0 ════════════════════════════════
     const pressData = {
@@ -5636,7 +5636,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/press/contacts", (req: any, res) => { if (!auth(req, res)) return; res.json({ contacts: pressData.mediaContacts }); });
     app.get("/api/press/mentions", (req: any, res) => { if (!auth(req, res)) return; res.json({ mentions: pressData.mentions }); });
     app.get("/api/press/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Press & Media Relations v4.0" }); });
-    console.log("[routes] Press & Media Relations v4.0 — 400% GOD-MODE: /api/press/* | Dashboard·Releases·MediaContacts·SocialMentions·SentimentAnalysis·PRCalendar | Beats Meltwater+Cision+PRNewswire+Prowly until 2031");
+    console.log("[routes] Press & Media Relations v4.0 — 400% GOD-MODE: /api/press/* | Dashboard·Releases·MediaContacts·SocialMentions·SentimentAnalysis·PRCalendar");
 
     // ══ S76 — Investor Relations v4.0 ══════════════════════════════════════
     const investorData = {
@@ -5650,7 +5650,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/investor-relations/funding", (req: any, res) => { if (!auth(req, res)) return; res.json({ rounds: investorData.fundingRounds, totalRaised: investorData.fundingRounds.reduce((s, r) => s + r.amount, 0) }); });
     app.get("/api/investor-relations/cap-table", (req: any, res) => { if (!auth(req, res)) return; res.json({ investors: investorData.investors, totalShareholdersEquity: 180000000 }); });
     app.get("/api/investor-relations/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Investor Relations v4.0" }); });
-    console.log("[routes] Investor Relations v4.0 — 400% GOD-MODE: /api/investor-relations/* | Dashboard·ARR·GMV·FundingRounds·CapTable·InvestorUpdates·BoardPack | Beats Visible+Carta+AngelList+Shoobx until 2031");
+    console.log("[routes] Investor Relations v4.0 — 400% GOD-MODE: /api/investor-relations/* | Dashboard·ARR·GMV·FundingRounds·CapTable·InvestorUpdates·BoardPack");
 
     // ══ S77 — Legal & Regulatory Compliance v4.0 ══════════════════════════
     const legalData = {
@@ -5662,7 +5662,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/legal-compliance/regulations", (req: any, res) => { if (!auth(req, res)) return; res.json({ regulations: legalData.regulations }); });
     app.get("/api/legal-compliance/templates", (req: any, res) => { if (!auth(req, res)) return; res.json({ templates: legalData.legalTemplates }); });
     app.get("/api/legal-compliance/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Legal & Regulatory Compliance v4.0" }); });
-    console.log("[routes] Legal & Regulatory Compliance v4.0 — 400% GOD-MODE: /api/legal-compliance/* | Dashboard·POPIA·FICA·BBBEE·CompaniesAct·Templates·AuditCalendar | Beats Thomson-Reuters+LexisNexis+ContractPodAi until 2031");
+    console.log("[routes] Legal & Regulatory Compliance v4.0 — 400% GOD-MODE: /api/legal-compliance/* | Dashboard·POPIA·FICA·BBBEE·CompaniesAct·Templates·AuditCalendar");
 
     // ══ S78 — Crisis Management v4.0 ══════════════════════════════════════
     type Incident = { id: string; title: string; severity: "P1" | "P2" | "P3" | "P4"; type: string; status: "open" | "investigating" | "contained" | "resolved"; affectedUsers: number; startedAt: Date; resolvedAt?: Date; lead: string; updates: string[] };
@@ -5681,7 +5681,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/crisis/incidents/:id/update", (req: any, res) => { if (!auth(req, res)) return; const i = incidents.get(req.params.id); if (!i) return res.status(404).json({ message: "Not found" }); i.updates.push(req.body.update); if (req.body.status) i.status = req.body.status; res.json({ incident: i }); });
     app.get("/api/crisis/playbooks", (req: any, res) => { if (!auth(req, res)) return; res.json({ playbooks: crisisPlaybooks }); });
     app.get("/api/crisis/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Crisis Management v4.0", incidents: incidents.size }); });
-    console.log("[routes] Crisis Management v4.0 — 400% GOD-MODE: /api/crisis/* | Dashboard·Incidents-CRUD·StatusUpdates·Playbooks·MTTR·P1-P4·StakeholderAlerts | Beats PagerDuty+OpsGenie+StatusPage+Incident.io until 2031");
+    console.log("[routes] Crisis Management v4.0 — 400% GOD-MODE: /api/crisis/* | Dashboard·Incidents-CRUD·StatusUpdates·Playbooks·MTTR·P1-P4·StakeholderAlerts");
 
     // ══ S79 — Platform Health Score v4.0 ══════════════════════════════════
     const healthScoreData = {
@@ -5696,7 +5696,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/platform-health/benchmarks", (req: any, res) => { if (!auth(req, res)) return; res.json({ competitors: healthScoreData.competitors, industry: { avg: 70.1, top: 87.4 } }); });
     app.get("/api/platform-health/history", (req: any, res) => { if (!auth(req, res)) return; res.json({ history: healthScoreData.history }); });
     app.get("/api/platform-health/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Platform Health Score v4.0" }); });
-    console.log("[routes] Platform Health Score v4.0 — 400% GOD-MODE: /api/platform-health/* | Dashboard·6D-Scoring·CompetitorBenchmark·TrendHistory·AIRecommendations | Beats Amplitude+Mixpanel+Datadog-Platform until 2031");
+    console.log("[routes] Platform Health Score v4.0 — 400% GOD-MODE: /api/platform-health/* | Dashboard·6D-Scoring·CompetitorBenchmark·TrendHistory·AIRecommendations");
 
     // ══ S80 — Revenue Share Program v4.0 ══════════════════════════════════
     type RevSharePartner = { id: string; name: string; type: "content_creator" | "educator" | "community_lead" | "ambassador"; followers: number; monthlyRevenue: number; sharePercent: number; earnings: number; status: "active" | "pending" | "suspended" };
@@ -5713,7 +5713,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/revenue-share/partners", (req: any, res) => { if (!auth(req, res)) return; const id = uuidv4(); const p: RevSharePartner = { id, ...req.body, status: "pending" }; revSharePartners.set(id, p); res.json({ partner: p }); });
     app.post("/api/revenue-share/partners/:id/pay", (req: any, res) => { if (!auth(req, res)) return; const p = revSharePartners.get(req.params.id); if (!p) return res.status(404).json({ message: "Not found" }); res.json({ partner: p, paid: p.earnings, message: `R${(p.earnings / 100).toLocaleString()} paid via EFT` }); });
     app.get("/api/revenue-share/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Revenue Share Program v4.0", partners: revSharePartners.size }); });
-    console.log("[routes] Revenue Share Program v4.0 — 400% GOD-MODE: /api/revenue-share/* | Dashboard·Partners·Pay·EFT·ContentCreators·Educators·CommunityLeads | Beats Patreon+Substack+YouTube-Partner+Creator-Fund until 2031");
+    console.log("[routes] Revenue Share Program v4.0 — 400% GOD-MODE: /api/revenue-share/* | Dashboard·Partners·Pay·EFT·ContentCreators·Educators·CommunityLeads");
 
     // ══ S81 — Blockchain Verification v4.0 ════════════════════════════════
     const blockchainData = {
@@ -5726,7 +5726,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/blockchain/mint", (req: any, res) => { if (!auth(req, res)) return; const cred = { id: uuidv4(), holder: req.body.holder, type: req.body.type, issuer: "FreelanceSkills.net", txHash: `0x${Math.random().toString(16).slice(2, 34)}`, issuedAt: new Date(), network: "Polygon", verified: true, revokedAt: undefined }; blockchainData.credentials.push(cred); res.json({ credential: cred, gasEstimate: "$0.006", confirmationMs: 2400 }); });
     app.post("/api/blockchain/verify", (req: any, res) => { if (!auth(req, res)) return; const cred = blockchainData.credentials.find(c => c.txHash === req.body.txHash); res.json({ valid: !!cred, credential: cred, verifiedAt: new Date() }); });
     app.get("/api/blockchain/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Blockchain Verification v4.0", credentials: blockchainData.credentials.length }); });
-    console.log("[routes] Blockchain Verification v4.0 — 400% GOD-MODE: /api/blockchain/* | Dashboard·Credentials·Mint·Verify·Revoke·PolygonNetwork·NFT-Certificates | Beats Credly+Badgr+Accredible+Verifiable until 2031");
+    console.log("[routes] Blockchain Verification v4.0 — 400% GOD-MODE: /api/blockchain/* | Dashboard·Credentials·Mint·Verify·Revoke·PolygonNetwork·NFT-Certificates");
 
     // ══ S82 — Executive Command Center v4.0 ═══════════════════════════════
     app.get("/api/exec-command/dashboard", (req: any, res) => { if (!auth(req, res)) return; res.json({ snapshot: { date: new Date(), gmv: 284000000 * 100, mrr: 7850000 * 100, freelancers: 8421, clients: 3241, newToday: rand(20, 80), ordersToday: rand(40, 120), revenueToday: rand(200000, 600000) * 100, sectionCount: 100, adminStaffOnline: 3, platformHealthScore: 87.4, openIncidents: 1, openDisputes: 42, awaitingKYC: 28 }, alerts: [{ type: "action_required", msg: "28 KYC verifications pending — SLA breach in 4h" }, { type: "milestone", msg: "Platform reached 100 admin sections — Section 100 complete!" }] }); });
@@ -5742,7 +5742,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/reporting/templates", (req: any, res) => { if (!auth(req, res)) return; res.json({ templates: reportTemplates, total: reportTemplates.length }); });
     app.post("/api/reporting/generate", (req: any, res) => { if (!auth(req, res)) return; const tpl = reportTemplates.find(t => t.id === req.body.templateId); res.json({ job: { id: uuidv4(), template: tpl?.name || req.body.templateId, status: "generating", eta: "45 seconds" } }); });
     app.get("/api/reporting/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Advanced Reporting Suite v4.0" }); });
-    console.log("[routes] Advanced Reporting Suite v4.0 — 400% GOD-MODE: /api/reporting/* | Dashboard·Templates·Generate·Schedule·BoardPack·InvestorPack·POPIA·DTIC | Beats Tableau+PowerBI+Looker+Sisense until 2031");
+    console.log("[routes] Advanced Reporting Suite v4.0 — 400% GOD-MODE: /api/reporting/* | Dashboard·Templates·Generate·Schedule·BoardPack·InvestorPack·POPIA·DTIC");
 
     // ══ S84 — Marketplace Simulation v4.0 ════════════════════════════════
     const simulationScenarios = [{ id: "1", name: "Commission Rate Change 8%→10%", variables: { commissionDelta: 2 }, results: { mrrImpact: 284000, churnImpact: 1.2, freelancerReaction: "negative" }, confidence: 84 }, { id: "2", name: "New Market Launch — Kenya", variables: { market: "KE", budget: 5000000 }, results: { newUsers6M: 2400, revenueYear1: 8400000, marketShareTarget: 3.2 }, confidence: 71 }, { id: "3", name: "AI Matching Engine Upgrade", variables: { matchingImprovement: 18 }, results: { orderConversionLift: 4.2, avgOrderValue: 8400, freelancerUtilization: 12 }, confidence: 89 }];
@@ -5751,7 +5751,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/simulation/scenarios", (req: any, res) => { if (!auth(req, res)) return; res.json({ scenarios: simulationScenarios }); });
     app.post("/api/simulation/run", (req: any, res) => { if (!auth(req, res)) return; res.json({ jobId: uuidv4(), scenario: req.body.scenario, status: "running", etaSeconds: 12, message: "Monte Carlo simulation with 10,000 iterations initiated" }); });
     app.get("/api/simulation/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Marketplace Simulation v4.0" }); });
-    console.log("[routes] Marketplace Simulation v4.0 — 400% GOD-MODE: /api/simulation/* | Dashboard·Scenarios·MonteCarlo·WhatIf·CommissionSim·MarketLaunch·PricingModel | Beats Anaplan+Vena+Planful+Workday-Adaptive until 2031");
+    console.log("[routes] Marketplace Simulation v4.0 — 400% GOD-MODE: /api/simulation/* | Dashboard·Scenarios·MonteCarlo·WhatIf·CommissionSim·MarketLaunch·PricingModel");
 
     // ══ S85 — Platform Roadmap Manager v4.0 ═══════════════════════════════
     type RoadmapItem = { id: string; title: string; description: string; status: "planned" | "in_progress" | "completed" | "cancelled"; priority: "critical" | "high" | "medium" | "low"; votes: number; quarter: string; team: string; effort: "S" | "M" | "L" | "XL" };
@@ -5771,7 +5771,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/roadmap/items", (req: any, res) => { if (!auth(req, res)) return; const id = uuidv4(); const item: RoadmapItem = { id, ...req.body, votes: 0, status: "planned" }; roadmapItems.set(id, item); res.json({ item }); });
     app.post("/api/roadmap/:id/vote", (req: any, res) => { if (!auth(req, res)) return; const item = roadmapItems.get(req.params.id); if (!item) return res.status(404).json({ message: "Not found" }); item.votes++; res.json({ item }); });
     app.get("/api/roadmap/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Platform Roadmap Manager v4.0", items: roadmapItems.size }); });
-    console.log("[routes] Platform Roadmap Manager v4.0 — 400% GOD-MODE: /api/roadmap/* | Dashboard·Items-CRUD·Voting·Prioritization·QuarterlyPlanning·FeatureFlags | Beats ProductBoard+Aha!+Jira-Portfolio+Linear until 2031");
+    console.log("[routes] Platform Roadmap Manager v4.0 — 400% GOD-MODE: /api/roadmap/* | Dashboard·Items-CRUD·Voting·Prioritization·QuarterlyPlanning·FeatureFlags");
 
     // ══ S86 — Competitive Intelligence v4.0 ═══════════════════════════════
     const competitorData = {
@@ -5784,7 +5784,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/competitive-intel/competitors", (req: any, res) => { if (!auth(req, res)) return; res.json({ competitors: competitorData.competitors, ourAdvantages: competitorData.ourAdvantages }); });
     app.get("/api/competitive-intel/swot", (req: any, res) => { if (!auth(req, res)) return; res.json(competitorData.swot); });
     app.get("/api/competitive-intel/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Competitive Intelligence v4.0" }); });
-    console.log("[routes] Competitive Intelligence v4.0 — 400% GOD-MODE: /api/competitive-intel/* | Dashboard·Competitors·SWOT·Advantages·PricingComparison·MarketShare | Beats Crayon+Klue+Kompyte+Battlecards until 2031");
+    console.log("[routes] Competitive Intelligence v4.0 — 400% GOD-MODE: /api/competitive-intel/* | Dashboard·Competitors·SWOT·Advantages·PricingComparison·MarketShare");
 
     // ══ S87 — Micro-Job Exchange v4.0 ══════════════════════════════════════
     type MicroJob = { id: string; title: string; category: string; price: number; deliveryHours: number; seller: string; rating: number; reviews: number; status: "active" | "paused" | "sold_out"; description: string; tags: string[] };
@@ -5803,7 +5803,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/micro-jobs/list", (req: any, res) => { if (!auth(req, res)) return; res.json({ jobs: [...microJobs.values()].sort((a, b) => b.reviews - a.reviews), total: microJobs.size }); });
     app.post("/api/micro-jobs", (req: any, res) => { if (!auth(req, res)) return; const id = uuidv4(); const j: MicroJob = { id, ...req.body, rating: 0, reviews: 0, status: "active" }; microJobs.set(id, j); res.json({ job: j }); });
     app.get("/api/micro-jobs/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Micro-Job Exchange v4.0", jobs: microJobs.size }); });
-    console.log("[routes] Micro-Job Exchange v4.0 — 400% GOD-MODE: /api/micro-jobs/* | Dashboard·List·Create·InstantMatch·QuickPay·<R500-Tier·AfricaFirst | Beats Fiverr-Pro+PeoplePerHour+TaskRabbit+Bark until 2031");
+    console.log("[routes] Micro-Job Exchange v4.0 — 400% GOD-MODE: /api/micro-jobs/* | Dashboard·List·Create·InstantMatch·QuickPay·<R500-Tier·AfricaFirst");
 
     // ══ S88 — White-Glove Concierge v4.0 ══════════════════════════════════
     type ConciergeRequest = { id: string; clientName: string; company: string; request: string; type: "talent_search" | "project_scoping" | "contract_review" | "onboarding" | "dispute_resolution"; priority: "standard" | "priority" | "vip"; assignedTo: string; status: "open" | "in_progress" | "resolved"; createdAt: Date };
@@ -5821,7 +5821,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/concierge/requests/:id/resolve", (req: any, res) => { if (!auth(req, res)) return; const r = conciergeRequests.get(req.params.id); if (!r) return res.status(404).json({ message: "Not found" }); r.status = "resolved"; res.json({ request: r }); });
     app.post("/api/concierge/requests", (req: any, res) => { if (!auth(req, res)) return; const id = uuidv4(); const r: ConciergeRequest = { id, ...req.body, status: "open", createdAt: new Date() }; conciergeRequests.set(id, r); res.json({ request: r }); });
     app.get("/api/concierge/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "White-Glove Concierge v4.0", requests: conciergeRequests.size }); });
-    console.log("[routes] White-Glove Concierge v4.0 — 400% GOD-MODE: /api/concierge/* | Dashboard·Requests·Resolve·VIP·TalentSearch·ProjectScoping·98%-Satisfaction | Beats Toptal-Concierge+Expert360+Catalant+Business-Talent-Group until 2031");
+    console.log("[routes] White-Glove Concierge v4.0 — 400% GOD-MODE: /api/concierge/* | Dashboard·Requests·Resolve·VIP·TalentSearch·ProjectScoping·98%-Satisfaction");
 
     // ══ S89 — Multi-Currency Exchange v4.0 ════════════════════════════════
     const fxData = {
@@ -5834,7 +5834,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/currency/rates", (req: any, res) => { if (!auth(req, res)) return; res.json({ rates: fxData.rates, updatedAt: new Date(), provider: "South African Reserve Bank + OANDA" }); });
     app.post("/api/currency/convert", (req: any, res) => { if (!auth(req, res)) return; const { from, to, amount } = req.body; const pair = fxData.rates.find(r => r.pair === `${from}/${to}`); const rate = pair ? pair.rate : 1; const result = amount * rate; const fee = Math.floor(result * 0.001); const conv = { from, to, amount, result: Math.floor(result), fee, rate, ts: new Date() }; fxData.conversions.push(conv); res.json({ conversion: conv }); });
     app.get("/api/currency/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Multi-Currency Exchange v4.0" }); });
-    console.log("[routes] Multi-Currency Exchange v4.0 — 400% GOD-MODE: /api/currency/* | Dashboard·LiveRates·Convert·FXExposure·HedgingEngine·SARB-Data·6-Currencies | Beats Wise+OFX+CurrencyCloud+Convera until 2031");
+    console.log("[routes] Multi-Currency Exchange v4.0 — 400% GOD-MODE: /api/currency/* | Dashboard·LiveRates·Convert·FXExposure·HedgingEngine·SARB-Data·6-Currencies");
 
     // ══ S90 — Fraud Prediction Engine v4.0 ════════════════════════════════
     const fraudPredictions = {
@@ -5849,7 +5849,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/fraud-prediction/fraud-types", (req: any, res) => { if (!auth(req, res)) return; res.json({ types: fraudPredictions.fraudTypes }); });
     app.post("/api/fraud-prediction/retrain", (req: any, res) => { if (!auth(req, res)) return; res.json({ message: "Model retraining initiated — ETA 4 hours", jobId: uuidv4(), currentVersion: fraudPredictions.modelStats.modelVersion }); });
     app.get("/api/fraud-prediction/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Fraud Prediction Engine v4.0" }); });
-    console.log("[routes] Fraud Prediction Engine v4.0 — 400% GOD-MODE: /api/fraud-prediction/* | Dashboard·Predictions·ModelStats·FraudTypes·Retrain·97.2%-Accuracy·XGBoost | Beats Sift+Kount+Ravelin+Featurespace until 2031");
+    console.log("[routes] Fraud Prediction Engine v4.0 — 400% GOD-MODE: /api/fraud-prediction/* | Dashboard·Predictions·ModelStats·FraudTypes·Retrain·97.2%-Accuracy·XGBoost");
 
     // ══ S91 — Performance Benchmarking v4.0 ═══════════════════════════════
     const benchmarkData = {
@@ -5865,7 +5865,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/benchmarking/api-latency", (req: any, res) => { if (!auth(req, res)) return; res.json({ endpoints: benchmarkData.apiLatency }); });
     app.get("/api/benchmarking/competitors", (req: any, res) => { if (!auth(req, res)) return; res.json({ competitors: benchmarkData.competitors, winner: "FreelanceSkills.net" }); });
     app.get("/api/benchmarking/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Performance Benchmarking v4.0" }); });
-    console.log("[routes] Performance Benchmarking v4.0 — 400% GOD-MODE: /api/benchmarking/* | Dashboard·PageLoad·APILatency·Uptime·Apdex·Competitors·SLATracking | Beats Pingdom+GTmetrix+WebPageTest+SpeedCurve until 2031");
+    console.log("[routes] Performance Benchmarking v4.0 — 400% GOD-MODE: /api/benchmarking/* | Dashboard·PageLoad·APILatency·Uptime·Apdex·Competitors·SLATracking");
 
     // ══ S92 — Accessibility & WCAG v4.0 ════════════════════════════════════
     const accessibilityData = {
@@ -5878,7 +5878,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/accessibility/issues", (req: any, res) => { if (!auth(req, res)) return; res.json({ issues: accessibilityData.issues }); });
     app.get("/api/accessibility/features", (req: any, res) => { if (!auth(req, res)) return; res.json({ features: accessibilityData.features }); });
     app.get("/api/accessibility/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Accessibility & WCAG v4.0" }); });
-    console.log("[routes] Accessibility & WCAG v4.0 — 400% GOD-MODE: /api/accessibility/* | Dashboard·Issues·WCAG-AA·ScreenReader·KeyboardNav·USSD·HighContrast·ReducedMotion | Beats Deque+Level-Access+UserWay+AudioEye until 2031");
+    console.log("[routes] Accessibility & WCAG v4.0 — 400% GOD-MODE: /api/accessibility/* | Dashboard·Issues·WCAG-AA·ScreenReader·KeyboardNav·USSD·HighContrast·ReducedMotion");
 
     // ══ S93 — Talent Shortage Alerts v4.0 ════════════════════════════════
     const shortageAlerts = [{ id: uuidv4(), skill: "AI/ML Engineering", severity: "critical", demandScore: 98, supplyScore: 24, gapIndex: 74, waitingClients: 48, avgWaitDays: 12.4, recommendation: "Launch targeted recruitment campaign for AI engineers — offer 30% premium" }, { id: uuidv4(), skill: "Blockchain Development", severity: "high", demandScore: 84, supplyScore: 31, gapIndex: 53, waitingClients: 22, avgWaitDays: 8.2, recommendation: "Partner with blockchain bootcamps — sponsor 20 developers" }, { id: uuidv4(), skill: "Data Engineering", severity: "high", demandScore: 91, supplyScore: 44, gapIndex: 47, waitingClients: 31, avgWaitDays: 6.8, recommendation: "Activate training pathway — Data Engineering with Python" }];
@@ -5888,7 +5888,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/talent-alerts/shortages", (req: any, res) => { if (!auth(req, res)) return; res.json({ alerts: shortageAlerts.sort((a, b) => b.gapIndex - a.gapIndex), total: shortageAlerts.length }); });
     app.get("/api/talent-alerts/pipeline", (req: any, res) => { if (!auth(req, res)) return; res.json({ pipeline: talentPipeline }); });
     app.get("/api/talent-alerts/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Talent Shortage Alerts v4.0" }); });
-    console.log("[routes] Talent Shortage Alerts v4.0 — 400% GOD-MODE: /api/talent-alerts/* | Dashboard·Shortages·Pipeline·GapIndex·AIRecruitment·BootcampPartners | Beats LinkedIn-Workforce-Insights+Burning-Glass+Lightcast until 2031");
+    console.log("[routes] Talent Shortage Alerts v4.0 — 400% GOD-MODE: /api/talent-alerts/* | Dashboard·Shortages·Pipeline·GapIndex·AIRecruitment·BootcampPartners");
 
     // ══ S94 — Smart Notification Orchestrator v4.0 ════════════════════════
     const notifOrchestrator = {
@@ -5901,7 +5901,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/smart-notifications/channels", (req: any, res) => { if (!auth(req, res)) return; res.json({ channels: notifOrchestrator.channels }); });
     app.get("/api/smart-notifications/rules", (req: any, res) => { if (!auth(req, res)) return; res.json({ rules: notifOrchestrator.rules }); });
     app.get("/api/smart-notifications/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Smart Notification Orchestrator v4.0" }); });
-    console.log("[routes] Smart Notification Orchestrator v4.0 — 400% GOD-MODE: /api/smart-notifications/* | Dashboard·6-Channels·CascadeRules·USSD·WhatsApp·Push·Suppression·AI-Timing | Beats Braze+Iterable+OneSignal+Courier until 2031");
+    console.log("[routes] Smart Notification Orchestrator v4.0 — 400% GOD-MODE: /api/smart-notifications/* | Dashboard·6-Channels·CascadeRules·USSD·WhatsApp·Push·Suppression·AI-Timing");
 
     // ══ S95 — Platform Migration Tools v4.0 ════════════════════════════════
     const migrationJobs = [{ id: uuidv4(), source: "Upwork", freelancers: 842, status: "completed", completedAt: new Date(Date.now() - 30 * 86400000), portfoliosImported: 821, gigsCreated: 1284 }, { id: uuidv4(), source: "Fiverr", freelancers: 412, status: "in_progress", completedAt: undefined, portfoliosImported: 241, gigsCreated: 389 }, { id: uuidv4(), source: "Freelancer.com", freelancers: 284, status: "queued", completedAt: undefined, portfoliosImported: 0, gigsCreated: 0 }];
@@ -5912,7 +5912,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/migration/import", (req: any, res) => { if (!auth(req, res)) return; res.json({ job: { id: uuidv4(), source: req.body.source, status: "queued", estimatedFreelancers: req.body.count || 100, eta: "2-4 hours" } }); });
     app.get("/api/migration/imported", (req: any, res) => { if (!auth(req, res)) return; res.json({ imported: importedUsers, total: importedUsers.reduce((s, u) => s + u.count, 0) }); });
     app.get("/api/migration/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Platform Migration Tools v4.0" }); });
-    console.log("[routes] Platform Migration Tools v4.0 — 400% GOD-MODE: /api/migration/* | Dashboard·Jobs·Import·PortfolioTransfer·ReviewMigration·ProfileMapping | Beats Fivetran+Airbyte+Stitch+Talend until 2031");
+    console.log("[routes] Platform Migration Tools v4.0 — 400% GOD-MODE: /api/migration/* | Dashboard·Jobs·Import·PortfolioTransfer·ReviewMigration·ProfileMapping");
 
     // ══ S96 — Revenue Optimisation AI v4.0 ════════════════════════════════
     const revenueOptData = {
@@ -5925,7 +5925,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/revenue-ai/recommendations", (req: any, res) => { if (!auth(req, res)) return; res.json({ recommendations: revenueOptData.recommendations.sort((a, b) => b.confidence - a.confidence), totalImpact: revenueOptData.totalOpportunity }); });
     app.post("/api/revenue-ai/recommendations/:id/action", (req: any, res) => { if (!auth(req, res)) return; const r = revenueOptData.recommendations.find(r => r.id === req.params.id); res.json({ recommendation: r, status: "actioned", ticket: `TASK-${rand(1000, 9999)}` }); });
     app.get("/api/revenue-ai/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Revenue Optimisation AI v4.0" }); });
-    console.log("[routes] Revenue Optimisation AI v4.0 — 400% GOD-MODE: /api/revenue-ai/* | Dashboard·Recommendations·UpsellEngine·PricingAI·RetentionTactics·NewStreams | Beats Zuora+Chargebee+Maxio+ProfitWell-Retain until 2031");
+    console.log("[routes] Revenue Optimisation AI v4.0 — 400% GOD-MODE: /api/revenue-ai/* | Dashboard·Recommendations·UpsellEngine·PricingAI·RetentionTactics·NewStreams");
 
     // ══ S97 — Operations Intelligence v4.0 ════════════════════════════════
     const opsData = {
@@ -5939,7 +5939,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.get("/api/ops-intel/efficiency", (req: any, res) => { if (!auth(req, res)) return; res.json(opsData.efficiency); });
     app.get("/api/ops-intel/anomalies", (req: any, res) => { if (!auth(req, res)) return; res.json({ anomalies: opsData.anomalies }); });
     app.get("/api/ops-intel/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Operations Intelligence v4.0" }); });
-    console.log("[routes] Operations Intelligence v4.0 — 400% GOD-MODE: /api/ops-intel/* | Dashboard·Processes·Efficiency·AutomationRate·Bottlenecks·CostSavings | Beats ServiceNow+Celonis+Signavio+ABBYY-Timeline until 2031");
+    console.log("[routes] Operations Intelligence v4.0 — 400% GOD-MODE: /api/ops-intel/* | Dashboard·Processes·Efficiency·AutomationRate·Bottlenecks·CostSavings");
 
     // ══ S98 — Geographic Hot Spots v4.0 ═══════════════════════════════════
     const hotspotData = {
@@ -5971,7 +5971,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     app.post("/api/ambassadors", (req: any, res) => { if (!auth(req, res)) return; const id = uuidv4(); const a: Ambassador = { id, ...req.body, signups: 0, conversions: 0, totalGmv: 0, status: "pending" }; ambassadors.set(id, a); res.json({ ambassador: a }); });
     app.post("/api/ambassadors/:id/pay", (req: any, res) => { if (!auth(req, res)) return; const a = ambassadors.get(req.params.id); if (!a) return res.status(404).json({ message: "Not found" }); const payout = Math.floor(a.totalGmv * a.commission / 100); res.json({ ambassador: a, payout, message: `R${(payout / 100).toLocaleString()} paid via EFT` }); });
     app.get("/api/ambassadors/stats", (req: any, res) => { if (!auth(req, res)) return; res.json({ section: "Ambassador Program v4.0", ambassadors: ambassadors.size }); });
-    console.log("[routes] Influencer & Ambassador Program v4.0 — 400% GOD-MODE: /api/ambassadors/* | Dashboard·List·Create·Pay·TierSystem·ConversionTracking·GMVAttribution | Beats AspireIQ+Grin+Creator.co+impact.com until 2031");
+    console.log("[routes] Influencer & Ambassador Program v4.0 — 400% GOD-MODE: /api/ambassadors/* | Dashboard·List·Create·Pay·TierSystem·ConversionTracking·GMVAttribution");
 
     // ══ S100 — FreelanceSkills Elite Club v4.0 ════════════════════════════
     type EliteMember = { id: string; name: string; tier: "gold" | "platinum" | "diamond" | "legend"; earnings: number; completedJobs: number; rating: number; joinedElite: Date; perks: string[]; badge: string; nftId?: string };
@@ -6313,7 +6313,7 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
       res.json({ events, generated_at: new Date().toISOString() });
     });
 
-    console.log("[routes] Vuma AI Agent ULTIMATE — FreelanceSkills.net: /api/vuma/* | Chat·FAQs·Actions(6)·Memory·Viral·Analytics·SubAgents(3) | 5-in-1 Super-Agent | Africa's most advanced freelance AI | Beats all competitors until 2031!");
+    console.log("[routes] Vuma AI Agent ULTIMATE — FreelanceSkills.net: /api/vuma/* | Chat·FAQs·Actions(6)·Memory·Viral·Analytics·SubAgents(3) | 5-in-1 Super-Agent | Africa's most advanced freelance AI!");
 
     // ── ACADEMY: AI UPSKILLING PLATFORM ────────────────────────────────────────
     // GET /api/academy/courses - List all courses (with filters)
@@ -6754,7 +6754,7 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
       }
     });
 
-    console.log("[routes] AI UPSKILLING ACADEMY — FreelanceSkills.net: /api/academy/* | 17 Production Courses (AI, Web Dev, Design, Copywriting, Data, Blockchain, Trades, Sales) · Lesson System · Quizzes · Certificates · Gamification · Marketplace Integration | Beats Coursera+Udemy+LinkedIn Learning until 2031!");
+    console.log("[routes] AI UPSKILLING ACADEMY — FreelanceSkills.net: /api/academy/* | 17 Production Courses (AI, Web Dev, Design, Copywriting, Data, Blockchain, Trades, Sales) · Lesson System · Quizzes · Certificates · Gamification · Marketplace Integration!");
 
     // ═══════════════════════════════════════════════════════════════════════
     // BLOG & CONTENT ENGINE — /api/blog/*

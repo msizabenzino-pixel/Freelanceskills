@@ -259,17 +259,16 @@ export default function VettingHub() {
 
         {/* Why We Verify */}
         <div className="mt-12 bg-slate-900/30 border border-slate-800 rounded-xl p-6 sm:p-8">
-          <h2 className="text-lg font-bold mb-4">🌍 Why FreelanceSkills Vetting Beats Everyone</h2>
+          <h2 className="text-lg font-bold mb-4">🌍 Why FreelanceSkills Vetting Stands Apart</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
-              { platform: "Fiverr", gap: "ID only — no skills, no education check", fs: "ID + Skills + Education + References + Background" },
-              { platform: "Upwork", gap: "No education verification, slow manual review", fs: "OCR + SAQA cross-check + Blockchain credential" },
-              { platform: "Toptal", gap: "Tech-only, excludes trades & creatives", fs: "All industries: tech, trades, design, marketing" },
-              { platform: "Andela", gap: "Tech-only, African focus but no tiered trust", fs: "Tiered 0–3 model, ZAR-native, POPIA-compliant" },
-            ].map(({ platform, gap, fs }) => (
-              <div key={platform} className="text-sm">
-                <div className="font-semibold text-slate-300 mb-1">vs {platform}</div>
-                <div className="text-slate-500 text-xs mb-1">❌ {gap}</div>
+              { feature: "Identity Verification", fs: "ID + Skills + Education + References + Background check" },
+              { feature: "Education Verification", fs: "OCR + SAQA cross-check + Blockchain-anchored credential" },
+              { feature: "Industry Coverage", fs: "All industries: tech, trades, design, marketing, sales" },
+              { feature: "Trust Tiering", fs: "Tiered 0–3 model, ZAR-native, POPIA-compliant" },
+            ].map(({ feature, fs }) => (
+              <div key={feature} className="text-sm">
+                <div className="font-semibold text-slate-300 mb-1">✦ {feature}</div>
                 <div className="text-emerald-400 text-xs">✅ {fs}</div>
               </div>
             ))}

@@ -1689,7 +1689,7 @@ export default function CmsManagement() {
             <div className="w-10 h-10 rounded-xl bg-violet-700/20 border border-violet-700/40 flex items-center justify-center text-xl">🖋️</div>
             <div>
               <h1 className="text-xl font-bold text-zinc-100">CMS Management v2.0</h1>
-              <div className="text-sm text-zinc-500">37 endpoints · 10 tabs · beats Webflow+Sanity+Strapi+Builder.io until 2030</div>
+              <div className="text-sm text-zinc-500">37 endpoints · 10 tabs · Africa-first headless CMS built for scale until 2030</div>
             </div>
           </div>
           {selectedPage && (

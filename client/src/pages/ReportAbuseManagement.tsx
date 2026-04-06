@@ -9,7 +9,7 @@
  * Instagram/Meta → False positives, no rehab, confusing appeals   → We: 7-dimension AI + personalised rehab + human empathy
  * TikTok         → Blanket suspensions, no deepfake detection      → We: Evidence Intelligence Vault with deepfake + manipulation AI
  * Reddit/Discord → Permabans without growth, mod burnout          → We: Rehab paths + real-time agent collaboration
- * Fiverr/Upwork  → Manual reviews (days), no prevention           → We: AI triage <1s, scam ring detection, USSD zero-data Africa
+
  *
  * 10 WORLD-CLASS FEATURES:
  * 1.  ✅ AI Severity Scoring + Predictive Risk Engine (7-dimension, early warning, prevention)

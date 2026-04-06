@@ -2,9 +2,9 @@
  * FreelancerManagement — /admin/freelancers
  *
  * HOW WE BEAT THE COMPETITION (client-side):
- * ✦ Fiverr: Fixed 20% commission → dynamic 8-12% with performance auto-rules
- * ✦ Upwork: Black-box JSS → transparent 6-factor AI score with suggestions
- * ✦ Toptal: 6-week screening → 5-stage pipeline visualised in real-time
+
+
+
  * ✦ PeoplePerHour: No earnings forecasting → 12-month predictive dashboard
  * ✦ Guru: No academy integration → cert-by-cert earnings lift timeline
  *
@@ -15,8 +15,8 @@
  * 4. Real-time Availability Calendar (week grid + booking preview)
  * 5. Multi-stage Verification Queue (5 stages)
  * 6. Predictive Performance Dashboard (12-month SVG chart)
- * 7. Gig Package Builder (3-tier Fiverr-style from skills)
- * 8. Proposal Tracking & Response Rate (Upwork-style)
+ * 7. Gig Package Builder (3-tier package builder from skills)
+ * 8. Proposal Tracking & Response Rate
  * 9. Table sortable by every metric including AI score + earnings lift
  * 10. One-tap Promote to Featured with instant audit
  */
@@ -182,7 +182,7 @@ function LiftTimeline({ timeline }: { timeline: { certName: string; issuedAt: st
   );
 }
 
-/* ─── Verification Pipeline (5-stage — beats Toptal) ────────────── */
+/* ─── Verification Pipeline (5-stage Africa-optimised pipeline) ────────────── */
 function VerificationPipeline({ stages }: { stages: Record<string, { done: boolean; label: string; icon: string; detail?: string }> }) {
   const stageList = Object.values(stages);
   const completedCount = stageList.filter(s => s.done).length;
@@ -550,10 +550,10 @@ function FreelancerModal({ freelancerId, onClose }: { freelancerId: string; onCl
               <div>
                 <SectionLabel>Job Success Score (JSS)</SectionLabel>
                 <JSSBar value={d.jss} />
-                <p className="text-[10px] text-gray-400 mt-1">Transparent 6-factor scoring — unlike Upwork's black box</p>
+                <p className="text-[10px] text-gray-400 mt-1">Transparent 6-factor scoring — every metric shown</p>
               </div>
 
-              {/* AI Score Breakdown (Upwork JSS killer) */}
+              {/* AI Score Breakdown */}
               {d.aiScoreBreakdown && (
                 <div>
                   <SectionLabel>AI Portfolio Score Breakdown</SectionLabel>
@@ -600,7 +600,7 @@ function FreelancerModal({ freelancerId, onClose }: { freelancerId: string; onCl
                 <span className="text-3xl">📈</span>
                 <div>
                   <div className="text-lg font-bold text-gray-900">+{d.earningsLift}% Earnings Lift</div>
-                  <div className="text-sm text-gray-500">From {d.certCount} Academy certifications — beats Upwork's stat visibility</div>
+                  <div className="text-sm text-gray-500">From {d.certCount} Academy certifications — earnings-lift tracked per cert</div>
                 </div>
               </div>
 
@@ -683,7 +683,7 @@ function FreelancerModal({ freelancerId, onClose }: { freelancerId: string; onCl
                     );
                   })}
                 </div>
-                <p className="text-[10px] text-gray-400 mt-2">Fiverr charges flat 20% at all levels. We reward excellence with lower fees.</p>
+                <p className="text-[10px] text-gray-400 mt-2">Traditional platforms charge flat 20%. We reward excellence with lower fees.</p>
               </div>
             </div>
           )}
@@ -695,7 +695,7 @@ function FreelancerModal({ freelancerId, onClose }: { freelancerId: string; onCl
                 <span className="text-2xl">🏆</span>
                 <div>
                   <p className="text-sm font-bold text-blue-800">5-Stage Verification Pipeline</p>
-                  <p className="text-xs text-blue-600">Completes in hours (Toptal takes 6 weeks). Africa-optimised with USSD fallback.</p>
+                  <p className="text-xs text-blue-600">Completes in hours. Africa-optimised with USSD fallback.</p>
                 </div>
               </div>
               {d.verificationStages && <VerificationPipeline stages={d.verificationStages} />}
@@ -787,7 +787,7 @@ function FreelancerModal({ freelancerId, onClose }: { freelancerId: string; onCl
                     className="flex-1 accent-[#1DBF73]" />
                   <span className="text-sm font-bold text-gray-800 w-12 text-right">{fmtRate(commissionDraft ?? d.commissionRate)}</span>
                 </div>
-                <p className="text-[10px] text-gray-400">Fiverr: 20% flat. Upwork: 5-20%. We: {fmtRate(d.commissionRate)} ({autoRule === "performance_based" ? "performance-based, auto-reduces as level rises" : "flat override"})</p>
+                <p className="text-[10px] text-gray-400">Industry standard: 20% flat. We: {fmtRate(d.commissionRate)} ({autoRule === "performance_based" ? "performance-based, auto-reduces as level rises" : "flat override"})</p>
                 <button data-testid="btn-save-commission" onClick={() => commissionDraft !== null && commMut.mutate()}
                   disabled={commMut.isPending || commissionDraft === null}
                   className="w-full py-2 rounded-xl text-sm font-semibold text-white disabled:opacity-50" style={{ background: "#6366f1" }}>

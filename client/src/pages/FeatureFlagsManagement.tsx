@@ -1367,7 +1367,7 @@ export default function FeatureFlagsManagement() {
                 <h1 className="text-xl font-bold text-zinc-100">Feature Flags v2.0</h1>
                 <span className="text-[10px] bg-orange-700/20 border border-orange-700/40 text-orange-300 px-2 py-0.5 rounded-full">200% ELON MUSK INTELLIGENCE</span>
               </div>
-              <div className="text-xs text-zinc-500 mt-0.5">Nuclear master control panel · 32 endpoints · 30 flags · 8 tabs · beats LaunchDarkly+Split+Unleash+Flagsmith+Shopify until 2029</div>
+              <div className="text-xs text-zinc-500 mt-0.5">Nuclear master control panel · 32 endpoints · 30 flags · 8 tabs · Africa-first feature flag intelligence until 2029</div>
             </div>
           </div>
           {contextFlag && (

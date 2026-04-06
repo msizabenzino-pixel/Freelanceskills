@@ -357,7 +357,7 @@ export default function AISmartMatch() {
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] -translate-x-1/3 translate-y-1/3" />
           <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
             <Badge className="mb-6 bg-white/10 text-white border-white/20 hover:bg-white/20 backdrop-blur-sm" data-testid="badge-hero">
-              <Brain className="w-3 h-3 mr-1" /> Inspired by Toptal · Upwork Uma · Fiverr Dynamic Matching
+              <Brain className="w-3 h-3 mr-1" /> Powered by AI Smart Matching
             </Badge>
             <h1 className="text-4xl md:text-6xl font-display font-bold mb-6 leading-tight" data-testid="text-hero-title">
               How AI Smart Matching Works

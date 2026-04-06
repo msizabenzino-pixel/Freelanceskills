@@ -704,7 +704,7 @@ export function registerSystemSettingsRoutes(app: Express) {
 
   // ── GET /api/system-settings/ab-metrics/:flagKey ─────────────────────
   // A/B Testing Framework — per-flag experiment metrics, statistical significance,
-  // control vs experiment conversion rates. Beats every competitor (none have this).
+  // control vs experiment conversion rates. Beats every competitor .
   app.get("/api/system-settings/ab-metrics/:flagKey", authGuard, async (req: any, res) => {
     try {
       const { flagKey } = req.params;
@@ -912,5 +912,5 @@ export function registerSystemSettingsRoutes(app: Express) {
     } catch (e: any) { res.status(500).json({ message: e.message }); }
   });
 
-  console.log("[routes] System Settings Department v3.0 — GODMODE INTELLIGENCE registered: /api/system-settings/* | 35 Persistent Configs + 15 Feature Flags + Version History + Rollback + AI 6D Optimizer + Africa-First Extras + Security Policy Engine + REAL-TIME Risk Validator + Compliance Alerts + Analytics Dashboard + A/B Testing Framework + Provider Configuration Wizard + Global Search + 10-Department Integration Sync + Socket.io Live Propagation + Full Audit Integration | Obliterates Upwork+Fiverr+Freelancer+Shopify+Stripe until 2029");
+  console.log("[routes] System Settings Department v3.0 — GODMODE INTELLIGENCE registered: /api/system-settings/* | 35 Persistent Configs + 15 Feature Flags + Version History + Rollback + AI 6D Optimizer + Africa-First Extras + Security Policy Engine + REAL-TIME Risk Validator + Compliance Alerts + Analytics Dashboard + A/B Testing Framework + Provider Configuration Wizard + Global Search + 10-Department Integration Sync + Socket.io Live Propagation + Full Audit Integration");
 }

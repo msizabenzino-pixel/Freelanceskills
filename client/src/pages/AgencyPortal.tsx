@@ -2,7 +2,7 @@
  * Section 40 — White Label & Agency Portal v4.0
  * 400% ELON MUSK GOD-MODE
  * Agency Management · White Label Config · Sub-accounts · Branded Portals
- * Beats Workana Agency + Toptal Enterprise + Upwork Enterprise until 2030
+
  */
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";

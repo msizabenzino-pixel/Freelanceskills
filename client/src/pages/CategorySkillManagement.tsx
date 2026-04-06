@@ -12,11 +12,11 @@
  * 📦 Import/Export    — Hierarchy CSV · validation report · auto-tag from description
  *
  * HOW WE OUTCLASS EVERY COMPETITOR:
- * Upwork   → Static 2012 taxonomy          → We: AI-updated daily, living graph
- * Fiverr   → No proficiency system         → We: 5 levels + Academy badges + client endorsements
+
+
  * Freelancer → No analytics                → We: Heatmaps, funnels, AI forecasts, skill gap map
  * PeoplePerHour → No Africa awareness      → We: USSD, M-Pesa, 11 languages, Africa-first intelligence
- * Toptal   → Invite-only, zero democracy   → We: Community voting + AI pre-screening + moderation
+
  */
 import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
@@ -966,7 +966,7 @@ export default function CategorySkillManagement() {
             <div className="space-y-5">
               <div>
                 <h2 className="text-lg font-bold text-gray-900">🎓 Proficiency & Verification System</h2>
-                <p className="text-xs text-gray-500 mt-1">Every skill has proficiency levels, optional client endorsements, Academy course links, and verification badges — obliterating Fiverr's flat-skills and Upwork's self-proclaimed expertise.</p>
+                <p className="text-xs text-gray-500 mt-1">Every skill has proficiency levels, optional client endorsements, Academy course links, and verification badges — raising the bar on skill verification across Africa.</p>
               </div>
 
               {/* Proficiency levels explanation */}
@@ -1073,7 +1073,7 @@ export default function CategorySkillManagement() {
               <div className="space-y-5">
                 <div>
                   <h2 className="text-lg font-bold text-gray-900">🌍 Africa-First Intelligence</h2>
-                  <p className="text-xs text-gray-500 mt-1">No competitor on earth — Upwork, Fiverr, Freelancer.com, PeoplePerHour, or Toptal — has Africa-specific taxonomy. This is our total blue-ocean advantage.</p>
+                  <p className="text-xs text-gray-500 mt-1">No other African platform has a continent-specific skill taxonomy. This is our total blue-ocean advantage.</p>
                 </div>
 
                 {/* Market opportunity banner */}
@@ -1271,21 +1271,20 @@ export default function CategorySkillManagement() {
                 )}
               </div>
 
-              {/* Competitor comparison */}
+              {/* FreelanceSkills taxonomy advantages */}
               <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-                <h3 className="font-bold text-gray-900 mb-4">🏆 How We Out-Engineer Every Competitor</h3>
+                <h3 className="font-bold text-gray-900 mb-4">🏆 FreelanceSkills Skill Taxonomy — Africa-First Advantages</h3>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
                   {[
-                    { competitor:"Upwork", flag:"🇺🇸", problem:"2012 taxonomy, 0 AI, no suggestions, no synonyms, no analytics", us:"AI-updated daily, living taxonomy with trend intelligence, synonym graph" },
-                    { competitor:"Fiverr", flag:"🇮🇱", problem:"Flat 3-level, no proficiency, no verification, no badge system", us:"5-level proficiency + Academy badges + client endorsements + verification" },
-                    { competitor:"Freelancer.com", flag:"🇦🇺", problem:"1,200 skills in single dropdown, no analytics, no emerging skill detection", us:"Heatmaps, funnels, AI forecasts, skill gap map, 30-day demand projection" },
-                    { competitor:"PeoplePerHour", flag:"🇬🇧", problem:"Static tags, zero Africa awareness, no bulk ops, no API", us:"Africa-first intelligence, USSD, M-Pesa, 11 languages, full bulk ops" },
-                    { competitor:"Toptal", flag:"🌐", problem:"Invite-only, zero community, no suggestions, no democracy", us:"Community voting + AI pre-screening + bulk moderation + open submission" },
+                    { area:"AI Taxonomy", flag:"🤖", ours:"AI-updated daily, living taxonomy with trend intelligence, synonym graph" },
+                    { area:"Skill Proficiency", flag:"📊", ours:"5-level proficiency + Academy badges + client endorsements + verification" },
+                    { area:"Analytics", flag:"📈", ours:"Heatmaps, funnels, AI forecasts, skill gap map, 30-day demand projection" },
+                    { area:"Africa-First", flag:"🌍", ours:"Africa-first intelligence, USSD, M-Pesa, 11 languages, full bulk ops" },
+                    { area:"Community", flag:"👥", ours:"Community voting + AI pre-screening + bulk moderation + open submission" },
                   ].map(c=>(
-                    <div key={c.competitor} className="border border-gray-100 rounded-xl p-4">
-                      <div className="font-bold text-gray-900 text-sm mb-1">{c.flag} {c.competitor}</div>
-                      <div className="text-[10px] text-red-500 mb-2">❌ {c.problem}</div>
-                      <div className="text-[10px] text-green-700 font-semibold">✅ {c.us}</div>
+                    <div key={c.area} className="border border-gray-100 rounded-xl p-4">
+                      <div className="font-bold text-gray-900 text-sm mb-1">{c.flag} {c.area}</div>
+                      <div className="text-[10px] text-green-700 font-semibold">✅ {c.ours}</div>
                     </div>
                   ))}
                 </div>

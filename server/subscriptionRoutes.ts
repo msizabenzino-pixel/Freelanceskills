@@ -2,7 +2,7 @@
  * ╔══════════════════════════════════════════════════════════════════════════════╗
  * ║  SUBSCRIPTION MANAGEMENT v4.0 — ELON MUSK 200% INTELLIGENCE FULL UPGRADE    ║
  * ║  Revenue & loyalty backbone with Agentic AI, Hybrid Billing, Agency Suite    ║
- * ║  Obliterates Upwork Plus, Fiverr Pro/Business, Patreon, Substack,           ║
+ * ║
  * ║  LinkedIn Premium until 2029                                                 ║
  * ╚══════════════════════════════════════════════════════════════════════════════╝
  *
@@ -1125,5 +1125,5 @@ export function registerSubscriptionRoutes(app: Express) {
     } catch (e: any) { res.status(500).json({ message: e.message }); }
   });
 
-  console.log("[routes] Subscription Management v4.0 — ELON MUSK 200% INTELLIGENCE FULL UPGRADE registered: /api/subscriptions/* | 35 Superpowers: Agentic-AI-Engine·Predictive-Churn-Prevention·Dynamic-Pricing·Hybrid-Metered-Billing·Agency-Team-Suite·Skill-Token-Economy·Cohort-Revenue-Analytics·Grace-Period-Engine·Downgrade-Flow-Intelligence·Full-Integration-Hooks(10-Systems)·USSD·Mobile-Money·LTV-Forecast·MRR/ARR·Sortable-Tables·Auto-Upgrade-Paths·White-Label·Multi-Currency·Tax-Compliance·Refund-Workflow·Dunning-Management·3-Year-Future-Proof | Obliterates Upwork-Plus+Fiverr-Pro/Business+Patreon+Substack+LinkedIn-Premium until 2029");
+  console.log("[routes] Subscription Management v4.0 — ELON MUSK 200% INTELLIGENCE FULL UPGRADE registered: /api/subscriptions/* | 35 Superpowers: Agentic-AI-Engine·Predictive-Churn-Prevention·Dynamic-Pricing·Hybrid-Metered-Billing·Agency-Team-Suite·Skill-Token-Economy·Cohort-Revenue-Analytics·Grace-Period-Engine·Downgrade-Flow-Intelligence·Full-Integration-Hooks(10-Systems)·USSD·Mobile-Money·LTV-Forecast·MRR/ARR·Sortable-Tables·Auto-Upgrade-Paths·White-Label·Multi-Currency·Tax-Compliance·Refund-Workflow·Dunning-Management·3-Year-Future-Proof");
 }

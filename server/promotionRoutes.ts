@@ -989,7 +989,7 @@ export function registerPromotionRoutes(app: Express) {
     } catch (e: any) { res.status(500).json({ message: e.message }); }
   });
 
-  console.log("[routes] Promotion System v2.0 — 200% ELON MUSK INTELLIGENCE registered: /api/promotions/* | 20 Superpowers: AI-Dynamic-Pricing·Predictive-ROI·Creative-AI-Studio·Auction-House·Merit-Free-Boosts·Smart-Scheduling·Africa-Micro-Tiers·Full-Funnel-Analytics·A/B-Testing·Peak-Heatmap | Obliterates Fiverr+Freelancer+Upwork+Toptal+PeoplePerHour for 3 years");
+  console.log("[routes] Promotion System v2.0 — 200% ELON MUSK INTELLIGENCE registered: /api/promotions/* | 20 Superpowers: AI-Dynamic-Pricing·Predictive-ROI·Creative-AI-Studio·Auction-House·Merit-Free-Boosts·Smart-Scheduling·Africa-Micro-Tiers·Full-Funnel-Analytics·A/B-Testing·Peak-Heatmap");
 }
 
 function zarFmtCents(cents: number) { return `R${(cents/100).toFixed(2)}`; }

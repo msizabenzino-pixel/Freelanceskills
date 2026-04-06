@@ -3,12 +3,12 @@
  * FreelanceSkills.net — Elon Musk $1B Standard
  *
  * HOW WE BEAT ALL 6 COMPETITORS (with proof):
- * ✦ FIVERR:          Instant release, zero control → Our AI Release Score (0–100) shows EXACTLY why each escrow is safe
- * ✦ UPWORK:          Milestones + 5-day security → One-tap release + auto-release in 48h for Academy freelancers
- * ✦ TOPTAL:          Secure but opaque billing → Transparent per-factor breakdown + Academy earnings-lift chart
- * ✦ PEOPLEPERHOUR:   Manual dispute process → Real-time AI anomaly detection + auto-hold on fraud risk ≥ 60
- * ✦ GURU:            Basic SafePay → Smart auto-release rules engine (Academy cert → 48h, others → 72h)
- * ✦ FREELANCER.COM:  Disputes take weeks → One-tap bulk release + live Socket.io notifications
+
+
+
+
+
+
  *
  * AFRICA-FIRST DESIGN:
  * - All amounts ZAR-first (R symbol, cent-accurate)
@@ -227,7 +227,7 @@ function TxModal({ tx, onClose }: { tx: EscrowTx; onClose: () => void }) {
           {/* AI Release Score */}
           <div className="rounded-xl p-4 border border-gray-200 space-y-3">
             <div className="flex justify-between items-center">
-              <SectionLabel>AI Release Score (Transparent — beats all competitors)</SectionLabel>
+              <SectionLabel>AI Release Score (Fully Transparent — every scoring factor shown)</SectionLabel>
               <ReleaseScoreBadge score={tx.releaseScore} />
             </div>
             {factors.length > 0 && factors.map((f, i) => (
@@ -546,7 +546,7 @@ export default function PaymentsControl() {
                 {
                   label: "Avg Release Time",
                   value: statsLoading ? "—" : `${stats?.avgReleaseHours || 0}h`,
-                  sub: "vs 5 days Upwork, 14 days Guru",
+                  sub: "industry-leading release speed",
                   color: "#f59e0b", icon: "⚡",
                   bg: "from-amber-50 to-orange-50", border: "border-amber-200",
                 },
@@ -599,25 +599,24 @@ export default function PaymentsControl() {
               </div>
             )}
 
-            {/* Competitive comparison */}
+            {/* Platform advantages */}
             <div className="bg-white rounded-2xl border border-gray-200 p-6">
-              <h3 className="text-sm font-bold text-gray-900 mb-4">🏆 How We Beat the Competition</h3>
+              <h3 className="text-sm font-bold text-gray-900 mb-4">🏆 FreelanceSkills Escrow Advantages</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {[
-                  { platform: "Fiverr", their: "Instant (no control)", ours: "AI score → 48h Academy / 72h standard", color: "#ef4444" },
-                  { platform: "Upwork", their: "5-day security hold", ours: "Real-time AI release scoring + bulk release", color: "#f97316" },
-                  { platform: "Toptal", their: "Opaque billing", ours: "Per-factor transparent breakdown", color: "#f59e0b" },
-                  { platform: "PeoplePerHour", their: "Manual disputes", ours: "Auto-hold on fraud risk ≥ 60", color: "#6366f1" },
-                  { platform: "Guru", their: "Basic SafePay", ours: "Smart rules engine + Academy correlation", color: "#8b5cf6" },
-                  { platform: "Freelancer.com", their: "Disputes take weeks", ours: "One-tap bulk release + live updates", color: "#3b82f6" },
+                  { feature: "AI Release Scoring", detail: "Every factor transparent — no black boxes", color: "#10b981" },
+                  { feature: "Academy Fast-Track", detail: "Certified freelancers qualify for 48h auto-release", color: "#6366f1" },
+                  { feature: "Bulk Release", detail: "Release multiple escrows in one click with live updates", color: "#3b82f6" },
+                  { feature: "Fraud Auto-Hold", detail: "Auto-hold triggered at risk score ≥ 60", color: "#f59e0b" },
+                  { feature: "Transparent Billing", detail: "Per-factor breakdown shown to admin at all times", color: "#8b5cf6" },
+                  { feature: "Smart Rules Engine", detail: "Fully editable release rules correlated to freelancer score", color: "#f97316" },
                 ].map((c, i) => (
                   <div key={i} className="p-3 rounded-xl border border-gray-100 bg-gray-50">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="font-bold text-xs text-gray-700">{c.platform}</span>
-                      <span className="text-[9px] px-1.5 py-0.5 rounded-full text-white font-bold" style={{ background: c.color }}>vs</span>
+                      <span className="font-bold text-xs text-gray-700">{c.feature}</span>
+                      <span className="text-[9px] px-1.5 py-0.5 rounded-full text-white font-bold" style={{ background: c.color }}>✓</span>
                     </div>
-                    <div className="text-[10px] text-red-500 line-through mb-0.5">{c.their}</div>
-                    <div className="text-[10px] text-emerald-700 font-semibold">{c.ours}</div>
+                    <div className="text-[10px] text-emerald-700 font-semibold">{c.detail}</div>
                   </div>
                 ))}
               </div>
@@ -749,7 +748,7 @@ export default function PaymentsControl() {
                 </button>
               </div>
               <p className="text-xs text-gray-500">
-                Beat Upwork's 5-day hold: Academy-certified freelancers get 48h auto-release. All rules are transparent, auditable, and editable.
+                Academy-certified freelancers qualify for 48h auto-release. All rules are transparent, auditable, and editable.
               </p>
 
               {/* Default rules always visible */}
@@ -975,7 +974,7 @@ export default function PaymentsControl() {
             <div className="space-y-4">
               <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
                 <h3 className="text-sm font-bold text-gray-900">🔍 AI Fraud Detection Model</h3>
-                <p className="text-xs text-gray-500">Transparent scoring — not a black box. Each factor is shown to admin. Beats Upwork's reactive approach.</p>
+                <p className="text-xs text-gray-500">Transparent scoring — every factor shown to admin. Proactive AI-driven release logic, fully auditable.</p>
                 {[
                   { label: "First-ever payment", weight: 25, trigger: "Client has no previous spend" },
                   { label: "Very new account",   weight: 15, trigger: "Account created &lt; 24h ago" },

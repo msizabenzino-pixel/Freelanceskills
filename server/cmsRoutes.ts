@@ -1,7 +1,7 @@
 /**
  * CMS Management Department — server/cmsRoutes.ts
  * Section 25 — FreelanceSkills.net
- * 200% Elon Musk Intelligence | Beats Webflow + Sanity + Strapi + Builder.io until 2030
+ * 200% Elon Musk Intelligence
  *
  * Endpoints:
  *   GET/POST   /api/cms/pages
@@ -940,5 +940,5 @@ export async function registerCmsRoutes(app: Express, isAuthenticated: any) {
     }
   });
 
-  console.log("[routes] CMS Management Department v2.0 — 200% ELON MUSK INTELLIGENCE MASTERPIECE registered: /api/cms/* | 37 Endpoints: Pages-CRUD·Publish·Schedule·Duplicate·Versions·Rollback·Blocks-CRUD·AI-Generate·AI-Translate·AI-SEO·AI-USSD·AI-WritePage·AI-SchemaLD·AI-BulkTranslate·AI-ImagePrompt·Dynamic-Jobs·Dynamic-Courses·Dynamic-Stats·Comments·Approval·RequestReview·Integration-Status·Integration-NotifyTOS·Performance·ABResults·Seed·Stats | Beats Webflow+Sanity+Strapi+Builder.io+Shopify until 2030 | Africa-First: 10 Languages·USSD·Mobile-Money·SDG·Cultural-Blocks");
+  console.log("[routes] CMS Management Department v2.0 — 200% ELON MUSK INTELLIGENCE MASTERPIECE registered: /api/cms/* | 37 Endpoints: Pages-CRUD·Publish·Schedule·Duplicate·Versions·Rollback·Blocks-CRUD·AI-Generate·AI-Translate·AI-SEO·AI-USSD·AI-WritePage·AI-SchemaLD·AI-BulkTranslate·AI-ImagePrompt·Dynamic-Jobs·Dynamic-Courses·Dynamic-Stats·Comments·Approval·RequestReview·Integration-Status·Integration-NotifyTOS·Performance·ABResults·Seed·Stats | Africa-First: 10 Languages·USSD·Mobile-Money·SDG·Cultural-Blocks");
 }

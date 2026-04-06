@@ -708,7 +708,7 @@ export default function AuditLogs() {
     return (
       <div className="space-y-5">
         <div><h2 className="text-xl font-bold text-white flex items-center gap-2"><Brain className="w-6 h-6 text-orange-400"/>Predictive Insider Threat Risk Engine</h2>
-          <p className="text-zinc-400 text-xs">5-factor behavioral risk model (0–100). Color-coded. No Upwork/Fiverr/Stripe audit system does this. Unique to FreelanceSkills.</p>
+          <p className="text-zinc-400 text-xs">5-factor behavioral risk model (0–100). Color-coded. Unique to FreelanceSkills.</p>
         </div>
         {/* Risk Band Legend */}
         <div className="grid grid-cols-4 gap-3">
@@ -1340,7 +1340,7 @@ await auditHookSecurity({
                 <Badge className="bg-blue-700">AFRICA-FIRST</Badge>
                 <Badge className="bg-emerald-700">40 SUPERPOWERS</Badge>
               </div>
-              <p className="text-zinc-400 text-sm mt-0.5">The earth's most tamper-proof, intelligent audit system. No Stripe/GitHub/Salesforce/Upwork/Fiverr reaches this before 2029.</p>
+              <p className="text-zinc-400 text-sm mt-0.5">The earth's most tamper-proof, intelligent audit system. Africa's gold standard for platform transparency.</p>
             </div>
           </div>
           <div className="mt-2 flex flex-wrap gap-1">

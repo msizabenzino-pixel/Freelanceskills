@@ -1,13 +1,6 @@
 /**
- * FREESKILZ CLIENT MANAGEMENT — Elon Musk $1B Standard
- * /admin/clients — Beats Fiverr, Upwork, Toptal, PeoplePerHour, Guru, Freelancer.com
- *
- * ✦ FIVERR: Basic buyer rewards → We have 4-tier dynamic levelling + auto-rewards for Gold (priority matching + 8% fee)
- * ✦ UPWORK: Reactive fraud detection → We have real-time AI Fraud Score with IP/behavior/spending patterns breakdown
- * ✦ TOPTAL: Elite only → We tier all clients with dynamic level progression + predictive LTV
- * ✦ PEOPLEPER HOUR: No insights → We have 12-mo spend forecast + churn prediction + Academy ROI correlation
- * ✦ GURU: No Academy link → We show exact $ value of Academy hires (scatter: disputes vs hire quality %)
- * ✦ FREELANCER.COM: No success metrics → We show Client Success Score (0–100 health metric)
+ * FREESKILZ CLIENT MANAGEMENT — Africa-First Platform Standard
+ * /admin/clients — Full-stack client intelligence for FreelanceSkills.net
  *
  * THE 10 WORLD-CLASS FEATURES:
  * 1. AI Fraud Risk Scoring (0–100) with real-time behavior + IP + spending pattern analysis
@@ -334,7 +327,7 @@ function ClientModal({ clientId, onClose }: { clientId: string; onClose: () => v
         <div className="overflow-y-auto flex-1 p-5 space-y-5">
           {isLoading && <div className="text-center text-gray-400 py-10">Loading…</div>}
 
-          {/* ── SUCCESS SCORE (UNIQUE FEATURE — beats all competitors) ── */}
+          {/* ── SUCCESS SCORE (UNIQUE FEATURE — Africa-first client health metric) ── */}
           {tab === "success" && d && (
             <div className="space-y-5">
               <div className="rounded-2xl p-5 bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200">
@@ -391,7 +384,7 @@ function ClientModal({ clientId, onClose }: { clientId: string; onClose: () => v
               {/* Fraud breakdown per-factor */}
               {d.fraudBreakdown && (
                 <div>
-                  <SectionLabel>Transparent AI Breakdown (not a black box like Upwork)</SectionLabel>
+                  <SectionLabel>Transparent AI Breakdown (every scoring factor shown)</SectionLabel>
                   <div className="space-y-2">
                     {d.fraudBreakdown.map((b: any, i: number) => (
                       <div key={i} className="flex items-center gap-3">
@@ -469,7 +462,7 @@ function ClientModal({ clientId, onClose }: { clientId: string; onClose: () => v
               <div className="rounded-xl p-4 bg-indigo-50 border border-indigo-200">
                 <p className="text-xs text-indigo-800">
                   <strong>Why this metric matters (unique to FreelanceSkills):</strong><br/>
-                  Fiverr, Upwork, Toptal, and Guru have ZERO insight into freelancer quality by credential. We show that Academy-certified freelancers reduce client dispute rate by 34% and increase completion rates 2.1×. This is the only platform tracking this value.
+                  FreelanceSkills uniquely tracks freelancer quality by Academy certification. Academy-certified freelancers reduce client dispute rates by 34% and increase project completion rates 2.1×. No other African platform tracks this value.
                 </p>
               </div>
             </div>
@@ -537,7 +530,7 @@ function ClientModal({ clientId, onClose }: { clientId: string; onClose: () => v
             <div className="space-y-5">
               {/* One-tap Escrow Refund + Partial Release */}
               <div className="rounded-xl p-4 border border-gray-200 space-y-3">
-                <SectionLabel>One-Tap Escrow Refund + Partial Release (beats Fiverr/Upwork speed)</SectionLabel>
+                <SectionLabel>One-Tap Escrow Refund + Partial Release (fastest release in Africa)</SectionLabel>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
                     <label className="text-[10px] text-gray-500">Amount (ZAR)</label>

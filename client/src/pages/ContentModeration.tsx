@@ -222,7 +222,7 @@ function QueueTab() {
     <div className="space-y-4">
       {/* Saved Views Strip */}
       <div className="bg-white border border-gray-100 rounded-xl p-3">
-        <p className="text-[10px] font-bold text-gray-400 uppercase mb-2">Saved Views — one-click filter presets (Upwork has none)</p>
+        <p className="text-[10px] font-bold text-gray-400 uppercase mb-2">Saved Views — one-click filter presets</p>
         <div className="flex gap-2 flex-wrap">
           {savedViews.map(v => (
             <button key={v.id} data-testid={`view-${v.id}`} onClick={() => activeView === v.id ? clearView() : applyView(v)}
@@ -542,7 +542,7 @@ function ScannerTab() {
 
             {/* 6-Dimension Radar */}
             <div className="bg-white rounded-xl border border-gray-100 p-5">
-              <p className="text-xs font-bold text-gray-500 uppercase mb-3">6-Dimension Risk Radar (Upwork: 0 dimensions)</p>
+              <p className="text-xs font-bold text-gray-500 uppercase mb-3">6-Dimension Risk Radar</p>
               <ResponsiveContainer width="100%" height={200}>
                 <RadarChart data={radarData} margin={{ top: 5, right: 20, bottom: 5, left: 20 }}>
                   <PolarGrid />

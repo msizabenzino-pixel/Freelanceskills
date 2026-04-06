@@ -1,7 +1,7 @@
 /**
  * FreelanceSkills — NUCLEAR VETTING SYSTEM — API Routes
  * 400% Production-ready. POPIA-compliant. AI-powered. Rate-limited.
- * Beats Fiverr, Upwork, Toptal, Andela, Guru until 2030.
+ *.
  */
 import { type Express, type Request, type Response } from "express";
 import { db } from "./db";
@@ -1116,5 +1116,5 @@ export function registerVettingRoutes(app: Express, isAuthenticated: any) {
     }
   });
 
-  console.log("[FreelanceSkills] ✅ Nuclear Vetting System online: /api/vetting/* | Tiers 0-3 | POPIA | Lebo AI (4 languages) | Blockchain | Rate-limited | 80-question bank | Monitoring | /api/challenge/stats | DELETE /api/user/data | Beats Fiverr+Upwork+Toptal+Andela+Guru");
+  console.log("[FreelanceSkills] ✅ Nuclear Vetting System online: /api/vetting/* | Tiers 0-3 | POPIA | Lebo AI (4 languages) | Blockchain | Rate-limited | 80-question bank | Monitoring | /api/challenge/stats | DELETE /api/user/data");
 }

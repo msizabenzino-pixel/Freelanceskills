@@ -86,9 +86,9 @@ const CHALLENGE_TASKS = [
 // ── Platform Fee Data ─────────────────────────────────────────────────────────
 const PLATFORMS = [
   { name: "FreelanceSkills", fee: 0.05, color: "#10b981", tagline: "Africa First" },
-  { name: "Upwork", fee: 0.20, color: "#ef4444", tagline: "Up to 20%" },
-  { name: "Fiverr", fee: 0.20, color: "#f59e0b", tagline: "Always 20%" },
-  { name: "Toptal", fee: 0.35, color: "#8b5cf6", tagline: "~35% cut" },
+  { name: "Global Platform A", fee: 0.20, color: "#ef4444", tagline: "Up to 20%" },
+  { name: "Global Platform B", fee: 0.20, color: "#f59e0b", tagline: "Always 20%" },
+  { name: "Elite Platform C", fee: 0.35, color: "#8b5cf6", tagline: "~35% cut" },
 ];
 
 // ── Income Projection ─────────────────────────────────────────────────────────
@@ -301,7 +301,7 @@ export default function VumaLive() {
                     </div>
                     {isUs && (
                       <p className="text-xs text-emerald-400 mt-2">
-                        💰 vs Upwork/Fiverr you save <strong>R {(projectValue * 0.15).toLocaleString()}</strong> on this project
+                        💰 With FreelanceSkills you save <strong>R {(projectValue * 0.15).toLocaleString()}</strong> vs typical 20% platform fees
                       </p>
                     )}
                   </div>
@@ -313,7 +313,7 @@ export default function VumaLive() {
               <p className="text-sm text-emerald-300">
                 <strong>Bottom line:</strong> On a R{projectValue.toLocaleString()} project you keep{" "}
                 <strong className="text-emerald-400">R {(projectValue * 0.95).toLocaleString()}</strong> with FreelanceSkills vs{" "}
-                <strong className="text-red-400">R {(projectValue * 0.80).toLocaleString()}</strong> on Upwork or Fiverr.{" "}
+                <strong className="text-red-400">R {(projectValue * 0.80).toLocaleString()}</strong> on a typical 20% fee platform.{" "}
                 That's <strong className="text-emerald-400">R {(projectValue * 0.15).toLocaleString()} more in your pocket</strong> — every single time.
               </p>
             </div>
@@ -376,7 +376,7 @@ export default function VumaLive() {
                 <p className="text-xl font-bold text-emerald-400">R {Math.round(monthlyIncome * 0.95).toLocaleString()}</p>
               </div>
               <div className="bg-red-600/10 border border-red-600/30 rounded-xl p-4 text-center">
-                <p className="text-xs text-gray-500 mb-1">On Upwork (20%)</p>
+                <p className="text-xs text-gray-500 mb-1">On a 20% fee platform</p>
                 <p className="text-xl font-bold text-red-400">R {Math.round(monthlyIncome * 0.80).toLocaleString()}</p>
               </div>
             </div>

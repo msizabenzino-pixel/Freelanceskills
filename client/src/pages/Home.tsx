@@ -746,7 +746,7 @@ export default function Home() {
                   icon: Banknote, color: "from-amber-500/20 to-orange-500/10 border-amber-500/20", iconColor: "text-amber-400",
                   title: "Transparent 10% Fees Only", badge: "No hidden charges, ever",
                   vs: "LinkedIn Premium: R600+/month", ours: "We: Only 10% when you earn",
-                  desc: "Nothing until you get paid. Flat 10% on success. Compare that to Upwork's 20% or LinkedIn Premium's monthly fee.",
+                  desc: "Nothing until you get paid. Flat 10% on success. Industry-leading rates for African freelancers.",
                 },
                 {
                   icon: Globe, color: "from-teal-500/20 to-emerald-500/10 border-teal-500/20", iconColor: "text-teal-400",

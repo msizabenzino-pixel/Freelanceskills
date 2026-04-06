@@ -281,7 +281,7 @@ function CatalogTab() {
   return (
     <div className="space-y-5">
       <div className="bg-amber-50 border border-amber-100 rounded-xl p-4">
-        <h3 className="font-bold text-amber-800 mb-1">6 Slot Types — Fiverr has 1, Upwork has 0</h3>
+        <h3 className="font-bold text-amber-800 mb-1">6 Slot Types — Africa-first promotion system</h3>
         <p className="text-xs text-amber-600">Each slot is an independent visibility channel. AI generates creatives automatically for every promotion created.</p>
       </div>
       {loading?<div className="flex justify-center py-8"><Spinner /></div>:(
@@ -475,7 +475,7 @@ function PricingTab() {
       <div className="flex items-center justify-between">
         <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4 flex-1 mr-4">
           <h3 className="font-bold text-indigo-800 mb-1">Dynamic Pricing Engine — {rules.length} Rules Active</h3>
-          <p className="text-xs text-indigo-600">Rules stack in priority order. Demand surge, Africa micro-tier, merit discount, peak season, long-campaign all calculate independently. Fiverr: 0 dynamic rules. We: {rules.length}+.</p>
+          <p className="text-xs text-indigo-600">Rules stack in priority order. Demand surge, Africa micro-tier, merit discount, peak season, long-campaign all calculate independently. Active rules: {rules.length}+.</p>
         </div>
         <button data-testid="btn-add-pricing-rule" onClick={()=>setShowAdd(true)} className="px-4 py-2.5 rounded-xl text-sm font-bold text-white shrink-0" style={{background:GOLD}}>+ Add Rule</button>
       </div>

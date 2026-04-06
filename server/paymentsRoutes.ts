@@ -53,7 +53,7 @@ async function auditLog(performedBy: string, userId: string, action: string, det
 
 /**
  * AI Release Score (0–100) — transparent per-factor model
- * Beats Fiverr/Upwork by showing WHY a transaction is safe to release
+ * Shows WHY a transaction is safe to release — transparent AI scoring
  */
 async function computeReleaseScore(
   freelancerId: string,

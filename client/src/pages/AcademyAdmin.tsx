@@ -3,9 +3,9 @@
  * FreelanceSkills.net — Elon Musk $1B African Gig Platform Standard
  *
  * HOW WE BEAT ALL 5 COMPETITORS (with real data):
- * ✦ FIVERR LEARN: Static learning paths, no outcome data
+
  *    → We show per-course earnings-lift % + job win rate correlation backed by real marketplace data
- * ✦ UPWORK SKILL BADGES: Labels only, no level progression
+
  *    → Dynamic level upgrades (New → Rising → Pro → Top Rated) triggered by cert count, auto-applied
  * ✦ LINKEDIN LEARNING: Generic, global, disconnected from jobs
  *    → Africa-first skill demand heatmap tied to actual SA job postings (2026–2028 forecast)
@@ -422,7 +422,7 @@ export default function AcademyAdmin() {
           <button onClick={() => navigate("/admin")} className="text-gray-400 hover:text-gray-600 text-lg">←</button>
           <div className="flex-1">
             <h1 className="text-xl font-bold text-purple-600">🎓 AI UPSKILLING ACADEMY ADMIN</h1>
-            <p className="text-[10px] text-gray-500">Earnings-lift per cert · Skill demand forecasting · DTIC impact export · Africa-first ZAR · Beats Fiverr + LinkedIn Learning + Coursera</p>
+            <p className="text-[10px] text-gray-500">Earnings-lift per cert · Skill demand forecasting · DTIC impact export · Africa-first ZAR</p>
           </div>
           <div className="flex items-center gap-2">
             {liveAlerts.length > 0 && (
@@ -529,24 +529,24 @@ export default function AcademyAdmin() {
               </div>
             )}
 
-            {/* Competitive comparison */}
+            {/* Academy advantages */}
             <div className="bg-white rounded-2xl border border-gray-200 p-6">
-              <h3 className="text-sm font-bold text-gray-900 mb-4">🏆 How Our Academy Beats the World</h3>
+              <h3 className="text-sm font-bold text-gray-900 mb-4">🏆 FreelanceSkills Academy — What Sets Us Apart</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {[
-                  { platform: "Fiverr Learn", their: "Static paths, no outcome data", ours: "Real earnings-lift % per cert (backed by marketplace data)" },
-                  { platform: "Upwork Badges", their: "Labels only, no level progression", ours: "Dynamic New → Rising → Pro → Top Rated upgrades auto-applied" },
-                  { platform: "LinkedIn Learning", their: "Generic, global, job-disconnected", ours: "Africa-first skill demand heatmap tied to real SA job postings" },
-                  { platform: "Coursera Business", their: "Zero freelance integration", ours: "Direct cert → job success rate correlation chart" },
-                  { platform: "Udemy", their: "No marketplace intelligence", ours: "AI auto-suggests courses from skill gap analysis" },
-                  { platform: "Industry avg", their: "15% course completion rate", ours: `${(stats?.avgCompletionRate || 72).toFixed(0)}% avg completion on our platform` },
+                  { platform: "Outcome Tracking", their: "Generic completion only", ours: "Real earnings-lift % per cert (backed by marketplace data)" },
+                  { platform: "Level Progression", their: "Static labels only", ours: "Dynamic New → Rising → Pro → Top Rated upgrades auto-applied" },
+                  { platform: "SA Job Market", their: "Global generic content", ours: "Africa-first skill demand heatmap tied to real SA job postings" },
+                  { platform: "Freelance Integration", their: "No marketplace link", ours: "Direct cert → job success rate correlation chart" },
+                  { platform: "Skill Gap AI", their: "Manual discovery only", ours: "AI auto-suggests courses from skill gap analysis" },
+                  { platform: "Completion Rate", their: "Industry avg: 15%", ours: `${(stats?.avgCompletionRate || 72).toFixed(0)}% avg completion on our platform` },
                 ].map((c, i) => (
                   <div key={i} className="p-3 rounded-xl border border-gray-100 bg-gray-50">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="font-bold text-xs text-gray-700">{c.platform}</span>
-                      <span className="text-[9px] px-1.5 py-0.5 rounded-full text-white font-bold bg-purple-500">vs</span>
+                      <span className="text-[9px] px-1.5 py-0.5 rounded-full text-white font-bold bg-purple-500">✓</span>
                     </div>
-                    <div className="text-[10px] text-red-500 line-through mb-1">{c.their}</div>
+                    <div className="text-[10px] text-gray-400 mb-1">{c.their}</div>
                     <div className="text-[10px] text-emerald-700 font-semibold">{c.ours}</div>
                   </div>
                 ))}
@@ -947,7 +947,7 @@ export default function AcademyAdmin() {
               {/* Manual issue */}
               <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
                 <h3 className="text-sm font-bold text-gray-900">🎓 Issue Certificate Manually</h3>
-                <p className="text-xs text-gray-500">Blockchain-style unique code auto-generated. Beats Upwork's static skill badges.</p>
+                <p className="text-xs text-gray-500">Blockchain-style unique code auto-generated per certification.</p>
                 <div className="space-y-3">
                   <div>
                     <label className="text-xs text-gray-500">Freelancer User ID</label>
@@ -975,7 +975,7 @@ export default function AcademyAdmin() {
               {/* Level progression info */}
               <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-3">
                 <h3 className="text-sm font-bold text-gray-900">⬆️ Dynamic Level Progression</h3>
-                <p className="text-xs text-gray-500">Auto-applied on cert approval. Beats Upwork's static badges and Fiverr's unrelated levels.</p>
+                <p className="text-xs text-gray-500">Auto-applied on cert approval — level upgrades reflect real skills earned.</p>
                 {[
                   { from: "New",       to: "Rising ⭐",     certs: 1,  perks: "Profile badge + priority in search" },
                   { from: "Rising",    to: "Pro 🔥",         certs: 3,  perks: "+5% escrow faster release + Pro badge" },
@@ -999,7 +999,7 @@ export default function AcademyAdmin() {
                   Format: FSN-YEAR-8HEX · Unique per cert · Verifiable on our platform · PDF-ready
                 </p>
                 <p className="text-[10px] text-gray-500 mt-2">
-                  Beats Fiverr (no certs), Upwork (badges only), LinkedIn (3rd-party only), Coursera (expensive fees)
+                  FreelanceSkills: marketplace-integrated certs with real earnings-lift tracking
                 </p>
               </div>
             </div>

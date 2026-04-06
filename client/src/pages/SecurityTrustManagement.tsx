@@ -305,7 +305,7 @@ export default function SecurityTrustManagement() {
     return (
       <div className="space-y-5">
         <div><h2 className="text-xl font-bold text-white flex items-center gap-2"><Shield className="w-6 h-6 text-red-400"/>Risk Dashboard — Perpetual AI Risk Engine</h2>
-          <p className="text-zinc-400 text-xs">7-dimension real-time scoring + predictive quarantine. Obliterates Upwork (manual, 72h), Fiverr (basic ID), Stripe Radar (transactions only).</p>
+          <p className="text-zinc-400 text-xs">7-dimension real-time scoring + predictive quarantine. Real-time, proactive, and Africa-optimised.</p>
         </div>
         {d&&<div className="grid grid-cols-6 gap-3">
           {[
@@ -407,7 +407,7 @@ export default function SecurityTrustManagement() {
                 </Select>
               </div>
               <Button className="bg-orange-600 hover:bg-orange-700 w-full h-7 text-xs" onClick={quarantineUser} data-testid="button-quarantine"><Lock className="w-3.5 h-3.5 mr-1"/>Apply Quarantine</Button>
-              <div className="text-xs text-zinc-500 p-2 bg-orange-900/20 border border-orange-900 rounded">vs Upwork: suspend after report filed (3-5 days). We: quarantine BEFORE harm using AI scores.</div>
+              <div className="text-xs text-zinc-500 p-2 bg-orange-900/20 border border-orange-900 rounded">Traditional: suspend after report filed (3-5 days). We: quarantine BEFORE harm using AI scores.</div>
             </CardContent>
           </Card>
           <Card className="bg-zinc-900 border-zinc-800">
@@ -440,7 +440,7 @@ export default function SecurityTrustManagement() {
   const renderAI = () => (
     <div className="space-y-5">
       <div><h2 className="text-xl font-bold text-white flex items-center gap-2"><Brain className="w-6 h-6 text-purple-400"/>AI Intelligence — Behavioral Biometrics + Deepfake Vault</h2>
-        <p className="text-zinc-400 text-xs">Keystroke cadence analysis, mouse dynamics, session anomaly detection, 5-signal deepfake vault. vs Upwork/Fiverr/Toptal/Airbnb: none have any of this.</p>
+        <p className="text-zinc-400 text-xs">Keystroke cadence analysis, mouse dynamics, session anomaly detection, 5-signal deepfake vault. Unique to FreelanceSkills.</p>
       </div>
       <div className="grid grid-cols-2 gap-5">
         {/* Behavioral Biometrics */}
@@ -511,7 +511,7 @@ export default function SecurityTrustManagement() {
               </div>
             )}
             <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="p-2 bg-red-900/20 border border-red-900 rounded"><div className="text-red-300 font-semibold mb-1">vs Upwork/Fiverr:</div><div className="text-zinc-400">Email ID upload, basic selfie. No liveness. No voice. No temporal consistency check.</div></div>
+              <div className="p-2 bg-red-900/20 border border-red-900 rounded"><div className="text-red-300 font-semibold mb-1">Industry standard:</div><div className="text-zinc-400">Email ID upload, basic selfie. No liveness. No voice. No temporal consistency check.</div></div>
               <div className="p-2 bg-blue-900/20 border border-blue-900 rounded"><div className="text-blue-300 font-semibold mb-1">FreelanceSkills v2.0:</div><div className="text-zinc-400">5-signal: ID authenticity + face match + liveness + voice biometric + temporal consistency.</div></div>
             </div>
           </CardContent>
@@ -781,7 +781,7 @@ export default function SecurityTrustManagement() {
               {t:"Hard Ban",c:"border-red-700 bg-red-900/20",tc:"text-red-300",desc:"Full block + all gigs hidden + payouts frozen. Confirmed fraud, deepfake KYC, chargebacks > 3. Triggers Finance freeze + Marketing suppression + Abuse escalation."},
               {t:"Shadow Ban",c:"border-purple-700 bg-purple-900/20",tc:"text-purple-300",desc:"User appears active but proposals invisible to clients, gigs removed from search, messages not delivered. Prevents ban evasion — bad actors who re-register instantly find themselves invisible."}
             ].map((b,i)=>(
-              <div key={i} className={`${b.c} border rounded p-3`}><div className={`${b.tc} font-bold mb-1`}>{b.t}</div><div className="text-zinc-300">{b.desc}</div><div className="mt-2 text-zinc-500 italic">{i===2?"No competitor (Upwork/Fiverr/Toptal/Airbnb) has shadow banning.":"Standard industry practice — we do it smarter."}</div></div>
+              <div key={i} className={`${b.c} border rounded p-3`}><div className={`${b.tc} font-bold mb-1`}>{b.t}</div><div className="text-zinc-300">{b.desc}</div><div className="mt-2 text-zinc-500 italic">{i===2?"Shadow banning: a FreelanceSkills innovation for the African market.":"Standard industry practice — we do it smarter."}</div></div>
             ))}
           </div>
         </CardContent>
@@ -797,7 +797,7 @@ export default function SecurityTrustManagement() {
     return (
       <div className="space-y-5">
         <div><h2 className="text-xl font-bold text-white flex items-center gap-2"><Globe className="w-6 h-6 text-yellow-400"/>Africa-First Security Hub</h2>
-          <p className="text-zinc-400 text-xs">USSD KYC (*120*KYC#), airtime micro-payment 2FA, mobile-money identity anchor, 6-country analytics, Africa fraud pattern detection. vs Upwork/Fiverr: excludes 800M Africans with feature phones.</p>
+          <p className="text-zinc-400 text-xs">USSD KYC (*120*KYC#), airtime micro-payment 2FA, mobile-money identity anchor, 6-country analytics, Africa fraud pattern detection. Reaching 800M Africans with feature phones.</p>
         </div>
         <div className="grid grid-cols-3 gap-5">
           {/* USSD KYC Flow */}
@@ -1283,7 +1283,7 @@ export default function SecurityTrustManagement() {
             <Badge className="bg-blue-700">AFRICA-FIRST</Badge>
             <Badge className="bg-zinc-700">OBLITERATES ALL COMPETITORS</Badge>
           </div>
-          <p className="text-zinc-400 text-sm">10 tabs · 50+ superpowers · The unbreakable heart of FreelanceSkills.net — out-engineers Upwork + Fiverr + Stripe Radar + Toptal + Airbnb until 2029</p>
+          <p className="text-zinc-400 text-sm">10 tabs · 50+ superpowers · The unbreakable heart of FreelanceSkills.net — Africa-first security until 2029</p>
           <div className="mt-2 flex flex-wrap gap-1.5">
             {["Perpetual AI Risk Engine","7-Dimension Scoring","Behavioral Biometrics","Keystroke/Mouse Analysis","Deepfake Vault (5-Signal)","Liveness Detection","Predictive Quarantine","USSD KYC *120*KYC#","Airtime 2FA","Mobile Money Anchor","Geofencing (CIDR)","Shadow Banning","Velocity Rules (8)","15 Event Types","Socket.io Live Alerts","10-Dept Integration Hooks","14-Day Threat Forecast","30-Day Risk Trends","Geography Heatmap","Immutable Audit Log","2FA (TOTP/SMS/USSD/Voice/Airtime)","Zero-Trust Re-Verify","6-Country Africa Analytics"].map(s=>(
               <Badge key={s} variant="outline" className="text-zinc-400 border-zinc-600 text-xs">{s}</Badge>

@@ -833,5 +833,5 @@ export async function registerAiBrainRoutes(app: Express, isAuthenticated: any) 
   scheduleAutoTrain();
   console.log("[ai-brain] Background self-training loop started: every 10min RedTeamSimulator→FraudDetector→RLHF signals");
 
-  console.log("[routes] AI Brain Department v3.0 — 300% ELON MUSK GOD-MODE: /api/ai/* | 34 Endpoints | 12 Agents | New: GrokFallback·Multilingual(12langs)·EdgeModels(5·ONNX-ready)·EdgeInfer·AutoTrain(10min-loop)·AutoTrainStatus·TurboButtons(10-depts)·TurboDepts·ABTest·ABResults·MemoryStore·MemoryGraph·RLHFSignal·RLHFQueue | Background: RedTeam→FraudDetect→RLHF every 10min | Beats Upwork-Uma+Fiverr-Neo+Toptal+Vellum+Salesforce-Einstein+xAI until 2030");
+  console.log("[routes] AI Brain Department v3.0 — 300% ELON MUSK GOD-MODE: /api/ai/* | 34 Endpoints | 12 Agents | New: GrokFallback·Multilingual(12langs)·EdgeModels(5·ONNX-ready)·EdgeInfer·AutoTrain(10min-loop)·AutoTrainStatus·TurboButtons(10-depts)·TurboDepts·ABTest·ABResults·MemoryStore·MemoryGraph·RLHFSignal·RLHFQueue | Background: RedTeam→FraudDetect→RLHF every 10min");
 }

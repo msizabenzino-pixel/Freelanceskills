@@ -306,7 +306,7 @@ function FinancialTab({ configs, onSave, showToast }: any) {
   return (
     <div className="space-y-5">
       <div><h2 className="text-xl font-bold text-white flex items-center gap-2"><DollarSign className="w-6 h-6 text-yellow-400" />Financial Settings — AI-Tiered Commission · Escrow · Withdrawal</h2>
-        <p className="text-zinc-400 text-xs">Upwork/Fiverr: flat 20%. FreelanceSkills: AI-tiered 5–15% + Africa micro-payment tiers. Every change risk-validated in real-time.</p>
+        <p className="text-zinc-400 text-xs">Industry standard: flat 20%. FreelanceSkills: AI-tiered 5–15% + Africa micro-payment tiers. Every change risk-validated in real-time.</p>
       </div>
 
       {risks.length > 0 && (
@@ -325,9 +325,9 @@ function FinancialTab({ configs, onSave, showToast }: any) {
                 <span className="text-3xl font-black text-yellow-400">{pct}%</span>
               </div>
               <input type="range" min="0" max="3000" step="25" value={localBPS} onChange={e => setLocalBPS(Number(e.target.value))} className="w-full h-2 accent-yellow-400" data-testid="slider-commission" />
-              <div className="flex justify-between text-xs text-zinc-600 mt-1"><span>0%</span><span>Upwork/Fiverr: 20%</span><span>30%</span></div>
+              <div className="flex justify-between text-xs text-zinc-600 mt-1"><span>0%</span><span>Industry avg: 20%</span><span>30%</span></div>
               <div className="text-xs text-zinc-500 mt-1">
-                {localBPS > 2000 ? "⚠️ Above industry max — expect churn" : localBPS < 500 ? "⚠️ Below sustainable floor" : `✅ Competitive vs Upwork (${(20 - localBPS/100).toFixed(1)}% cheaper)`}
+                {localBPS > 2000 ? "⚠️ Above industry max — expect churn" : localBPS < 500 ? "⚠️ Below sustainable floor" : `✅ Competitive — ${(20 - localBPS/100).toFixed(1)}% below industry average`}
               </div>
             </div>
             <div>
@@ -398,7 +398,7 @@ function FinancialTab({ configs, onSave, showToast }: any) {
                 <div className="text-xs text-zinc-500">R{v >= 1000 ? `${v/1000}k` : v} job</div>
                 <div className="text-lg font-bold text-yellow-400">R{(v * localBPS / 10000).toFixed(0)}</div>
                 <div className="text-xs text-zinc-600">platform rev</div>
-                <div className="text-xs text-zinc-700">vs Upwork: R{(v * 0.2).toFixed(0)}</div>
+                <div className="text-xs text-zinc-700">Industry 20%: R{(v * 0.2).toFixed(0)}</div>
               </div>
             ))}
           </div>
@@ -748,7 +748,7 @@ function AfricaTab({ configs, onSave, showToast }: any) {
   return (
     <div className="space-y-5">
       <div><h2 className="text-xl font-bold text-white flex items-center gap-2"><Globe className="w-6 h-6 text-emerald-400" />Africa-First Intelligence Layer</h2>
-        <p className="text-zinc-400 text-xs">The only freelance platform built for Africa's 650M people. Fiverr/Upwork have zero Africa-specific config. We run 3 years ahead until 2029.</p>
+        <p className="text-zinc-400 text-xs">The only freelance platform built for Africa's 650M people. No other platform has this Africa-first configuration depth. We lead the market until 2029.</p>
       </div>
       <div className="grid grid-cols-3 gap-3">
         {[
