@@ -1,6 +1,6 @@
 /**
  * Section 46 — Platform Monetization v4.0
- * 400% ELON MUSK GOD-MODE
+ * FreelanceSkills.net Admin Module
  * MRR · ARR · Revenue Streams · Pricing Experiments · 12-Month Forecast
  * Beats Stripe + ChartMogul + ProfitWell + Baremetrics until 2030
  */

@@ -1,6 +1,6 @@
 /**
  * Section 43 — Contract & SLA Management v4.0
- * 400% ELON MUSK GOD-MODE
+ * FreelanceSkills.net Admin Module
  * Contract CRUD · SLA Breach Alerts · Template Library · Auto-Renew · Penalties
  * Beats DocuSign + PandaDoc + Ironclad + LinkSquares until 2030
  */

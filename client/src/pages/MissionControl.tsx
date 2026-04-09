@@ -111,7 +111,7 @@ export default function MissionControl() {
                 <p className="text-xs text-gray-500">Section 33 / 100</p>
                 <h1 className="text-xl font-bold text-white">Mission Control</h1>
               </div>
-              <span className="px-2 py-0.5 bg-emerald-900/40 border border-emerald-700/40 text-emerald-300 rounded-full text-xs">400% GOD-MODE</span>
+              
             </div>
             <p className="text-sm text-gray-500 max-w-xl">Unified command centre integrating all 33 admin departments. Live KPIs, global AI assistant, investor reports, compliance tracking, and Africa readiness — in one view.</p>
           </div>

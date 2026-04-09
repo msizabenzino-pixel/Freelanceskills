@@ -1090,7 +1090,7 @@ export default function SupportTeamDashboard() {
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-xl font-bold text-zinc-100">Support Team System v2.0</h1>
-              <span className="text-[10px] bg-blue-700/20 border border-blue-700/40 text-blue-300 px-2 py-0.5 rounded-full">200% ELON MUSK INTELLIGENCE</span>
+              <span className="text-[10px] bg-blue-700/20 border border-blue-700/40 text-blue-300 px-2 py-0.5 rounded-full">FreelanceSkills.net</span>
               <span className="text-[10px] bg-emerald-700/20 border border-emerald-700/40 text-emerald-300 px-2 py-0.5 rounded-full">35 Endpoints · 8 Tabs</span>
             </div>
             <div className="text-xs text-zinc-500 mt-0.5">AI Copilot (95% accuracy) · Gamification · @Mentions · Africa USSD/WhatsApp/Voice · Deep Links (8 depts) · Africa-first support intelligence until 2029</div>

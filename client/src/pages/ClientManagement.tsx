@@ -741,7 +741,7 @@ export default function ClientManagement() {
         <div className="max-w-screen-2xl mx-auto px-6 py-4 flex items-center gap-4 flex-wrap">
           <button onClick={() => navigate("/admin")} className="text-gray-400 hover:text-gray-600 text-lg">←</button>
           <div className="flex-1 min-w-0">
-            <h1 className="text-xl font-bold" style={{ color: "#f59e0b" }}>🏢 CLIENT MANAGEMENT — Elon Musk $1B Edition</h1>
+            <h1 className="text-xl font-bold" style={{ color: "#f59e0b" }}>Client Management</h1>
             <p className="text-[10px] text-gray-500">AI fraud scoring · Dynamic leveling · Academy ROI · Escrow refunds · Client Success Score · {total.toLocaleString()} clients</p>
           </div>
           {liveMsg && (

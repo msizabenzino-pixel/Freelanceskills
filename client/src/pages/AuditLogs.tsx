@@ -1,6 +1,6 @@
 /**
  * ╔══════════════════════════════════════════════════════════════════════════════════╗
- * ║  AUDIT LOGS DEPARTMENT v2.0 — 200% ELON MUSK INTELLIGENCE — MASTERPIECE        ║
+ * ║  AUDIT LOGS DEPARTMENT — Admin Module                                                              ║
  * ║  The earth's most tamper-proof, intelligent, comprehensive audit system         ║
  * ║                                                                                  ║
  * ║  6-Tab Architecture:                                                             ║
@@ -858,7 +858,7 @@ export default function AuditLogs() {
     const heatMax = Math.max(1, ...heatMatrix.flat());
     return (
       <div className="space-y-5">
-        <h2 className="text-xl font-bold text-white flex items-center gap-2"><BarChart3 className="w-6 h-6 text-green-400"/>Audit Log Analytics — 200% Intelligence</h2>
+        <h2 className="text-xl font-bold text-white flex items-center gap-2"><BarChart3 className="w-6 h-6 text-green-400"/>Audit Log Analytics</h2>
         {/* KPI Cards */}
         <div className="grid grid-cols-5 gap-3">
           {[

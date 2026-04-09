@@ -1,6 +1,6 @@
 /**
  * Section 45 — Escrow Intelligence v4.0
- * 400% ELON MUSK GOD-MODE
+ * FreelanceSkills.net Admin Module
  * Escrow Analytics · Milestone Tracking · Risk Analysis · Auto-Release · Dispute Prevention
  * Beats Escrow.com + PaySafe + Stripe-Connect until 2030
  */

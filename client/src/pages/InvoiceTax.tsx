@@ -1,6 +1,6 @@
 /**
  * Section 38 — Invoice & Tax Management v4.0
- * 400% ELON MUSK GOD-MODE
+ * FreelanceSkills.net Admin Module
  * SARS VAT · PDF Export · Tax Reports · Invoice CRUD · Overdue Tracking
  * Beats FreshBooks + Xero + Sage + QuickBooks until 2030
  */

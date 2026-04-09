@@ -1,6 +1,6 @@
 /**
  * ╔══════════════════════════════════════════════════════════════════════════════╗
- * ║  PROMOTION MANAGEMENT v2.0 — 200% ELON MUSK INTELLIGENCE                    ║
+ * ║  PROMOTION MANAGEMENT — Admin Module                                                              ║
  * ║  9 Tabs. 20 Superpowers. 3 Years ahead of every competitor.                  ║
  * ╚══════════════════════════════════════════════════════════════════════════════╝
  *

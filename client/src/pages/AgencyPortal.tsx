@@ -1,6 +1,6 @@
 /**
  * Section 40 — White Label & Agency Portal v4.0
- * 400% ELON MUSK GOD-MODE
+ * FreelanceSkills.net Admin Module
  * Agency Management · White Label Config · Sub-accounts · Branded Portals
 
  */

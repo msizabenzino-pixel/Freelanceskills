@@ -145,7 +145,7 @@ export default function FinanceDepartment() {
       <div className="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div className="max-w-screen-2xl mx-auto px-6 py-4 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">🏦 FINANCE DEPARTMENT (200% Intelligence)</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Finance Department</h1>
             <p className="text-xs text-gray-500 mt-0.5">AI Escrow Release · Zero-Day Payouts · Revenue Forecasting · Explainable Fraud · Auto-Approval Queue</p>
           </div>
           <a href="/api/finance/report/pdf" className="px-4 py-2 rounded-lg text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700">

@@ -1,6 +1,6 @@
 /**
  * ESCROW & PAYMENTS CONTROL CENTRE — /admin/payments
- * FreelanceSkills.net — Elon Musk $1B Standard
+ * FreelanceSkills.net Admin Module
  *
  * HOW WE BEAT ALL 6 COMPETITORS (with proof):
 

@@ -1,6 +1,6 @@
 /**
  * Section 35 — Marketplace Health & Anomaly Detection v4.0
- * 400% ELON MUSK GOD-MODE
+ * FreelanceSkills.net Admin Module
  * Real-Time KPIs · AI Anomaly Detection (7D) · Fraud Patterns · Quality Metrics · Executive Insights
  * Beats Datadog + New Relic + Sentry + Grafana + Elastic until 2030
  */

@@ -1,6 +1,6 @@
 /**
  * NOTIFICATIONS & COMMUNICATIONS CENTRE — /admin/notifications
- * 200% INTELLIGENCE · ELON MUSK STANDARD
+ * FreelanceSkills.net Admin Module
  * FreelanceSkills.net — 15th Admin Section
  *
  * OUT-ENGINEERS EVERY COMPETITOR:

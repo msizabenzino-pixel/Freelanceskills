@@ -1,6 +1,6 @@
 /**
  * ╔══════════════════════════════════════════════════════════════════════════════╗
- * ║  SUBSCRIPTION MANAGEMENT v4.0 — ELON MUSK 200% INTELLIGENCE FULL UPGRADE    ║
+ * ║  SUBSCRIPTION MANAGEMENT — Admin Module                                                              ║
  * ║  Revenue & loyalty backbone — Africa's most comprehensive subscription system    ║
  * ║  Patreon, Substack, LinkedIn Premium until 2029                             ║
  * ╚══════════════════════════════════════════════════════════════════════════════╝

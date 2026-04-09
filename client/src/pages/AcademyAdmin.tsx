@@ -1,6 +1,6 @@
 /**
  * AI UPSKILLING ACADEMY ADMIN — /admin/academy
- * FreelanceSkills.net — Elon Musk $1B African Gig Platform Standard
+ * FreelanceSkills.net Admin Module
  *
  * HOW WE BEAT ALL 5 COMPETITORS (with real data):
 

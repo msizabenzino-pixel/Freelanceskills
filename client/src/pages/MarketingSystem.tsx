@@ -1,6 +1,6 @@
 /**
  * ╔══════════════════════════════════════════════════════════════════════════════╗
- * ║  MARKETING SYSTEM v3.0 — ELON MUSK 200% INTELLIGENCE DASHBOARD              ║
+ * ║  MARKETING SYSTEM — Admin Module                                                              ║
  * ║  10 Magnificent Tabs · 30 Superpowers · Stays ahead until 2031               ║
  * ╚══════════════════════════════════════════════════════════════════════════════╝
 

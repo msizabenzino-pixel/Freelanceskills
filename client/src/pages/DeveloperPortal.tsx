@@ -1,6 +1,6 @@
 /**
  * Section 49 — API Gateway & Developer Portal v4.0
- * 400% ELON MUSK GOD-MODE
+ * FreelanceSkills.net Admin Module
  * API Key Management · Webhooks · Rate Limiting · Scopes · SDK Docs
  * Beats Kong + Apigee + AWS API Gateway + MuleSoft until 2030
  */

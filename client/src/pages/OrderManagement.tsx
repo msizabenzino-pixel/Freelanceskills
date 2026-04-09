@@ -118,7 +118,7 @@ const ROLE_COLORS: Record<string, string> = {
 const SAVED_VIEWS = [
   { id: "", label: "📋 All Orders", color: "#6366f1" },
   { id: "struggling", label: "🆘 Struggling Projects", color: "#ef4444" },
-  { id: "high_satisfaction", label: "🌟 High Satisfaction", color: "#10b981" },
+  { id: "high_satisfaction", label: "High Satisfaction", color: "#10b981" },
   { id: "critical_health", label: "❤️ Critical Health (<40)", color: "#f59e0b" },
 ];
 
@@ -322,7 +322,7 @@ export default function OrderManagement() {
         <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
           {[
             { label: "Total Orders", value: stats.total, icon: "📦" },
-            { label: "Revenue", value: formatZAR(stats.totalRevenueZAR || 0), icon: "💰", color: "#10b981" },
+            { label: "Revenue", value: formatZAR(stats.totalRevenueZAR || 0), icon: "Revenue", color: "#10b981" },
             { label: "Commission", value: formatZAR(stats.totalCommissionZAR || 0), icon: "🏦", color: "#3b82f6" },
             { label: "In Progress", value: stats.in_progress, icon: "🔨", color: "#f59e0b" },
             { label: "Disputed", value: stats.disputed, icon: "⚖️", color: "#ef4444" },

@@ -1011,7 +1011,7 @@ export default function RealTimeMonitoring() {
               </div>
               <div>
                 <h1 className="text-lg font-bold text-gray-100">Real-Time Monitoring Department</h1>
-                <p className="text-gray-500 text-xs">Section 29 · Living Heartbeat · FreelanceSkills.net · 200% Elon Musk Intelligence</p>
+                <p className="text-gray-500 text-xs">Real-Time Monitoring · FreelanceSkills.net</p>
               </div>
             </div>
             <div className="flex items-center gap-3">

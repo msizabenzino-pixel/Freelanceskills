@@ -1,6 +1,6 @@
 /**
  * Role & Permission System v2.0 — client/src/pages/RolePermissionSystem.tsx
- * Section 27 UPGRADED — FreelanceSkills.net | 200% ELON MUSK INTELLIGENCE MASTERPIECE
+ * Section 27 UPGRADED — FreelanceSkills.net | FreelanceSkills.net Admin Platform
  *
  * We studied freelancerskills.net: zero roles, zero permissions.
  * Upwork: 3 flat roles. Fiverr: 4 roles. Shopify: dropdown.
@@ -1060,7 +1060,7 @@ export default function RolePermissionSystem() {
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-xl font-bold text-zinc-100">Role &amp; Permission System v2.0</h1>
-              <span className="text-[10px] bg-red-700/20 border border-red-700/40 text-red-300 px-2 py-0.5 rounded-full">200% ELON MUSK INTELLIGENCE</span>
+              <span className="text-[10px] bg-red-700/20 border border-red-700/40 text-red-300 px-2 py-0.5 rounded-full">FreelanceSkills.net</span>
             </div>
             <div className="text-xs text-zinc-500 mt-0.5">37 endpoints · 5 core roles · 137 permissions · 25 depts · Immutable audit · Africa-first · Predictive risk until 2029</div>
           </div>

@@ -374,7 +374,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* System status footer */}
         <div className={`border-t border-gray-800 px-3 py-2 flex items-center gap-2 ${collapsed ? "justify-center" : ""}`}>
           <div className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse shrink-0" />
-          {!collapsed && <span className="text-xs text-gray-500">100/100 sections — 400% God Mode 👑</span>}
+          {!collapsed && <span className="text-xs text-gray-500">FreelanceSkills.net · Admin Platform</span>}
         </div>
       </aside>
 

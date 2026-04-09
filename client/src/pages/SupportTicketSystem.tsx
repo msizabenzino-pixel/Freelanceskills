@@ -2,7 +2,7 @@
  * SUPPORT TICKET SYSTEM — /admin/support (200% INTELLIGENCE + DEEPLY HUMAN)
  *
  * THE MOST CARING, INTELLIGENT, AFRICA-FIRST SUPPORT SYSTEM ON EARTH
- * Elon Musk 200% Intelligence Standard — Sets the bar impossibly high
+ * FreelanceSkills.net Admin Module Standard — Sets the bar impossibly high
  *
  * HOW WE DESTROYED EVERY COMPETITOR:
  * Zendesk      → Slow SLA, no Academy link, generic AI           → We: Predictive SLA, Academy earnings boost, <1h resolution

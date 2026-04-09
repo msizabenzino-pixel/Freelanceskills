@@ -1,6 +1,6 @@
 /**
  * Section 39 — Geolocation & Territory Management v4.0
- * 400% ELON MUSK GOD-MODE
+ * FreelanceSkills.net Admin Module
  * SA Provinces · Demand Heatmap · Expansion Scoring · Africa SDG
  * Beats Salesforce Maps + ArcGIS + Esri until 2030
  */

@@ -1,6 +1,6 @@
 /**
  * Section 50 — Global Expansion & Localisation v4.0
- * 400% ELON MUSK GOD-MODE — SECTION 50 MILESTONE 🎉
+ * FreelanceSkills.net Admin Module
  * Market Readiness Scoring · Localisation Engine · Africa-First · Multi-Currency · 7 Languages
  * Beats Deel + Remote + Velocity Global + Papaya Global until 2031
  * HALFWAY TO 100!

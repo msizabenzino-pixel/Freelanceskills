@@ -1,6 +1,6 @@
 /**
  * Section 42 — Customer Success v4.0
- * 400% ELON MUSK GOD-MODE
+ * FreelanceSkills.net Admin Module
  * Account Health · Churn Risk · NPS · LTV · Upsell Opportunities
  * Beats Gainsight + ChurnZero + Totango + Mixpanel until 2030
  */

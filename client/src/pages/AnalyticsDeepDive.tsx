@@ -402,7 +402,7 @@ export default function AnalyticsDeepDive() {
             {[
               { id: "users", icon: "👥", label: "User Analytics" },
               { id: "marketplace", icon: "🏪", label: "Marketplace" },
-              { id: "financial", icon: "💰", label: "Financial" },
+              { id: "financial", icon: "Financial", label: "Financial" },
               { id: "academy", icon: "🎓", label: "Academy" },
               { id: "geo", icon: "🌍", label: "Geographic" },
             ].map(({ id, icon, label }) => (
@@ -420,7 +420,7 @@ export default function AnalyticsDeepDive() {
               {uLoading ? <div className="h-64 flex items-center justify-center"><div className="w-8 h-8 border-2 rounded-full animate-spin" style={{ borderColor: `${G} transparent transparent transparent` }}></div></div> : (
                 <>
                   {/* Acquisition Funnel */}
-                  <ChartCard title="🎯 Acquisition Funnel">
+                  <ChartCard title="Acquisition Funnel">
                     {userData?.funnel ? (
                       <div className="space-y-3">
                         {[
@@ -492,7 +492,7 @@ export default function AnalyticsDeepDive() {
                     </ChartCard>
 
                     {/* Account Status */}
-                    <ChartCard title="⚡ Account Status Distribution">
+                    <ChartCard title="Account Status Distribution">
                       {userData?.byStatus?.length > 0 ? (
                         <ResponsiveContainer width="100%" height={220}>
                           <BarChart data={userData.byStatus.map((r: any) => ({ ...r, status: capFmt(r.status) }))}>
@@ -574,7 +574,7 @@ export default function AnalyticsDeepDive() {
                   </div>
 
                   {/* Category Performance */}
-                  <ChartCard title="🏆 Top 10 Categories by Jobs Posted">
+                  <ChartCard title="Top 10 Categories by Jobs Posted">
                     {mktData?.byCategory?.length > 0 ? (
                       <ResponsiveContainer width="100%" height={280}>
                         <BarChart data={mktData.byCategory} layout="vertical">
@@ -705,7 +705,7 @@ export default function AnalyticsDeepDive() {
                   )}
 
                   {/* Certificates over time */}
-                  <ChartCard title="🏆 Certificates Issued Over Time">
+                  <ChartCard title="Certificates Issued Over Time">
                     {acaData?.certsByDate?.length > 0 ? (
                       <ResponsiveContainer width="100%" height={220}>
                         <AreaChart data={acaData.certsByDate}>
@@ -837,7 +837,7 @@ export default function AnalyticsDeepDive() {
 
                       {/* Wallet by country */}
                       {geoData.byCountry.filter((r: any) => r.totalWalletCents > 0).length > 0 && (
-                        <ChartCard title="💰 Wallet Value by Country (ZAR)">
+                        <ChartCard title="Wallet Value by Country (ZAR)">
                           <ResponsiveContainer width="100%" height={250}>
                             <BarChart data={geoData.byCountry.filter((r: any) => r.totalWalletCents > 0).slice(0, 10)}>
                               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />

@@ -1,6 +1,6 @@
 /**
  * Section 41 — Batch Operations & Automation v4.0
- * 400% ELON MUSK GOD-MODE
+ * FreelanceSkills.net Admin Module
  * Rule Engine · Batch Jobs · POPIA Cleanup · Scheduled Tasks · Triggers
  * Beats Zapier + Make + n8n + Temporal + Celery until 2030
  */

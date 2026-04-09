@@ -2,7 +2,7 @@
  * REPORT & ABUSE MANAGEMENT — /admin/reports (200% INTELLIGENCE + DEEPLY HUMAN)
  *
  * THE SAFEST, MOST REHABILITATIVE TRUST & SAFETY SYSTEM ON EARTH
- * Elon Musk 200% Intelligence Standard — bar set impossibly high
+ * FreelanceSkills.net Admin Module Standard — bar set impossibly high
  *
  * HOW WE DESTROYED EVERY COMPETITOR:
  * X/Twitter      → Reactive bans, opaque, silencing culture       → We: Predictive Risk Engine prevents harm BEFORE it occurs

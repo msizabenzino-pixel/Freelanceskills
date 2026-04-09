@@ -1,7 +1,7 @@
 /**
  * PROPOSAL MANAGEMENT ADMIN — /admin/proposals
  *
- * 200% INTELLIGENCE: AI Quality Score, Win Probability, Spam Detection, Academy Correlation
+ * FreelanceSkills.net Admin Module: AI Quality Score, Win Probability, Spam Detection, Academy Correlation
 
  *
  * 1. ✅ AI Quality Score + Predictive Win Probability (real-time, explainable)
@@ -57,7 +57,7 @@ const SAVED_FILTERS = [
   { id: "high_quality", label: "⭐ High Quality (Score >80)", query: { minScore: 80 } },
   { id: "fraud_risk", label: "🚨 Fraud Risk (>70)", query: { minSpam: 70 } },
   { id: "high_academy", label: "🎓 Academy Match (>80%)", query: { minAcademy: 80 } },
-  { id: "low_budget", label: "💰 Budget Mismatch (<50%)", query: { maxBudgetMatch: 50 } },
+  { id: "low_budget", label: "Budget Mismatch (<50%)", query: { maxBudgetMatch: 50 } },
 ];
 
 export default function ProposalManagement() {
@@ -233,7 +233,7 @@ export default function ProposalManagement() {
         <div className="max-w-screen-2xl mx-auto px-6 py-4 flex items-center gap-4">
           <button onClick={() => navigate("/admin")} className="text-gray-400 hover:text-gray-600 text-lg">←</button>
           <div className="flex-1">
-            <h1 className="text-2xl font-bold text-gray-900">💬 PROPOSAL MANAGEMENT (200% Intelligence)</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Proposal Management</h1>
             <p className="text-[10px] text-gray-500 mt-0.5">AI Score · Win % · Academy Match · Fraud Detection · Smart Recommendations</p>
           </div>
           <button onClick={exportCSV} className="px-4 py-2 rounded-lg text-sm font-bold text-white bg-blue-600 hover:bg-blue-700">
@@ -318,7 +318,7 @@ export default function ProposalManagement() {
                       <th className="px-4 py-3 text-left font-bold text-gray-700">Job</th>
                       <th className="px-4 py-3 text-left font-bold text-gray-700">Budget</th>
                       <th className="px-4 py-3 text-left font-bold text-gray-700">⭐ Quality</th>
-                      <th className="px-4 py-3 text-left font-bold text-gray-700">🎯 Win %</th>
+                      <th className="px-4 py-3 text-left font-bold text-gray-700">Win %</th>
                       <th className="px-4 py-3 text-left font-bold text-gray-700">📈 Earnings Lift</th>
                       <th className="px-4 py-3 text-left font-bold text-gray-700">🎓 Academy</th>
                       <th className="px-4 py-3 text-left font-bold text-gray-700">Status</th>
@@ -731,7 +731,7 @@ export default function ProposalManagement() {
               {/* WIN PROBABILITY */}
               {proposalIntel?.intelligence?.winProbability && (
                 <div className="bg-emerald-50 rounded-xl p-5 border border-emerald-200">
-                  <h3 className="font-bold text-gray-900 mb-3">🎯 Win Probability Prediction (Feature 1)</h3>
+                  <h3 className="font-bold text-gray-900 mb-3">Win Probability Prediction</h3>
                   <div className="mb-3">
                     <div className="text-4xl font-bold text-emerald-600">{(proposalIntel.intelligence.winProbability.probability * 100).toFixed(0)}%</div>
                     <p className="text-xs text-gray-600 mt-1">Likelihood this proposal wins the job</p>

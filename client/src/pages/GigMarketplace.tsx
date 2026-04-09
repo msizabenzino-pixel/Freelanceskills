@@ -1,7 +1,7 @@
 /**
  * GIG MARKETPLACE ADMIN — /admin/gigs
  *
- * 200% INTELLIGENCE STANDARD
+ * FreelanceSkills.net Admin Module
 
  * 
  * 10 ENHANCEMENTS:
@@ -199,7 +199,7 @@ export default function GigMarketplace() {
         <div className="max-w-screen-2xl mx-auto px-6 py-4 flex items-center gap-4">
           <button onClick={() => navigate("/admin")} className="text-gray-400 hover:text-gray-600 text-lg">←</button>
           <div className="flex-1">
-            <h1 className="text-2xl font-bold text-gray-900">🎯 GIG MARKETPLACE ADMIN (200% Intelligence)</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Gig Marketplace</h1>
             <p className="text-[10px] text-gray-500 mt-0.5">AI Intelligence Score · Predictive Orders · ZAR Optimization · Academy Correlation</p>
           </div>
           <button onClick={exportCSV} className="px-4 py-2 rounded-lg text-sm font-bold text-white bg-blue-600 hover:bg-blue-700">
@@ -234,10 +234,10 @@ export default function GigMarketplace() {
             {/* KPI Cards */}
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               {[
-                { label: "Total Gigs", value: analytics.totalGigs, icon: "🎯" },
+                { label: "Total Gigs", value: analytics.totalGigs, icon: "Gigs" },
                 { label: "Active", value: analytics.activeGigs, icon: "✅", color: "#1DBF73" },
                 { label: "Pending", value: analytics.pendingApproval, icon: "⏳", color: "#f59e0b" },
-                { label: "Monthly Earnings (ZAR)", value: `R${parseInt(analytics.totalMonthlyEarningsZAR || "0").toLocaleString()}`, icon: "💰", color: "#10b981" },
+                { label: "Monthly Earnings (ZAR)", value: `R${parseInt(analytics.totalMonthlyEarningsZAR || "0").toLocaleString()}`, icon: "Revenue", color: "#10b981" },
                 { label: "Avg AI Score", value: analytics.averageAIScore, icon: "🤖", color: "#6366f1" },
               ].map((kpi, i) => (
                 <div key={i} className="rounded-xl p-4 border border-gray-200 bg-white text-center">
@@ -415,7 +415,7 @@ export default function GigMarketplace() {
           <div className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-white rounded-xl p-6 border border-gray-200">
-                <h3 className="font-bold text-gray-900 mb-4">🌟 Top Gigs by AI Score</h3>
+                <h3 className="font-bold text-gray-900 mb-4">Top Gigs by AI Score</h3>
                 <div className="space-y-2">
                   {analytics.topGigs?.slice(0, 5).map((gig: any, i: number) => (
                     <div key={i} className="flex justify-between items-center p-2 rounded-lg bg-gray-50">
@@ -465,7 +465,7 @@ export default function GigMarketplace() {
                 <button onClick={() => bulkOptimizeMut.mutate()} disabled={!selectedGigs.length || bulkOptimizeMut.isPending}
                   className="w-full px-4 py-2 rounded-lg text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
                   data-testid="btn-bulk-optimize">
-                  🚀 Optimize {selectedGigs.length} Gigs
+                  Optimize {selectedGigs.length} Gigs
                 </button>
               </div>
             </div>
@@ -516,7 +516,7 @@ export default function GigMarketplace() {
               {/* AI SCORE BREAKDOWN */}
               {gigIntel?.intelligence?.aiScoreBreakdown && (
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-200">
-                  <h3 className="font-bold text-gray-900 mb-3">🎯 AI Gig Intelligence Score Breakdown</h3>
+                  <h3 className="font-bold text-gray-900 mb-3">AI Gig Intelligence Score Breakdown</h3>
                   <div className="mb-3">
                     <div className="flex justify-between items-center mb-1">
                       <span className="text-sm font-bold">Score</span>
@@ -566,7 +566,7 @@ export default function GigMarketplace() {
               {/* ZAR PRICING INTELLIGENCE */}
               {gigIntel?.intelligence?.zarPricingIntelligence && (
                 <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-5 border border-yellow-200">
-                  <h3 className="font-bold text-gray-900 mb-3">💰 ZAR Pricing Intelligence</h3>
+                  <h3 className="font-bold text-gray-900 mb-3">ZAR Pricing Intelligence</h3>
                   <div className="space-y-2">
                     <div className="flex justify-between bg-white p-3 rounded-lg">
                       <span className="text-sm text-gray-700">Current Price</span>

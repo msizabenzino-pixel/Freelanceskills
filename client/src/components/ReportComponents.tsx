@@ -1,7 +1,7 @@
 /**
  * REPORT & ABUSE MANAGEMENT — REUSABLE COMPONENT LIBRARY
  * 
- * 200% Intelligence Components
+ * Admin Components
  * Extracted from ReportAbuseManagement for reusability across the platform
  */
 

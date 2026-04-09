@@ -1,6 +1,6 @@
 /**
  * Mobile Admin v4.0 — FreelanceSkills.net — Section 34
- * 400% ELON MUSK GOD-MODE — Africa-First Mobile Command Centre
+ * FreelanceSkills.net Admin Module — Africa-First Mobile Command Centre
  * 8 Tabs · Field Agents · USSD Gateway · Biometric Auth · Africa Carrier Intel
  * Emergency Lockdown · Offline Sync · Device Registry · Live Alerts · Quick Actions
  * Beats Zendesk Mobile + Salesforce Field Service + ServiceNow + PagerDuty until 2030
@@ -1090,7 +1090,7 @@ export default function MobileAdmin() {
               <h1 className="text-sm font-bold text-white truncate">{titles[activeTab]}</h1>
               {activeTab === "activity" && liveEvents.length > 0 && <PulseDot />}
             </div>
-            <p className="text-[9px] text-gray-600 font-mono">Mobile Admin v4.0 · FreelanceSkills · 400% GOD-MODE</p>
+            <p className="text-[9px] text-gray-600 font-mono">Mobile Admin · FreelanceSkills.net</p>
           </div>
           <div className="flex items-center gap-2">
             {isOffline && <span className="text-[9px] px-2 py-0.5 rounded-full bg-yellow-900/40 text-yellow-400 font-bold">OFFLINE</span>}

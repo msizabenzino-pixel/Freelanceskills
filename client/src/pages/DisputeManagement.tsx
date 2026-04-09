@@ -162,7 +162,7 @@ export default function DisputeManagement() {
       <div className="min-h-screen bg-gray-50">
         <div className="bg-white border-b border-gray-200 sticky top-0 z-30">
           <div className="max-w-screen-2xl mx-auto px-6 py-4">
-            <h1 className="text-2xl font-bold text-gray-900">⚖️ DISPUTE MANAGEMENT (200% Intelligence)</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Dispute Management</h1>
             <p className="text-xs text-gray-500 mt-0.5">AI Mediator · Evidence Vault · Fairness Score · Empathy Engine · Growth Paths · Timeline · Bulk Actions</p>
           </div>
 

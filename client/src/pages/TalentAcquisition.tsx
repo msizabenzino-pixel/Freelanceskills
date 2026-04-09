@@ -1,6 +1,6 @@
 /**
  * Section 37 — Talent Acquisition & Certification v4.0 — FreelanceSkills.net
- * 400% ELON MUSK GOD-MODE — THE SHOWSTOPPER
+ * FreelanceSkills.net Admin Module — THE SHOWSTOPPER
  * Recruitment Pipeline (7 Stages) · AI Employer Matching · Skill Certification ·
  * Badge System · Competency Matrix · Training Pathways · Interview Scheduler ·
  * SAQA-Aligned · Africa-First · Batch Cert Runs · Analytics Funnel

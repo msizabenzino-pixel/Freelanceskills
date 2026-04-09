@@ -1,6 +1,6 @@
 /**
  * Section 48 — Gamification & Loyalty Engine v4.0
- * 400% ELON MUSK GOD-MODE
+ * FreelanceSkills.net Admin Module
  * Points System · Badge Economy · Challenges · Leaderboard · 5-Tier Loyalty
  * Beats Smile.io + Yotpo + LoyaltyLion + Stamp.me until 2030
  */

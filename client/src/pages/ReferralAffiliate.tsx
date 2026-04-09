@@ -1,6 +1,6 @@
 /**
  * Section 36 — Referral & Affiliate System v4.0 — FreelanceSkills.net
- * 400% ELON MUSK GOD-MODE
+ * FreelanceSkills.net Admin Module
  * Referral Tracking · Commission Tiers · Payout Engine · Campaign Builder
  * A/B Testing · Fraud Detection · Leaderboard · Africa-First
  * Beats Impact.com + ShareASale + PartnerStack + Tapfiliate + Rewardful until 2030

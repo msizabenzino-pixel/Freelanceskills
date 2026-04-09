@@ -1202,7 +1202,7 @@ export default function SystemPerformance() {
             <div className="p-2 bg-cyan-900/30 border border-cyan-700/40 rounded-xl"><Gauge size={20} className="text-cyan-400" /></div>
             <div>
               <h1 className="text-lg font-bold text-white">System Performance Department</h1>
-              <p className="text-gray-500 text-xs">Section 31 v2.0 · 400% God-Mode · Distributed Traces · Business Correlation · Africa Carriers · AI Explain · Dept Signals</p>
+              <p className="text-gray-500 text-xs">System Performance · Distributed Traces · Business Correlation · Africa Carriers · AI Analysis</p>
             </div>
           </div>
           <div className="flex items-center gap-3">

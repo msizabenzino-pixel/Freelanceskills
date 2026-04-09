@@ -77,7 +77,7 @@ export default function EliteClub() {
               </div>
               <div className="flex items-center gap-1.5">
                 <Sparkles size={12} className="text-purple-400" />
-                <span className="text-xs text-purple-400">100 sections complete — 400% Elon Mode</span>
+                <span className="text-xs text-purple-400">Full Platform — 100 Sections</span>
               </div>
             </div>
           </div>
@@ -234,7 +234,7 @@ export default function EliteClub() {
           <div className="bg-gray-900 border border-gray-800 rounded-xl p-5 text-center">
             <Sparkles size={32} className="text-yellow-400 mx-auto mb-3" />
             <h3 className="text-lg font-bold text-white mb-1">Section 100 of 100 — COMPLETE</h3>
-            <p className="text-sm text-gray-400 max-w-md mx-auto">FreelanceSkills.net has reached 100 admin sections. Built at 400% Elon Musk god-mode standard. The platform is alive.</p>
+            <p className="text-sm text-gray-400 max-w-md mx-auto">FreelanceSkills.net — 100 admin sections built and live. The full platform is operational.</p>
             <div className="flex justify-center gap-2 mt-4">
               <span className="px-3 py-1 bg-emerald-900/40 text-emerald-300 rounded-full text-xs font-medium">100 Sections Live</span>
               <span className="px-3 py-1 bg-yellow-900/40 text-yellow-300 rounded-full text-xs font-medium">400% Complete</span>

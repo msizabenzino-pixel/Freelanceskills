@@ -1,6 +1,6 @@
 /**
  * ╔══════════════════════════════════════════════════════════════════════════════════════════╗
- * ║  ANALYTICS & REPORTING DEPARTMENT v2.0 — 200% ELON MUSK INTELLIGENCE MASTERPIECE       ║
+ * ║  ANALYTICS & REPORTING DEPARTMENT v2.0       ║
  * ║  Section 24 — FreelanceSkills.net                                                        ║
  * ║                                                                                          ║
  * ║  WHY THIS OBLITERATES EVERY COMPETITOR UNTIL 2029:                                       ║
@@ -1780,7 +1780,7 @@ export default function AnalyticsReporting() {
           <div>
             <h1 className="text-2xl font-bold text-white flex items-center gap-3">
               <span className="text-3xl">📊</span>Analytics &amp; Reporting
-              <Badge className="bg-violet-900 text-violet-200 text-xs ml-1">v2.0 — 200% Intelligence</Badge>
+              <Badge className="bg-violet-900 text-violet-200 text-xs ml-1">v2.0</Badge>
             </h1>
             <p className="text-zinc-500 text-sm mt-1">
               10-tab BI brain · Agentic AI Analyst · Predictive Forecasting · Africa SDG Intelligence · Department Integration Hub

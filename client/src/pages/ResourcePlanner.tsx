@@ -1,6 +1,6 @@
 /**
  * Section 44 — Resource Planner v4.0
- * 400% ELON MUSK GOD-MODE
+ * FreelanceSkills.net Admin Module
  * Utilization Heatmap · Capacity Forecast · Skill Matrix · Overload Alerts
  * Beats Teamdeck + Float + Resource.Guru + Harvest until 2030
  */

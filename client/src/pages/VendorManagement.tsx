@@ -1,6 +1,6 @@
 /**
  * Section 47 — Supplier & Vendor Management v4.0
- * 400% ELON MUSK GOD-MODE
+ * FreelanceSkills.net Admin Module
  * Vendor Registry · SLA Tracking · Spend Analysis · Risk Rating · Category Breakdown
  * Beats SAP Ariba + Coupa + Jaggaer + Procurify until 2030
  */
