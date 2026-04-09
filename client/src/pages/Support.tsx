@@ -100,14 +100,14 @@ export default function Support() {
               </a>
 
               <a 
-                href="mailto:support@freelanceskill.co.za"
+                href="mailto:support@freelanceskills.co.za"
                 className="bg-card p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow text-center group"
               >
                 <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                   <Mail className="h-8 w-8 text-purple-600" />
                 </div>
                 <h3 className="font-semibold text-lg mb-1">Email</h3>
-                <p className="text-purple-600 font-medium">support@freelanceskill.co.za</p>
+                <p className="text-purple-600 font-medium">support@freelanceskills.co.za</p>
                 <p className="text-sm text-muted-foreground mt-2">We reply within 24 hours</p>
               </a>
             </div>
@@ -232,7 +232,7 @@ export default function Support() {
       <AIProfileBuilder 
         open={showProfileBuilder}
         onClose={() => setShowProfileBuilder(false)}
-        onComplete={(profile) => console.log("Profile created:", profile)}
+        onComplete={() => setShowProfileBuilder(false)}
       />
     </div>
   );

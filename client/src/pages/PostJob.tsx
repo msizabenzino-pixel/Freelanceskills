@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AuthGuard } from "@/components/AuthGuard";
+import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -130,7 +131,7 @@ export default function PostJob() {
               </div>
               <h2 className="text-2xl font-bold text-foreground mb-2">Job Posted Successfully!</h2>
               <p className="text-muted-foreground mb-2">
-                Your job is now live and visible to <span className="font-semibold text-foreground">47,000+ verified freelancers</span> across South Africa.
+                Your job is now live and visible to <span className="font-semibold text-foreground">verified freelancers</span> across South Africa and beyond.
               </p>
               <p className="text-sm text-muted-foreground mb-8">Expect your first proposals within minutes.</p>
 

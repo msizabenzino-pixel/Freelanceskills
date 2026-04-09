@@ -330,7 +330,7 @@ export default function ResolutionCenter() {
                 
                 <div className="bg-muted rounded-lg p-4 mb-6">
                   <p className="text-sm">
-                    <strong>Reference:</strong> DSP-2024-{Math.random().toString(36).substr(2, 6).toUpperCase()}
+                    <strong>Reference:</strong> DSP-{new Date().getFullYear()}-{Math.random().toString(36).substr(2, 6).toUpperCase()}
                   </p>
                 </div>
 

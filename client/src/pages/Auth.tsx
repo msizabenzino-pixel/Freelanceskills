@@ -161,7 +161,7 @@ export default function Auth() {
       setResetLink("Check your email inbox for the reset link.");
       toast({ 
         title: "Reset email sent",
-        description: "If this email exists, Firebase has sent a password reset link."
+        description: "If an account exists with this email, a reset link has been sent to your inbox."
       });
     },
     onError: (error: Error) => {
@@ -211,8 +211,8 @@ export default function Auth() {
     e.preventDefault();
     if (!isFirebaseConfigured) {
       toast({
-        title: "Firebase not configured",
-        description: "Please set VITE_FIREBASE_* values and restart the dev server.",
+        title: "Sign-in unavailable",
+        description: "Authentication is temporarily unavailable. Please try again later or contact support.",
         variant: "destructive",
       });
       return;

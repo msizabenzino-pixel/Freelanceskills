@@ -45,7 +45,7 @@ const MAP_COORDS: Array<{ top: string; left: string }> = [
 const QUICK_FILTERS = [
   { label: "Verified Only", key: "verified", value: "true" },
   { label: "Under R500/hr", key: "maxRate", value: "500" },
-  { label: "5 Star Rating", key: "minRating", value: "4.9" },
+  { label: "Top Rated (4.5+)", key: "minRating", value: "4.5" },
   { label: "10+ Jobs Done", key: "minJobs", value: "10" },
 ];
 
