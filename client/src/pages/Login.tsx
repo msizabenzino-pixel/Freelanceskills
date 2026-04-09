@@ -189,7 +189,7 @@ export default function Login() {
             {/* Trust Benefits */}
             <div className="space-y-4 mb-10" data-testid="benefits-list">
               {[
-                { icon: BadgeCheck, text: "AI-proctored vetting — 5-tier Nuclear Verification System" },
+                { icon: BadgeCheck, text: "AI-proctored vetting — 5-tier verified talent system" },
                 { icon: CheckCircle, text: "PayFast escrow & instant ZAR payouts on every project" },
                 { icon: Zap, text: "AI smart matching + industry-leading 10% transparent fees" },
                 { icon: Lock, text: "POPIA compliant — SA-based 24/7 support team" },

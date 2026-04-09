@@ -3,7 +3,7 @@
  * ║  SECTION 33 — MISSION CONTROL                                               ║
  * ║  client/src/pages/MissionControl.tsx — FreelanceSkills.net                 ║
  * ║                                                                              ║
- * ║  400% ELON MUSK GOD-MODE — Unified Admin Command Centre                    ║
+ * ║  Unified Admin Command Centre                    ║
  * ║  The master dashboard integrating all 33 departments into one view.         ║
  * ║                                                                              ║
  * ║  SECTIONS:                                                                   ║

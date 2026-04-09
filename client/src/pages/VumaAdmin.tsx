@@ -244,10 +244,10 @@ export default function VumaAdmin() {
             </div>
 
             <div className="bg-gray-800 border border-gray-700 rounded-2xl p-5">
-              <h3 className="font-semibold text-white mb-4">Vuma-NUCLEAR Activity Log</h3>
+              <h3 className="font-semibold text-white mb-4">Vuma Activity Log</h3>
               <div className="space-y-2">
                 {[
-                  { time: "Now", event: "Vuma-NUCLEAR active — nuclear system prompt loaded", type: "success" },
+                  { time: "Now", event: "Vuma active — system ready", type: "success" },
                   { time: "2m ago", event: "POPIA consent modal served to new session", type: "info" },
                   { time: "5m ago", event: "Vuma sub-agent ProfileOptimizer — response 1.2s", type: "success" },
                   { time: "12m ago", event: "Action: post-job triggered — match engine activated", type: "success" },

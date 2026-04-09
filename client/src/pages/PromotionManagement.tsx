@@ -1115,7 +1115,7 @@ function AfricaTab() {
     <div className="space-y-5">
       <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl p-5 text-white">
         <h3 className="font-bold text-lg">🌍 Africa-Optimized Micro-Promotions</h3>
-        <p className="text-sm opacity-90 mt-1">R5–R50 tiers purchasable via MTN/Airtel/Safaricom Mobile Money or USSD dial code — no smartphone required. Zero-data option. No competitor has Africa-native promotion infrastructure.</p>
+        <p className="text-sm opacity-90 mt-1">R5–R50 tiers purchasable via MTN/Airtel/Safaricom Mobile Money or USSD dial code — no smartphone required. Zero-data option. Our promotion infrastructure is built specifically for African mobile users.</p>
         <div className="flex gap-2 mt-3 flex-wrap text-[11px]">
           {["MTN Mobile Money","Airtel Money","M-Pesa","Vodacom","USSD *120*SKILLS#"].map(n=><span key={n} className="bg-white/20 px-2 py-0.5 rounded-full">{n}</span>)}
         </div>

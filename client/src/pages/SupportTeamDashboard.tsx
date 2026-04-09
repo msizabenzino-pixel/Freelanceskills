@@ -171,7 +171,7 @@ function LiveQueueTab({ onSelectTicket }: { onSelectTicket: (t: Ticket) => void 
       )}
 
       {isLoading ? <div className="text-center py-12 text-zinc-500 animate-pulse">Loading queue…</div> : tickets.length === 0 ? (
-        <div className="text-center py-12 text-zinc-600"><div className="text-5xl mb-3">🎫</div><div>No tickets found. Click "🌱 Seed" to populate with demo data.</div></div>
+        <div className="text-center py-12 text-zinc-600"><div className="text-5xl mb-3">🎫</div><div>No support tickets yet. Tickets will appear here when customers submit them.</div></div>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-zinc-700">
           <table className="w-full text-xs" style={{ minWidth: "900px" }}>
@@ -282,7 +282,7 @@ function AIInboxTab({ preSelectedTicket }: { preSelectedTicket: Ticket | null })
               <div className="text-zinc-600 text-[9px] font-mono">{t.userId}</div>
             </button>
           ))}
-          {tickets.length === 0 && <div className="text-zinc-600 text-xs text-center py-8">Seed demo data from Live Queue tab</div>}
+          {tickets.length === 0 && <div className="text-zinc-600 text-xs text-center py-8">Tickets appear here once they are created</div>}
         </div>
       </div>
 
@@ -615,7 +615,7 @@ function CannedResponsesTab() {
               </div>
             </div>
           ))}
-          {responses.length === 0 && <div className="col-span-2 text-center py-10 text-zinc-600"><div className="text-4xl mb-2">💬</div>Seed demo data to see canned responses (including Swahili and Zulu responses)</div>}
+          {responses.length === 0 && <div className="col-span-2 text-center py-10 text-zinc-600"><div className="text-4xl mb-2">💬</div>No canned responses configured yet</div>}
         </div>
       )}
 
@@ -691,7 +691,7 @@ function EscalationsTab() {
             </div>
           </div>
         ))}
-        {rules.length === 0 && <div className="col-span-2 text-center py-10 text-zinc-600"><div className="text-4xl mb-2">🚨</div>Seed demo data to see escalation rules</div>}
+        {rules.length === 0 && <div className="col-span-2 text-center py-10 text-zinc-600"><div className="text-4xl mb-2">🚨</div>No escalation rules configured yet</div>}
       </div>
 
       {intStatus && (
@@ -802,7 +802,7 @@ function PerformanceTab() {
                   <Bar dataKey="points" name="Weekly Points" radius={[3, 3, 0, 0]}>{weeklyLeaderboard.slice(0, 5).map((_: any, i: number) => <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />)}</Bar>
                 </BarChart>
               </ResponsiveContainer>
-            ) : <div className="text-zinc-600 text-sm text-center py-8">Seed demo data to see weekly chart</div>}
+            ) : <div className="text-zinc-600 text-sm text-center py-8">No data available yet</div>}
           </div>
         </div>
       )}
@@ -835,7 +835,7 @@ function PerformanceTab() {
           </div>
         </div>
       )}
-      {leaderboard.length === 0 && perfLeaderboard.length === 0 && <div className="text-center py-10 text-zinc-600"><div className="text-4xl mb-2">🏆</div>Seed demo data to see gamification leaderboard</div>}
+      {leaderboard.length === 0 && perfLeaderboard.length === 0 && <div className="text-center py-10 text-zinc-600"><div className="text-4xl mb-2">🏆</div>No leaderboard data yet</div>}
     </div>
   );
 }
@@ -886,7 +886,7 @@ function CollaborationTab() {
                 <div className="text-zinc-600 text-[9px] font-mono">{t.userId}</div>
               </button>
             ))}
-            {tickets.length === 0 && <div className="text-zinc-600 text-xs text-center py-8">Seed demo data first</div>}
+            {tickets.length === 0 && <div className="text-zinc-600 text-xs text-center py-8">No data yet</div>}
           </div>
         </div>
 

@@ -93,7 +93,7 @@ export default function VettingHub() {
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-3xl">🔐</span>
-                <h1 className="text-2xl sm:text-3xl font-bold">Nuclear Vetting System</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold">Verified Talent System</h1>
               </div>
               <p className="text-slate-400 text-sm sm:text-base">
                 Africa's most rigorous freelancer verification. Trusted by 1,200+ businesses.

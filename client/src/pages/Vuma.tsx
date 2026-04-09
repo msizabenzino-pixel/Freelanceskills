@@ -126,7 +126,7 @@ function POPIAModal() {
           </div>
         </div>
         <div className="text-sm text-gray-300 space-y-2 mb-5">
-          <p>By using Vuma-NUCLEAR, you agree to our use of chat data to improve your experience on FreelanceSkills.net.</p>
+          <p>By using Vuma, you agree to our use of chat data to improve your experience on FreelanceSkills.net.</p>
           <ul className="text-xs text-gray-400 space-y-1 list-none">
             <li className="flex items-start gap-2"><span className="text-emerald-400 mt-0.5">✓</span> Conversations are not permanently stored on our servers</li>
             <li className="flex items-start gap-2"><span className="text-emerald-400 mt-0.5">✓</span> No personal data is shared with third parties</li>
@@ -171,7 +171,7 @@ function ChatTab() {
     {
       id: "intro",
       role: "assistant",
-      content: "**Sawubona! I'm VUMA-NUCLEAR 🔥**\n\nFreelanceSkills.net's official AI — built to end youth unemployment in Africa. I'm not a support bot. I'm a truth-seeking, income-creating weapon.\n\n**10,247 projects · R18.4M earned · 3,240 youth hired · 4.9★**\n\nAsk me anything — and I'll be brutally honest with you. Let's go!",
+      content: "Hello! I'm Vuma, the FreelanceSkills.net AI assistant.\n\nI can help you find work, refine your profile, prepare winning proposals, or navigate the platform.\n\nWhat can I help you with today?",
       suggestions: ["How do I start earning as a freelancer?", "How do your fees work?", "What is the Free AI Academy?"],
       ts: Date.now(),
     },

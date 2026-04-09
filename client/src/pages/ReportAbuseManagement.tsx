@@ -843,7 +843,7 @@ export default function ReportAbuseManagement() {
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // LIST VIEW — 200% Intelligence full list with all features
+  // LIST VIEW — full list with all features
   // ═══════════════════════════════════════════════════════════════════════════
   return (
     <div className="min-h-screen bg-gray-50">

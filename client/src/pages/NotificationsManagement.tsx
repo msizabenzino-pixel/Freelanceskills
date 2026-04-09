@@ -682,7 +682,7 @@ export default function NotificationsManagement() {
                       🔒 {((segPreview.estimatedSize || 112450) - (segPreview.consentFilteredSize || 100080)).toLocaleString()} users filtered out due to opt-outs or preference restrictions (POPIA compliant)
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-gray-700 mb-2">Sample Users:</div>
+                      <div className="text-xs font-bold text-gray-700 mb-2">Users:</div>
                       <div className="space-y-2">
                         {(segPreview.sampleUsers || []).map((u: any, i: number) => (
                           <div key={i} className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">

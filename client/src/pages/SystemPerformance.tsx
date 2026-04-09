@@ -1,6 +1,6 @@
 /**
  * System Performance Department — client/src/pages/SystemPerformance.tsx
- * Section 31 — FreelanceSkills.net | 300% ELON MUSK GOD-MODE
+ * Section 31 — FreelanceSkills.net
  *
  * Tabs:
  *  1. Live Pulse       — real-time KPI cards + sparklines

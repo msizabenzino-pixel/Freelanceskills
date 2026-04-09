@@ -1,7 +1,7 @@
 /**
  * ╔══════════════════════════════════════════════════════════════════════════════════╗
  * ║  SYSTEM SETTINGS DEPARTMENT v3.0 — GODMODE INTELLIGENCE                         ║
- * ║  FreelanceSkills.net — The Nuclear Heart of the Entire Platform                  ║
+ * FreelanceSkills.net — System Settings                  ║
  * ║                                                                                  ║
  * ║  HOW WE BEAT EVERY COMPETITOR:                                                   ║
  * ║  Upwork   — flat 20% commission, no version history, no Africa config           ║
@@ -1573,7 +1573,7 @@ export default function SystemSettings() {
                 <Badge className="bg-emerald-700">AFRICA-FIRST</Badge>
                 <Badge className="bg-indigo-700">10-DEPT SYNC</Badge>
               </div>
-              <p className="text-zinc-400 text-sm mt-0.5">The Nuclear Heart of FreelanceSkills.net — 35 configs · 15 flags · Version history · AI 6D optimizer · Real-time risk validation · A/B testing · Analytics · Provider wizard · 10-department sync</p>
+              <p className="text-zinc-400 text-sm mt-0.5">Platform configuration centre — 35 configs · 15 flags · Version history · AI optimiser · Real-time validation · A/B testing · Analytics · 10-department sync</p>
             </div>
             {/* Global Search Button */}
             <button onClick={() => setShowSearch(true)} className="flex items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-lg px-3 py-2 text-xs text-zinc-400 transition-all" data-testid="button-global-search">

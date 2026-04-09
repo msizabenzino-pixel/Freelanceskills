@@ -118,9 +118,9 @@ export default function About() {
           {/* Hero stats row */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12 max-w-3xl mx-auto" data-testid="hero-stats">
             {[
-              { value: "47K+", label: "Verified Freelancers", icon: Users },
-              { value: "R2.3B+", label: "Escrow Processed", icon: Shield },
-              { value: "92K+", label: "Projects Completed", icon: Briefcase },
+              { value: "149K+", label: "Real Job Listings", icon: Briefcase },
+              { value: "100%", label: "POPIA Compliant", icon: Shield },
+              { value: "10%", label: "Transparent Fees", icon: Users },
               { value: "4.9★", label: "Platform Rating", icon: Star },
             ].map(({ value, label, icon: Icon }, i) => (
               <div
@@ -220,7 +220,7 @@ export default function About() {
               {
                 icon: Globe,
                 title: "Connect Businesses with Reliable Talent",
-                desc: "Help organisations find skills-matched professionals they can trust, streamlining hiring and reducing risk through our rigorous 5-step Nuclear Vetting System.",
+                desc: "Help organisations find skills-matched professionals they can trust, streamlining hiring and reducing risk through our rigorous 5-step Verified Talent System.",
                 color: "text-blue-400",
                 bg: "bg-blue-500/10",
               },
@@ -264,7 +264,7 @@ export default function About() {
               Industry-Leading Verification
             </span>
             <h2 className="text-4xl sm:text-5xl font-bold mb-4" data-testid="heading-vetting">
-              The Nuclear Vetting System™
+              The Verified Talent System
             </h2>
             <p className="text-slate-400 max-w-2xl mx-auto">
               Our AI-proctored 5-step vetting process ensures every freelancer on the platform meets
@@ -320,7 +320,7 @@ export default function About() {
 
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { icon: BadgeCheck, title: "Rigorous Verification & Skills Validation", desc: "Every profile is vetted. Every skill is tested. We ensure quality from day one with our 5-step Nuclear Vetting System." },
+              { icon: BadgeCheck, title: "Rigorous Verification & Skills Validation", desc: "Every profile is vetted. Every skill is tested. We ensure quality from day one with our 5-step Verified Talent System." },
               { icon: Shield, title: "Secure Escrow & PayFast Payouts", desc: "Protected transactions and instant ZAR payouts via PayFast ensure both parties feel completely secure." },
               { icon: Zap, title: "Transparent 10% Fees", desc: "No hidden charges. Industry-leading rates that reward hard work and quality output." },
               { icon: Globe, title: "AI Smart Matching", desc: "Intelligent algorithms connect you with opportunities perfectly tailored to your verified skillset and experience level." },
@@ -355,9 +355,9 @@ export default function About() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
             {[
-              { number: "47,000+", label: "Verified Professionals", sub: "AI-vetted, POPIA-compliant" },
-              { number: "92,000+", label: "Projects Completed", sub: "On time, on budget" },
-              { number: "R2.3B+", label: "In Escrow Processed", sub: "PayFast-secured payments" },
+              { number: "149,000+", label: "Real Job Listings", sub: "Live, sourced, verified" },
+              { number: "10%", label: "Platform Fee — Flat", sub: "No hidden charges, ever" },
+              { number: "54", label: "African Countries Reached", sub: "Pan-African job coverage" },
               { number: "100%", label: "POPIA Compliant", sub: "South African data law" },
             ].map((stat, idx) => (
               <div
@@ -376,7 +376,7 @@ export default function About() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4" data-testid="trust-badges">
             {[
               { icon: Shield, label: "Secure Payments", sub: "256-bit SSL + PayFast" },
-              { icon: BadgeCheck, label: "Verified Profiles", sub: "5-step Nuclear Vetting" },
+              { icon: BadgeCheck, label: "Verified Profiles", sub: "5-step Verified Talent" },
               { icon: Lock, label: "POPIA Compliant", sub: "SA data protection law" },
               { icon: Globe, label: "Cape Town-Based", sub: "CIPC Reg: 2026/070509/09" },
             ].map((badge, idx) => (
@@ -638,7 +638,7 @@ export default function About() {
               className="w-full px-6 py-3.5 bg-emerald-500 text-slate-950 rounded-xl font-semibold hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/25"
               data-testid="button-got-it"
             >
-              Got it, thanks!
+              Dismiss
             </button>
           </div>
         </div>

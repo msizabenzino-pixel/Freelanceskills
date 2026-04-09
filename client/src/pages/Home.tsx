@@ -26,7 +26,7 @@ const LIVE_ACTIVITIES = [
   { emoji: "🆕", text: "Zanele M. from Cape Town just joined FreelanceSkills", time: "20m ago" },
   { emoji: "💳", text: "Thabo N. received a ZAR payout of R12,500", time: "23m ago" },
   { emoji: "📝", text: "Nandi Z. won her first government tender · R45,000", time: "26m ago" },
-  { emoji: "🚀", text: "Kevin I. upgraded to Premium · profile views up 400%", time: "30m ago" },
+  { emoji: "🚀", text: "Kevin I. upgraded to Premium — client inquiries increased significantly", time: "30m ago" },
 ];
 
 function LiveActivityTicker() {
@@ -524,7 +524,7 @@ export default function Home() {
 
       <main id="main-content" role="main">
 
-        {/* ══ OPEN TO GIGS NETWORK LAYER (NEW — LinkedIn killer) ════════════════ */}
+        {/* ══ Open to Gigs Network Layer ════════════════ */}
         <section className="py-20 bg-gradient-to-b from-slate-950 to-slate-900/60 border-b border-slate-800/50" aria-labelledby="network-heading" data-testid="section-open-to-gigs">
           <div className="container mx-auto px-4 md:px-6">
             <div className="flex flex-col lg:flex-row gap-14 items-center">

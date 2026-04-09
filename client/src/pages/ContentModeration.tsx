@@ -1,5 +1,5 @@
 /**
- * Content Moderation Department — 200% Intelligence
+ * Content Moderation Department
  * FreelanceSkills.net — Platform Safety Guardian
  *
  * HOW WE OUT-ENGINEER EVERY COMPETITOR:

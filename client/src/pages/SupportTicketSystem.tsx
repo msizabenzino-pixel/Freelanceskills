@@ -203,7 +203,7 @@ export default function SupportTicketSystem() {
 
   if (!selectedTicket) {
     // ═══════════════════════════════════════════════════════════════════════════
-    // LIST VIEW — 200% Intelligence with Saved Views + Bulk Actions
+    // LIST VIEW — with Saved Views + Bulk Actions
     // ═══════════════════════════════════════════════════════════════════════════
     return (
       <div className="min-h-screen bg-gray-50">

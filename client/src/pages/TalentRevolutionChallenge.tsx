@@ -1,7 +1,7 @@
 /**
  * 30-Day African Talent Revolution Challenge Dashboard
  * Public page — no auth required
- * From: FREELANCESKILLS-500B-NUCLEAR-2026 prompt
+ * FreelanceSkills.net Admin Module
  */
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
@@ -308,7 +308,7 @@ export default function TalentRevolutionChallenge() {
         <div className="container mx-auto px-4 md:px-6 max-w-4xl">
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-3">Verification Tier Breakdown</h2>
           <p className="text-muted-foreground text-center text-sm mb-10">
-            Nuclear vetting creates real trust. Higher tiers earn 2–5× more per project.
+            Verified talent earns trust. Higher verification tiers earn 2–5× more per project.
           </p>
           <div className="space-y-4">
             {TIER_DATA.map((t) => (

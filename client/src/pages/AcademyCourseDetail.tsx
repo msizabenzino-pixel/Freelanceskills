@@ -198,7 +198,7 @@ function generateCertificate(
   ctx.font = "16px Arial";
   ctx.textAlign = "center";
   ctx.fillText("FreelanceSkills Academy", 350, yAfterTitle + 165);
-  ctx.fillText("Powered by Nuclear Vetting System™", 1050, yAfterTitle + 165);
+  ctx.fillText("Verified by FreelanceSkills.net", 1050, yAfterTitle + 165);
 
   // Bottom seal text
   ctx.fillStyle = "rgba(16,185,129,0.6)";

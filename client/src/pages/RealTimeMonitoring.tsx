@@ -520,7 +520,7 @@ function HistoricalReplayTab() {
               <div className="bg-gray-800/50 rounded p-2"><div className="text-gray-500">Health Score</div><div className={healthColor(selectedSnap.platformHealthScore)}>{Number(selectedSnap.platformHealthScore).toFixed(0)}/100</div></div>
             </div>
           )}
-          {snapshots.length === 0 && <div className="text-center py-6 text-gray-600 text-sm">No history yet — click "Seed Demo Data" on Live Overview tab</div>}
+          {snapshots.length === 0 && <div className="text-center py-6 text-gray-600 text-sm">No history yet — data will appear once monitoring begins</div>}
         </div>
 
         {/* What-If Simulator */}
@@ -896,7 +896,7 @@ function AlertRulesTab({ socket }: { socket: Socket | null }) {
       {/* Rules List */}
       <div className="space-y-3">
         {(data?.rules || []).length === 0 && !showForm && (
-          <div className="text-center py-12 text-gray-600"><Settings size={40} className="mx-auto mb-3 opacity-30" /><div className="text-sm">No alert rules configured — create one above or seed demo data</div></div>
+          <div className="text-center py-12 text-gray-600"><Settings size={40} className="mx-auto mb-3 opacity-30" /><div className="text-sm">No alert rules configured — create one above to get started</div></div>
         )}
         {(data?.rules || []).map((rule: AlertRule) => (
           <div key={rule.id} data-testid={`rule-card-${rule.id}`} className={`p-4 rounded-xl border ${rule.isActive ? "bg-gray-900/40 border-gray-700/40" : "bg-gray-900/20 border-gray-800/40 opacity-60"}`}>

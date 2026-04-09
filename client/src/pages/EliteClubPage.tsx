@@ -21,7 +21,7 @@ const REQUIREMENTS = [
   { label: "Completed Projects", value: "50+", desc: "Successfully completed projects on the platform" },
   { label: "Minimum Rating", value: "4.8★", desc: "Consistent 5-star delivery over time" },
   { label: "Response Rate", value: ">95%", desc: "Respond to clients within 24 hours" },
-  { label: "Vetting Level", value: "Level 3+", desc: "Nuclear vetting system at minimum level 3" },
+  { label: "Vetting Level", value: "Level 3+", desc: "5-step verification at minimum level 3" },
 ];
 
 const HALL_OF_FAME = [

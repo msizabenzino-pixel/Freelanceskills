@@ -2,7 +2,7 @@ import { Link } from "wouter";
 
 const focusAreas = [
   { title: "Mobile-first public pages", value: "320px–4K" },
-  { title: "Nuclear vetting", value: "5 steps" },
+  { title: "5-step verification", value: "5 steps" },
   { title: "Trust infrastructure", value: "POPIA + AI" },
   { title: "Marketplace growth", value: "1M by 2031" },
 ];
@@ -20,7 +20,7 @@ export default function NuclearChallenge() {
       <div className="max-w-5xl mx-auto space-y-8">
         <header className="space-y-4">
           <p className="text-emerald-400 font-semibold uppercase tracking-[0.3em] text-xs" data-testid="text-challenge-kicker">
-            500B NUCLEAR 2026
+            FreelanceSkills 2026
           </p>
           <h1 className="text-4xl sm:text-6xl font-black leading-tight" data-testid="text-challenge-title">
             Freight-free growth, verified trust, and public pages that convert.
