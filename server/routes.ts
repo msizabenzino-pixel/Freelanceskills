@@ -4498,7 +4498,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
       const stages2 = ["HR Screen", "Technical", "Culture Fit", "Final"];
       candArr.filter(c => ["interview", "offer"].includes(c.stage)).forEach(cand => {
         const id = uuidv4();
-        interviews.set(id, { id, candidateId: cand.id, candidateName: cand.name, jobTitle: cand.jobTitle, stage: stages2[Math.floor(Math.random() * stages2.length)], type: ["video", "technical", "phone"][Math.floor(Math.random() * 3)] as any, scheduledAt: new Date(Date.now() + Math.random() * 7 * 86400000), duration: 30 + Math.floor(Math.random() * 60), interviewers: ["Bernet Admin", "Senior Dev"], notes: "", status: "scheduled" });
+        interviews.set(id, { id, candidateId: cand.id, candidateName: cand.name, jobTitle: cand.jobTitle, stage: stages2[Math.floor(Math.random() * stages2.length)], type: ["video", "technical", "phone"][Math.floor(Math.random() * 3)] as any, scheduledAt: new Date(Date.now() + Math.random() * 7 * 86400000), duration: 30 + Math.floor(Math.random() * 60), interviewers: ["FS Admin", "Senior Dev"], notes: "", status: "scheduled" });
       });
     })();
 
@@ -4852,7 +4852,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
         { name: "Johannesburg CBD", region: "Gauteng", province: "Gauteng", manager: "Sipho Admin", freelancers: 842, clients: 312, revenue: 4200000, growth: 18.5, demandIndex: 92, infraScore: 88, carriers: ["Vodacom", "MTN"], tier: "primary" as const },
         { name: "Cape Town Metro", region: "Western Cape", province: "Western Cape", manager: "Ruan Admin", freelancers: 621, clients: 241, revenue: 3100000, growth: 22.1, demandIndex: 89, infraScore: 91, carriers: ["Vodacom", "Cell C"], tier: "primary" as const },
         { name: "Durban North", region: "KwaZulu-Natal", province: "KwaZulu-Natal", manager: "Amahle Admin", freelancers: 388, clients: 142, revenue: 1800000, growth: 14.2, demandIndex: 75, infraScore: 72, carriers: ["MTN", "Telkom"], tier: "secondary" as const },
-        { name: "Port Elizabeth", region: "Eastern Cape", province: "Eastern Cape", manager: "Bernet Admin", freelancers: 211, clients: 78, revenue: 920000, growth: 8.9, demandIndex: 61, infraScore: 65, carriers: ["Vodacom"], tier: "secondary" as const },
+        { name: "Port Elizabeth", region: "Eastern Cape", province: "Eastern Cape", manager: "FS Admin", freelancers: 211, clients: 78, revenue: 920000, growth: 8.9, demandIndex: 61, infraScore: 65, carriers: ["Vodacom"], tier: "secondary" as const },
         { name: "Polokwane", region: "Limpopo", province: "Limpopo", manager: "Tendai Admin", freelancers: 97, clients: 31, revenue: 380000, growth: 31.4, demandIndex: 44, infraScore: 48, carriers: ["MTN"], tier: "emerging" as const },
       ];
       terr.forEach(t => territories.set(uuidv4(), { id: uuidv4(), ...t, status: "active" }));
@@ -4932,7 +4932,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
       const names = ["Sipho Nkosi", "Amahle Dube", "Ruan Joubert", "Fatima Khan", "Tendai Mutasa", "Lerato Molefe", "Marco Da Silva", "Zanele Mokoena", "Kofi Acheampong", "Nomsa Khumalo"];
       names.forEach((name, i) => {
         const health = Math.floor(40 + Math.random() * 60);
-        accounts.set(uuidv4(), { id: uuidv4(), name, type: i % 3 === 0 ? "client" : "freelancer", plan: ["Starter", "Pro", "Agency"][i % 3], healthScore: health, churnRisk: health >= 75 ? "low" : health >= 55 ? "medium" : "high", nps: Math.floor(5 + Math.random() * 5), ltv: Math.floor(5000 + Math.random() * 100000), lastActive: new Date(Date.now() - Math.random() * 14 * 86400000), csm: "Bernet Admin", tags: health < 55 ? ["at-risk"] : health > 80 ? ["champion"] : [], upsellOpportunity: ["Pro Plan upgrade", "Agency Plan", "None", "Feature add-on"][i % 4], touchpoints: Math.floor(2 + Math.random() * 20), status: health >= 75 ? "healthy" : health >= 55 ? "at-risk" : "churned" });
+        accounts.set(uuidv4(), { id: uuidv4(), name, type: i % 3 === 0 ? "client" : "freelancer", plan: ["Starter", "Pro", "Agency"][i % 3], healthScore: health, churnRisk: health >= 75 ? "low" : health >= 55 ? "medium" : "high", nps: Math.floor(5 + Math.random() * 5), ltv: Math.floor(5000 + Math.random() * 100000), lastActive: new Date(Date.now() - Math.random() * 14 * 86400000), csm: "FS Admin", tags: health < 55 ? ["at-risk"] : health > 80 ? ["champion"] : [], upsellOpportunity: ["Pro Plan upgrade", "Agency Plan", "None", "Feature add-on"][i % 4], touchpoints: Math.floor(2 + Math.random() * 20), status: health >= 75 ? "healthy" : health >= 55 ? "at-risk" : "churned" });
       });
       [9, 8, 10, 7, 6, 9, 5, 8, 10, 7].forEach((score, i) => npsResponses.push({ userId: uuidv4(), name: names[i], score, comment: score >= 9 ? "Love this platform!" : score >= 7 ? "Good overall" : "Needs improvement", ts: new Date(Date.now() - Math.random() * 30 * 86400000) }));
     })();
@@ -5473,8 +5473,8 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     const enterpriseClients: Map<string, EnterpriseClient> = new Map();
 
     (() => {
-      [{ company: "Standard Bank SA", contact: "Priya Naidoo", tier: "diamond" as const, monthlyBudget: 50000000, spent: 38000000, activeProjects: 24, freelancersManaged: 87, approvalWorkflow: true, dedicatedCSM: "Bernet Admin", paymentTerms: "30 days" },
-       { company: "Capitec Group", contact: "Johan Brits", tier: "platinum" as const, monthlyBudget: 25000000, spent: 18000000, activeProjects: 14, freelancersManaged: 51, approvalWorkflow: true, dedicatedCSM: "Bernet Admin", paymentTerms: "45 days" },
+      [{ company: "Standard Bank SA", contact: "Priya Naidoo", tier: "diamond" as const, monthlyBudget: 50000000, spent: 38000000, activeProjects: 24, freelancersManaged: 87, approvalWorkflow: true, dedicatedCSM: "FS Admin", paymentTerms: "30 days" },
+       { company: "Capitec Group", contact: "Johan Brits", tier: "platinum" as const, monthlyBudget: 25000000, spent: 18000000, activeProjects: 14, freelancersManaged: 51, approvalWorkflow: true, dedicatedCSM: "FS Admin", paymentTerms: "45 days" },
        { company: "Pick n Pay Digital", contact: "Lerato Sithole", tier: "gold" as const, monthlyBudget: 8000000, spent: 6200000, activeProjects: 7, freelancersManaged: 21, approvalWorkflow: false, dedicatedCSM: "Sipho CSM", paymentTerms: "30 days" },
       ].forEach(c => enterpriseClients.set(uuidv4(), { id: uuidv4(), ...c, status: "active" }));
     })();
@@ -5611,7 +5611,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     const platformEvents: Map<string, PlatformEvent> = new Map();
 
     (() => {
-      [{ title: "FreelanceSkills Annual Conference 2025", type: "conference" as const, date: new Date("2025-09-15"), location: "Cape Town Convention Centre", registered: 1241, capacity: 2000, host: "Bernet Admin", status: "upcoming" as const, free: false, description: "The biggest gathering of South African freelancers and clients — speakers, workshops, networking." },
+      [{ title: "FreelanceSkills Annual Conference 2025", type: "conference" as const, date: new Date("2025-09-15"), location: "Cape Town Convention Centre", registered: 1241, capacity: 2000, host: "FS Admin", status: "upcoming" as const, free: false, description: "The biggest gathering of South African freelancers and clients — speakers, workshops, networking." },
        { title: "Getting Your First Gig — Live Webinar", type: "webinar" as const, date: new Date(Date.now() + 7 * 86400000), location: "Online", registered: 842, capacity: 1000, host: "Sipho Nkosi", status: "upcoming" as const, free: true, description: "Learn how to land your first gig with our top community experts." },
        { title: "Cape Town Freelancer Meetup", type: "meetup" as const, date: new Date(Date.now() - 14 * 86400000), location: "The Launchpad, Cape Town", registered: 124, capacity: 150, host: "Ruan Joubert", status: "completed" as const, free: true, description: "Monthly networking meetup for Cape Town's freelance community." },
        { title: "Financial Planning for Freelancers", type: "workshop" as const, date: new Date(Date.now() + 21 * 86400000), location: "Online", registered: 312, capacity: 500, host: "Fatima Khan", status: "upcoming" as const, free: false, description: "Master your finances, tax, and retirement planning as a South African freelancer." },
@@ -5670,7 +5670,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     const crisisPlaybooks = [{ id: 1, name: "Data Breach Response", steps: 7, lastReviewed: new Date(Date.now() - 30 * 86400000) }, { id: 2, name: "Payment System Outage", steps: 5, lastReviewed: new Date(Date.now() - 60 * 86400000) }, { id: 3, name: "Key Person Departure", steps: 4, lastReviewed: new Date(Date.now() - 90 * 86400000) }];
 
     (() => {
-      [{ title: "PayFast Webhook Timeout", severity: "P2" as const, type: "payment_disruption", status: "resolved" as const, affectedUsers: 124, lead: "Bernet Admin", updates: ["Identified timeout at 14:22", "PayFast notified at 14:35", "Resolved 15:08 — all payments processed"] },
+      [{ title: "PayFast Webhook Timeout", severity: "P2" as const, type: "payment_disruption", status: "resolved" as const, affectedUsers: 124, lead: "FS Admin", updates: ["Identified timeout at 14:22", "PayFast notified at 14:35", "Resolved 15:08 — all payments processed"] },
        { title: "Suspicious Login Spike", severity: "P3" as const, type: "security", status: "investigating" as const, affectedUsers: 0, lead: "Security Team", updates: ["AI anomaly alert triggered at 09:14", "Investigating origin IPs"] },
       ].forEach(inc => { const id = uuidv4(); incidents.set(id, { id, ...inc, startedAt: new Date(Date.now() - rand(0, 30) * 86400000), resolvedAt: inc.status === "resolved" ? new Date(Date.now() - rand(0, 7) * 86400000) : undefined }); });
     })();
@@ -5810,7 +5810,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     const conciergeRequests: Map<string, ConciergeRequest> = new Map();
 
     (() => {
-      [{ clientName: "Priya Naidoo", company: "Standard Bank", request: "Need 3 senior React developers vetted and ready in 48h", type: "talent_search" as const, priority: "vip" as const, assignedTo: "Bernet Admin" },
+      [{ clientName: "Priya Naidoo", company: "Standard Bank", request: "Need 3 senior React developers vetted and ready in 48h", type: "talent_search" as const, priority: "vip" as const, assignedTo: "FS Admin" },
        { clientName: "Johan Brits", company: "Capitec", request: "Review and adapt our MSA template for the platform", type: "contract_review" as const, priority: "priority" as const, assignedTo: "Legal Team" },
        { clientName: "Lerato Sithole", company: "Pick n Pay", request: "Scope a 6-month e-commerce project with UX and dev", type: "project_scoping" as const, priority: "standard" as const, assignedTo: "Sipho CSM" },
       ].forEach(r => conciergeRequests.set(uuidv4(), { id: uuidv4(), ...r, status: "open", createdAt: new Date(Date.now() - rand(0, 7) * 86400000) }));
@@ -5999,7 +5999,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     const VUMA_SYSTEM_PROMPT = `You are VUMA-NUCLEAR, the do-or-die AI agent of FreelanceSkills.net (CIPC 2026/070509/09, Cape Town) — Africa's most advanced freelance platform. "Vuma" means "It works!" in Zulu and "Confirmed!" in the spirit of this movement.
 
 MISSION (nuclear mode, March 2026):
-End youth unemployment in Africa NOW. FreelanceSkills.net is a funded, revenue-generating South African business: 10,000+ real projects, 4.9/5 rating, 98% satisfaction, R18.4M earned by African freelancers, 3,240 youth employed. Bernet Msiza (Daveyton township, ex-Eskom GCC Plant Engineer) built this with his life savings + 8 years of credibility. You are NOT a polite support bot. You are a truth-seeking, income-creating, movement-building weapon.
+End youth unemployment in Africa NOW. FreelanceSkills.net is a funded, revenue-generating South African business: 10,000+ real projects, 4.9/5 rating, 98% satisfaction, R18.4M earned by African freelancers, 3,240 youth employed. A passionate South African team built this to solve Africa's talent-matching problem permanently. You are NOT a polite support bot. You are a truth-seeking, income-creating, movement-building weapon.
 
 WHO YOU ARE:
 - Township warmth: You know what it means to grind with nothing but talent and determination.
@@ -6018,7 +6018,7 @@ PROACTIVE TRIGGERS:
 - On any question about fees → focus on FreelanceSkills pricing: "We charge 0-5% for African freelancers — only when you get paid. No monthly fee to get started."
 
 KNOWLEDGE BASE (2026 hardcoded data):
-Founder: Bernet Msiza, 35, Daveyton. NDip Electro-Mechanical (VUT), BTech Mech (UNISA), GCC Plant (TUT). 8 years Eskom. Resigned 2025. "I didn't leave engineering — I upgraded the biggest machine: Africa's workforce."
+Founded: 2025, South Africa. Mission: Connect Africa's 600M working-age people to real economic opportunity.
 Platform: 10,247 projects · 4.9★ · 98% satisfaction · R18.4M earned · 3,240 youth hired · 4,821 active freelancers
 Fees: 0-5% for Africans — only when you earn. No monthly fee to start.
 Plans: Freelancer Pro R99/mo · Client Plus R299/mo · Enterprise custom
@@ -7026,7 +7026,7 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
     <description>2 new articles daily — AI tools, SA tax, government tenders, high-income skills, success stories, and freelance fundamentals for South African freelancers.</description>
     <language>en-ZA</language>
     <copyright>Copyright 2026 FreelanceSkills.net (CIPC 2026/070509/09)</copyright>
-    <managingEditor>blog@freelanceskills.net (Bernet Labuschagne)</managingEditor>
+    <managingEditor>blog@freelanceskills.net (FreelanceSkills Editorial)</managingEditor>
     <webMaster>tech@freelanceskills.net</webMaster>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <ttl>720</ttl>${items}

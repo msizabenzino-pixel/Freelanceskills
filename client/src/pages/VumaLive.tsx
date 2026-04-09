@@ -482,7 +482,7 @@ export default function VumaLive() {
             </div>
             <div className="flex-1">
               <h2 className="text-xl font-bold">30-Day Freelance Challenge</h2>
-              <p className="text-sm text-gray-400">One micro-task per day. Bernet completed all 30 before launching — now it's your turn.</p>
+              <p className="text-sm text-gray-400">One micro-task per day. Complete all 30 to build unstoppable momentum — start today.</p>
             </div>
             <button onClick={() => setChallengeOpen(o => !o)} data-testid="toggle-challenge"
               className="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-sm font-medium transition-colors">
@@ -572,7 +572,7 @@ export default function VumaLive() {
               </a>
             ))}
           </div>
-          <p className="text-xs text-gray-600 mt-4">CIPC 2026/070509/09 · Bernet Msiza · Daveyton → Africa → World</p>
+          <p className="text-xs text-gray-600 mt-4">CIPC 2026/070509/09 · FreelanceSkills.net · Africa → World</p>
         </section>
       </div>
       <Footer />

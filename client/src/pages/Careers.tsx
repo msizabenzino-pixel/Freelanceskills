@@ -281,23 +281,20 @@ export default function Careers() {
             <div className="bg-card border border-border rounded-2xl p-8 md:p-12 shadow-sm">
               <div className="flex items-center gap-4 mb-8">
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-white font-black text-2xl flex-shrink-0">
-                  BM
+                  FS
                 </div>
                 <div>
-                  <div className="font-bold text-foreground text-lg">Ben Msiza</div>
-                  <div className="text-muted-foreground text-sm">Founder & CEO, FreelanceSkills</div>
-                  <div className="text-xs text-muted-foreground">GCC · B-Tech Mechanical · CIPC 2026/070509/09</div>
+                  <div className="font-bold text-foreground text-lg">FreelanceSkills Leadership</div>
+                  <div className="text-muted-foreground text-sm">FreelanceSkills.net</div>
+                  <div className="text-xs text-muted-foreground">CIPC 2026/070509/09 · South Africa</div>
                 </div>
               </div>
               <blockquote className="text-foreground text-lg leading-relaxed italic mb-6">
-                "I spent over a decade at Eskom solving complex engineering problems with teams across South Africa. Then I left and tried to run my own businesses — and the biggest problem wasn't capital or customers. It was finding reliable, verified, skilled people to help me build.
+                "Africa has no shortage of talent — it has a shortage of platforms that take that talent seriously. We built FreelanceSkills to change that permanently.
                 <br /><br />
-                FreelanceSkills exists to solve that problem permanently. If you want to help build Africa's future of work — not just talk about it — come join us."
+                FreelanceSkills exists to connect Africa's best people with the work they deserve. If you want to help build Africa's future of work — not just talk about it — come join us."
               </blockquote>
               <div className="flex flex-wrap gap-3">
-                <Button onClick={() => navigate("/about")} variant="outline" data-testid="button-careers-about">
-                  Read Ben's Full Story
-                </Button>
                 <a href="mailto:careers@freelanceskills.co.za" data-testid="button-careers-email">
                   <Button className="bg-primary hover:bg-primary/90">
                     <Mail className="w-4 h-4 mr-2" /> Email Us Directly

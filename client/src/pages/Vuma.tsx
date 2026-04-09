@@ -1039,7 +1039,7 @@ export default function VumaUltimate() {
         </div>
 
         <div className="mt-4 text-center text-xs text-gray-700">
-          CIPC 2026/070509/09 · Bernet Msiza · Daveyton → Africa → World · "Vuma!" means It works! in Zulu
+          CIPC 2026/070509/09 · FreelanceSkills.net · "Vuma!" means It works! in Zulu
         </div>
       </div>
 

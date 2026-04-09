@@ -32,7 +32,7 @@ export const BLOG_CATEGORIES = [
 
 export const BLOG_AUTHORS = [
   {
-    name: "Bernet Labuschagne",
+    name: "FreelanceSkills Editorial Team",
     slug: "bernet-labuschagne",
     bio: "Founder of FreelanceSkills.net (CIPC 2026/070509/09). 15+ years in SA digital business. Building the platform that ends youth unemployment in Africa.",
     role: "Founder & CEO",

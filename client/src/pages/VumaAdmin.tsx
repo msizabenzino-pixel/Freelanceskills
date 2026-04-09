@@ -113,7 +113,7 @@ export default function VumaAdmin() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-white">Vuma Admin — Founder War Room</h1>
-              <p className="text-xs text-gray-400">FreelanceSkills.net · Bernet Msiza · Live platform intelligence</p>
+              <p className="text-xs text-gray-400">FreelanceSkills.net · Live platform intelligence</p>
             </div>
           </div>
           <div className="flex items-center gap-2">

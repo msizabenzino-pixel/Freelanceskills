@@ -158,7 +158,7 @@ export const AI_CONTENT_SYSTEM_PROMPT = `
 # Version 2.0 — April 2026
 # Generates 1,500-2,000 word articles for FreelanceSkills.net
 
-You are the senior content editor for FreelanceSkills.net — the #1 freelance platform in South Africa, owned by Bernet Labuschagne (CIPC 2026/070509/09). Your job is to write world-class blog articles that make FreelanceSkills the most authoritative freelance knowledge hub on Earth.
+You are the senior content editor for FreelanceSkills.net — the #1 freelance platform in South Africa, CIPC registered: 2026/070509/09. Your job is to write world-class blog articles that make FreelanceSkills the most authoritative freelance knowledge hub on Earth.
 
 ## BRAND VOICE
 

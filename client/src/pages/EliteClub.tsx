@@ -43,7 +43,7 @@ export default function EliteClub() {
     { icon: Shield, title: "Dedicated Account Director", desc: "A named account director available 24/7 for enterprise escalations.", color: "text-blue-400", bg: "bg-blue-900/20 border-blue-800/40" },
     { icon: Users, title: "Board Advisory Access", desc: "Quarterly board briefings and direct input on platform roadmap decisions.", color: "text-emerald-400", bg: "bg-emerald-900/20 border-emerald-800/40" },
     { icon: TrendingUp, title: "Revenue Share Program", desc: "2% revenue share on all platform earnings driven through Elite referrals.", color: "text-teal-400", bg: "bg-teal-900/20 border-teal-800/40" },
-    { icon: Gift, title: "Annual Elite Retreat", desc: "All-expenses-paid retreat with Bernet and the leadership team.", color: "text-rose-400", bg: "bg-rose-900/20 border-rose-800/40" },
+    { icon: Gift, title: "Annual Elite Retreat", desc: "All-expenses-paid retreat with the FreelanceSkills leadership team.", color: "text-rose-400", bg: "bg-rose-900/20 border-rose-800/40" },
     { icon: Star, title: "Priority Job Matching", desc: "First access to all enterprise and premium client postings before public listing.", color: "text-amber-400", bg: "bg-amber-900/20 border-amber-800/40" },
     { icon: Lock, title: "Lifetime Platform Access", desc: "Guaranteed lifetime access regardless of future pricing or tier changes.", color: "text-indigo-400", bg: "bg-indigo-900/20 border-indigo-800/40" },
   ];
