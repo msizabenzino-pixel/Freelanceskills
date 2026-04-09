@@ -113,7 +113,7 @@ export default function Enterprise() {
       <main id="main-content" role="main">
         <section className="bg-primary text-white pt-32 pb-20">
           <div className="container mx-auto px-4 md:px-6 text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-accent text-sm font-medium mb-6">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-accent text-sm font-medium mb-6">
               <Building2 className="w-4 h-4" /> For Corporates & Government
             </div>
             <h1 className="text-4xl md:text-5xl font-display font-bold mb-6" data-testid="text-enterprise-heading">
@@ -122,14 +122,14 @@ export default function Enterprise() {
             <p className="text-xl text-white/80 max-w-3xl mx-auto mb-8">
               Bulk hiring, tender integration, and youth employment programs — all on one platform built for South Africa's largest employers.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-accent text-primary hover:bg-accent/90 font-bold gap-2" data-testid="button-contact-sales-hero" onClick={scrollToForm}>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button size="lg" className="bg-accent text-primary hover:bg-accent/90 font-bold gap-2" data-testid="button-contact-sales-hero" onClick={scrollToForm}>
                   <Phone className="h-4 w-4" /> Contact Sales
                 </Button>
-              <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 gap-2" data-testid="button-learn-more" onClick={() => navigate("/how-it-works")}>
+                <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 gap-2" data-testid="button-learn-more" onClick={() => navigate("/how-it-works")}>
                   Learn More <ArrowRight className="h-4 w-4" />
                 </Button>
-            </div>
+              </div>
           </div>
         </section>
 
@@ -217,8 +217,8 @@ export default function Enterprise() {
                 </div>
 
                 <Button size="lg" className="bg-primary text-white hover:bg-primary/90 font-bold gap-2 px-8" data-testid="button-contact-sales-pricing" onClick={scrollToForm}>
-                    <Phone className="h-4 w-4" /> Contact Sales
-                  </Button>
+                  <Phone className="h-4 w-4" /> Contact Sales
+                </Button>
               </div>
             </div>
           </div>

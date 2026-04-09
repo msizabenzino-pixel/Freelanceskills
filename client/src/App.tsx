@@ -443,8 +443,8 @@ function Router() {
         <Route path="/vetting/skills" component={VettingSkills} />
         <Route path="/vetting/education" component={VettingEducation} />
         <Route path="/vetting/background" component={VettingBackground} />
-          <Route path="/nuclear-challenge" component={NuclearChallenge} />
-          <Route path="/challenge" component={TalentRevolutionChallenge} />
+        <Route path="/nuclear-challenge" component={NuclearChallenge} />
+        <Route path="/challenge" component={TalentRevolutionChallenge} />
         <Route path="/academy" component={Academy} />
         <Route path="/academy/catalog" component={AcademyCatalog} />
         <Route path="/academy/:id" component={AcademyCourseDetail} />
