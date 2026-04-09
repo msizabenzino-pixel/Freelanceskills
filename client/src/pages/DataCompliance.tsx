@@ -183,7 +183,7 @@ function DsrQueueTab() {
               {["POPIA", "GDPR", "CCPA", "NDPR", "LGPD", "DPA"].map(j => <option key={j} value={j}>{j}</option>)}
             </select>
             <select data-testid="select-dsr-language" value={form.consent_language} onChange={e => setForm(f => ({ ...f, consent_language: e.target.value }))} className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-300">
-              {[["en","English"],["zu","isiZulu"],["xh","isiXhosa"],["af","Afrikaans"],["sw","Kiswahili"],["ha","Hausa"],["yo","Yoruba"],["fr","Français"]].map(([c, l]) => <option key={c} value={c}>{l}</option>)}
+              {[["en","English"],["zu","isiZulu"],["xh","isiXhosa"],["af","Afrikaans"],["sw","Kiswahili"],["ha","Hausa"],["yo","Yoruba"],["fr","Français"],["ar","Arabic"],["pcm","Nigerian Pidgin"]].map(([c, l]) => <option key={c} value={c}>{l}</option>)}
             </select>
             <textarea data-testid="input-dsr-desc" placeholder="Description" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={2} className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-300 col-span-2 resize-none" />
           </div>
@@ -854,7 +854,7 @@ function AfricaTab() {
       <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-4">
         <h3 className="text-xs font-semibold text-violet-300 mb-3 flex items-center gap-1.5"><Languages size={11} /> Consent Engine — 8 Languages (POPIA s.11 informed consent)</h3>
         <div className="flex flex-wrap gap-2 mb-4">
-          {[["en","English"],["zu","isiZulu"],["xh","isiXhosa"],["af","Afrikaans"],["sw","Kiswahili"],["ha","Hausa"],["yo","Yoruba"],["fr","Français"]].map(([code, label]) => (
+          {[["en","English"],["zu","isiZulu"],["xh","isiXhosa"],["af","Afrikaans"],["sw","Kiswahili"],["ha","Hausa"],["yo","Yoruba"],["fr","Français"],["ar","Arabic"],["pcm","Nigerian Pidgin"]].map(([code, label]) => (
             <button key={code} data-testid={`lang-btn-${code}`} onClick={() => loadLanguage(code)} className={`px-3 py-1.5 rounded-lg text-xs transition-all ${selectedLang === code ? "bg-violet-900/50 text-violet-300 border border-violet-700/40" : "bg-gray-800 text-gray-500 hover:text-gray-300"}`}>{label}</button>
           ))}
         </div>

@@ -158,7 +158,7 @@ export default function Accessibility() {
                 <Globe className="w-8 h-8 inline-block mr-2 mb-1" />
                 Language Support
               </h2>
-              <p className="text-muted-foreground text-lg">All 11 official South African languages plus Portuguese, French & Swahili</p>
+              <p className="text-muted-foreground text-lg">All 11 official South African languages plus Portuguese, French, Swahili, Hausa, Arabic, and Nigerian Pidgin</p>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 max-w-6xl mx-auto mb-12">

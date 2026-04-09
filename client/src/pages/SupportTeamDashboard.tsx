@@ -44,7 +44,7 @@ const AGENT_STATUS_CLR: Record<string, string> = { online:"text-emerald-400", bu
 const CHANNEL_ICONS: Record<string, string> = { chat:"💬", email:"📧", whatsapp:"📱", ussd:"📳", sms:"💌", in_app:"🔔" };
 const SLA_RISK_CLR: Record<string, string> = { ok:"text-emerald-400", warning:"text-amber-400", critical:"text-red-400", breached:"text-red-600 font-bold", unknown:"text-zinc-500" };
 const CHART_COLORS = ["#8b5cf6","#3b82f6","#10b981","#f97316","#ef4444","#eab308","#ec4899","#14b8a6"];
-const LANGUAGES = [{ code:"en", label:"🇬🇧 English" }, { code:"sw", label:"🇰🇪 Swahili" }, { code:"zu", label:"🇿🇦 Zulu" }, { code:"af", label:"🇿🇦 Afrikaans" }, { code:"ha", label:"🇳🇬 Hausa" }];
+const LANGUAGES = [{ code:"en", label:"🇬🇧 English" }, { code:"sw", label:"🇰🇪 Swahili" }, { code:"zu", label:"🇿🇦 Zulu" }, { code:"af", label:"🇿🇦 Afrikaans" }, { code:"ha", label:"🇳🇬 Hausa" }, { code:"ar", label:"🇸🇦 Arabic" }, { code:"pcm", label:"🇳🇬 Nigerian Pidgin" }];
 
 // ─── Shared Components ────────────────────────────────────────────────────────
 function StatCard({ label, value, sub, color }: { label: string; value: string|number; sub?: string; color: string }) {
@@ -959,7 +959,7 @@ function AfricaIntelTab() {
     <div className="space-y-5">
       <div>
         <h3 className="font-semibold text-zinc-100 text-lg">🌍 Africa-First Intelligence</h3>
-        <div className="text-zinc-500 text-sm mt-1">USSD zero-data ticket creation · Voice-to-text (Swahili/Zulu/Hausa/Xhosa) · Mobile money transaction lookup · WhatsApp Business integration</div>
+        <div className="text-zinc-500 text-sm mt-1">USSD zero-data ticket creation · Voice-to-text (Swahili/Zulu/Hausa/Xhosa/Arabic/Nigerian Pidgin) · Mobile money transaction lookup · WhatsApp Business integration</div>
       </div>
 
       {/* Africa stats */}
@@ -1004,7 +1004,7 @@ function AfricaIntelTab() {
         {/* Voice ticket */}
         <div className="bg-zinc-800/50 border border-zinc-700 rounded-xl p-4">
           <h4 className="font-semibold text-zinc-200 mb-1">🎤 Voice-to-Text Ticket</h4>
-          <div className="text-zinc-500 text-xs mb-3">AI transcribes voice messages. Supports Swahili · Zulu · Hausa · Xhosa · Afrikaans. Live Google/AWS Transcribe integration in Q2 2026.</div>
+          <div className="text-zinc-500 text-xs mb-3">AI transcribes voice messages. Supports Swahili · Zulu · Hausa · Xhosa · Afrikaans · Arabic · Nigerian Pidgin. Live Google/AWS Transcribe integration in Q2 2026.</div>
           <div className="space-y-2">
             <div><Label className="text-zinc-300 text-xs">Language</Label><Select value={voiceLang} onValueChange={setVoiceLang}><SelectTrigger className="bg-zinc-800 border-zinc-700 text-zinc-100 mt-1"><SelectValue /></SelectTrigger><SelectContent className="bg-zinc-800 border-zinc-700 text-zinc-100">{LANGUAGES.map(l => <SelectItem key={l.code} value={l.code}>{l.label}</SelectItem>)}</SelectContent></Select></div>
             <div><Label className="text-zinc-300 text-xs">Phone Number</Label><Input value={voicePhone} onChange={e => setVoicePhone(e.target.value)} placeholder="+254712345678" className="bg-zinc-800 border-zinc-700 text-zinc-100 mt-1 font-mono" /></div>

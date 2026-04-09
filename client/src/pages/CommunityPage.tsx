@@ -165,7 +165,7 @@ export default function CommunityPage() {
               { icon: <Trophy className="w-6 h-6" />, title: "Community Leaderboard", desc: "Earn points for helpful posts. Top contributors earn Elite Club membership" },
               { icon: <Shield className="w-6 h-6" />, title: "Verified Members Only", desc: "Posts by verified freelancers are marked for extra credibility" },
               { icon: <Sparkles className="w-6 h-6" />, title: "AI-Moderated Quality", desc: "Our AI removes spam and flags unhelpful content automatically" },
-              { icon: <Globe className="w-6 h-6" />, title: "Pan-African Reach", desc: "12 countries. English, Zulu, Xhosa, Afrikaans, Swahili and more" },
+              { icon: <Globe className="w-6 h-6" />, title: "Pan-African Reach", desc: "12 countries. English, Zulu, Xhosa, Afrikaans, Swahili, French, Hausa, Arabic, and Nigerian Pidgin" },
             ].map((f, i) => (
               <div key={i} className="p-6 bg-slate-900 border border-slate-800 rounded-2xl hover:border-emerald-500/30 transition-all group">
                 <div className="w-10 h-10 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center text-emerald-400 mb-4 group-hover:bg-emerald-500/20 transition-all">

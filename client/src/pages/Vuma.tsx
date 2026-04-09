@@ -98,7 +98,7 @@ const COURSE_STEPS = [
   "Deliver & Delight: 5-Star Frameworks",
 ];
 
-const LANGUAGES = ["English", "Zulu", "Xhosa", "Afrikaans", "Swahili", "French", "Portuguese", "Shona"];
+const LANGUAGES = ["English", "Zulu", "Xhosa", "Afrikaans", "Swahili", "French", "Portuguese", "Shona", "Hausa", "Arabic", "Nigerian Pidgin"];
 
 const GEO_COLORS = ["#10b981", "#3b82f6", "#8b5cf6", "#f59e0b", "#ef4444"];
 
