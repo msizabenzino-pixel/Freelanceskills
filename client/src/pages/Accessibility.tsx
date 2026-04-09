@@ -41,6 +41,9 @@ const languages = [
   { code: "pt", name: "Portuguese", native: "Português", flag: "🇵🇹", status: "live" },
   { code: "fr", name: "French", native: "Français", flag: "🇫🇷", status: "live" },
   { code: "sw", name: "Swahili", native: "Kiswahili", flag: "🇰🇪", status: "live" },
+  { code: "ha", name: "Hausa", native: "Hausa", flag: "🇳🇬", status: "beta" },
+  { code: "ar", name: "Arabic", native: "العربية", flag: "🇸🇦", status: "beta" },
+  { code: "pcm", name: "Nigerian Pidgin", native: "Nigerian Pidgin", flag: "🇳🇬", status: "beta" },
 ];
 
 const sampleTranslations: Record<string, { greeting: string; tagline: string; cta: string }> = {
@@ -58,6 +61,9 @@ const sampleTranslations: Record<string, { greeting: string; tagline: string; ct
   pt: { greeting: "Bem-vindo ao FreelanceSkills", tagline: "Encontre profissionais qualificados perto de si", cta: "Começar" },
   fr: { greeting: "Bienvenue sur FreelanceSkills", tagline: "Trouvez des professionnels qualifiés près de chez vous", cta: "Commencer" },
   sw: { greeting: "Karibu FreelanceSkills", tagline: "Pata wataalamu wenye ujuzi karibu nawe", cta: "Anza Sasa" },
+  ha: { greeting: "Barka da zuwa FreelanceSkills", tagline: "Nemo kwararru kusa da kai", cta: "Fara Yanzu" },
+  ar: { greeting: "مرحبًا بك في FreelanceSkills", tagline: "اعثر على محترفين مهرة بالقرب منك", cta: "ابدأ الآن" },
+  pcm: { greeting: "Welkam to FreelanceSkills", tagline: "Find correct professionals we dey near you", cta: "Start Now" },
 };
 
 const accessibilityFeatures = [
