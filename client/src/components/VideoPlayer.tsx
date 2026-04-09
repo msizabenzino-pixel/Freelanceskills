@@ -50,17 +50,13 @@ export function VideoPlayer({
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const aspectClass = aspectRatio === "video" ? "aspect-video" : "aspect-square";
-  const isPlayable = Boolean(youtubeId || videoSrc);
+  const isPlayable = Boolean(youtubeId || videoSrc || youtubeSearchQuery);
 
   const handlePlay = () => {
     if (isPlayable) {
       setIsPlaying(true);
     } else if (youtubeSearchQuery) {
-      window.open(
-        `https://www.youtube.com/results?search_query=${encodeURIComponent(youtubeSearchQuery)}`,
-        "_blank",
-        "noopener noreferrer"
-      );
+      window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(youtubeSearchQuery)}`, "_blank", "noopener noreferrer");
     }
   };
 
@@ -150,7 +146,6 @@ export function VideoPlayer({
                 </div>
               </button>
             ) : (
-              /* No video source at all — honest "coming soon" with no fake play */
               <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
                 <span className="text-white/80 text-xs font-medium bg-black/50 px-3 py-1.5 rounded-full tracking-wide">
                   Video preview available soon
@@ -170,7 +165,7 @@ export function VideoPlayer({
               )}
             </div>
 
-            {/* Language selector — only shown when there's real playable content */}
+            {/* Language selector — shown for playable or searchable content */}
             {isPlayable && (
               <div className="absolute top-3 right-3 z-20" onClick={(e) => e.stopPropagation()}>
                 <DropdownMenu>
