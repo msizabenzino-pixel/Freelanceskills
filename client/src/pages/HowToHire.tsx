@@ -3,6 +3,7 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
 import { VideoPlayer, VideoLanguageInfo } from "@/components/VideoPlayer";
+import guideThumb from "@assets/image_1775734099920.png";
 import { 
   Search, 
   MessageSquare, 
@@ -60,12 +61,12 @@ export default function HowToHire() {
                 <VideoPlayer 
                   title="How to Post a Job"
                   duration="3:15 min"
-                  thumbnail="https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&auto=format"
+                  thumbnail={guideThumb}
                 />
                 <VideoPlayer 
                   title="Instant Booking a Tasker"
                   duration="2:45 min"
-                  thumbnail="https://images.unsplash.com/photo-1560472355-536de3962603?w=400&auto=format"
+                  thumbnail={guideThumb}
                 />
               </div>
             </div>

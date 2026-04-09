@@ -117,6 +117,7 @@ export function VideoPlayer({
               src={thumbnail}
               alt={title}
               className="w-full h-full object-cover opacity-60 group-hover:opacity-75 transition-opacity duration-200"
+              data-testid={`img-video-thumbnail-${title.toLowerCase().replace(/\s+/g, "-")}`}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
@@ -152,7 +153,7 @@ export function VideoPlayer({
               /* No video source at all — honest "coming soon" with no fake play */
               <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
                 <span className="text-white/80 text-xs font-medium bg-black/50 px-3 py-1.5 rounded-full tracking-wide">
-                  Video Coming Soon
+                  Video preview available soon
                 </span>
               </div>
             )}

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
 import { VideoPlayer, VideoLanguageInfo } from "@/components/VideoPlayer";
 import { useCurrency } from "@/lib/currency";
+import guideThumb from "@assets/image_1775734099920.png";
 import { 
   User, 
   Shield, 
@@ -62,19 +63,19 @@ export default function HowToGetHired() {
                 <VideoPlayer
                   title="Creating a Winning Profile"
                   duration="4:20 min"
-                  thumbnail="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format"
+                  thumbnail={guideThumb}
                   youtubeSearchQuery="how to create a winning freelancer profile south africa"
                 />
                 <VideoPlayer
                   title="Getting Verified"
                   duration="3:10 min"
-                  thumbnail="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=400&auto=format"
+                  thumbnail={guideThumb}
                   youtubeSearchQuery="freelancer identity verification FICA south africa"
                 />
                 <VideoPlayer
                   title="Your First Client"
                   duration="5:30 min"
-                  thumbnail="https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&auto=format"
+                  thumbnail={guideThumb}
                   youtubeSearchQuery="how to get your first freelance client south africa"
                 />
               </div>
