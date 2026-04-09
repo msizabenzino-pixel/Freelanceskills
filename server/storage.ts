@@ -12,12 +12,13 @@ import {
   type AuditLog, type InsertAuditLog,
   type EscrowTransaction, type InsertEscrowTransaction,
   type PremiumTier, type InsertPremiumTier,
+  type Dispute, type InsertDispute,
   jobs, profiles, servicePackages, bookings, reviews, conversations, messages,
   freelancerVerifications, privateFeedback, enterpriseLeads, aggregatedJobs, jobApplications,
   businessInvitations, referrals, courses, lessons, courseProgress, certificates, notifications,
-  fraudFlags, auditLogs, escrowTransactions, premiumTiers
+  fraudFlags, auditLogs, escrowTransactions, premiumTiers, disputes
 } from "@shared/schema";
-import { db } from "./db";
+import { db, pool } from "./db";
 import { eq, and, or, sql, desc, count } from "drizzle-orm";
 
 export interface IStorage {
@@ -162,6 +163,9 @@ export interface IStorage {
   // Premium tier operations (#45)
   getPremiumTier(userId: string): Promise<PremiumTier | undefined>;
   upsertPremiumTier(tier: InsertPremiumTier): Promise<PremiumTier>;
+
+  // Raw SQL query (used by routes that need complex JOINs)
+  query(sql: string, params?: any[]): Promise<any[]>;
 }
 
 class DatabaseStorage implements IStorage {
@@ -1243,6 +1247,16 @@ class DatabaseStorage implements IStorage {
     }
     const [created] = await db.insert(premiumTiers).values(tier).returning();
     return created;
+  }
+
+  async query(sqlStr: string, params?: any[]): Promise<any[]> {
+    const client = await pool.connect();
+    try {
+      const result = await client.query(sqlStr, params);
+      return result.rows;
+    } finally {
+      client.release();
+    }
   }
 }
 

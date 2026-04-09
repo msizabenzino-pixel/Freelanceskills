@@ -171,18 +171,41 @@ export async function registerRoutes(
         const myJobs = allJobs.filter(j => j.clientId === userId);
         const myBookings = bookings.filter(b => b.clientId === userId);
         const completedBookings = myBookings.filter(b => b.status === "completed");
+
+        // Fetch real application counts for each job
+        const jobIds = myJobs.map(j => j.id);
+        let appCounts: Record<string, number> = {};
+        if (jobIds.length > 0) {
+          try {
+            const rows = await storage.query(
+              `SELECT job_id, COUNT(*)::int AS cnt FROM job_applications WHERE job_id = ANY($1) GROUP BY job_id`,
+              [jobIds]
+            );
+            rows.forEach((r: any) => { appCounts[r.job_id] = r.cnt; });
+          } catch (_) { /* non-fatal */ }
+        }
+
+        // Fetch average rating given by this client from reviews table
+        let avgRatingGiven = 0;
+        try {
+          const ratingRows = await storage.query(
+            `SELECT COALESCE(AVG(rating), 0)::float AS avg FROM reviews WHERE reviewer_id = $1`,
+            [userId]
+          );
+          avgRatingGiven = parseFloat((ratingRows[0]?.avg || 0).toFixed(1));
+        } catch (_) { /* non-fatal */ }
         
         stats.client = {
           activeJobs: myJobs.map(j => ({
             ...j,
-            applicantCount: 0, // Placeholder, would need application counts
+            applicantCount: appCounts[j.id] || 0,
           })),
           escrowBalance: myBookings
             .filter(b => b.status === "confirmed" || b.status === "in_progress" || b.status === "delivered")
             .reduce((sum, b) => sum + b.totalAmount, 0),
           totalSpent: completedBookings.reduce((sum, b) => sum + b.totalAmount, 0),
           activeProjectsCount: myBookings.filter(b => b.status === "in_progress" || b.status === "delivered").length,
-          avgRatingGiven: 0, // Placeholder
+          avgRatingGiven,
         };
       }
 
@@ -201,14 +224,18 @@ export async function registerRoutes(
             .reduce((sum, b) => sum + b.totalAmount, 0),
           referralStats,
           activeGigs: myBookings.filter(b => b.status === "in_progress" || b.status === "delivered"),
-          earningsHistory: [ // Placeholder for chart
-            { month: "Jan", amount: 0 },
-            { month: "Feb", amount: 0 },
-            { month: "Mar", amount: 0 },
-            { month: "Apr", amount: 0 },
-            { month: "May", amount: 0 },
-            { month: "Jun", amount: 0 },
-          ]
+          earningsHistory: (() => {
+            const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+            const now = new Date();
+            return Array.from({ length: 6 }, (_, i) => {
+              const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
+              const monthName = months[d.getMonth()];
+              const amount = completedBookings
+                .filter(b => b.createdAt && new Date(b.createdAt).getMonth() === d.getMonth() && new Date(b.createdAt).getFullYear() === d.getFullYear())
+                .reduce((sum, b) => sum + b.totalAmount, 0);
+              return { month: monthName, amount };
+            });
+          })()
         };
       }
 
@@ -220,10 +247,18 @@ export async function registerRoutes(
   });
 
   // Job routes
-  app.get("/api/jobs", async (req, res) => {
+  app.get("/api/jobs", async (req: any, res) => {
     try {
-      const { q, category, locationType, minBudget, maxBudget, status } = req.query;
+      const { q, category, locationType, minBudget, maxBudget, status, clientId } = req.query;
       let allJobs = await storage.getAllJobs();
+
+      // Filter by clientId — "me" resolves to the authenticated user's ID
+      if (clientId) {
+        const resolvedClientId = clientId === "me" ? (req.session as any)?.userId : (clientId as string);
+        if (resolvedClientId) {
+          allJobs = allJobs.filter((j) => j.clientId === resolvedClientId);
+        }
+      }
 
       if (q) {
         const qLower = (q as string).toLowerCase();
@@ -249,7 +284,8 @@ export async function registerRoutes(
       }
       if (status) {
         allJobs = allJobs.filter((j) => j.status === status);
-      } else {
+      } else if (!clientId) {
+        // Only filter to open/in_progress when not fetching a specific client's jobs
         allJobs = allJobs.filter((j) => j.status === "open" || j.status === "in_progress");
       }
 

@@ -160,8 +160,18 @@ export default function FreelancerProfile() {
   const hourlyRate = profile.hourlyRate || 0;
   const skills = profile.skills || [];
   const isOwnProfile = user?.id === id;
-  const reviews: Array<{ id: string; rating?: number; comment?: string; createdAt?: Date | string | null }> = [];
-  const isLoadingReviews = false;
+
+  const reviewsQuery = useQuery({
+    queryKey: ["freelancer-reviews", id],
+    queryFn: async () => {
+      const res = await fetch(`/api/freelancers/${id}/reviews`);
+      if (!res.ok) return [];
+      return res.json();
+    },
+    enabled: Boolean(id),
+  });
+  const reviews: Array<{ id: string; rating?: number; comment?: string; createdAt?: Date | string | null }> = reviewsQuery.data ?? [];
+  const isLoadingReviews = reviewsQuery.isLoading;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
