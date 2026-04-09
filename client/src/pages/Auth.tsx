@@ -170,11 +170,7 @@ export default function Auth() {
   });
 
   const validateSignupProfile = (): boolean => {
-    const skillsCount = formData.skills
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean).length;
-    const years = Number(formData.yearsExperience);
+    const isClient = formData.userType === "client";
 
     if (!formData.firstName.trim() || !formData.lastName.trim()) {
       toast({ title: "Missing details", description: "First and last name are required.", variant: "destructive" });
@@ -188,22 +184,32 @@ export default function Auth() {
       toast({ title: "Missing details", description: "Location is required.", variant: "destructive" });
       return false;
     }
-    if (!formData.title.trim()) {
-      toast({ title: "Missing details", description: "Professional title is required.", variant: "destructive" });
-      return false;
+
+    if (!isClient) {
+      const skillsCount = formData.skills
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean).length;
+      const years = Number(formData.yearsExperience);
+
+      if (!formData.title.trim()) {
+        toast({ title: "Missing details", description: "Professional title is required.", variant: "destructive" });
+        return false;
+      }
+      if (skillsCount < 2) {
+        toast({ title: "Missing details", description: "Add at least 2 skills (comma separated).", variant: "destructive" });
+        return false;
+      }
+      if (Number.isNaN(years) || years < 0 || years > 50) {
+        toast({ title: "Invalid value", description: "Years of experience must be between 0 and 50.", variant: "destructive" });
+        return false;
+      }
+      if (formData.bio.trim().length < 40) {
+        toast({ title: "Missing details", description: "Bio must be at least 40 characters for job applications.", variant: "destructive" });
+        return false;
+      }
     }
-    if (skillsCount < 2) {
-      toast({ title: "Missing details", description: "Add at least 2 skills (comma separated).", variant: "destructive" });
-      return false;
-    }
-    if (Number.isNaN(years) || years < 0 || years > 50) {
-      toast({ title: "Invalid value", description: "Years of experience must be between 0 and 50.", variant: "destructive" });
-      return false;
-    }
-    if (formData.bio.trim().length < 40) {
-      toast({ title: "Missing details", description: "Bio must be at least 40 characters for job applications.", variant: "destructive" });
-      return false;
-    }
+
     return true;
   };
 

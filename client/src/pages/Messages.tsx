@@ -1,4 +1,5 @@
 import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import { AuthGuard } from "@/components/AuthGuard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -1060,9 +1061,10 @@ export default function Messages() {
         <ContractBuilder
           open={showContract}
           onClose={() => setShowContract(false)}
-          onComplete={(contract: any) => console.log("Contract created:", contract)}
+          onComplete={() => {}}
         />
       </div>
+      <Footer />
     </AuthGuard>
   );
 }

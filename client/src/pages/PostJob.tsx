@@ -65,6 +65,7 @@ export default function PostJob() {
       locationType: string;
       location?: string;
       budget: number;
+      skills?: string[];
     }) => {
       const response = await fetch("/api/jobs", {
         method: "POST",
@@ -116,6 +117,7 @@ export default function PostJob() {
       locationType,
       location: locationType === "onsite" && location.trim() ? location.trim() : undefined,
       budget: Math.round(budgetRands * 100),
+      skills,
     });
   };
 

@@ -88,12 +88,10 @@ export default function ClientDashboard() {
     },
   });
 
-  if (!jobs) return <div>Loading...</div>;
-
-  const openJobs = jobs.filter(j => j.status === "open").length;
-  const activeJobs = jobs.filter(j => ["hired", "in_progress"].includes(j.status)).length;
-  const completedJobs = jobs.filter(j => j.status === "completed").length;
-  const totalSpent = jobs.reduce((sum, j) => sum + (j.budget / 100), 0);
+  const openJobs = (jobs || []).filter(j => j.status === "open").length;
+  const activeJobs = (jobs || []).filter(j => ["hired", "in_progress"].includes(j.status)).length;
+  const completedJobs = (jobs || []).filter(j => j.status === "completed").length;
+  const totalSpent = (jobs || []).reduce((sum, j) => sum + (j.budget / 100), 0);
 
   return (
     <AuthGuard>
@@ -110,8 +108,18 @@ export default function ClientDashboard() {
             <p className="text-gray-400">Manage your jobs, review bids, and release payments</p>
           </div>
 
-          {/* KPI Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {/* Loading state */}
+          {jobsLoading && (
+            <div className="flex items-center justify-center py-24 text-gray-400">
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                Loading your dashboard…
+              </div>
+            </div>
+          )}
+
+          {/* KPI Cards + Main Content */}
+          {!jobsLoading && <><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {[
               { label: "Open Jobs", value: openJobs, icon: <Clock className="w-5 h-5" />, color: "blue" },
               { label: "Active", value: activeJobs, icon: <Zap className="w-5 h-5" />, color: "emerald" },
@@ -258,6 +266,7 @@ export default function ClientDashboard() {
               )}
             </div>
           </div>
+          </>}
         </div>
 
         <Footer />

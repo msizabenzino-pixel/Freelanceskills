@@ -3,6 +3,9 @@ import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { apiRequest } from "@/lib/queryClient";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
+import { AuthGuard } from "@/components/AuthGuard";
 
 function TierBadge({ tier }: { tier: number }) {
   const badges = [
@@ -85,7 +88,9 @@ export default function VettingHub() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 pb-16" data-testid="page-vetting-hub">
+    <AuthGuard message="Sign in to access your verification dashboard and get your profile vetted.">
+    <div className="min-h-screen bg-slate-950 text-slate-50 pb-16 flex flex-col" data-testid="page-vetting-hub">
+      <Navbar />
       {/* Header */}
       <div className="bg-gradient-to-r from-slate-900 via-slate-950 to-emerald-950/20 border-b border-emerald-500/20 px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="max-w-5xl mx-auto">
@@ -299,6 +304,8 @@ export default function VettingHub() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
+    </AuthGuard>
   );
 }

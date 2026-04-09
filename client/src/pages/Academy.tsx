@@ -200,7 +200,7 @@ export default function Academy() {
           {/* Pill badge */}
           <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-medium px-4 py-1.5 rounded-full mb-6">
             <Sparkles className="w-4 h-4" />
-            15 Expert-Crafted Courses · Updated 2026
+            30 Expert-Crafted Courses · Updated 2026
           </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white mb-6 leading-[1.05]">
@@ -249,7 +249,7 @@ export default function Academy() {
 
       {/* ── STATS ─────────────────────────────────────────────────── */}
       <section className="max-w-5xl mx-auto px-4 -mt-6 mb-16 grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard icon={<BookOpen className="w-7 h-7" />} value={apiStats ? `${apiStats.totalCourses}` : "15"} label="Expert Courses" />
+        <StatCard icon={<BookOpen className="w-7 h-7" />} value={apiStats ? `${apiStats.totalCourses}` : "30"} label="Expert Courses" />
         <StatCard icon={<Users className="w-7 h-7" />} value={apiStats ? `${Math.round(apiStats.totalEnrolments / 1000)}K+` : "112K+"} label="Enrolled Learners" />
         <StatCard icon={<Award className="w-7 h-7" />} value={apiStats ? `${apiStats.avgCompletionRate}%` : "94.8%"} label="Completion Rate" />
         <StatCard icon={<TrendingUp className="w-7 h-7" />} value={apiStats ? `${apiStats.avgRating}★` : "4.8★"} label="Average Rating" />

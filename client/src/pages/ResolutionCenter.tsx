@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { AuthGuard } from "@/components/AuthGuard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -73,8 +74,16 @@ export default function ResolutionCenter() {
   const [description, setDescription] = useState("");
   const [resolution, setResolution] = useState("");
 
+  const refIdRef = useRef(
+    `DSP-${new Date().getFullYear()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
+  );
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!disputeType) {
+      toast({ title: "Missing field", description: "Please select a dispute type.", variant: "destructive" });
+      return;
+    }
     toast({
       title: "Dispute Submitted",
       description: "Our team will review your case and respond within 24-48 hours.",
@@ -83,6 +92,7 @@ export default function ResolutionCenter() {
   };
 
   return (
+    <AuthGuard message="Sign in to submit or track a dispute.">
     <div className="min-h-screen bg-background">
       <Navbar />
       
@@ -330,7 +340,7 @@ export default function ResolutionCenter() {
                 
                 <div className="bg-muted rounded-lg p-4 mb-6">
                   <p className="text-sm">
-                    <strong>Reference:</strong> DSP-{new Date().getFullYear()}-{Math.random().toString(36).substr(2, 6).toUpperCase()}
+                    <strong>Reference:</strong> {refIdRef.current}
                   </p>
                 </div>
 
@@ -357,5 +367,6 @@ export default function ResolutionCenter() {
 
       <Footer />
     </div>
+    </AuthGuard>
   );
 }
