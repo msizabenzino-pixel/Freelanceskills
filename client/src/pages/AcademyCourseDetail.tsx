@@ -7,8 +7,39 @@ import {
   BookOpen, CheckCircle2, Lock, ChevronDown, ChevronUp, Play, FileText,
   HelpCircle, Award, TrendingUp, Star, Users, Clock, ArrowRight, ArrowLeft,
   Download, Share2, Sparkles, Trophy, Target, BarChart3, ChevronLeft,
-  CheckCheck, X, Zap, BadgeCheck
+  CheckCheck, X, Zap, BadgeCheck, Globe, ChevronDown as ChevDown
 } from "lucide-react";
+
+// ─── Supported Languages ─────────────────────────────────────────────────────
+const COURSE_LANGUAGES = [
+  { code: "en",  name: "English",          native: "English",       flag: "🇬🇧", status: "live" },
+  { code: "af",  name: "Afrikaans",        native: "Afrikaans",     flag: "🇿🇦", status: "live" },
+  { code: "zu",  name: "Zulu",             native: "isiZulu",       flag: "🇿🇦", status: "live" },
+  { code: "xh",  name: "Xhosa",            native: "isiXhosa",      flag: "🇿🇦", status: "live" },
+  { code: "st",  name: "Sotho",            native: "Sesotho",       flag: "🇿🇦", status: "live" },
+  { code: "tn",  name: "Tswana",           native: "Setswana",      flag: "🇿🇦", status: "live" },
+  { code: "pt",  name: "Portuguese",       native: "Português",     flag: "🇵🇹", status: "live" },
+  { code: "fr",  name: "French",           native: "Français",      flag: "🇫🇷", status: "live" },
+  { code: "sw",  name: "Swahili",          native: "Kiswahili",     flag: "🇰🇪", status: "live" },
+  { code: "ha",  name: "Hausa",            native: "Hausa",         flag: "🇳🇬", status: "beta" },
+  { code: "ar",  name: "Arabic",           native: "العربية",       flag: "🇸🇦", status: "beta" },
+  { code: "pcm", name: "Nigerian Pidgin",  native: "Nigerian Pidgin", flag: "🇳🇬", status: "beta" },
+  { code: "ts",  name: "Tsonga",           native: "Xitsonga",      flag: "🇿🇦", status: "beta" },
+  { code: "ve",  name: "Venda",            native: "Tshivenḓa",     flag: "🇿🇦", status: "beta" },
+  { code: "nso", name: "Northern Sotho",   native: "Sepedi",        flag: "🇿🇦", status: "beta" },
+];
+
+function getTranslationCacheKey(courseId: number, lessonId: string, langCode: string) {
+  return `acad_trans_${courseId}_${lessonId}_${langCode}`;
+}
+function getCachedTranslation(courseId: number, lessonId: string, langCode: string): string | null {
+  try { return localStorage.getItem(getTranslationCacheKey(courseId, lessonId, langCode)); }
+  catch { return null; }
+}
+function setCachedTranslation(courseId: number, lessonId: string, langCode: string, text: string) {
+  try { localStorage.setItem(getTranslationCacheKey(courseId, lessonId, langCode), text); }
+  catch { /* storage full – ignore */ }
+}
 
 // ─── Progress Storage ────────────────────────────────────────────────────────
 function getProgressKey(courseId: number) {
@@ -521,6 +552,74 @@ export default function AcademyCourseDetail() {
   const [showCertModal, setShowCertModal] = useState(false);
   const [showOverview, setShowOverview] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  // ── Language / Translation state ──────────────────────────────────────────
+  const [selectedLang, setSelectedLang] = useState("en");
+  const [showLangPicker, setShowLangPicker] = useState(false);
+  const [translatedContent, setTranslatedContent] = useState<string | null>(null);
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [translateError, setTranslateError] = useState<string | null>(null);
+  const langPickerRef = useRef<HTMLDivElement>(null);
+
+  // Close language picker on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (langPickerRef.current && !langPickerRef.current.contains(e.target as Node)) {
+        setShowLangPicker(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  // Translate whenever lesson or language changes
+  useEffect(() => {
+    if (!activeLessonId || !course) return;
+    const lesson = course.modules.flatMap(m => m.lessons).find(l => l.id === activeLessonId);
+    if (!lesson) return;
+
+    if (selectedLang === "en" || lesson.type === "quiz") {
+      setTranslatedContent(null);
+      return;
+    }
+
+    // Check cache first
+    const cached = getCachedTranslation(course.id, activeLessonId, selectedLang);
+    if (cached) {
+      setTranslatedContent(cached);
+      setTranslateError(null);
+      return;
+    }
+
+    // Fetch from API
+    const langObj = COURSE_LANGUAGES.find(l => l.code === selectedLang);
+    setIsTranslating(true);
+    setTranslateError(null);
+    setTranslatedContent(null);
+
+    fetch("/api/academy/translate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        content: lesson.content,
+        targetLanguage: selectedLang,
+        targetLanguageName: langObj ? `${langObj.name} (${langObj.native})` : selectedLang,
+        lessonTitle: lesson.title,
+      }),
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (data.translated) {
+          setTranslatedContent(data.translated);
+          setCachedTranslation(course.id, activeLessonId, selectedLang, data.translated);
+        } else {
+          setTranslateError("Translation unavailable — showing English.");
+        }
+      })
+      .catch(() => setTranslateError("Translation failed — showing English."))
+      .finally(() => setIsTranslating(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeLessonId, selectedLang]);
 
   if (!course) {
     return (
@@ -1062,12 +1161,70 @@ export default function AcademyCourseDetail() {
                   <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight">
                     {activeLesson.title}
                   </h1>
-                  {isLessonComplete && (
-                    <span className="flex items-center gap-1.5 text-emerald-400 text-sm font-medium bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/30 whitespace-nowrap">
-                      <CheckCircle2 className="w-4 h-4" />
-                      Complete
-                    </span>
-                  )}
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {isLessonComplete && (
+                      <span className="flex items-center gap-1.5 text-emerald-400 text-sm font-medium bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/30 whitespace-nowrap">
+                        <CheckCircle2 className="w-4 h-4" />
+                        Complete
+                      </span>
+                    )}
+                    {/* Language picker — hidden for quiz lessons */}
+                    {activeLesson.type !== "quiz" && (
+                      <div className="relative" ref={langPickerRef}>
+                        <button
+                          onClick={() => setShowLangPicker(p => !p)}
+                          data-testid="button-language-picker"
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-sm font-medium transition-all ${
+                            selectedLang !== "en"
+                              ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-400"
+                              : "bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-600"
+                          }`}
+                          title="Change lesson language"
+                        >
+                          <Globe className="w-3.5 h-3.5" />
+                          <span>{COURSE_LANGUAGES.find(l => l.code === selectedLang)?.flag ?? "🇬🇧"}</span>
+                          <span className="hidden sm:inline">
+                            {COURSE_LANGUAGES.find(l => l.code === selectedLang)?.native ?? "English"}
+                          </span>
+                          <ChevDown className="w-3 h-3" />
+                        </button>
+
+                        {showLangPicker && (
+                          <div className="absolute right-0 top-full mt-2 w-64 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl shadow-black/50 z-50 overflow-hidden">
+                            <div className="px-3 py-2 border-b border-slate-700/60">
+                              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Lesson Language</p>
+                            </div>
+                            <div className="max-h-80 overflow-y-auto p-1.5 space-y-0.5">
+                              {COURSE_LANGUAGES.map(lang => (
+                                <button
+                                  key={lang.code}
+                                  data-testid={`lang-option-${lang.code}`}
+                                  onClick={() => { setSelectedLang(lang.code); setShowLangPicker(false); }}
+                                  className={`w-full text-left px-3 py-2.5 rounded-lg flex items-center gap-3 transition-all ${
+                                    selectedLang === lang.code
+                                      ? "bg-emerald-500/15 text-emerald-400"
+                                      : "text-slate-300 hover:bg-slate-800"
+                                  }`}
+                                >
+                                  <span className="text-lg leading-none">{lang.flag}</span>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="font-medium text-sm truncate">{lang.native}</p>
+                                    <p className="text-xs text-slate-500">{lang.name}</p>
+                                  </div>
+                                  {lang.status === "beta" && (
+                                    <span className="text-[10px] px-1.5 py-0.5 bg-amber-500/20 text-amber-400 rounded border border-amber-500/30 font-medium">BETA</span>
+                                  )}
+                                  {selectedLang === lang.code && (
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                                  )}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -1091,9 +1248,35 @@ export default function AcademyCourseDetail() {
                       </div>
                     )}
 
+                    {/* Translation status banner */}
+                    {isTranslating && (
+                      <div className="flex items-center gap-2 mb-4 px-4 py-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 text-sm">
+                        <div className="w-3.5 h-3.5 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                        Translating to {COURSE_LANGUAGES.find(l => l.code === selectedLang)?.native ?? selectedLang}…
+                      </div>
+                    )}
+                    {translateError && (
+                      <div className="flex items-center gap-2 mb-4 px-4 py-2.5 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-400 text-sm">
+                        <Globe className="w-3.5 h-3.5 flex-shrink-0" />
+                        {translateError}
+                      </div>
+                    )}
+                    {selectedLang !== "en" && translatedContent && !isTranslating && (
+                      <div className="flex items-center gap-2 mb-4 px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-400 text-xs">
+                        <Globe className="w-3 h-3 flex-shrink-0 text-emerald-400" />
+                        <span>
+                          Showing in <span className="text-emerald-400 font-medium">{COURSE_LANGUAGES.find(l => l.code === selectedLang)?.native}</span>
+                          {" · "}
+                          <button onClick={() => setSelectedLang("en")} className="underline hover:text-slate-300 transition-colors">
+                            Switch back to English
+                          </button>
+                        </span>
+                      </div>
+                    )}
+
                     {/* Text content with markdown-like rendering */}
                     <div className="prose prose-invert max-w-none">
-                      {activeLesson.content.split("\n").map((line, i) => {
+                      {(translatedContent && !isTranslating ? translatedContent : activeLesson.content).split("\n").map((line, i) => {
                         if (line.startsWith("# ")) {
                           return <h1 key={i} className="text-2xl font-black text-white mt-6 mb-3">{line.slice(2)}</h1>;
                         }
@@ -1129,9 +1312,9 @@ export default function AcademyCourseDetail() {
                       }).filter(Boolean)}
 
                       {/* Code blocks */}
-                      {activeLesson.content.split(/```[a-z]*\n/).length > 1 && (
+                      {(translatedContent && !isTranslating ? translatedContent : activeLesson.content).split(/```[a-z]*\n/).length > 1 && (
                         <div>
-                          {activeLesson.content.split(/```(?:[a-z]+)?\n/).map((segment, i) => {
+                          {(translatedContent && !isTranslating ? translatedContent : activeLesson.content).split(/```(?:[a-z]+)?\n/).map((segment, i) => {
                             if (i % 2 === 1) {
                               const code = segment.replace(/```$/, "").trim();
                               return (

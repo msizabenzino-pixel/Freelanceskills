@@ -6526,6 +6526,57 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
       }
     });
 
+    // POST /api/academy/translate - Translate lesson content to a target language
+    app.post("/api/academy/translate", async (req, res) => {
+      try {
+        const { content, targetLanguage, targetLanguageName, lessonTitle } = req.body;
+        if (!content || !targetLanguage || targetLanguage === "en") {
+          return res.status(400).json({ error: "Missing content or targetLanguage" });
+        }
+
+        const OpenAI = (await import("openai")).default;
+        const openai = new OpenAI({
+          apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
+          baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+        });
+
+        const tick3 = "```";
+        const systemPrompt = [
+          `You are an expert educational content translator specialising in African languages and professional business content. Translate the provided lesson content accurately into ${targetLanguageName || targetLanguage}.`,
+          "",
+          "Rules:",
+          `1. Preserve all markdown formatting exactly (**, ##, -, ${tick3}, |, etc.)`,
+          `2. Keep ALL code blocks (${tick3} ... ${tick3}) in English — do not translate code`,
+          "3. Keep technical terms, product names, brand names, and URLs in English",
+          "4. Keep numbers, currency amounts (R, ZAR, USD), and percentages as-is",
+          "5. Keep all emojis as-is",
+          "6. Translate naturally and fluently — not word-for-word",
+          "7. Maintain the professional yet accessible tone of the original",
+          "8. For South African indigenous languages: use standard written forms",
+          "9. Return ONLY the translated text — no preamble, no explanation",
+        ].join("\n");
+
+        const completion = await openai.chat.completions.create({
+          model: "gpt-4o-mini",
+          messages: [
+            { role: "system", content: systemPrompt },
+            {
+              role: "user",
+              content: `Translate this lesson content titled "${lessonTitle || "Lesson"}" into ${targetLanguageName || targetLanguage}:\n\n${content}`,
+            },
+          ],
+          max_tokens: 4000,
+          temperature: 0.3,
+        });
+
+        const translated = completion.choices[0]?.message?.content || "";
+        res.json({ translated });
+      } catch (error: any) {
+        console.error("Translation error:", error);
+        res.status(500).json({ error: error.message || "Translation failed" });
+      }
+    });
+
     // POST /api/academy/seed-courses (Admin only) - Initialize all courses
     app.post("/api/academy/seed-courses", isAuthenticated, async (req: any, res) => {
       try {
