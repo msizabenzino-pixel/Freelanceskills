@@ -31,7 +31,7 @@ interface VideoPlayerProps {
   youtubeId?: string;
   /** Direct mp4/webm URL for HTML5 video playback. */
   videoSrc?: string;
-  /** Fallback: opens a YouTube search in a new tab when neither youtubeId nor videoSrc is set. */
+  /** Fallback: uses a YouTube search embed when neither youtubeId nor videoSrc is set. */
   youtubeSearchQuery?: string;
 }
 
@@ -56,7 +56,7 @@ export function VideoPlayer({
     if (isPlayable) {
       setIsPlaying(true);
     } else if (youtubeSearchQuery) {
-      window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(youtubeSearchQuery)}`, "_blank", "noopener noreferrer");
+      setIsPlaying(true);
     }
   };
 
@@ -107,6 +107,14 @@ export function VideoPlayer({
           </div>
 
         /* ── Thumbnail / poster state ─────────────────────── */
+        ) : isPlaying && youtubeSearchQuery ? (
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed?listType=search&list=${encodeURIComponent(youtubeSearchQuery)}&autoplay=1&rel=0&modestbranding=1&cc_load_policy=1`}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            className="absolute inset-0 w-full h-full border-0"
+            title={title}
+          />
         ) : (
           <>
             <img
@@ -133,15 +141,15 @@ export function VideoPlayer({
               <button
                 className="absolute inset-0 flex items-center justify-center z-10 w-full cursor-pointer"
                 onClick={handlePlay}
-                aria-label={`Search YouTube for ${title}`}
-                data-testid={`btn-search-${title.toLowerCase().replace(/\s+/g, "-")}`}
+                aria-label={`Play ${title}`}
+                data-testid={`btn-play-${title.toLowerCase().replace(/\s+/g, "-")}`}
               >
                 <div className="text-center px-4">
                   <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-200">
                     <ExternalLink className="h-7 w-7 text-white" />
                   </div>
                   <p className="text-white text-xs mt-2 font-medium bg-black/50 px-3 py-1 rounded-full inline-block">
-                    Watch on YouTube
+                    Play video
                   </p>
                 </div>
               </button>
