@@ -854,4 +854,14 @@ export function startCronScheduler() {
       log(`Cron backup error: ${err.message}`, "cron");
     }
   }, 24 * 60 * 60 * 1000);
+
+  // ── Remote AI jobs pipeline: every 15 minutes ────────────────────────────
+  (async () => {
+    try {
+      const { startRemoteAICron } = await import("./remoteAIFetcher");
+      startRemoteAICron();
+    } catch (err: any) {
+      log(`[RemoteAI] Cron startup error: ${err.message}`, "warn");
+    }
+  })();
 }

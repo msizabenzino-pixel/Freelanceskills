@@ -70,6 +70,11 @@ export const aggregatedJobs = pgTable("aggregated_jobs", {
   companySize: text("company_size"),
   beeLevel: text("bee_level"),
   agentGenerated: boolean("agent_generated").default(false),
+  // Remote AI enrichment fields (populated by remoteAIFetcher)
+  aiSkillTags: text("ai_skill_tags"),          // JSON: '["Python","LLM","LangChain"]'
+  freelanceFriendly: boolean("freelance_friendly").default(false),
+  entryLevelPossible: boolean("entry_level_possible").default(false),
+  saMatchScore: integer("sa_match_score").default(0), // 0–100 fit score for SA bootcamp dev
 });
 
 export const insertAggregatedJobSchema = createInsertSchema(aggregatedJobs).omit({

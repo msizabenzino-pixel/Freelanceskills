@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { RemoteAIJobsWidget } from "@/components/RemoteAIJobsWidget";
 import {
   ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users,
   Building2, Brain, Globe, ShieldCheck, Lock, Headphones, Star, Quote, Send,
@@ -758,6 +759,9 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* ══ REMOTE AI JOBS WIDGET ══════════════════════════════════════════════ */}
+        <RemoteAIJobsWidget />
 
         {/* ══ FOR BEGINNERS ══════════════════════════════════════════════════════ */}
         <section className="py-20 bg-slate-950" aria-labelledby="beginners-heading" data-testid="section-for-beginners">

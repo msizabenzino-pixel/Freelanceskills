@@ -206,6 +206,83 @@ export function registerAggregatedJobRoutes(app: Express) {
     }
   });
 
+  // ── GET /api/jobs/remote-ai ───────────────────────────────────────────────
+  // Live Remote AI/Tech jobs pipeline endpoint.
+  // Returns top jobs + live stats counter for homepage widget.
+  app.get("/api/jobs/remote-ai", async (req: Request, res: Response) => {
+    const CACHE_KEY = "jobs:remote-ai:v1";
+    const cached = cache.get<unknown>(CACHE_KEY);
+    if (cached) {
+      res.setHeader("X-Cache", "HIT");
+      res.setHeader("Cache-Control", "public, max-age=300, stale-while-revalidate=60");
+      return res.json(cached);
+    }
+
+    try {
+      const { getRemoteAIStats } = await import("./remoteAIFetcher");
+      const stats = getRemoteAIStats();
+
+      // Query the DB for top remote AI/tech jobs
+      const jobs = await storage.searchAggregatedJobs({
+        isRemote: true,
+        category: "Data Science & AI",
+        limit: 50,
+      });
+
+      // Also pull strong AI matches from other categories via keyword search
+      const keywordJobs = await storage.searchAggregatedJobs({
+        isRemote: true,
+        search: "python OR llm OR ai OR machine learning OR automation",
+        limit: 50,
+      });
+
+      // Merge, dedup by id, sort by saMatchScore desc then aiScore desc
+      const seen = new Set<string>();
+      const allJobs: any[] = [];
+      for (const j of [...jobs, ...keywordJobs]) {
+        if (!seen.has(j.id)) { seen.add(j.id); allJobs.push(j); }
+      }
+      allJobs.sort((a, b) => {
+        const scoreA = (a.saMatchScore || 0) * 2 + (a.aiScore || 0);
+        const scoreB = (b.saMatchScore || 0) * 2 + (b.aiScore || 0);
+        return scoreB - scoreA;
+      });
+
+      const payload = {
+        jobs: allJobs.slice(0, 50),
+        total: allJobs.length,
+        stats,
+        widget: {
+          counter: stats.liveCounter,
+          newToday: stats.newToday,
+          top5: allJobs.slice(0, 5).map(j => ({
+            id: j.id,
+            title: j.title,
+            company: j.company,
+            location: j.location,
+            saMatchScore: j.saMatchScore || 0,
+            aiSkillTags: (() => { try { return JSON.parse(j.aiSkillTags || "[]"); } catch { return []; } })(),
+            freelanceFriendly: j.freelanceFriendly,
+            entryLevelPossible: j.entryLevelPossible,
+            salaryMin: j.salaryMin,
+            salaryMax: j.salaryMax,
+            applyUrl: j.applyUrl || j.sourceUrl,
+            source: j.source,
+            postedDate: j.postedDate,
+          })),
+        },
+      };
+
+      cache.set(CACHE_KEY, payload, 300); // 5-min cache
+      res.setHeader("X-Cache", "MISS");
+      res.setHeader("Cache-Control", "public, max-age=300, stale-while-revalidate=60");
+      return res.json(payload);
+    } catch (err: any) {
+      log(`GET /api/jobs/remote-ai error: ${err.message}`, "error");
+      return res.status(500).json({ error: "Failed to fetch remote AI jobs" });
+    }
+  });
+
   // ── GET /api/aggregated-jobs/:id ──────────────────────────────────────────
   app.get("/api/aggregated-jobs/:id", async (req: Request, res: Response) => {
     try {
