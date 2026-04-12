@@ -57,7 +57,8 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
     {
       name: "Learn",
       items: [
-        { name: "Academy", href: "/academy", icon: GraduationCap, description: "Courses and upskilling" },
+        { name: "Academy", href: "/academy", icon: GraduationCap, description: "65 expert courses across 15 languages" },
+        { name: "AI Skills Hub", href: "/academy/ai-hub", icon: Sparkles, description: "35 AI courses with verified certificates" },
         { name: "How It Works", href: "/how-it-works", icon: HelpCircle, description: "Platform overview" },
         { name: "How to Hire", href: "/how-to-hire", icon: Users, description: "Client onboarding" },
         { name: "How to Get Hired", href: "/how-to-get-hired", icon: Briefcase, description: "Freelancer onboarding" },

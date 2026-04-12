@@ -200,7 +200,7 @@ export default function Academy() {
           {/* Pill badge */}
           <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-medium px-4 py-1.5 rounded-full mb-6">
             <Sparkles className="w-4 h-4" />
-            30 Expert-Crafted Courses · 15 Languages · Updated 2026
+            65 Expert-Crafted Courses · 15 Languages · Updated 2026
           </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white mb-6 leading-[1.05]">
@@ -265,6 +265,46 @@ export default function Academy() {
           {featuredCourses.map((c) => (
             <CourseCard key={c.id} course={c} onClick={() => navigate(`/academy/${c.id}`)} />
           ))}
+        </div>
+      </section>
+
+      {/* ── AI SKILLS HUB PROMO ──────────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 mb-16">
+        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-violet-900/60 via-slate-900 to-emerald-900/60 border border-violet-500/30 p-8 md:p-12 flex flex-col md:flex-row items-center gap-8">
+          <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-transparent to-emerald-500/5 pointer-events-none" />
+          <div className="flex-1 relative">
+            <div className="inline-flex items-center gap-2 bg-violet-500/20 border border-violet-500/40 text-violet-300 text-xs font-bold px-3 py-1 rounded-full mb-4">
+              <Zap className="w-3 h-3" />
+              NEW · 35 AI COURSES
+            </div>
+            <h2 className="text-2xl md:text-3xl font-black text-white mb-3 leading-tight">
+              AI Skills Hub — Africa's First{" "}
+              <span className="bg-gradient-to-r from-violet-400 to-emerald-400 bg-clip-text text-transparent">
+                AI Freelance Academy
+              </span>
+            </h2>
+            <p className="text-slate-300 text-base leading-relaxed mb-6 max-w-xl">
+              Master Prompt Engineering, GPT-4o, n8n Automation, AI Ethics, Computer Vision and more.
+              Earn verifiable certificates that prove your AI skills to global clients.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => navigate("/academy/ai-hub")}
+                data-testid="button-ai-hub-cta"
+                className="px-6 py-3 bg-violet-500 hover:bg-violet-400 text-white font-bold rounded-xl transition-colors text-sm"
+              >
+                Explore AI Courses →
+              </button>
+              <button
+                onClick={() => navigate("/cert/verify/demo")}
+                data-testid="button-cert-verify-cta"
+                className="px-6 py-3 bg-white/10 border border-white/20 text-white font-medium rounded-xl hover:bg-white/20 transition-colors text-sm"
+              >
+                Verify a Certificate
+              </button>
+            </div>
+          </div>
+          <div className="flex-shrink-0 text-7xl md:text-8xl select-none">🤖</div>
         </div>
       </section>
 
@@ -387,10 +427,10 @@ export default function Academy() {
               Start Free Course →
             </button>
             <button
-              onClick={() => navigate("/browse")}
+              onClick={() => navigate("/jobs")}
               className="px-8 py-4 bg-emerald-800/50 border border-white/20 text-white font-bold rounded-xl hover:bg-emerald-800/80 transition-colors text-lg"
             >
-              Find Freelance Work
+              Browse AI Jobs
             </button>
           </div>
         </div>

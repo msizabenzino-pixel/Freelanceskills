@@ -460,6 +460,7 @@ function Router() {
         <Route path="/referral" component={Referral} />
         <Route path="/checkout" component={Checkout} />
         <Route path="/onboarding" component={FreelancerOnboarding} />
+        <Route path="/freelancer-onboarding" component={FreelancerOnboarding} />
         <Route path="/profile-builder" component={ProfileBuilder} />
         <Route path="/cv-upload" component={CVUpload} />
         <Route path="/payments-hub" component={PaymentsHub} />
