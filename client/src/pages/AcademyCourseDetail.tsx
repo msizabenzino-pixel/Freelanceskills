@@ -7,7 +7,8 @@ import {
   BookOpen, CheckCircle2, Lock, ChevronDown, ChevronUp, Play, FileText,
   HelpCircle, Award, TrendingUp, Star, Users, Clock, ArrowRight, ArrowLeft,
   Download, Share2, Sparkles, Trophy, Target, BarChart3, ChevronLeft,
-  CheckCheck, X, Zap, BadgeCheck, Globe, ChevronDown as ChevDown
+  CheckCheck, X, Zap, BadgeCheck, Globe, ChevronDown as ChevDown,
+  MessageCircle, Send, Bot, Loader2
 } from "lucide-react";
 
 // ─── Supported Languages ─────────────────────────────────────────────────────
@@ -552,6 +553,46 @@ export default function AcademyCourseDetail() {
   const [showCertModal, setShowCertModal] = useState(false);
   const [showOverview, setShowOverview] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  // ── AI Tutor Chat state ────────────────────────────────────────────────────
+  const [tutorOpen, setTutorOpen] = useState(false);
+  const [tutorMessages, setTutorMessages] = useState<{ role: "user" | "tutor"; text: string }[]>([
+    { role: "tutor", text: "👋 Hi! I'm Vuma, your AI learning tutor. Ask me anything about this course — concepts, code, career paths, or how to apply this to freelance work in Africa!" },
+  ]);
+  const [tutorInput, setTutorInput] = useState("");
+  const [tutorLoading, setTutorLoading] = useState(false);
+  const tutorEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (tutorOpen) tutorEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [tutorMessages, tutorOpen]);
+
+  async function sendTutorMessage() {
+    if (!tutorInput.trim() || tutorLoading) return;
+    const msg = tutorInput.trim();
+    setTutorInput("");
+    setTutorMessages(prev => [...prev, { role: "user", text: msg }]);
+    setTutorLoading(true);
+    try {
+      const lesson = course?.modules.flatMap(m => m.lessons).find(l => l.id === activeLessonId);
+      const res = await fetch("/api/academy/ai-tutor", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: msg,
+          courseTitle: course?.title,
+          lessonTitle: lesson?.title,
+          context: `Course: ${course?.title}. Category: ${course?.category}. Skills: ${course?.skills?.join(", ")}.`,
+        }),
+      });
+      const data = await res.json();
+      setTutorMessages(prev => [...prev, { role: "tutor", text: data.reply || "I'm here to help — could you rephrase that?" }]);
+    } catch {
+      setTutorMessages(prev => [...prev, { role: "tutor", text: "Sorry, I'm having trouble connecting right now. Please try again in a moment." }]);
+    } finally {
+      setTutorLoading(false);
+    }
+  }
 
   // ── Language / Translation state ──────────────────────────────────────────
   const [selectedLang, setSelectedLang] = useState("en");
@@ -1411,6 +1452,90 @@ export default function AcademyCourseDetail() {
       {showCertModal && (
         <CertificateModal course={course} onClose={() => setShowCertModal(false)} />
       )}
+
+      {/* ── AI Tutor Chat — Floating Widget ─────────────────────────────── */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+        {tutorOpen && (
+          <div className="w-80 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center gap-3 px-4 py-3 bg-emerald-600/20 border-b border-slate-700">
+              <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0">
+                <Bot className="w-4 h-4 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-white">Vuma AI Tutor</p>
+                <p className="text-xs text-emerald-400">Ask anything about this course</p>
+              </div>
+              <button
+                onClick={() => setTutorOpen(false)}
+                className="text-slate-400 hover:text-white transition-colors"
+                data-testid="button-close-tutor"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3 max-h-72 min-h-48">
+              {tutorMessages.map((msg, i) => (
+                <div key={i} className={`flex gap-2 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
+                  {msg.role === "tutor" && (
+                    <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Bot className="w-3 h-3 text-white" />
+                    </div>
+                  )}
+                  <div className={`max-w-[85%] px-3 py-2 rounded-xl text-sm leading-relaxed ${
+                    msg.role === "user"
+                      ? "bg-emerald-600 text-white rounded-tr-sm"
+                      : "bg-slate-800 text-slate-200 rounded-tl-sm"
+                  }`}>
+                    {msg.text}
+                  </div>
+                </div>
+              ))}
+              {tutorLoading && (
+                <div className="flex gap-2">
+                  <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0">
+                    <Bot className="w-3 h-3 text-white" />
+                  </div>
+                  <div className="bg-slate-800 px-3 py-2 rounded-xl rounded-tl-sm">
+                    <Loader2 className="w-4 h-4 text-emerald-400 animate-spin" />
+                  </div>
+                </div>
+              )}
+              <div ref={tutorEndRef} />
+            </div>
+            {/* Input */}
+            <div className="px-3 py-3 border-t border-slate-700 flex gap-2">
+              <input
+                value={tutorInput}
+                onChange={e => setTutorInput(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendTutorMessage()}
+                placeholder="Ask Vuma anything..."
+                disabled={tutorLoading}
+                data-testid="input-tutor-message"
+                className="flex-1 bg-slate-800 text-white placeholder-slate-500 text-sm px-3 py-2 rounded-xl border border-slate-600 focus:border-emerald-500 focus:outline-none disabled:opacity-50"
+              />
+              <button
+                onClick={sendTutorMessage}
+                disabled={tutorLoading || !tutorInput.trim()}
+                data-testid="button-send-tutor"
+                className="w-9 h-9 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white rounded-xl flex items-center justify-center transition-colors flex-shrink-0"
+              >
+                <Send className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+        {/* Toggle button */}
+        <button
+          onClick={() => setTutorOpen(prev => !prev)}
+          data-testid="button-toggle-ai-tutor"
+          className="w-14 h-14 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+          title="Ask AI Tutor"
+        >
+          {tutorOpen ? <X className="w-6 h-6" /> : <MessageCircle className="w-6 h-6" />}
+        </button>
+      </div>
     </div>
   );
 }

@@ -43,6 +43,8 @@ const Impact = lazy(() => import("@/pages/Impact"));
 const Academy = lazy(() => import("@/pages/Academy"));
 const AcademyCatalog = lazy(() => import("@/pages/AcademyCatalog"));
 const AcademyCourseDetail = lazy(() => import("@/pages/AcademyCourseDetail"));
+const AcademyAIHub = lazy(() => import("@/pages/AcademyAIHub"));
+const CertVerify = lazy(() => import("@/pages/CertVerify"));
 const Blog = lazy(() => import("@/pages/Blog"));
 const BlogPost = lazy(() => import("@/pages/BlogPost"));
 const BlogCategory = lazy(() => import("@/pages/BlogCategory"));
@@ -447,7 +449,9 @@ function Router() {
         <Route path="/challenge" component={TalentRevolutionChallenge} />
         <Route path="/academy" component={Academy} />
         <Route path="/academy/catalog" component={AcademyCatalog} />
+        <Route path="/academy/ai-hub" component={AcademyAIHub} />
         <Route path="/academy/:id" component={AcademyCourseDetail} />
+        <Route path="/cert/verify/:code" component={CertVerify} />
         <Route path="/blog" component={Blog} />
         <Route path="/blog/search" component={BlogSearch} />
         <Route path="/blog/category/:slug" component={BlogCategory} />

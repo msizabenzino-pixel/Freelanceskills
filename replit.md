@@ -1,5 +1,21 @@
 # FreelanceSkills - Global Freelance Marketplace
 
+## April 2026 — AI Skills Academy v2.0 (35 New Courses + Cert Verify + AI Tutor)
+
+### New Features Shipped
+- **35 AI Courses** (IDs 31–65) in `client/src/lib/aiAcademyCurriculum.ts` — all based on Upwork 2026 data
+- **AcademyAIHub** (`/academy/ai-hub`) — Knowledge Hub page: filterable grid, SA vs global stats, evolution timeline
+- **CertVerify** (`/cert/verify/:code`) — Public certificate verification with SHA-256 hash, LinkedIn sharing, demo mode
+- **Certificate Verify API** (`GET /api/cert/verify/:code`) — Live DB lookup + demo mode, registered in `server/certVerifyRoutes.ts`
+- **Certificate Download API** (`GET /api/cert/download/:code`) — LinkedIn OAuth URL generator
+- **AI Tutor Chat API** (`POST /api/academy/ai-tutor`) — GPT-4o-mini powered, Africa-first prompting
+- **AI Tutor Widget** — Floating chat bubble on every course page in `AcademyCourseDetail.tsx`
+- **Build Fix** — Python f-string `\${price:.2f}` in template literal (aiAcademyCurriculum.ts:155) was causing esbuild parse failure — fixed by escaping the `$`
+
+### Critical Build Rule
+- ALWAYS run `npm run build` after ANY server or major frontend change — production runs `dist/index.cjs`
+- The build compiles TS → CJS for server and Vite bundles for frontend
+
 ## Overview
 
 FreelanceSkills is a full-stack freelance marketplace designed to connect local and remote talent with clients, with an initial focus on South Africa and global expansion plans. The platform aims to create 1 Million job opportunities by 2031 by offering job postings, TaskRabbit-style service packages with booking functionality, and operating on a commission-based, escrow-secured model. Key features include AI-powered matching, proposal generation, job post assistance, profile optimization, a global job board, an upskilling academy, and robust growth systems like business invites and a referral program.

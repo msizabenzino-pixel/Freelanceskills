@@ -152,7 +152,7 @@ def get_stock_price(ticker: str) -> str:
     import yfinance as yf
     stock = yf.Ticker(ticker)
     price = stock.history(period="1d")['Close'].iloc[-1]
-    return f"{ticker}: ${price:.2f}"
+    return f"{ticker}: \${price:.2f}"
 \`\`\`
 
 **Building a Research Agent:**

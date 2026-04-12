@@ -86,6 +86,8 @@ export async function registerRoutes(
   registerPaymentsRoutes(app);
   const { registerAcademyAdminRoutes } = await import("./academyAdminRoutes");
   registerAcademyAdminRoutes(app);
+  const { registerCertVerifyRoutes } = await import("./certVerifyRoutes");
+  registerCertVerifyRoutes(app);
   const { registerSystemSettingsRoutes } = await import("./systemSettingsRoutes");
   registerSystemSettingsRoutes(app);
   const { registerGigsRoutes } = await import("./gigsRoutes");
@@ -2089,6 +2091,62 @@ Respond with ONLY the JSON object, no markdown.`
     } catch (error) {
       console.error("Error fetching certificates:", error);
       res.status(500).json({ message: "Failed to fetch certificates" });
+    }
+  });
+
+  // ── AI Tutor Chat — in-course learning support ─────────────────────────────
+  app.post("/api/academy/ai-tutor", isAuthenticated, async (req: any, res) => {
+    try {
+      const { message, courseTitle, lessonTitle, context } = req.body;
+      if (!message || typeof message !== "string") {
+        return res.status(400).json({ error: "message is required" });
+      }
+
+      const baseUrl = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL || "https://api.openai.com/v1";
+      const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.OPENAI_API_KEY || "";
+
+      const systemPrompt = `You are Vuma, the AI learning tutor for FreelanceSkills.net — Africa's #1 freelance skills academy.
+
+You help freelancers in South Africa and across Africa master AI skills that earn real money. You are:
+- Warm, encouraging, and practical
+- Expert in the course content: ${courseTitle || "FreelanceSkills AI Academy"}
+- Focused on Africa-first freelance applications (Rand earnings, SA clients, remote global work)
+- Concise: answer in 3–5 sentences max unless the student needs a code example
+
+Current lesson context: ${lessonTitle || "General Academy Support"}
+${context ? `Additional context: ${context}` : ""}
+
+Never make up information. If unsure, say "Let me check the lesson content" and refer to course materials. Always end with one actionable tip or next step.`;
+
+      const response = await fetch(`${baseUrl}/chat/completions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: message },
+          ],
+          max_tokens: 400,
+          temperature: 0.7,
+        }),
+      });
+
+      if (!response.ok) {
+        const err = await response.text();
+        console.error("[AI Tutor] OpenAI error:", err);
+        return res.status(500).json({ error: "AI tutor temporarily unavailable" });
+      }
+
+      const data = await response.json() as any;
+      const reply = data.choices?.[0]?.message?.content || "I'm here to help! Could you rephrase your question?";
+      return res.json({ reply });
+    } catch (err) {
+      console.error("[AI Tutor] Error:", err);
+      return res.status(500).json({ error: "AI tutor temporarily unavailable" });
     }
   });
 
