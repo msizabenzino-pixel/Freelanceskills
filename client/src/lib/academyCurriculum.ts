@@ -1682,11 +1682,18 @@ export const COURSES: Course[] = [
   },
 ];
 
+// Import and merge AI Academy courses (IDs 31–65)
+import { AI_COURSES } from "./aiAcademyCurriculum";
+export { AI_ACADEMY_LAUNCH_PRIORITY, ACADEMY_EVOLUTION_ROADMAP, AI_COURSE_CATEGORIES } from "./aiAcademyCurriculum";
+
+/** All 65 courses: 30 existing + 35 new AI courses */
+export const ALL_COURSES: Course[] = [...COURSES, ...AI_COURSES];
+
 export function getCourse(idOrSlug: number | string): Course | undefined {
   if (typeof idOrSlug === "number") {
-    return COURSES.find((c) => c.id === idOrSlug);
+    return ALL_COURSES.find((c) => c.id === idOrSlug);
   }
-  return COURSES.find((c) => c.slug === idOrSlug || c.id === Number(idOrSlug));
+  return ALL_COURSES.find((c) => c.slug === idOrSlug || c.id === Number(idOrSlug));
 }
 
 export function getTotalLessons(course: Course): number {
