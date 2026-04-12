@@ -6975,7 +6975,7 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
     app.get("/api/blog/categories", async (req, res) => {
       try {
         const cats = await bq(`SELECT * FROM blog_categories ORDER BY post_count DESC, name ASC`);
-        res.json(cats || []);
+        res.json((cats || []).map((c: any) => ({ ...c, postCount: c.post_count })));
       } catch (err) {
         res.status(500).json({ error: "Failed to fetch categories" });
       }
@@ -7043,7 +7043,28 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
            ORDER BY bp.published_at DESC LIMIT 1`
         );
 
-        res.json({ posts: posts || [], total: parseInt(total), featured: featuredPosts?.[0] || null });
+        const normPost = (p: any) => ({
+          id: p.id,
+          title: p.title,
+          slug: p.slug,
+          excerpt: p.excerpt,
+          coverImage: p.cover_image,
+          coverImageAlt: p.cover_image_alt,
+          categoryName: p.category_name,
+          categorySlug: p.category_slug,
+          categoryColor: p.category_color,
+          authorName: p.author_name,
+          readingTimeMinutes: p.reading_time_minutes,
+          viewCount: p.view_count,
+          tags: p.tags,
+          isFeatured: p.is_featured,
+          publishedAt: p.published_at,
+        });
+        res.json({
+          posts: (posts || []).map(normPost),
+          total: parseInt(total),
+          featured: featuredPosts?.[0] ? normPost(featuredPosts[0]) : null,
+        });
       } catch (err) {
         console.error("Blog posts error:", err);
         res.status(500).json({ error: "Failed to fetch posts" });
@@ -7096,7 +7117,25 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
               `SELECT id, title, category, earnings_lift_pct, is_free FROM courses WHERE status = 'live' LIMIT 2`
             );
 
-        res.json({ ...post, relatedPosts: relatedPosts || [], linkedCourses: linkedCourses || [] });
+        const normFull = (p: any) => ({
+          id: p.id, title: p.title, slug: p.slug, excerpt: p.excerpt,
+          content: p.content, coverImage: p.cover_image, coverImageAlt: p.cover_image_alt,
+          categoryName: p.category_name, categorySlug: p.category_slug, categoryColor: p.category_color,
+          authorName: p.author_name, authorBio: p.author_bio, authorAvatar: p.author_avatar, authorRole: p.author_role,
+          readingTimeMinutes: p.reading_time_minutes, viewCount: p.view_count,
+          tags: p.tags, isFeatured: p.is_featured, publishedAt: p.published_at,
+          metaTitle: p.meta_title, metaDescription: p.meta_description,
+          targetKeywords: p.target_keywords, linkedCourseIds: p.linked_course_ids,
+        });
+        const normRelated = (r: any) => ({
+          id: r.id, title: r.title, slug: r.slug, excerpt: r.excerpt,
+          readingTimeMinutes: r.reading_time_minutes, categoryName: r.category_name, categoryColor: r.category_color,
+        });
+        res.json({
+          ...normFull(post),
+          relatedPosts: (relatedPosts || []).map(normRelated),
+          linkedCourses: linkedCourses || [],
+        });
       } catch (err) {
         console.error("Blog post error:", err);
         res.status(500).json({ error: "Failed to fetch post" });
@@ -7132,7 +7171,13 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
            ORDER BY bp.view_count DESC, bp.published_at DESC LIMIT 20`,
           [searchTerm, q]
         );
-        res.json({ posts: posts || [] });
+        const normSearch = (p: any) => ({
+          id: p.id, title: p.title, slug: p.slug, excerpt: p.excerpt,
+          readingTimeMinutes: p.reading_time_minutes, viewCount: p.view_count,
+          categoryName: p.category_name, categorySlug: p.category_slug, categoryColor: p.category_color,
+          authorName: p.author_name, publishedAt: p.published_at, tags: p.tags,
+        });
+        res.json({ posts: (posts || []).map(normSearch) });
       } catch (err) {
         res.status(500).json({ error: "Search failed" });
       }

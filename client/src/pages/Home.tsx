@@ -1169,9 +1169,9 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               {(liveBlogPosts && liveBlogPosts.length > 0
                 ? liveBlogPosts.slice(0, 3).map((post: any, i: number) => ({
-                    category: post.category_name || "Freelancing",
+                    category: post.categoryName || post.category_name || "Freelancing",
                     title: post.title, excerpt: post.excerpt || post.meta_description || "",
-                    readTime: `${post.read_time_minutes || 5} min read`,
+                    readTime: `${post.readingTimeMinutes || post.read_time_minutes || 5} min read`,
                     color: ["text-blue-400 bg-blue-500/10 border-blue-500/20", "text-emerald-400 bg-emerald-500/10 border-emerald-500/20", "text-violet-400 bg-violet-500/10 border-violet-500/20"][i],
                     href: `/blog/${post.slug}`,
                   }))
