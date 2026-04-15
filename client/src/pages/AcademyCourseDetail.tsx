@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, type ReactNode } from "react";
 import { useParams, useLocation } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -1315,59 +1315,88 @@ export default function AcademyCourseDetail() {
                       </div>
                     )}
 
-                    {/* Text content with markdown-like rendering */}
+                    {/* Text content with markdown-like rendering — single-pass keeps code inline */}
                     <div className="prose prose-invert max-w-none">
-                      {(translatedContent && !isTranslating ? translatedContent : activeLesson.content).split("\n").map((line, i) => {
-                        if (line.startsWith("# ")) {
-                          return <h1 key={i} className="text-2xl font-black text-white mt-6 mb-3">{line.slice(2)}</h1>;
-                        }
-                        if (line.startsWith("## ")) {
-                          return <h2 key={i} className="text-xl font-bold text-white mt-5 mb-2">{line.slice(3)}</h2>;
-                        }
-                        if (line.startsWith("**") && line.endsWith("**")) {
-                          return <p key={i} className="font-bold text-white mt-4 mb-2">{line.slice(2, -2)}</p>;
-                        }
-                        if (line.startsWith("- ")) {
-                          return (
-                            <div key={i} className="flex items-start gap-2 my-1.5">
-                              <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full mt-2 flex-shrink-0" />
-                              <p className="text-slate-300 leading-relaxed" dangerouslySetInnerHTML={{
-                                __html: line.slice(2).replace(/\*\*(.*?)\*\*/g, "<strong class='text-white'>$1</strong>")
-                              }} />
-                            </div>
-                          );
-                        }
-                        if (line.startsWith("```")) {
-                          return null; // handled below
-                        }
-                        if (line.trim() === "") {
-                          return <div key={i} className="h-3" />;
-                        }
-                        return (
-                          <p key={i} className="text-slate-300 leading-relaxed" dangerouslySetInnerHTML={{
-                            __html: line
-                              .replace(/\*\*(.*?)\*\*/g, "<strong class='text-white'>$1</strong>")
-                              .replace(/`(.*?)`/g, "<code class='bg-slate-800 text-emerald-400 px-1.5 py-0.5 rounded text-sm font-mono'>$1</code>")
-                          }} />
-                        );
-                      }).filter(Boolean)}
-
-                      {/* Code blocks */}
-                      {(translatedContent && !isTranslating ? translatedContent : activeLesson.content).split(/```[a-z]*\n/).length > 1 && (
-                        <div>
-                          {(translatedContent && !isTranslating ? translatedContent : activeLesson.content).split(/```(?:[a-z]+)?\n/).map((segment, i) => {
-                            if (i % 2 === 1) {
-                              const code = segment.replace(/```$/, "").trim();
-                              return (
-                                <pre key={`code-${i}`} className="bg-slate-800 border border-slate-700 rounded-xl p-4 overflow-x-auto my-4 text-sm font-mono text-slate-300 leading-relaxed">
-                                  {code}
-                                </pre>
-                              );
-                            }
-                            return null;
-                          })}
-                        </div>
-                      )}
+                      {(() => {
+                        const rawContent = translatedContent && !isTranslating ? translatedContent : activeLesson.content;
+                        const elements: ReactNode[] = [];
+                        let key = 0;
+                        // Split into alternating text/code segments on ``` fences
+                        const segments = rawContent.split(/```(?:[a-z]*)?\n?/);
+                        segments.forEach((segment, segIdx) => {
+                          if (segIdx % 2 === 1) {
+                            // This is a code block segment
+                            const code = segment.replace(/```\s*$/, "").trimEnd();
+                            elements.push(
+                              <pre key={key++} className="bg-slate-800 border border-slate-700 rounded-xl p-4 overflow-x-auto my-4 text-sm font-mono text-slate-300 leading-relaxed whitespace-pre-wrap break-words">
+                                {code}
+                              </pre>
+                            );
+                          } else {
+                            // This is a text segment — render line by line
+                            segment.split("\n").forEach((line) => {
+                              if (line.startsWith("# ")) {
+                                elements.push(<h1 key={key++} className="text-2xl font-black text-white mt-6 mb-3">{line.slice(2)}</h1>);
+                              } else if (line.startsWith("## ")) {
+                                elements.push(<h2 key={key++} className="text-xl font-bold text-white mt-5 mb-2">{line.slice(3)}</h2>);
+                              } else if (line.startsWith("### ")) {
+                                elements.push(<h3 key={key++} className="text-lg font-bold text-white mt-4 mb-2">{line.slice(4)}</h3>);
+                              } else if (line.startsWith("**") && line.endsWith("**")) {
+                                elements.push(<p key={key++} className="font-bold text-white mt-4 mb-2">{line.slice(2, -2)}</p>);
+                              } else if (line.startsWith("- ") || line.startsWith("* ")) {
+                                elements.push(
+                                  <div key={key++} className="flex items-start gap-2 my-1.5">
+                                    <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full mt-2 flex-shrink-0" />
+                                    <p className="text-slate-300 leading-relaxed" dangerouslySetInnerHTML={{
+                                      __html: line.slice(2)
+                                        .replace(/\*\*(.*?)\*\*/g, "<strong class='text-white'>$1</strong>")
+                                        .replace(/`(.*?)`/g, "<code class='bg-slate-800 text-emerald-400 px-1.5 py-0.5 rounded text-sm font-mono'>$1</code>")
+                                    }} />
+                                  </div>
+                                );
+                              } else if (/^\d+\.\s/.test(line)) {
+                                const numMatch = line.match(/^(\d+)\.\s(.*)$/);
+                                if (numMatch) {
+                                  elements.push(
+                                    <div key={key++} className="flex items-start gap-2 my-1.5">
+                                      <span className="text-emerald-400 font-bold text-sm flex-shrink-0 mt-0.5">{numMatch[1]}.</span>
+                                      <p className="text-slate-300 leading-relaxed" dangerouslySetInnerHTML={{
+                                        __html: numMatch[2]
+                                          .replace(/\*\*(.*?)\*\*/g, "<strong class='text-white'>$1</strong>")
+                                          .replace(/`(.*?)`/g, "<code class='bg-slate-800 text-emerald-400 px-1.5 py-0.5 rounded text-sm font-mono'>$1</code>")
+                                      }} />
+                                    </div>
+                                  );
+                                }
+                              } else if (line.startsWith("|") && line.endsWith("|")) {
+                                // Table row — wrap in a styled row
+                                const cells = line.split("|").filter((_, ci) => ci > 0 && ci < line.split("|").length - 1);
+                                const isSep = cells.every(c => /^[-:]+$/.test(c.trim()));
+                                if (!isSep) {
+                                  elements.push(
+                                    <div key={key++} className="flex gap-0 border-b border-slate-800">
+                                      {cells.map((cell, ci) => (
+                                        <div key={ci} className="flex-1 px-3 py-1.5 text-sm text-slate-300 truncate">{cell.trim()}</div>
+                                      ))}
+                                    </div>
+                                  );
+                                }
+                              } else if (line.trim() === "") {
+                                elements.push(<div key={key++} className="h-3" />);
+                              } else {
+                                elements.push(
+                                  <p key={key++} className="text-slate-300 leading-relaxed" dangerouslySetInnerHTML={{
+                                    __html: line
+                                      .replace(/\*\*(.*?)\*\*/g, "<strong class='text-white'>$1</strong>")
+                                      .replace(/`(.*?)`/g, "<code class='bg-slate-800 text-emerald-400 px-1.5 py-0.5 rounded text-sm font-mono'>$1</code>")
+                                  }} />
+                                );
+                              }
+                            });
+                          }
+                        });
+                        return elements;
+                      })()}
                     </div>
 
                     {/* Mark complete button */}
