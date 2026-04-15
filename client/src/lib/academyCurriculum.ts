@@ -926,7 +926,7 @@ export const COURSES: Course[] = [
     skills: ["Content Strategy", "Meta Ads", "TikTok Ads", "Community Management", "Analytics"],
     isFree: true,
     rating: 4.8,
-    studentsEnrolled: 3812,
+    enrolled: 3812,
     instructor: { name: "Lerato Dlamini", title: "Digital Marketing Lead, Lagos & Joburg", avatar: "LD" },
     modules: [
       {
@@ -982,7 +982,7 @@ export const COURSES: Course[] = [
     skills: ["Shopify", "Liquid", "PayFast", "CRO", "Product Photography Basics"],
     isFree: false,
     rating: 4.9,
-    studentsEnrolled: 2143,
+    enrolled: 2143,
     instructor: { name: "Sipho Mthembu", title: "E-Commerce Consultant & Shopify Partner", avatar: "SM" },
     modules: [
       {
@@ -1037,7 +1037,7 @@ export const COURSES: Course[] = [
     skills: ["DaVinci Resolve", "CapCut", "Colour Grading", "Audio Mixing", "Storyboarding"],
     isFree: false,
     rating: 4.7,
-    studentsEnrolled: 1876,
+    enrolled: 1876,
     instructor: { name: "Amara Osei", title: "Broadcast Producer, SABC & Netflix Africa Vendor", avatar: "AO" },
     modules: [
       {
@@ -1088,7 +1088,7 @@ export const COURSES: Course[] = [
     skills: ["Python", "Pandas", "Matplotlib", "Seaborn", "Jupyter Notebooks", "Report Writing"],
     isFree: false,
     rating: 4.8,
-    studentsEnrolled: 1654,
+    enrolled: 1654,
     instructor: { name: "Dr. Funmi Adeyemi", title: "Data Scientist, MTN & Standard Bank Projects", avatar: "FA" },
     modules: [
       {
@@ -1139,7 +1139,7 @@ export const COURSES: Course[] = [
     skills: ["React Native", "Expo", "React Navigation", "AsyncStorage", "REST APIs", "App Store Publishing"],
     isFree: false,
     rating: 4.8,
-    studentsEnrolled: 1320,
+    enrolled: 1320,
     instructor: { name: "Kemi Adebayo", title: "Lead Mobile Developer, FinTech Africa", avatar: "KA" },
     modules: [
       {
@@ -1190,7 +1190,7 @@ export const COURSES: Course[] = [
     skills: ["WordPress", "WooCommerce", "Elementor", "PHP", "ACF", "REST API"],
     isFree: true,
     rating: 4.6,
-    studentsEnrolled: 4231,
+    enrolled: 4231,
     instructor: { name: "Thabo Nkosi", title: "WordPress Developer & Agency Owner", avatar: "TN" },
     modules: [
       {
@@ -1240,7 +1240,7 @@ export const COURSES: Course[] = [
     skills: ["Keyword Research", "On-Page SEO", "Technical SEO", "Local SEO", "Google Search Console", "Backlink Building"],
     isFree: true,
     rating: 4.7,
-    studentsEnrolled: 5102,
+    enrolled: 5102,
     instructor: { name: "Grace Mensah", title: "SEO Strategist, Continent Media Group", avatar: "GM" },
     modules: [
       {
@@ -1291,7 +1291,7 @@ export const COURSES: Course[] = [
     skills: ["Provisional Tax", "VAT", "Invoicing", "Xero", "Business Structures", "Expense Tracking"],
     isFree: true,
     rating: 4.9,
-    studentsEnrolled: 6230,
+    enrolled: 6230,
     instructor: { name: "Ntombi Zulu", title: "CA(SA), Freelancer Tax Specialist", avatar: "NZ" },
     modules: [
       {
@@ -1341,7 +1341,7 @@ export const COURSES: Course[] = [
     skills: ["Figma", "User Research", "Wireframing", "Prototyping", "Design Systems", "Developer Handoff"],
     isFree: false,
     rating: 4.9,
-    studentsEnrolled: 2867,
+    enrolled: 2867,
     instructor: { name: "Adaeze Okafor", title: "UX Lead, Access Bank Digital & Bolt Africa", avatar: "AO" },
     modules: [
       {
@@ -1392,7 +1392,7 @@ export const COURSES: Course[] = [
     skills: ["AWS", "EC2", "S3", "Lambda", "RDS", "IAM", "CloudFront", "Terraform basics"],
     isFree: false,
     rating: 4.8,
-    studentsEnrolled: 1122,
+    enrolled: 1122,
     instructor: { name: "Chidi Okeke", title: "AWS Solutions Architect, Andela Africa", avatar: "CO" },
     modules: [
       {
@@ -1442,7 +1442,7 @@ export const COURSES: Course[] = [
     skills: ["Direct Response Copy", "SEO Writing", "Email Sequences", "Ad Copy", "Brand Voice", "Content Strategy"],
     isFree: true,
     rating: 4.7,
-    studentsEnrolled: 4506,
+    enrolled: 4506,
     instructor: { name: "Yemisi Adeyemi", title: "Creative Director & Brand Copywriter", avatar: "YA" },
     modules: [
       {
@@ -1492,7 +1492,7 @@ export const COURSES: Course[] = [
     skills: ["Agile", "Scrum", "Client Communication", "Scope Management", "Notion", "Milestone Billing"],
     isFree: true,
     rating: 4.8,
-    studentsEnrolled: 3871,
+    enrolled: 3871,
     instructor: { name: "Bongani Zuma", title: "PMP-Certified PM, MTN & Vodacom Projects", avatar: "BZ" },
     modules: [
       {
@@ -1542,7 +1542,7 @@ export const COURSES: Course[] = [
     skills: ["Network Security", "OWASP Top 10", "Penetration Testing Basics", "POPIA Compliance", "Security Auditing"],
     isFree: false,
     rating: 4.7,
-    studentsEnrolled: 892,
+    enrolled: 892,
     instructor: { name: "Tarisai Mutasa", title: "Certified Ethical Hacker (CEH), CrowdStrike Partner", avatar: "TM" },
     modules: [
       {
@@ -1592,7 +1592,7 @@ export const COURSES: Course[] = [
     skills: ["ChatGPT", "Prompt Engineering", "GitHub Copilot", "Midjourney", "Zapier", "AI Automation"],
     isFree: true,
     rating: 4.9,
-    studentsEnrolled: 7124,
+    enrolled: 7124,
     instructor: { name: "Olusegun Bello", title: "AI Productivity Consultant & Former Google Engineer", avatar: "OB" },
     modules: [
       {
@@ -1643,7 +1643,7 @@ export const COURSES: Course[] = [
     skills: ["Cross-Cultural Communication", "Client Negotiation", "Brand Communication", "Pan-African Business", "Professional Writing"],
     isFree: true,
     rating: 4.8,
-    studentsEnrolled: 2893,
+    enrolled: 2893,
     instructor: { name: "Amina Diallo", title: "Business Development Director, pan-African tech company", avatar: "AD" },
     modules: [
       {

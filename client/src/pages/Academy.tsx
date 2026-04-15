@@ -126,7 +126,7 @@ function CourseCard({ course, onClick }: { course: (typeof ALL_COURSES)[0]; onCl
           <div className="flex items-center justify-between">
             <span className="flex items-center gap-1 text-xs text-slate-500">
               <Users className="w-3.5 h-3.5" />
-              {course.enrolled.toLocaleString()} enrolled
+              {(course.enrolled ?? 0).toLocaleString()} enrolled
             </span>
             <span className="flex items-center gap-1 text-sm font-semibold text-emerald-400 group-hover:text-emerald-300">
               Start Learning
