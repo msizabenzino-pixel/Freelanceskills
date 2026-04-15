@@ -235,9 +235,9 @@ export default function AcademyAIHub() {
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-3">
-              <Link href="/academy">
+              <Link href="/academy/57">
                 <button className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-6 py-3 rounded-xl transition-colors flex items-center gap-2">
-                  <Play className="w-4 h-4" /> Start Free Course
+                  <Play className="w-4 h-4" /> Start Free AI Course
                 </button>
               </Link>
               <a href="#courses">
@@ -584,7 +584,7 @@ export default function AcademyAIHub() {
             Your first client could pay for the entire academy in one day.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
-            <Link href="/academy">
+            <Link href="/academy/1">
               <button data-testid="button-start-ai-academy" className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-8 py-4 rounded-xl text-lg transition-colors flex items-center gap-2">
                 <Rocket className="w-5 h-5" />
                 Start Free — AI Prompt Course

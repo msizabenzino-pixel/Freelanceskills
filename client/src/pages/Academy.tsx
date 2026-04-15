@@ -1,9 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, type ReactNode } from "react";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { COURSES, getTotalLessons } from "@/lib/academyCurriculum";
+import { COURSES, ALL_COURSES, getTotalLessons } from "@/lib/academyCurriculum";
 import {
   BookOpen, Clock, TrendingUp, Star, Users, Search,
   ChevronRight, Award, CheckCircle2, Zap, Play, Trophy,
@@ -49,7 +49,7 @@ function DifficultyBadge({ level }: { level: string }) {
   );
 }
 
-function CourseCard({ course, onClick }: { course: (typeof COURSES)[0]; onClick: () => void }) {
+function CourseCard({ course, onClick }: { course: (typeof ALL_COURSES)[0]; onClick: () => void }) {
   const totalLessons = getTotalLessons(course);
 
   return (
@@ -139,7 +139,7 @@ function CourseCard({ course, onClick }: { course: (typeof COURSES)[0]; onClick:
   );
 }
 
-function StatCard({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
+function StatCard({ icon, value, label }: { icon: ReactNode; value: string; label: string }) {
   return (
     <div className="flex flex-col items-center text-center p-6 bg-slate-900/60 border border-slate-700/40 rounded-2xl">
       <div className="text-emerald-400 mb-3">{icon}</div>
@@ -168,10 +168,10 @@ export default function Academy() {
     staleTime: 1000 * 60 * 5,
   });
 
-  const featuredCourses = COURSES.filter((c) => [1, 3, 8].includes(c.id));
+  const featuredCourses = ALL_COURSES.filter((c) => [1, 3, 31].includes(c.id));
 
   const filtered = useMemo(() => {
-    return COURSES.filter((c) => {
+    return ALL_COURSES.filter((c) => {
       const matchesSearch =
         !search ||
         c.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -249,7 +249,7 @@ export default function Academy() {
 
       {/* ── STATS ─────────────────────────────────────────────────── */}
       <section className="max-w-5xl mx-auto px-4 -mt-6 mb-16 grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard icon={<BookOpen className="w-7 h-7" />} value={apiStats ? `${apiStats.totalCourses}` : "30"} label="Expert Courses" />
+        <StatCard icon={<BookOpen className="w-7 h-7" />} value={apiStats ? `${apiStats.totalCourses}` : "65"} label="Expert Courses" />
         <StatCard icon={<Users className="w-7 h-7" />} value={apiStats ? `${Math.round(apiStats.totalEnrolments / 1000)}K+` : "112K+"} label="Enrolled Learners" />
         <StatCard icon={<Award className="w-7 h-7" />} value={apiStats ? `${apiStats.avgCompletionRate}%` : "94.8%"} label="Completion Rate" />
         <StatCard icon={<TrendingUp className="w-7 h-7" />} value="15 🌍" label="Languages" />
