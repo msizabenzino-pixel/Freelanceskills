@@ -40,12 +40,12 @@ export default function Login() {
     const params = new URLSearchParams(window.location.search);
     const authErr = params.get("auth_error");
     if (authErr) {
-      setAuthError(decodeURIComponent(authErr));
+      setAuthError(authErr);
       window.history.replaceState({}, "", window.location.pathname);
     }
     const linkedinErr = params.get("linkedin_error");
     if (linkedinErr) {
-      setAuthError("LinkedIn is not configured yet. Please add the redirect URL and try again.");
+      setAuthError(linkedinErr === "not_configured" ? "LinkedIn is not configured yet. Please add the redirect URL and try again." : linkedinErr);
       window.history.replaceState({}, "", window.location.pathname);
     }
 
