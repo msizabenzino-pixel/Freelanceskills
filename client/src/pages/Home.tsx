@@ -325,6 +325,7 @@ export default function Home() {
   const [heroMode, setHeroMode] = useState<"search" | "ai">("search");
   const [applyJob, setApplyJob] = useState<{ title: string; company: string; budget: string; location: string } | null>(null);
   const [profileCompletion] = useState(42); // demo completion %
+  const [activeCategory, setActiveCategory] = useState("Development");
 
   const { data: realJobsData } = useQuery<any>({
     queryKey: ["/api/aggregated-jobs", { limit: 6, sortBy: "recent" }],
@@ -368,6 +369,36 @@ export default function Home() {
     e.preventDefault();
     navigate(searchQuery.trim() ? `/jobs?q=${encodeURIComponent(searchQuery.trim())}` : "/jobs");
   };
+
+  const discoveryCategories = [
+    {
+      name: "Creative & Design",
+      topics: ["Logo Designers", "Brand Identity", "UI/UX Designers", "Canva Designers", "Presentation Designers", "Illustrators"],
+    },
+    {
+      name: "Development",
+      topics: ["Web Developers", "Full Stack Developers", "React Developers", "WordPress Experts", "Software Engineers", "API Developers"],
+    },
+    {
+      name: "Writing",
+      topics: ["Writers", "Content Writers", "Copywriters", "SEO Writers", "Ghostwriters", "Proofreaders"],
+    },
+    {
+      name: "Business & Finance",
+      topics: ["Accountants", "Business Consultants", "Project Managers", "Tax Experts", "HR Professionals", "Recruiters"],
+    },
+    {
+      name: "Data & AI",
+      topics: ["AI Experts", "Prompt Engineers", "Data Scientists", "Machine Learning", "Automation Experts", "Chatbot Developers"],
+    },
+  ];
+
+  const instantBrowseLinks = [
+    { label: "Post a job", href: "/post-job" },
+    { label: "Find talent", href: "/talent" },
+    { label: "Browse jobs", href: "/jobs" },
+    { label: "Open categories", href: "/jobs" },
+  ];
 
   return (
     <div className="min-h-screen bg-slate-950 text-white font-sans flex flex-col overflow-x-hidden" style={{ paddingTop: 56 }}>
@@ -472,6 +503,71 @@ export default function Home() {
                   <AIBriefGenerator />
                 </div>
               )}
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.35 }}
+              className="max-w-6xl mx-auto mb-8"
+              data-testid="panel-instant-discovery"
+            >
+              <div className="flex flex-wrap justify-center gap-2 mb-4">
+                {discoveryCategories.map((category) => (
+                  <button
+                    key={category.name}
+                    onClick={() => setActiveCategory(category.name)}
+                    className={`px-4 py-2 rounded-full text-sm font-semibold border transition-all ${
+                      activeCategory === category.name
+                        ? "bg-emerald-500 text-slate-950 border-emerald-400 shadow-lg shadow-emerald-500/20"
+                        : "bg-slate-900/70 text-slate-300 border-slate-700 hover:border-emerald-500/40 hover:text-emerald-400"
+                    }`}
+                    data-testid={`button-category-${category.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+                  >
+                    {category.name}
+                  </button>
+                ))}
+              </div>
+
+              <div className="grid lg:grid-cols-[1.2fr_1.8fr] gap-4">
+                <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-5 text-left shadow-2xl shadow-black/20">
+                  <p className="text-xs uppercase tracking-[0.24em] text-emerald-400 font-semibold mb-3">Instant browse</p>
+                  <h3 className="text-2xl font-black mb-2">Start like Fiverr Pro</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed mb-5">
+                    Jump straight into the right skill category, service, or hiring path without digging through the site.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {instantBrowseLinks.map((link) => (
+                      <Link
+                        key={link.label}
+                        href={link.href}
+                        className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-sm font-medium text-slate-100 transition-all"
+                        data-testid={`link-instant-${link.label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-5 shadow-2xl shadow-black/20">
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {discoveryCategories.find((category) => category.name === activeCategory)?.topics.map((topic) => (
+                      <button
+                        key={topic}
+                        onClick={() => navigate(`/jobs?q=${encodeURIComponent(topic)}`)}
+                        className="text-left rounded-2xl border border-slate-800 bg-slate-950/60 hover:bg-slate-800 hover:border-emerald-500/30 p-4 transition-all group"
+                        data-testid={`button-topic-${topic.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+                      >
+                        <div className="text-sm font-semibold text-white group-hover:text-emerald-400 transition-colors">
+                          {topic}
+                        </div>
+                        <div className="text-xs text-slate-500 mt-1">Browse verified talent</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </motion.div>
 
             {/* CTAs */}
