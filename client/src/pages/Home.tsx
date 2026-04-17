@@ -395,7 +395,7 @@ export default function Home() {
 
   const instantBrowseLinks = [
     { label: "Post a job", href: "/post-job" },
-    { label: "Find talent", href: "/talent" },
+    { label: "Find talent", href: "/find-talent" },
     { label: "Browse jobs", href: "/jobs" },
     { label: "Open categories", href: "/jobs" },
   ];
@@ -529,13 +529,26 @@ export default function Home() {
                 ))}
               </div>
 
-              <div className="grid lg:grid-cols-[1.2fr_1.8fr] gap-4">
-                <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-5 text-left shadow-2xl shadow-black/20">
+              <div className="grid lg:grid-cols-[1.05fr_1.95fr] gap-4">
+                <div className="rounded-3xl border border-emerald-500/15 bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/20 p-5 text-left shadow-2xl shadow-black/20">
                   <p className="text-xs uppercase tracking-[0.24em] text-emerald-400 font-semibold mb-3">Instant browse</p>
                   <h3 className="text-2xl font-black mb-2">Start like Fiverr Pro</h3>
                   <p className="text-sm text-slate-400 leading-relaxed mb-5">
                     Jump straight into the right skill category, service, or hiring path without digging through the site.
                   </p>
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950/50 p-4 mb-5">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs uppercase tracking-[0.2em] text-slate-500">Today’s focus</span>
+                      <span className="text-xs text-emerald-400 font-semibold">{activeCategory}</span>
+                    </div>
+                    <div className="text-sm text-slate-300 leading-relaxed">
+                      {activeCategory === "Development" && "From websites to AI systems, hire builders with real execution power."}
+                      {activeCategory === "Creative & Design" && "Branding, logos, UI and visuals that make the first impression count."}
+                      {activeCategory === "Writing" && "Conversion copy, thought leadership, SEO and content that wins trust."}
+                      {activeCategory === "Business & Finance" && "Strategy, operations, compliance and financial expertise on demand."}
+                      {activeCategory === "Data & AI" && "Data intelligence, automation and AI experts for modern teams."}
+                    </div>
+                  </div>
                   <div className="flex flex-wrap gap-2">
                     {instantBrowseLinks.map((link) => (
                       <Link
@@ -551,6 +564,20 @@ export default function Home() {
                 </div>
 
                 <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-5 shadow-2xl shadow-black/20">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.24em] text-slate-500 font-semibold">Popular in this category</p>
+                      <h4 className="text-lg font-bold text-white mt-1">{activeCategory}</h4>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => navigate("/jobs")}
+                      className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-colors"
+                      data-testid="button-view-all-jobs"
+                    >
+                      View all jobs
+                    </button>
+                  </div>
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {discoveryCategories.find((category) => category.name === activeCategory)?.topics.map((topic) => (
                       <button
