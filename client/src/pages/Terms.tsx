@@ -158,7 +158,7 @@ export default function Terms() {
                 <li>CIPC Registration: 2026/070509/09</li>
                 <li>Address: Tableview, Cape Town, South Africa</li>
                 <li>Email: legal@freelanceskills.co.za</li>
-                <li>Phone: 0800 123 456</li>
+                <li>Phone: +27 72 232 4636</li>
               </ul>
             </section>
           </div>

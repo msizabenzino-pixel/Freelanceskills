@@ -222,11 +222,11 @@ export default function Services() {
               <span className="text-sm font-normal text-muted-foreground ml-2">({filteredServices.length})</span>
             </h2>
             <button
-              onClick={() => navigate("/explore")}
+              onClick={() => navigate("/jobs")}
               className="text-primary hover:text-accent flex items-center gap-1 font-medium transition-colors"
               data-testid="button-view-all-services"
             >
-              View Jobs <ArrowRight className="w-4 h-4" />
+              Browse All Jobs <ArrowRight className="w-4 h-4" />
             </button>
           </div>
 

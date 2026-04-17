@@ -349,7 +349,7 @@ export default function ResolutionCenter() {
                 </p>
 
                 <div className="flex gap-4 justify-center">
-                  <a href="https://wa.me/27601234567">
+                  <a href="https://wa.me/27722324636">
                     <Button variant="outline" className="gap-2">
                       <Phone className="h-4 w-4" />
                       WhatsApp Support

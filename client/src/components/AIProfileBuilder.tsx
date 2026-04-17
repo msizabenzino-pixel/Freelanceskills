@@ -531,7 +531,7 @@ export function AIProfileBuilder({
                 </div>
                 <div className="flex-1">
                   <p className="font-semibold text-green-800">WhatsApp Us (Fastest)</p>
-                  <p className="text-sm text-green-700">+27 60 123 4567</p>
+                  <p className="text-sm text-green-700">+27 72 232 4636</p>
                 </div>
                 <ArrowRight className="h-5 w-5 text-green-600" />
               </a>
@@ -541,8 +541,8 @@ export function AIProfileBuilder({
                   <Phone className="h-6 w-6" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-blue-800">Call Us (Free)</p>
-                  <p className="text-sm text-blue-700">0800 123 456</p>
+                  <p className="font-semibold text-blue-800">WhatsApp Support</p>
+                  <p className="text-sm text-blue-700">+27 72 232 4636</p>
                 </div>
               </div>
             </div>

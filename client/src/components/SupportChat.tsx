@@ -40,7 +40,7 @@ const BOT_FALLBACKS: Array<{ when: RegExp; reply: string }> = [
 function getBotReply(text: string) {
   const matched = BOT_FALLBACKS.find((item) => item.when.test(text));
   if (matched) return matched.reply;
-  return "Thanks for your message. Our support team can also help on WhatsApp: https://wa.me/27601234567";
+  return "Thanks for your message. Our support team can also help on WhatsApp: https://wa.me/27722324636";
 }
 
 function formatTime(date?: Date | null) {
@@ -239,7 +239,7 @@ export function SupportChat() {
                 </div>
                 <div className="mt-2 text-center">
                   <a
-                    href="https://wa.me/27601234567"
+                    href="https://wa.me/27722324636"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-xs text-primary inline-flex items-center gap-1 hover:underline"

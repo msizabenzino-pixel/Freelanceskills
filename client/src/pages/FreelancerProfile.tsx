@@ -147,8 +147,8 @@ export default function FreelancerProfile() {
         <main className="flex-1 flex flex-col items-center justify-center gap-4">
           <h2 className="text-2xl font-bold text-primary">Profile not found</h2>
           <p className="text-muted-foreground">The freelancer profile you're looking for doesn't exist.</p>
-          <Link href="/explore">
-            <Button>Back to Explore</Button>
+          <Link href="/find-talent">
+            <Button>Browse Freelancers</Button>
           </Link>
         </main>
         <Footer />

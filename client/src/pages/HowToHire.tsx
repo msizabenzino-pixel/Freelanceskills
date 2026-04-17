@@ -62,11 +62,13 @@ export default function HowToHire() {
                   title="How to Post a Job"
                   duration="3:15 min"
                   thumbnail={guideThumb}
+                  youtubeSearchQuery="how to post a job on a freelance platform south africa"
                 />
                 <VideoPlayer 
                   title="Instant Booking a Tasker"
                   duration="2:45 min"
                   thumbnail={guideThumb}
+                  youtubeSearchQuery="how to book a freelancer instantly online south africa"
                 />
               </div>
             </div>

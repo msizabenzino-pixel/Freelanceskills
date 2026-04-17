@@ -70,7 +70,7 @@ export default function Support() {
           <div className="container mx-auto px-4">
             <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
               <a 
-                href="https://wa.me/27601234567"
+                href="https://wa.me/27722324636"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-card p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow text-center group"
@@ -79,7 +79,7 @@ export default function Support() {
                   <MessageCircle className="h-8 w-8 text-green-600" />
                 </div>
                 <h3 className="font-semibold text-lg mb-1">WhatsApp</h3>
-                <p className="text-green-600 font-medium">+27 60 123 4567</p>
+                <p className="text-green-600 font-medium">+27 72 232 4636</p>
                 <p className="text-sm text-muted-foreground mt-2">Fastest response - usually &lt; 5 mins</p>
                 <div className="flex items-center justify-center gap-1 mt-3 text-sm text-primary">
                   <span>Chat Now</span>
@@ -88,15 +88,15 @@ export default function Support() {
               </a>
 
               <a 
-                href="tel:0800123456"
+                href="mailto:support@freelanceskills.co.za"
                 className="bg-card p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow text-center group"
               >
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                   <Phone className="h-8 w-8 text-blue-600" />
                 </div>
-                <h3 className="font-semibold text-lg mb-1">Call Us (Free)</h3>
-                <p className="text-blue-600 font-medium">0800 123 456</p>
-                <p className="text-sm text-muted-foreground mt-2">Toll-free for all networks</p>
+                <h3 className="font-semibold text-lg mb-1">Email Support</h3>
+                <p className="text-blue-600 font-medium">support@freelanceskills.co.za</p>
+                <p className="text-sm text-muted-foreground mt-2">We respond within 4 business hours</p>
               </a>
 
               <a 
@@ -210,16 +210,16 @@ export default function Support() {
               Our friendly team is just a message away. We're here to help you succeed!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="https://wa.me/27601234567" target="_blank" rel="noopener noreferrer">
+              <a href="https://wa.me/27722324636" target="_blank" rel="noopener noreferrer">
                 <Button size="lg" className="gap-2 bg-green-500 hover:bg-green-600">
                   <MessageCircle className="h-5 w-5" />
                   WhatsApp Us Now
                 </Button>
               </a>
-              <a href="tel:0800123456">
+              <a href="mailto:support@freelanceskills.co.za">
                 <Button size="lg" variant="outline" className="gap-2">
-                  <Phone className="h-5 w-5" />
-                  Call 0800 123 456
+                  <Mail className="h-5 w-5" />
+                  Email Support
                 </Button>
               </a>
             </div>
