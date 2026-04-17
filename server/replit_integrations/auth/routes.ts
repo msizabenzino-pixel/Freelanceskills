@@ -4,7 +4,109 @@ import { isAuthenticated } from "./replitAuth";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
+const LINKEDIN_AUTH_URL = "https://www.linkedin.com/oauth/v2/authorization";
+const LINKEDIN_TOKEN_URL = "https://www.linkedin.com/oauth/v2/accessToken";
+const LINKEDIN_USERINFO_URL = "https://api.linkedin.com/v2/userinfo";
+
+function getLinkedInCallbackUrl(req: any): string {
+  const host = process.env.REPLIT_DOMAINS?.split(",")[0] || req.get("host");
+  const proto = host?.includes("replit.app") || host?.includes("replit.dev") ? "https" : req.protocol;
+  return `${proto}://${host}/api/auth/linkedin/callback`;
+}
+
 export function registerAuthRoutes(app: Express): void {
+  // ── LINKEDIN OAUTH 2.0 ─────────────────────────────────────────────────────
+  app.get("/api/auth/linkedin", (req: any, res) => {
+    const clientId = process.env.LINKEDIN_CLIENT_ID;
+    if (!clientId) {
+      return res.redirect("/?linkedin_error=not_configured");
+    }
+    const state = crypto.randomBytes(16).toString("hex");
+    (req.session as any).linkedinState = state;
+    const params = new URLSearchParams({
+      response_type: "code",
+      client_id: clientId,
+      redirect_uri: getLinkedInCallbackUrl(req),
+      scope: "openid profile email",
+      state,
+    });
+    res.redirect(`${LINKEDIN_AUTH_URL}?${params.toString()}`);
+  });
+
+  app.get("/api/auth/linkedin/callback", async (req: any, res) => {
+    try {
+      const { code, state, error } = req.query;
+      const clientId = process.env.LINKEDIN_CLIENT_ID;
+      const clientSecret = process.env.LINKEDIN_CLIENT_SECRET;
+
+      if (error) {
+        return res.redirect(`/login?auth_error=${encodeURIComponent("LinkedIn sign-in was cancelled.")}`);
+      }
+      if (!clientId || !clientSecret) {
+        return res.redirect("/login?auth_error=" + encodeURIComponent("LinkedIn is not configured. Please contact support."));
+      }
+      if (state !== (req.session as any).linkedinState) {
+        return res.redirect("/login?auth_error=" + encodeURIComponent("Invalid state. Please try again."));
+      }
+      delete (req.session as any).linkedinState;
+
+      // Exchange code for access token
+      const tokenRes = await fetch(LINKEDIN_TOKEN_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          grant_type: "authorization_code",
+          code: String(code),
+          redirect_uri: getLinkedInCallbackUrl(req),
+          client_id: clientId,
+          client_secret: clientSecret,
+        }).toString(),
+      });
+      if (!tokenRes.ok) {
+        const err = await tokenRes.text();
+        console.error("[linkedin] Token exchange failed:", err);
+        return res.redirect("/login?auth_error=" + encodeURIComponent("LinkedIn authentication failed. Please try again."));
+      }
+      const tokenData = await tokenRes.json() as any;
+      const accessToken = tokenData.access_token;
+
+      // Fetch LinkedIn user info (OIDC)
+      const userRes = await fetch(LINKEDIN_USERINFO_URL, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (!userRes.ok) {
+        return res.redirect("/login?auth_error=" + encodeURIComponent("Could not retrieve your LinkedIn profile. Please try again."));
+      }
+      const profile = await userRes.json() as any;
+      const email = profile.email;
+      if (!email) {
+        return res.redirect("/login?auth_error=" + encodeURIComponent("Your LinkedIn account does not have a verified email address."));
+      }
+
+      // Create or find the user
+      const existingUser = await authStorage.getUserByEmail(email);
+      let user;
+      if (existingUser) {
+        user = existingUser;
+      } else {
+        user = await authStorage.createUser({
+          email,
+          password: null,
+          firstName: profile.given_name || profile.name?.split(" ")[0] || null,
+          lastName: profile.family_name || profile.name?.split(" ").slice(1).join(" ") || null,
+          profileImageUrl: profile.picture || null,
+        });
+      }
+
+      (req.session as any).userId = user.id;
+      console.log(`[linkedin] User ${email} signed in (id: ${user.id})`);
+      res.redirect("/dashboard?linkedin_welcome=1");
+    } catch (err) {
+      console.error("[linkedin] OAuth callback error:", err);
+      res.redirect("/login?auth_error=" + encodeURIComponent("An unexpected error occurred. Please try again."));
+    }
+  });
+
   app.post("/api/auth/forgot-password", async (req, res) => {
     try {
       const { email } = req.body;
