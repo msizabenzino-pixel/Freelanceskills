@@ -43,6 +43,11 @@ export default function Login() {
       setAuthError(decodeURIComponent(authErr));
       window.history.replaceState({}, "", window.location.pathname);
     }
+    const linkedinErr = params.get("linkedin_error");
+    if (linkedinErr) {
+      setAuthError("LinkedIn is not configured yet. Please add the redirect URL and try again.");
+      window.history.replaceState({}, "", window.location.pathname);
+    }
 
     const isInstalled =
       window.matchMedia("(display-mode: standalone)").matches ||
