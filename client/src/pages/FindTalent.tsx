@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { LevelBadge, getLevelFromStats } from "@/components/LevelBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -79,6 +80,12 @@ function FreelancerCard({ f, onSelect, selected }: { f: FreelancerResult; onSele
 
         <div className="w-full">
           <h3 className="font-bold text-base text-foreground leading-tight">{f.name}</h3>
+          <div className="flex justify-center mt-1 mb-0.5">
+            <LevelBadge
+              level={getLevelFromStats(f.completedJobs ?? 0, f.rating ?? 0, 0)}
+              size="xs"
+            />
+          </div>
           <p className="text-muted-foreground text-sm mt-0.5 line-clamp-2">{f.title}</p>
           {f.location && (
             <p className="text-xs text-muted-foreground mt-1 flex items-center justify-center gap-1">

@@ -2,7 +2,7 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Menu, X, Zap, LogOut, HelpCircle, Users, Briefcase, ChevronDown, Sparkles, Moon, Sun, Mic, GraduationCap, Bell, AlertTriangle, Download } from "lucide-react";
+import { Menu, X, Zap, LogOut, HelpCircle, Users, Briefcase, ChevronDown, Sparkles, Moon, Sun, Mic, GraduationCap, Bell, AlertTriangle, Download, Trophy } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useDarkMode } from "@/hooks/use-dark-mode";
 import { VoiceSearch } from "./VoiceSearch";
@@ -28,6 +28,15 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
   const { user, isLoading, isAuthenticated, logout } = useAuth();
   const { isDark, toggle: toggleDarkMode } = useDarkMode();
   const [highContrast, setHighContrast] = useState(() => localStorage.getItem("high-contrast") === "true");
+  const [pointsBalance, setPointsBalance] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!isAuthenticated || !user?.id) return;
+    fetch(`/api/rewards?userId=${user.id}`)
+      .then(r => r.json())
+      .then(d => { if (typeof d.balance === "number") setPointsBalance(d.balance); })
+      .catch(() => {});
+  }, [isAuthenticated, user?.id]);
   const useSolidNav = true;
 
   useEffect(() => {
@@ -422,6 +431,18 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
             </Button>
           {isAuthenticated ? (
             <div className="flex items-center gap-3">
+              {/* Points Balance Badge */}
+              {pointsBalance !== null && (
+                <button
+                  onClick={() => navigate("/rewards")}
+                  className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 hover:border-emerald-500/40 transition-all"
+                  data-testid="badge-points-balance"
+                  title="View your rewards"
+                >
+                  <Trophy className="w-3 h-3 text-emerald-400" />
+                  <span className="text-xs font-bold text-emerald-400">{pointsBalance.toLocaleString()} pts</span>
+                </button>
+              )}
               <div className="flex items-center gap-2">
                 {user?.profileImageUrl ? (
                   <img src={user.profileImageUrl} alt="" className="w-8 h-8 rounded-full" />

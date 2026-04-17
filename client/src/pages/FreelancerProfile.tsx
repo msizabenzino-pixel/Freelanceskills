@@ -11,6 +11,7 @@ import { useCurrency } from "@/lib/currency";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { PortfolioUploader } from "@/components/PortfolioUploader";
+import { LevelBadge, getLevelFromStats } from "@/components/LevelBadge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -201,6 +202,13 @@ export default function FreelancerProfile() {
                 </div>
 
                 <h1 className="text-2xl font-bold text-primary" data-testid="text-freelancer-name">{displayName}</h1>
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <LevelBadge
+                    level={getLevelFromStats(reviews.length, (profile as any).rating ?? 0, 0)}
+                    size="sm"
+                    data-testid="badge-freelancer-level"
+                  />
+                </div>
                 <p className="text-muted-foreground font-medium mb-4" data-testid="text-freelancer-role">{profile.title}</p>
 
                 <div className="flex justify-center gap-4 text-sm text-muted-foreground mb-6">

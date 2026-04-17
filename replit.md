@@ -1,5 +1,20 @@
 # FreelanceSkills - Global Freelance Marketplace
 
+## April 2026 — Fiverr Pro Features (Better): LevelBadge, AI Brief, Rewards, Auth
+
+### New Features Shipped
+- **LevelBadge component** (`client/src/components/LevelBadge.tsx`) — 5-tier system (New/Rising Star/Level 1/Level 2/Top Rated) with `getLevelFromStats()` + `getLevelProgress()`. Integrated into FreelancerProfile.tsx and FindTalent.tsx cards.
+- **AI Brief Generator** (`client/src/components/AIBriefGenerator.tsx`) — "Describe your project" input with OpenAI GPT-4o-mini backend (`POST /api/ai/generate-brief`). Falls back to smart keyword-based templates. Hero tab on Home.tsx toggled via Search/AI Brief toggle. Generates title, description, ZAR budget, skills, timeline, jobType in a modal with Copy + Post This Job CTA.
+- **Rewards/Points System** (`shared/models/rewards.ts`, `client/src/pages/RewardsHub.tsx`) — Full points engine: 12 earn actions, 5-tier system (Bronze→Elite), 6-reward catalogue (R50 credit to 50% commission off), DB tables `point_transactions` + `reward_redemptions`. Server routes: `GET /api/rewards`, `POST /api/rewards/earn`, `POST /api/rewards/redeem`. Navbar points badge links to `/rewards`. Route registered in App.tsx.
+- **Enhanced Auth** — Added `loginWithFacebook()` to `firebaseAuth.ts`. Login page updated with Google (full-width primary), Facebook + Apple (2-column grid), LinkedIn (coming soon). Fixed missing `handleLinkedInLogin`. All handlers have proper loading states.
+
+### Key Files
+- `client/src/components/LevelBadge.tsx` — Level badge + helpers
+- `client/src/components/AIBriefGenerator.tsx` — AI brief modal + compact mode
+- `shared/models/rewards.ts` — Points actions, tiers, catalogue, DB tables
+- `client/src/pages/RewardsHub.tsx` — Full rewards hub page (/rewards)
+- `client/src/lib/firebaseAuth.ts` — loginWithFacebook added
+
 ## April 2026 — AI Skills Academy v2.0 (35 New Courses + Cert Verify + AI Tutor)
 
 ### New Features Shipped

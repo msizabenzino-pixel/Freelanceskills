@@ -4,6 +4,7 @@ import {
   createUserWithEmailAndPassword,
   OAuthProvider,
   GoogleAuthProvider,
+  FacebookAuthProvider,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -38,7 +39,7 @@ function mapFirebaseUser(user: FirebaseUser): User {
   };
 }
 
-function mapSocialAuthError(error: unknown, provider: "google" | "apple"): Error {
+function mapSocialAuthError(error: unknown, provider: "google" | "apple" | "facebook"): Error {
   if (!(error instanceof FirebaseError)) {
     return new Error("Sign-in failed. Please try again.");
   }
@@ -56,6 +57,8 @@ function mapSocialAuthError(error: unknown, provider: "google" | "apple"): Error
       return new Error(
         provider === "google"
           ? "Google sign-in is not enabled in Firebase Authentication."
+          : provider === "facebook"
+          ? "Facebook sign-in is not enabled in Firebase Authentication."
           : "Apple sign-in is not enabled in Firebase Authentication."
       );
     case "auth/account-exists-with-different-credential":
@@ -115,6 +118,19 @@ export async function loginWithGoogle(): Promise<User> {
     return mapFirebaseUser(credential.user);
   } catch (error) {
     throw mapSocialAuthError(error, "google");
+  }
+}
+
+export async function loginWithFacebook(): Promise<User> {
+  ensureFirebaseReady();
+  const provider = new FacebookAuthProvider();
+  provider.addScope("email");
+  provider.addScope("public_profile");
+  try {
+    const credential = await signInWithPopup(firebaseAuth!, provider);
+    return mapFirebaseUser(credential.user);
+  } catch (error) {
+    throw mapSocialAuthError(error, "facebook");
   }
 }
 

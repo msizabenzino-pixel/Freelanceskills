@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { RemoteAIJobsWidget } from "@/components/RemoteAIJobsWidget";
+import { AIBriefGenerator } from "@/components/AIBriefGenerator";
 import {
   ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users,
   Building2, Brain, Globe, ShieldCheck, Lock, Headphones, Star, Quote, Send,
@@ -321,6 +322,7 @@ export default function Home() {
   const [newsletterStatus, setNewsletterStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [newsletterMsg, setNewsletterMsg] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [heroMode, setHeroMode] = useState<"search" | "ai">("search");
   const [applyJob, setApplyJob] = useState<{ title: string; company: string; budget: string; location: string } | null>(null);
   const [profileCompletion] = useState(42); // demo completion %
 
@@ -420,28 +422,57 @@ export default function Home() {
               <span className="text-emerald-400 font-semibold">Find work. Hire fast. Get paid safely.</span>
             </motion.p>
 
-            {/* Search */}
-            <motion.form initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}
-              onSubmit={handleSearch} className="relative max-w-2xl mx-auto mb-8" data-testid="form-hero-search">
-              <div className="flex items-center gap-3 bg-slate-900/90 backdrop-blur-sm border border-slate-700 hover:border-emerald-500/40 focus-within:border-emerald-500/60 rounded-2xl px-4 py-3 shadow-2xl transition-all">
-                <Search className="w-5 h-5 text-slate-500 flex-shrink-0" />
-                <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-                  placeholder="Search jobs, skills, or companies across Africa..."
-                  className="flex-1 bg-transparent text-white placeholder:text-slate-500 text-base focus:outline-none"
-                  data-testid="input-hero-search" />
-                <button type="submit" className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-all flex-shrink-0" data-testid="button-hero-search">
-                  Search
+            {/* Hero Input — Search or AI Brief Mode */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}
+              className="relative max-w-2xl mx-auto mb-8" data-testid="hero-input-area">
+              {/* Mode Toggle */}
+              <div className="flex items-center justify-center gap-1 mb-3">
+                <button
+                  onClick={() => setHeroMode("search")}
+                  className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${heroMode === "search" ? "bg-slate-700 text-white" : "text-slate-500 hover:text-slate-300"}`}
+                  data-testid="button-hero-mode-search"
+                >
+                  <Search className="w-3.5 h-3.5" /> Search Jobs
+                </button>
+                <button
+                  onClick={() => setHeroMode("ai")}
+                  className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${heroMode === "ai" ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-400" : "text-slate-500 hover:text-slate-300"}`}
+                  data-testid="button-hero-mode-ai"
+                >
+                  <Sparkles className="w-3.5 h-3.5" /> AI Brief Generator
                 </button>
               </div>
-              {/* Search suggestions */}
-              <div className="flex flex-wrap gap-2 mt-3 justify-center">
-                {["React Developer", "Plumber", "Brand Designer", "Remote Finance", "Government Tender"].map((s, i) => (
-                  <button key={i} type="button" onClick={() => { setSearchQuery(s); navigate(`/jobs?q=${encodeURIComponent(s)}`); }}
-                    className="text-[11px] px-3 py-1 rounded-full bg-slate-900/60 border border-slate-800 hover:border-emerald-500/40 text-slate-500 hover:text-emerald-400 transition-all"
-                    data-testid={`search-suggestion-${i}`}>{s}</button>
-                ))}
-              </div>
-            </motion.form>
+
+              {heroMode === "search" ? (
+                <form onSubmit={handleSearch} data-testid="form-hero-search">
+                  <div className="flex items-center gap-3 bg-slate-900/90 backdrop-blur-sm border border-slate-700 hover:border-emerald-500/40 focus-within:border-emerald-500/60 rounded-2xl px-4 py-3 shadow-2xl transition-all">
+                    <Search className="w-5 h-5 text-slate-500 flex-shrink-0" />
+                    <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
+                      placeholder="Search jobs, skills, or companies across Africa..."
+                      className="flex-1 bg-transparent text-white placeholder:text-slate-500 text-base focus:outline-none"
+                      data-testid="input-hero-search" />
+                    <button type="submit" className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-all flex-shrink-0" data-testid="button-hero-search">
+                      Search
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-3 justify-center">
+                    {["React Developer", "Plumber", "Brand Designer", "Remote Finance", "Government Tender"].map((s, i) => (
+                      <button key={i} type="button" onClick={() => { setSearchQuery(s); navigate(`/jobs?q=${encodeURIComponent(s)}`); }}
+                        className="text-[11px] px-3 py-1 rounded-full bg-slate-900/60 border border-slate-800 hover:border-emerald-500/40 text-slate-500 hover:text-emerald-400 transition-all"
+                        data-testid={`search-suggestion-${i}`}>{s}</button>
+                    ))}
+                  </div>
+                </form>
+              ) : (
+                <div data-testid="hero-ai-brief-section">
+                  <div className="flex items-center gap-2 justify-center mb-3">
+                    <Sparkles className="w-4 h-4 text-emerald-400" />
+                    <p className="text-sm text-slate-400">Describe your project in plain English — AI writes the full brief</p>
+                  </div>
+                  <AIBriefGenerator />
+                </div>
+              )}
+            </motion.div>
 
             {/* CTAs */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }}

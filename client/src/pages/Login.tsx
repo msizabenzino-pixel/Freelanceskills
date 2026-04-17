@@ -10,7 +10,7 @@ import {
   Download, X, BadgeCheck, Globe, Star, Users, Briefcase, Smartphone
 } from "lucide-react";
 import { Link } from "wouter";
-import { loginWithEmail, loginWithGoogle } from "@/lib/firebaseAuth";
+import { loginWithEmail, loginWithGoogle, loginWithFacebook, loginWithApple } from "@/lib/firebaseAuth";
 import { consumePendingAuthRedirect } from "@/lib/authRedirect";
 
 interface BeforeInstallPromptEvent extends Event {
@@ -28,6 +28,8 @@ export default function Login() {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isFacebookLoading, setIsFacebookLoading] = useState(false);
+  const [isAppleLoading, setIsAppleLoading] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [showFallbackModal, setShowFallbackModal] = useState(false);
@@ -120,6 +122,46 @@ export default function Login() {
     } finally {
       setIsGoogleLoading(false);
     }
+  };
+
+  const handleFacebookLogin = async () => {
+    setAuthError(null);
+    setIsFacebookLoading(true);
+    try {
+      await loginWithFacebook();
+      toast({ title: "Welcome back!", description: "Signed in with Facebook." });
+      handlePostAuthRedirect();
+    } catch (err: any) {
+      const message = err?.message?.includes("popup-closed-by-user")
+        ? "Sign-in was cancelled. Please try again."
+        : err?.message || "Facebook sign-in failed. Please try again.";
+      setAuthError(message);
+      toast({ title: "Facebook sign-in failed", description: message, variant: "destructive" });
+    } finally {
+      setIsFacebookLoading(false);
+    }
+  };
+
+  const handleAppleLogin = async () => {
+    setAuthError(null);
+    setIsAppleLoading(true);
+    try {
+      await loginWithApple();
+      toast({ title: "Welcome back!", description: "Signed in with Apple." });
+      handlePostAuthRedirect();
+    } catch (err: any) {
+      const message = err?.message?.includes("popup-closed-by-user")
+        ? "Sign-in was cancelled. Please try again."
+        : err?.message || "Apple sign-in failed. Please try again.";
+      setAuthError(message);
+      toast({ title: "Apple sign-in failed", description: message, variant: "destructive" });
+    } finally {
+      setIsAppleLoading(false);
+    }
+  };
+
+  const handleLinkedInLogin = () => {
+    toast({ title: "LinkedIn coming soon", description: "LinkedIn login is being set up. Use Google or email for now.", variant: "destructive" });
   };
 
   return (
@@ -243,12 +285,13 @@ export default function Login() {
                 </div>
               )}
 
-              {/* Social Login Buttons — Google first */}
-              <div className="space-y-3 mb-8" data-testid="social-login-section">
+              {/* Social Login Buttons */}
+              <div className="mb-8" data-testid="social-login-section">
+                {/* Google — full width, primary */}
                 <button
                   onClick={handleGoogleLogin}
-                  disabled={isGoogleLoading || isLoading}
-                  className="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-xl border border-slate-700 hover:bg-slate-800 hover:border-slate-600 transition-all text-slate-100 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0 shadow-sm"
+                  disabled={isGoogleLoading || isFacebookLoading || isAppleLoading || isLoading}
+                  className="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-xl border border-slate-700 hover:bg-slate-800 hover:border-slate-600 transition-all text-slate-100 font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0 shadow-sm mb-3"
                   data-testid="button-social-google"
                 >
                   {isGoogleLoading ? (
@@ -261,19 +304,54 @@ export default function Login() {
                       <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                     </svg>
                   )}
-                  {isGoogleLoading ? "Signing in..." : "Continue with Google"}
+                  {isGoogleLoading ? "Signing in with Google..." : "Continue with Google"}
                 </button>
 
+                {/* Facebook + Apple — side by side */}
+                <div className="grid grid-cols-2 gap-3 mb-3">
+                  <button
+                    onClick={handleFacebookLogin}
+                    disabled={isGoogleLoading || isFacebookLoading || isAppleLoading || isLoading}
+                    className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-slate-700 hover:bg-[#1877F2]/10 hover:border-[#1877F2]/50 transition-all text-slate-100 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0 shadow-sm"
+                    data-testid="button-social-facebook"
+                  >
+                    {isFacebookLoading ? (
+                      <div className="w-4 h-4 border-2 border-[#1877F2] border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#1877F2">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                      </svg>
+                    )}
+                    <span className="text-sm">{isFacebookLoading ? "..." : "Facebook"}</span>
+                  </button>
+
+                  <button
+                    onClick={handleAppleLogin}
+                    disabled={isGoogleLoading || isFacebookLoading || isAppleLoading || isLoading}
+                    className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-slate-700 hover:bg-slate-800 hover:border-slate-500 transition-all text-slate-100 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0 shadow-sm"
+                    data-testid="button-social-apple"
+                  >
+                    {isAppleLoading ? (
+                      <div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701z" />
+                      </svg>
+                    )}
+                    <span className="text-sm">{isAppleLoading ? "..." : "Apple"}</span>
+                  </button>
+                </div>
+
+                {/* LinkedIn — muted/coming-soon style */}
                 <button
                   onClick={handleLinkedInLogin}
-                  className="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-xl border border-slate-700 hover:bg-slate-800 hover:border-slate-600 transition-all text-slate-100 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0 shadow-sm"
+                  className="w-full flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-xl border border-slate-800 hover:border-slate-700 transition-all text-slate-500 hover:text-slate-400 text-sm font-medium"
                   data-testid="button-social-linkedin"
-                  title="Use LinkedIn login"
                 >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                   </svg>
-                  LinkedIn
+                  LinkedIn (coming soon)
                 </button>
               </div>
 

@@ -7404,5 +7404,219 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
     console.log("[routes] BLOG ENGINE — FreelanceSkills.net: 2 articles/day · 480 planned · SEO-optimised · SA-focused · Academy-integrated · Categories: AI Tools, SA Tax, Tenders, High-Income Skills, Success Stories, Blue-Collar, Fundamentals");
   }
 
+  // ── AI BRIEF GENERATOR ─────────────────────────────────────────────────────
+  app.post("/api/ai/generate-brief", async (req: any, res) => {
+    try {
+      const { description } = req.body;
+      if (!description || description.trim().length < 10) {
+        return res.status(400).json({ error: "Please provide a description of at least 10 characters." });
+      }
+
+      const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
+      const baseUrl = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL || "https://api.openai.com/v1";
+
+      if (!apiKey) {
+        const fallback = generateFallbackBrief(description);
+        return res.json(fallback);
+      }
+
+      const response = await fetch(`${baseUrl}/chat/completions`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          messages: [
+            {
+              role: "system",
+              content: `You are a South African freelance marketplace expert who creates professional job briefs. 
+              Return ONLY valid JSON with these fields:
+              - title: string (concise job title, max 60 chars)
+              - description: string (professional 3-4 paragraph description, in South African English)
+              - budgetMin: number (minimum budget in ZAR, realistic SA market rate)
+              - budgetMax: number (maximum budget in ZAR)
+              - skills: string[] (array of 4-6 required skills)
+              - timeline: string (e.g. "1–2 weeks", "3 days", "1 month")
+              - jobType: string ("Fixed Price" or "Hourly")
+              No markdown, no explanation, just the JSON object.`
+            },
+            { role: "user", content: `Generate a professional job brief for: ${description}` }
+          ],
+          max_tokens: 600,
+          temperature: 0.7,
+        }),
+      });
+
+      if (!response.ok) {
+        const fallback = generateFallbackBrief(description);
+        return res.json(fallback);
+      }
+
+      const data = await response.json() as any;
+      const content = data.choices?.[0]?.message?.content || "";
+      try {
+        const parsed = JSON.parse(content);
+        return res.json(parsed);
+      } catch {
+        const fallback = generateFallbackBrief(description);
+        return res.json(fallback);
+      }
+    } catch (error) {
+      log("AI brief generator error", "ai");
+      const fallback = generateFallbackBrief(req.body?.description || "");
+      return res.json(fallback);
+    }
+  });
+
+  function generateFallbackBrief(description: string) {
+    const words = description.toLowerCase();
+    const isDesign = words.includes("design") || words.includes("logo") || words.includes("brand");
+    const isDev = words.includes("develop") || words.includes("app") || words.includes("website") || words.includes("code");
+    const isContent = words.includes("write") || words.includes("content") || words.includes("copy") || words.includes("blog");
+    const isVideo = words.includes("video") || words.includes("edit") || words.includes("reel");
+
+    if (isDev) return {
+      title: "Software Developer Required",
+      description: "We are looking for an experienced developer to assist with our project. The ideal candidate will have strong technical skills and experience delivering high-quality solutions in South Africa.\n\nYou will be responsible for planning, building and testing the solution end-to-end, ensuring it meets our requirements and is delivered on time.\n\nCommunication is key — we expect regular progress updates and professional delivery.",
+      budgetMin: 5000, budgetMax: 25000, skills: ["JavaScript", "React", "Node.js", "PostgreSQL", "REST APIs"],
+      timeline: "2–4 weeks", jobType: "Fixed Price"
+    };
+    if (isDesign) return {
+      title: "Graphic Designer Needed",
+      description: "We require a talented graphic designer to create compelling visual content for our brand. The ideal candidate will have a strong portfolio and experience with South African brands.\n\nDeliverables include original designs, source files, and all final formats required for print and digital use.",
+      budgetMin: 2000, budgetMax: 8000, skills: ["Adobe Illustrator", "Photoshop", "Figma", "Brand Identity", "Typography"],
+      timeline: "1–2 weeks", jobType: "Fixed Price"
+    };
+    if (isContent) return {
+      title: "Content Writer Required",
+      description: "We are seeking a skilled content writer to produce high-quality written content for our business. The ideal candidate will have strong SEO knowledge and experience writing for South African audiences.\n\nContent must be original, engaging, and delivered according to our editorial guidelines.",
+      budgetMin: 500, budgetMax: 3000, skills: ["SEO Writing", "Content Strategy", "Research", "Copywriting", "Editing"],
+      timeline: "1 week", jobType: "Fixed Price"
+    };
+    if (isVideo) return {
+      title: "Video Editor Required",
+      description: "We need a professional video editor to create high-quality video content for our brand. The ideal candidate will have experience creating short-form content for social media platforms popular in South Africa.\n\nFinal deliverables must be optimised for Instagram, TikTok, and YouTube formats.",
+      budgetMin: 1500, budgetMax: 6000, skills: ["Premiere Pro", "After Effects", "CapCut", "Color Grading", "Motion Graphics"],
+      timeline: "3–5 days", jobType: "Fixed Price"
+    };
+    return {
+      title: "Freelance Professional Required",
+      description: "We are looking for a skilled freelancer to assist with our project. The ideal candidate will have relevant experience and the ability to deliver high-quality results within the agreed timeframe.\n\nPlease include your portfolio, relevant experience, and a detailed quote in your proposal.",
+      budgetMin: 2000, budgetMax: 10000, skills: ["Project Management", "Communication", "Problem Solving", "Attention to Detail"],
+      timeline: "1–3 weeks", jobType: "Fixed Price"
+    };
+  }
+
+  // ── REWARDS / POINTS SYSTEM ───────────────────────────────────────────────
+  app.get("/api/rewards", async (req: any, res) => {
+    try {
+      const userId = req.session?.userId || req.query.userId;
+      if (!userId) return res.status(401).json({ error: "Not authenticated" });
+
+      const { db } = await import("./db");
+      const { pointTransactions, rewardRedemptions } = await import("../shared/models/rewards");
+      const { eq, desc, sql: sqlFn } = await import("drizzle-orm");
+
+      const transactions = await db
+        .select()
+        .from(pointTransactions)
+        .where(eq(pointTransactions.userId, userId))
+        .orderBy(desc(pointTransactions.createdAt))
+        .limit(50);
+
+      const redemptions = await db
+        .select()
+        .from(rewardRedemptions)
+        .where(eq(rewardRedemptions.userId, userId))
+        .orderBy(desc(rewardRedemptions.createdAt))
+        .limit(20);
+
+      const balance = transactions.length > 0 ? transactions[0].balanceAfter : 0;
+
+      res.json({ balance, transactions, redemptions });
+    } catch (error) {
+      log("Rewards fetch error: " + String(error), "rewards");
+      res.json({ balance: 0, transactions: [], redemptions: [] });
+    }
+  });
+
+  app.post("/api/rewards/earn", async (req: any, res) => {
+    try {
+      const { userId, action } = req.body;
+      if (!userId || !action) return res.status(400).json({ error: "userId and action required" });
+
+      const { POINT_ACTIONS } = await import("../shared/models/rewards");
+      const actionConfig = POINT_ACTIONS[action as keyof typeof POINT_ACTIONS];
+      if (!actionConfig) return res.status(400).json({ error: "Unknown action" });
+
+      const { db } = await import("./db");
+      const { pointTransactions } = await import("../shared/models/rewards");
+      const { eq, desc } = await import("drizzle-orm");
+
+      const existing = await db.select().from(pointTransactions)
+        .where(eq(pointTransactions.userId, userId))
+        .orderBy(desc(pointTransactions.createdAt))
+        .limit(1);
+
+      const currentBalance = existing.length > 0 ? existing[0].balanceAfter : 0;
+      const newBalance = currentBalance + actionConfig.points;
+
+      const [tx] = await db.insert(pointTransactions).values({
+        userId,
+        amount: actionConfig.points,
+        action,
+        description: actionConfig.label,
+        balanceAfter: newBalance,
+      }).returning();
+
+      log(`[rewards] +${actionConfig.points} pts for ${userId} (${action}) → balance: ${newBalance}`, "rewards");
+      res.json({ transaction: tx, balance: newBalance, pointsEarned: actionConfig.points });
+    } catch (error) {
+      log("Rewards earn error: " + String(error), "rewards");
+      res.status(500).json({ error: "Failed to record points" });
+    }
+  });
+
+  app.post("/api/rewards/redeem", async (req: any, res) => {
+    try {
+      const userId = req.session?.userId || req.body.userId;
+      if (!userId) return res.status(401).json({ error: "Not authenticated" });
+
+      const { rewardId } = req.body;
+      const { REWARDS_CATALOGUE } = await import("../shared/models/rewards");
+      const reward = REWARDS_CATALOGUE.find(r => r.id === rewardId);
+      if (!reward) return res.status(404).json({ error: "Reward not found" });
+
+      const { db } = await import("./db");
+      const { pointTransactions, rewardRedemptions } = await import("../shared/models/rewards");
+      const { eq, desc } = await import("drizzle-orm");
+
+      const existing = await db.select().from(pointTransactions)
+        .where(eq(pointTransactions.userId, userId))
+        .orderBy(desc(pointTransactions.createdAt))
+        .limit(1);
+
+      const balance = existing.length > 0 ? existing[0].balanceAfter : 0;
+      if (balance < reward.cost) {
+        return res.status(400).json({ error: `Insufficient points. Need ${reward.cost}, you have ${balance}.` });
+      }
+
+      const newBalance = balance - reward.cost;
+      await db.insert(pointTransactions).values({
+        userId, amount: -reward.cost, action: "redeem",
+        description: `Redeemed: ${reward.name}`, balanceAfter: newBalance,
+      });
+
+      const [redemption] = await db.insert(rewardRedemptions).values({
+        userId, rewardId, rewardName: reward.name, pointsCost: reward.cost,
+        status: "pending",
+      }).returning();
+
+      res.json({ redemption, balance: newBalance });
+    } catch (error) {
+      log("Rewards redeem error: " + String(error), "rewards");
+      res.status(500).json({ error: "Failed to redeem reward" });
+    }
+  });
+
   return httpServer;
 }

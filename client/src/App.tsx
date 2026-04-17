@@ -51,6 +51,7 @@ const BlogCategory = lazy(() => import("@/pages/BlogCategory"));
 const BlogSearch = lazy(() => import("@/pages/BlogSearch"));
 const Enterprise = lazy(() => import("@/pages/Enterprise"));
 const Referral = lazy(() => import("@/pages/Referral"));
+const RewardsHub = lazy(() => import("@/pages/RewardsHub"));
 const Checkout = lazy(() => import("@/pages/Checkout"));
 const FreelancerOnboarding = lazy(() => import("@/pages/FreelancerOnboarding"));
 const ProfileBuilder = lazy(() => import("@/pages/ProfileBuilder"));
@@ -458,6 +459,7 @@ function Router() {
         <Route path="/blog/:slug" component={BlogPost} />
         <Route path="/enterprise" component={Enterprise} />
         <Route path="/referral" component={Referral} />
+        <Route path="/rewards" component={RewardsHub} />
         <Route path="/checkout" component={Checkout} />
         <Route path="/onboarding" component={FreelancerOnboarding} />
         <Route path="/freelancer-onboarding" component={FreelancerOnboarding} />

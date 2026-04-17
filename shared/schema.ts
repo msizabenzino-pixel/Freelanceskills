@@ -32,3 +32,4 @@ export * from "./models/compliance";
 export * from "./models/marketplace";
 export * from "./models/blog";
 export * from "./models/vetting";
+export * from "./models/rewards";
