@@ -399,6 +399,7 @@ export default function Home() {
     { label: "Browse jobs", href: "/jobs" },
     { label: "Open categories", href: "/jobs" },
   ];
+  const activeTopics = discoveryCategories.find((category) => category.name === activeCategory)?.topics ?? [];
 
   return (
     <div className="min-h-screen bg-slate-950 text-white font-sans flex flex-col overflow-x-hidden" style={{ paddingTop: 56 }}>
@@ -579,7 +580,7 @@ export default function Home() {
                     </button>
                   </div>
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {discoveryCategories.find((category) => category.name === activeCategory)?.topics.map((topic) => (
+                    {activeTopics.map((topic) => (
                       <button
                         key={topic}
                         onClick={() => navigate(`/jobs?q=${encodeURIComponent(topic)}`)}
