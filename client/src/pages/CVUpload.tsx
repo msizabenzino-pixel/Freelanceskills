@@ -152,7 +152,19 @@ export default function CVUpload() {
   // ── Parse mutation
   const parseMutation = useMutation({
     mutationFn: async (text: string) => {
-      const res = await apiRequest("POST", "/api/cv/parse", { cvText: text });
+      const res = await fetch("/api/cv/parse", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ cvText: text }),
+      });
+      if (res.status === 401) {
+        throw new Error("401:Please sign in before parsing your CV.");
+      }
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({})) as any;
+        throw new Error(body?.message || "CV parsing failed — please try again.");
+      }
       return res.json();
     },
     onSuccess: (data) => {
@@ -169,12 +181,25 @@ export default function CVUpload() {
         category: data.category || "",
         certifications: data.certifications || "",
       }));
+      toast({ title: "AI extracted your profile!", description: "Review the details below and make any adjustments." });
       setPhase("review");
     },
-    onError: () => {
-      // Fallback: go to review with empty form so user can fill manually
+    onError: (error: Error) => {
+      const is401 = error.message.startsWith("401:");
+      if (is401) {
+        toast({
+          variant: "destructive",
+          title: "Sign in required",
+          description: "Please sign in or create an account, then try again.",
+        });
+      } else {
+        // Non-401 failure: fall through to manual form with a helpful message
+        toast({
+          title: "AI extraction unavailable",
+          description: "Fill in your details below — it only takes 2 minutes.",
+        });
+      }
       setPhase("review");
-      toast({ title: "AI tip", description: "Fill in your details manually — or try pasting more of your CV." });
     },
   });
 
@@ -182,26 +207,48 @@ export default function CVUpload() {
   const profileMutation = useMutation({
     mutationFn: async (data: FormData) => {
       if (!data.firstName || !data.lastName || !data.title || !data.category) {
-        throw new Error("Please fill in Name, Title and Category");
+        throw new Error("Please fill in your Name, Title and Category before going live.");
       }
-      const res = await apiRequest("POST", "/api/profile", {
-        userId: user?.id,
-        userType: "freelancer",
-        bio: data.bio,
-        title: data.title,
-        skills: data.skills,
-        hourlyRate: data.hourlyRate ? parseInt(data.hourlyRate) * 100 : 0,
-        location: data.location,
-        isPro: false,
+      const res = await fetch("/api/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          userId: user?.id,
+          userType: "freelancer",
+          bio: data.bio,
+          title: data.title,
+          skills: data.skills,
+          hourlyRate: data.hourlyRate ? parseInt(data.hourlyRate) * 100 : 0,
+          location: data.location,
+          isPro: false,
+        }),
       });
+      if (res.status === 401) {
+        throw new Error("401:Your session expired. Please sign in again to publish your profile.");
+      }
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({})) as any;
+        throw new Error(body?.message || "Profile creation failed — please try again.");
+      }
       return res.json();
     },
     onSuccess: () => {
-      toast({ title: "🎉 Profile Created!", description: "Welcome to FreelanceSkills. Start getting work today." });
+      toast({
+        title: "Profile live!",
+        description: "Your profile is now visible to employers on FreelanceSkills.",
+      });
       setLocation("/dashboard");
     },
     onError: (error: Error) => {
-      toast({ variant: "destructive", title: "Error", description: error.message });
+      const is401 = error.message.startsWith("401:");
+      toast({
+        variant: "destructive",
+        title: is401 ? "Session expired" : "Could not publish profile",
+        description: is401
+          ? "Please sign in again and then click Go Live."
+          : error.message,
+      });
     },
   });
 

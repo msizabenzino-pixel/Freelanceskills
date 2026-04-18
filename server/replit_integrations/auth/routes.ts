@@ -244,6 +244,65 @@ export function registerAuthRoutes(app: Express): void {
     });
   });
 
+  // ── FIREBASE SESSION BRIDGE ────────────────────────────────────────────────
+  // Verifies a Firebase ID token and synchronises it into the Express session.
+  // This bridges Firebase client auth ↔ server-side isAuthenticated middleware.
+  app.post("/api/auth/sync-session", async (req: any, res) => {
+    try {
+      const { uid, idToken } = req.body as { uid?: string; idToken?: string };
+      if (!uid || !idToken) {
+        return res.status(400).json({ success: false, message: "uid and idToken are required" });
+      }
+
+      // Verify the token is genuine using Firebase's lookup REST API.
+      // The Web API key is public (embedded in every frontend build).
+      const firebaseApiKey =
+        process.env.VITE_FIREBASE_API_KEY ||
+        process.env.FIREBASE_API_KEY ||
+        "AIzaSyDA7jqV7SveOCkfllNsQUC-kThK74n4Syk";
+
+      const verifyRes = await fetch(
+        `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${firebaseApiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ idToken }),
+        }
+      );
+
+      if (!verifyRes.ok) {
+        const err = await verifyRes.json().catch(() => ({})) as any;
+        const code = err?.error?.message || "INVALID_TOKEN";
+        console.warn("[sync-session] Token verification failed:", code);
+        return res.status(401).json({ success: false, message: "Invalid Firebase token", code });
+      }
+
+      const data = await verifyRes.json() as any;
+      const verifiedUid: string | undefined = data?.users?.[0]?.localId;
+      if (!verifiedUid || verifiedUid !== uid) {
+        return res.status(401).json({ success: false, message: "UID mismatch — token not valid for this user" });
+      }
+
+      // Set the server session so isAuthenticated passes for this user.
+      (req.session as any).userId = uid;
+      (req.session as any).firebaseSynced = true;
+
+      res.json({ success: true, message: "Session synchronised", userId: uid });
+    } catch (error) {
+      console.error("[sync-session] Error:", error);
+      res.status(500).json({ success: false, message: "Session sync failed — please try again" });
+    }
+  });
+
+  // Clear the server session when Firebase user logs out.
+  app.post("/api/auth/clear-session", (req, res) => {
+    req.session.destroy((err) => {
+      if (err) console.error("[clear-session] Error:", err);
+      res.clearCookie("connect.sid");
+      res.json({ success: true, message: "Session cleared" });
+    });
+  });
+
   app.get("/api/auth/user", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.session.userId;

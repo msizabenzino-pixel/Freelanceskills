@@ -1,0 +1,68 @@
+You are Replit Agent Ω-Prime fused with a 15-year Principal Full-Stack Engineer (ex-Scale, ex-Takealot, ex-African marketplace architect). 
+
+Project name: FreelanceSkills-Alien-Platform-vNuclear-Senior-Dev-v2
+
+OBJECTIVE: Rebuild the entire platform from the ground up so that EVERY reported issue is surgically eliminated with zero tolerance for partial states, false messages, or silent failures.
+
+ISSUES TO OBLITERATE WITH EXTREME PRECISION:
+5. Registration: "registration failed" UI but account actually created → false negative feedback, repeated signups, trust erosion.
+6. AI CV Builder: Promised auto-extraction but only redirects to manual form + 401 on "Create/Go Live".
+7. Profile creation: 401 on "Go Live", preview renders but nothing persists → Draft vs Published confusion, users think profile is live when it isn’t.
+8. Apply button: completely non-responsive, zero loading state, zero error toast, zero feedback (likely auth/profile gate failing silently).
+
+NON-NEGOTIABLE ARCHITECTURE (Senior Dev Standard):
+- Monorepo: /frontend (React 19 + Vite + TS + Tailwind + shadcn/ui + TanStack Query v5 + Zustand) + /backend (Node 20 + Express + TS + Zod)
+- Auth & DB: Supabase (Auth + PostgreSQL + Storage + Row Level Security) — full migration. No raw Firebase client calls.
+- State machine for profiles: enum status = ['draft', 'saved', 'published']
+- All mutations are atomic transactions (account + profile + CV parse in one go when possible)
+- Every API response: { success: boolean, message: string, data?: any, code?: string, status?: 'draft'|'saved'|'published' }
+- Frontend: NEVER optimistically updates UI. Always awaits real backend truth + shows loading/error toasts via sonner.
+- Zero silent failures — every button has loading spinner + error boundary.
+
+PHASE 1: AUTH & REGISTRATION (NUKE ISSUE 5)
+- POST /api/auth/register
+  • Atomic Supabase transaction: create auth.user + insert profile row (status: 'draft')
+  • On ANY success: return clear { success: true, message: "Account created! Let's build your profile." } + auto-login + session cookie
+  • On failure: rollback everything, return exact mapped error (e.g. code: "EMAIL_EXISTS")
+- Frontend registration form → immediate success toast + seamless redirect to Profile Wizard. No more "failed" lies.
+
+PHASE 2: AI CV BUILDER + PROFILE PIPELINE (NUKE ISSUES 6 & 7)
+- CV Upload: /api/profile/upload-cv (Supabase Storage) → backend /api/profile/parse-cv
+  • Use real LLM (Grok API / OpenAI via env key) + pdf-parse or mammoth to extract: skills (array), bio, title, experience years, benchmark rate
+  • Return parsed data with "AI Extracted" badges
+- Profile Wizard (multi-step, forced after registration):
+  • Fields auto-filled from CV parse
+  • Real-time draft saved to Supabase (status: 'draft')
+  • "Go Live / Publish Profile" button:
+    • POST /api/profile/publish
+    • Validates session server-side (no more 401s)
+    • Updates status to 'published' atomically
+    • Returns clear status badge
+- UI everywhere: explicit badges — "Draft — Not visible to employers" (red), "Saved", "Published & Live" (green)
+- Preview mode clearly labeled "PREVIEW ONLY — Not published"
+
+PHASE 3: JOB APPLICATION FLOW (NUKE ISSUE 8)
+- Job listings page: every "Apply" button is a proper React event handler
+- On click:
+  • Show immediate loading spinner
+  • Frontend first checks profile.status === 'published' via TanStack Query
+  • If not: blocking modal with exact message + one-click link to wizard ("Complete your profile before applying")
+  • If yes: open full application form (cover letter, questions, attach docs)
+- Never silent. Always visible state change.
+
+PHASE 4: GLOBAL UX & ONBOARDING OVERHAUL
+- Hero: side-by-side CTAs — "Search Jobs" + "Build Profile in 60 seconds with AI CV"
+- Consistent SA-first mobile design, dark mode default, fast loading
+- Toast system for every action
+- Protected routes auto-refresh session
+
+PHASE 5: DELIVERABLES & HARDENING
+Build full working monorepo in this Replit.
+After each phase: pause, show preview URLs, and provide curl/Postman test commands for register → CV parse → publish → apply.
+Include:
+- .env.example with Supabase + LLM keys
+- RLS policies for profiles
+- Rate limiting + security headers
+- One-click dev run command
+
+Start building NOW. Prioritize atomic registration, real AI CV parsing, and bulletproof Apply button first. No half-measures.

@@ -8,10 +8,14 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { useLocation } from "wouter";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 import { 
   Camera, Globe, Sparkles, ShieldCheck, ThumbsUp, Plus, Upload,
   Briefcase, GraduationCap, Clock, MapPin, Eye, Save, CheckCircle2, WandSparkles,
-  BadgeCheck, Zap, Edit3, CalendarDays, Link2, Users, Bell, Shield
+  BadgeCheck, Zap, Edit3, CalendarDays, Link2, Users, Bell, Shield, Loader2
 } from "lucide-react";
 
 const SKILLS = ["React", "TypeScript", "UI Design", "Node.js", "SEO", "Copywriting"];
@@ -21,6 +25,52 @@ export default function ProfileBuilder() {
   const [strength] = useState(74);
   const [headline, setHeadline] = useState("Full-Stack Developer | AI Specialist | Open to Freelance Gigs");
   const [bio, setBio] = useState("I build fast, reliable digital products for startups and SMEs across Africa.");
+  const { toast } = useToast();
+  const { user } = useAuth();
+  const [, navigate] = useLocation();
+
+  const publishMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch("/api/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          userId: user?.id,
+          userType: "freelancer",
+          bio,
+          title: headline,
+          skills: SKILLS,
+          hourlyRate: 0,
+          location: "",
+          isPro: false,
+        }),
+      });
+      if (res.status === 401) {
+        throw new Error("401:Session expired — please sign in again.");
+      }
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({})) as any;
+        throw new Error(body?.message || "Could not publish profile. Please try again.");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Profile published!",
+        description: "Your profile is now live and visible to employers.",
+      });
+      navigate("/dashboard");
+    },
+    onError: (err: Error) => {
+      const is401 = err.message.startsWith("401:");
+      toast({
+        variant: "destructive",
+        title: is401 ? "Session expired" : "Publish failed",
+        description: is401 ? "Please sign in again and click Save & Publish." : err.message,
+      });
+    },
+  });
 
   return (
     <div className="min-h-screen bg-slate-950 text-white flex flex-col">
@@ -39,8 +89,15 @@ export default function ProfileBuilder() {
               <button className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-800 text-slate-300 hover:text-emerald-400 hover:border-emerald-500/40 transition-all" data-testid="button-preview-public-profile">
                 <Eye className="w-4 h-4" /> Preview Public Profile
               </button>
-              <Button className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold" data-testid="button-save-publish">
-                <Save className="w-4 h-4 mr-2" /> Save & Publish
+              <Button
+                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold"
+                data-testid="button-save-publish"
+                onClick={() => publishMutation.mutate()}
+                disabled={publishMutation.isPending}
+              >
+                {publishMutation.isPending
+                  ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Publishing…</>
+                  : <><Save className="w-4 h-4 mr-2" /> Save & Publish</>}
               </Button>
             </div>
           </div>
@@ -226,8 +283,15 @@ export default function ProfileBuilder() {
                   <button className="flex-1 inline-flex items-center justify-center px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:text-emerald-400 hover:border-emerald-500/40" data-testid="button-preview-link">
                     <Eye className="w-4 h-4 mr-2" /> Preview
                   </button>
-                  <Button className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold" data-testid="button-publish-profile">
-                    Save & Publish
+                  <Button
+                    className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold"
+                    data-testid="button-publish-profile"
+                    onClick={() => publishMutation.mutate()}
+                    disabled={publishMutation.isPending}
+                  >
+                    {publishMutation.isPending
+                      ? <><Loader2 className="w-4 h-4 mr-1 animate-spin" /> Publishing…</>
+                      : "Save & Publish"}
                   </Button>
                 </div>
               </Card>
