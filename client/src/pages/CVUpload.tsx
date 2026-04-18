@@ -16,6 +16,7 @@ import { Slider } from "@/components/ui/slider";
 import { Progress } from "@/components/ui/progress";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { earnPoints } from "@/lib/earnPoints";
 import { SERVICE_CATEGORIES } from "@shared/categories";
 import {
   Upload, FileText, Sparkles, Check, User, Briefcase,
@@ -109,6 +110,7 @@ export default function CVUpload() {
   const [cvText, setCvText] = useState("");
   const [dragOver, setDragOver] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
+  const [uploadedFileRef, setUploadedFileRef] = useState<File | null>(null);
   const [parseScanStep, setParseScanStep] = useState(0);
   const [formData, setFormData] = useState<FormData>(defaultForm);
   const [skillInput, setSkillInput] = useState("");
@@ -123,15 +125,23 @@ export default function CVUpload() {
   const marketRate = MARKET_RATES[formData.category] ?? MARKET_RATES.default;
   const skillSuggestions = SKILL_SUGGESTIONS[formData.category] ?? SKILL_SUGGESTIONS.default;
 
-  // ── File handling
+  // ── File handling — store raw file ref, don't try to read binary PDF/DOCX as text
   const handleFile = useCallback((file: File) => {
     setUploadedFile(file.name);
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const text = e.target?.result as string;
-      setCvText(text || `[File uploaded: ${file.name}] — AI will process this document.`);
-    };
-    reader.readAsText(file);
+    setUploadedFileRef(file);
+    // Only read plaintext files as text; let the server handle PDF/DOCX
+    const isPdfOrDoc = /\.(pdf|docx?)/i.test(file.name) ||
+      file.type === "application/pdf" ||
+      file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    if (!isPdfOrDoc) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const text = e.target?.result as string;
+        setCvText(text || "");
+      };
+      reader.readAsText(file);
+    }
+    // For PDF/DOCX, we leave cvText empty — server will parse on /api/cv/upload
   }, []);
 
   const handleDrop = (e: React.DragEvent) => {
@@ -203,6 +213,54 @@ export default function CVUpload() {
     },
   });
 
+  // ── File upload mutation (PDF/DOCX → server parsing → profile data)
+  const uploadFileMutation = useMutation({
+    mutationFn: async (fd: globalThis.FormData) => {
+      const res = await fetch("/api/cv/upload", {
+        method: "POST",
+        credentials: "include",
+        body: fd, // no Content-Type header — browser sets multipart boundary
+      });
+      if (res.status === 401) throw new Error("401:Please sign in before uploading your CV.");
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({})) as any;
+        throw new Error(body?.message || "File upload failed — please try again.");
+      }
+      return res.json();
+    },
+    onSuccess: (result) => {
+      const data = result.data || {};
+      setFormData((prev) => ({
+        ...prev,
+        firstName: data.firstName || prev.firstName,
+        lastName: data.lastName || prev.lastName,
+        title: data.title || prev.title,
+        bio: data.bio || prev.bio,
+        skills: data.skills?.length ? data.skills : prev.skills,
+        hourlyRate: data.hourlyRate?.toString() || prev.hourlyRate,
+        location: data.location || prev.location,
+        experienceLevel: data.experienceLevel || prev.experienceLevel,
+        category: data.category || prev.category,
+        certifications: data.certifications || prev.certifications,
+      }));
+      if (result.success) {
+        toast({ title: "CV parsed!", description: `Extracted ${result.extractedLength ?? "?"} characters. Review your profile details below.` });
+      } else {
+        toast({ title: "Partial extraction", description: result.message || "Fill in any missing fields below." });
+      }
+      setPhase("review");
+    },
+    onError: (error: Error) => {
+      const is401 = error.message.startsWith("401:");
+      toast({
+        variant: "destructive",
+        title: is401 ? "Sign in required" : "Upload failed",
+        description: is401 ? "Please sign in and try again." : error.message,
+      });
+      setPhase("upload");
+    },
+  });
+
   // ── Profile save mutation
   const profileMutation = useMutation({
     mutationFn: async (data: FormData) => {
@@ -233,7 +291,18 @@ export default function CVUpload() {
       }
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      // 1 — Publish profile (flip publishedProfile flag)
+      await fetch("/api/profile/publish", { method: "POST", credentials: "include" }).catch(() => {});
+      // 2 — Award 50 points for completing profile
+      const pts = await earnPoints("profile_complete", user?.id ?? "");
+      if (pts?.success) {
+        toast({
+          title: `+${pts.points} points earned! 🎉`,
+          description: "You earned points for completing your profile.",
+        });
+      }
+      // 3 — Success nav
       toast({
         title: "Profile live!",
         description: "Your profile is now visible to employers on FreelanceSkills.",
@@ -252,7 +321,8 @@ export default function CVUpload() {
     },
   });
 
-  // ── Start AI parse
+  // ── Start AI parse — routes through /api/cv/upload for binary files,
+  //    /api/cv/parse for pasted text
   const startParsing = () => {
     if (!cvText.trim() && !uploadedFile) return;
     setPhase("parsing");
@@ -263,7 +333,14 @@ export default function CVUpload() {
       setParseScanStep(step);
       if (step >= AI_PARSE_STEPS.length) {
         clearInterval(interval);
-        parseMutation.mutate(cvText || "Sample CV text for profile building");
+        if (uploadedFileRef) {
+          // Real file — send via multipart to /api/cv/upload
+          const fd = new window.FormData();
+          fd.append("cv", uploadedFileRef);
+          uploadFileMutation.mutate(fd);
+        } else {
+          parseMutation.mutate(cvText || "Sample CV text for profile building");
+        }
       }
     }, 500);
   };
@@ -925,6 +1002,18 @@ Google Professional Cloud Developer (2022)`;
                       </CardContent>
                     </Card>
 
+                    {/* Draft/Live status indicator */}
+                    <div className="flex items-center justify-between px-1">
+                      <div className="flex items-center gap-2 text-sm">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                          Draft
+                        </span>
+                        <span className="text-muted-foreground text-xs">→ click Go Live to publish</span>
+                      </div>
+                      <span className="text-xs text-muted-foreground">+50 pts on publish</span>
+                    </div>
+
                     <Button
                       size="lg"
                       className="w-full h-14 text-base font-bold gap-3 bg-emerald-600 hover:bg-emerald-500 text-white shadow-xl"
@@ -932,7 +1021,7 @@ Google Professional Cloud Developer (2022)`;
                       disabled={profileMutation.isPending}
                       data-testid="btn-create-profile"
                     >
-                      {profileMutation.isPending ? <><Loader2 className="w-5 h-5 animate-spin" /> Creating Profile...</> : <><Zap className="w-5 h-5" /> Go Live — Create My Profile <ArrowRight className="w-5 h-5" /></>}
+                      {profileMutation.isPending ? <><Loader2 className="w-5 h-5 animate-spin" /> Publishing Profile...</> : <><Zap className="w-5 h-5" /> Go Live — Create My Profile <ArrowRight className="w-5 h-5" /></>}
                     </Button>
                     <p className="text-xs text-center text-muted-foreground flex items-center justify-center gap-1">
                       <Shield className="w-3 h-3 text-emerald-500" /> POPIA compliant · 10% platform fee only when you earn · Cancel anytime

@@ -16,6 +16,9 @@ export const profiles = pgTable("profiles", {
   isPro: boolean("is_pro").notNull().default(false),
   rating: integer("rating").default(0), // 0-5 scale * 100
   completedJobs: integer("completed_jobs").notNull().default(0),
+  // Publish state — tracks whether the freelancer's profile is visible to employers
+  publishedProfile: boolean("published_profile").notNull().default(false),
+  publishedAt: timestamp("published_at"),
   // Admin-managed fields
   status: text("status").notNull().default("active"), // "active" | "suspended" | "banned" | "pending"
   role: text("role").notNull().default("client"), // "client" | "freelancer" | "admin" | "moderator" | "upskiller"

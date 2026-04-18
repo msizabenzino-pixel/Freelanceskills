@@ -1,0 +1,67 @@
+You are Replit Agent Ω-Prime fused with a 15-year Principal Full-Stack Engineer who has shipped high-trust African marketplaces (ex-Takealot scale). 
+
+Project: FreelanceSkills-Alien-Platform-vNuclear-Senior-Dev-SILENCE-TERMINATOR-v4
+
+OBJECTIVE: Rebuild the entire platform so that EVERY reported issue is destroyed AND the system becomes emotionally intelligent — it NEVER leaves a user in silence, self-doubt, or confusion loops.
+
+ISSUES TO OBLITERATE WITH ZERO TOLERANCE:
+- Registration false-failure messages
+- Fake AI CV Builder (no real extraction)
+- 401s on profile publish
+- Preview vs reality desync
+- Silent non-responsive "Apply" button
+- CRITICAL PSYCHOLOGICAL ISSUE: When any action is blocked (especially Apply due to incomplete profile), the system stays completely silent → user questions themselves → confusion loop. A proper system MUST clearly explain WHY and guide the user forward.
+
+NON-NEGOTIABLE ARCHITECTURE RULES (Senior Dev + UX Psychology Standard):
+- Every single user action (button click, form submit, navigation) MUST produce immediate, visible, helpful feedback. No silent failures allowed anywhere.
+- Profile status is a strict state machine: 'draft' | 'saved' | 'published'
+- Frontend always syncs with backend truth via TanStack Query — never assumes state.
+- Use sonner/react-hot-toast for clear, non-intrusive, actionable toasts.
+- All blocked actions return specific, plain-language guidance from the backend.
+
+PHASE 1: AUTH & REGISTRATION (Zero False Messages)
+- POST /api/auth/register: atomic Supabase transaction (create user + draft profile)
+- Success: clear toast "Account created successfully! Let's build your profile." + auto-login + redirect to wizard
+- Failure: precise, helpful message only. No partial records ever created.
+
+PHASE 2: REAL AI CV BUILDER + PROFILE SYSTEM
+- CV Upload → /api/profile/parse-cv using real LLM (Grok/OpenAI via env key) to extract skills, bio, title, experience, benchmark rate
+- Multi-step Profile Wizard with AI auto-fill + "AI Extracted" badges
+- "Go Live / Publish Profile" button calls /api/profile/publish
+  • Validates session server-side
+  • Updates status atomically
+  • Returns explicit status + helpful message
+- UI everywhere shows prominent colored badge:
+  • 🔴 Draft — Not visible to employers
+  • 🟡 Saved — Still private
+  • 🟢 Published & Live — Visible to all jobs
+- Preview mode is clearly watermarked "PREVIEW ONLY — Not published yet"
+
+PHASE 3: INTELLIGENT & COMMUNICATIVE JOB APPLICATION FLOW (END SILENCE FOREVER)
+- Every "Apply" button is wired with proper onClick:
+  • Instant loading spinner (no perceived delay)
+  • Calls backend /api/profile/check-readiness (or inline in apply endpoint)
+  • Backend ALWAYS responds with specific guidance:
+    - Not logged in → "Please log in to apply" + login modal
+    - Profile not published → "Your profile isn't complete yet. Finish these sections to unlock applications: [list missing items]" + one-click button "Complete Profile Now" that opens wizard
+    - Ready → open full application form
+- Hover/tooltip on Apply button: "Requires a published profile to apply"
+- If profile incomplete: toast + modal explains exactly why + gives direct next step. No user is ever left wondering "maybe my profile isn't complete?"
+- This design explicitly kills the confusion loop described by users.
+
+PHASE 4: GLOBAL UX & ONBOARDING
+- Hero: side-by-side CTAs — "Search Jobs" + "Build AI Profile in 60 seconds"
+- Force wizard after registration with clear progress
+- Mobile-first, SA-optimized, dark mode default, fast loading
+- Helpful empty states and loading indicators everywhere
+
+PHASE 5: DELIVERABLES
+Build the complete monorepo (frontend + backend) in this Replit using Supabase (Auth + Postgres + Storage).
+After each phase pause and show preview URLs + test commands.
+Include:
+- .env.example with all keys
+- Full test flow: register → CV parse → publish → try Apply (incomplete + complete states)
+- RLS policies
+- Production security + rate limiting
+
+Start building immediately. Make the platform feel trustworthy, respectful, and communicative at every single interaction. Prioritize the intelligent Apply button feedback first.

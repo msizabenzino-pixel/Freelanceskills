@@ -1732,7 +1732,130 @@ User: ${message}`;
   });
 
   // ============ CV PARSING & PROFILE CREATION ============
-  
+
+  // POST /api/cv/upload — accepts a real PDF/DOCX/TXT file, extracts text,
+  // then runs the same AI parse pipeline and returns a populated profile object.
+  app.post("/api/cv/upload", isAuthenticated, async (req: any, res) => {
+    const multer = (await import("multer")).default;
+    const upload = multer({
+      storage: multer.memoryStorage(),
+      limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB max
+      fileFilter: (_req, file, cb) => {
+        const allowed = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain", "application/msword"];
+        if (allowed.includes(file.mimetype) || file.originalname.match(/\.(pdf|docx|doc|txt)$/i)) {
+          cb(null, true);
+        } else {
+          cb(new Error("Only PDF, DOCX, DOC and TXT files are accepted."));
+        }
+      },
+    }).single("cv");
+
+    await new Promise<void>((resolve, reject) => upload(req, res as any, (err) => (err ? reject(err) : resolve())));
+
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: "No file uploaded. Please attach a PDF, DOCX or TXT file." });
+    }
+
+    // ── Extract text from file ─────────────────────────────────────────────
+    let extractedText = "";
+    const mime = req.file.mimetype;
+    const fileName = req.file.originalname.toLowerCase();
+
+    try {
+      if (mime === "application/pdf" || fileName.endsWith(".pdf")) {
+        const pdfParse = (await import("pdf-parse")).default;
+        const result = await pdfParse(req.file.buffer);
+        extractedText = result.text.trim();
+      } else if (
+        mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+        fileName.endsWith(".docx") || fileName.endsWith(".doc")
+      ) {
+        const mammoth = await import("mammoth");
+        const result = await mammoth.extractRawText({ buffer: req.file.buffer });
+        extractedText = result.value.trim();
+      } else {
+        // Plain text
+        extractedText = req.file.buffer.toString("utf-8").trim();
+      }
+    } catch (parseErr) {
+      console.error("[cv/upload] File parse error:", parseErr);
+      return res.status(422).json({ success: false, message: "Could not read this file. Try exporting as PDF or copying the text manually." });
+    }
+
+    if (!extractedText || extractedText.length < 30) {
+      return res.status(422).json({ success: false, message: "The uploaded file appears to be empty or image-only. Please use a text-based PDF or paste your CV text." });
+    }
+
+    // ── Run AI extraction (same model as /api/cv/parse) ────────────────────
+    try {
+      const openai = new (await import("openai")).default({
+        apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
+        baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+      });
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: `You are an expert CV parser for a South African freelance marketplace. Extract structured profile information. Return a JSON object with: firstName, lastName, title, bio (2-3 sentences), skills (string[], max 15), hourlyRate (ZAR number), location (SA city/province), experienceLevel ("entry"|"intermediate"|"senior"|"expert"), yearsOfExperience (number), category ("trades"|"tech"|"creative"|"cleaning"|"safety"|"admin"|"marketing"|"finance"|"education"|"healthcare"), certifications (string[]). Respond with ONLY the JSON object.`,
+          },
+          { role: "user", content: extractedText.slice(0, 8000) },
+        ],
+        temperature: 0.3,
+        response_format: { type: "json_object" },
+      });
+      const parsed = JSON.parse(response.choices[0]?.message?.content || "{}");
+      res.json({ success: true, data: parsed, extractedLength: extractedText.length });
+    } catch (aiErr: any) {
+      console.error("[cv/upload] AI parse error:", aiErr?.message);
+      // Return extracted text so client can still send it to /api/cv/parse
+      res.json({ success: false, extractedText, message: "AI extraction unavailable — form pre-filled with text extraction." });
+    }
+  });
+
+  // POST /api/profile/publish — sets publishedProfile=true for the logged-in user's profile.
+  app.post("/api/profile/publish", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const { db } = await import("./db");
+      const { profiles } = await import("../shared/models/profiles");
+      const { eq } = await import("drizzle-orm");
+
+      const [updated] = await db
+        .update(profiles)
+        .set({ publishedProfile: true, publishedAt: new Date() })
+        .where(eq(profiles.userId, userId))
+        .returning();
+
+      if (!updated) {
+        return res.status(404).json({ success: false, message: "Profile not found. Create your profile first." });
+      }
+
+      // Award points for first-time publish (if not already published)
+      log(`[profile/publish] User ${userId} published profile`, "profile");
+      res.json({ success: true, message: "Profile is now live and visible to employers!", profile: updated });
+    } catch (err) {
+      console.error("[profile/publish] Error:", err);
+      res.status(500).json({ success: false, message: "Could not publish profile. Please try again." });
+    }
+  });
+
+  // GET /api/profile/status — returns publish status for the logged-in user.
+  app.get("/api/profile/status", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const profile = await storage.getProfile(userId);
+      if (!profile) return res.json({ published: false, profile: null });
+      res.json({
+        published: Boolean((profile as any).publishedProfile),
+        publishedAt: (profile as any).publishedAt ?? null,
+        profile,
+      });
+    } catch (err) {
+      res.status(500).json({ success: false, message: "Could not fetch profile status." });
+    }
+  });
+
   app.post("/api/cv/parse", isAuthenticated, async (req, res) => {
     try {
       const { cvText } = req.body;

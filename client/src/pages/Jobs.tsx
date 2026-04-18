@@ -10,15 +10,17 @@ import { AIBriefGenerator } from "@/components/AIBriefGenerator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { JobCard } from "@/components/JobCard";
 import { AggregatedJobCard, type AggregatedJob } from "@/components/AggregatedJobCard";
 import { useToast } from "@/hooks/use-toast";
 import {
   Loader2, Search, AlertCircle, Zap, Wifi, Globe,
   BrainCircuit, TrendingUp, Briefcase, Users, RefreshCw,
-  SlidersHorizontal, X, ChevronDown, ChevronUp,
+  SlidersHorizontal, X, ChevronDown, ChevronUp, Send, Sparkles,
 } from "lucide-react";
 import { useCurrency } from "@/lib/currency";
 import { useAuth } from "@/hooks/use-auth";
@@ -27,6 +29,7 @@ import {
   fetchJobsFromFirestore, type Job,
 } from "@/lib/firebaseAppData";
 import { apiRequest } from "@/lib/queryClient";
+import { earnPoints } from "@/lib/earnPoints";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -136,6 +139,9 @@ export default function Jobs() {
   const [showFilters, setShowFilters] = useState(false);
   const [applyingId, setApplyingId] = useState<string | null>(null);
   const [applyModalJob, setApplyModalJob] = useState<AggregatedJob | null>(null);
+  const [coverLetterJob, setCoverLetterJob] = useState<Job | null>(null);
+  const [coverLetterText, setCoverLetterText] = useState("");
+  const [isGeneratingCoverLetter, setIsGeneratingCoverLetter] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authModalRedirect, setAuthModalRedirect] = useState("/jobs");
@@ -226,25 +232,60 @@ export default function Jobs() {
 
   // ── Firebase apply ────────────────────────────────────────────────────────
   const firebaseApplyMutation = useMutation({
-    mutationFn: async (job: Job) => {
+    mutationFn: async ({ job, coverLetter }: { job: Job; coverLetter: string }) => {
       if (!user?.id) throw new Error("Please sign in first.");
       return applyForJobInFirestore({
         jobId: job.id,
         freelancerId: user.id,
         freelancerName: user.firstName || user.email || "Freelancer",
+        coverLetter,
       });
     },
-    onSuccess: (result) => {
+    onSuccess: async (result) => {
       toast({
         title: result.applied ? "Application submitted!" : "Already applied",
-        description: result.applied ? "Your application was sent successfully." : "You have already applied for this role.",
+        description: result.applied ? "Your proposal was sent successfully." : "You have already applied for this role.",
       });
+      if (result.applied) {
+        const pts = await earnPoints("proposal_sent", user?.id ?? "");
+        if (pts?.success) {
+          toast({ title: `+${pts.points} pts earned!`, description: "Keep applying to earn more points." });
+        }
+      }
+      setCoverLetterJob(null);
+      setCoverLetterText("");
       myApplicationsQuery.refetch();
     },
     onError: (err: Error) => {
       toast({ title: "Application failed", description: err.message, variant: "destructive" });
     },
   });
+
+  // ── AI-generate a cover letter for a Firebase job ─────────────────────────
+  const generateCoverLetter = useCallback(async (job: Job) => {
+    if (!user?.id || isGeneratingCoverLetter) return;
+    setIsGeneratingCoverLetter(true);
+    try {
+      const res = await fetch("/api/ai/generate-cover-letter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          jobTitle: job.title,
+          jobDescription: job.description,
+          category: job.category,
+          location: job.location,
+        }),
+      });
+      if (!res.ok) throw new Error("AI unavailable");
+      const { coverLetter } = await res.json();
+      setCoverLetterText(coverLetter || "");
+    } catch {
+      toast({ title: "AI unavailable", description: "Write your cover letter manually below.", variant: "destructive" });
+    } finally {
+      setIsGeneratingCoverLetter(false);
+    }
+  }, [user, isGeneratingCoverLetter, toast]);
 
   // ── Aggregated apply — opens AI Apply Modal ───────────────────────────────
   const handleAggregatedApply = useCallback((job: AggregatedJob) => {
@@ -664,7 +705,8 @@ export default function Jobs() {
                                   setShowAuthModal(true);
                                   return;
                                 }
-                                firebaseApplyMutation.mutate(job);
+                                setCoverLetterJob(job);
+                                setCoverLetterText("");
                               }}
                             />
                           ))}
@@ -748,7 +790,8 @@ export default function Jobs() {
                             setShowAuthModal(true);
                             return;
                           }
-                          firebaseApplyMutation.mutate(job);
+                          setCoverLetterJob(job);
+                          setCoverLetterText("");
                         }}
                       />
                     ))}
@@ -759,6 +802,85 @@ export default function Jobs() {
           </Tabs>
         </div>
       </main>
+      {/* ── Cover Letter Modal (Firebase / local jobs) ────────────────────────── */}
+      {coverLetterJob && (
+        <Dialog open={true} onOpenChange={(open) => { if (!open) { setCoverLetterJob(null); setCoverLetterText(""); } }}>
+          <DialogContent className="max-w-2xl bg-slate-950 border-emerald-500/20 text-foreground">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold text-white flex items-center gap-2">
+                <Send className="w-5 h-5 text-emerald-400" />
+                Apply to {coverLetterJob.title}
+              </DialogTitle>
+            </DialogHeader>
+
+            {/* Job snapshot */}
+            <div className="rounded-xl bg-slate-900 border border-slate-800 p-4 text-sm space-y-1">
+              <p className="font-semibold text-white">{coverLetterJob.title}</p>
+              <p className="text-muted-foreground line-clamp-3">{coverLetterJob.description}</p>
+              <div className="flex flex-wrap gap-2 pt-1">
+                <Badge variant="outline" className="border-emerald-500/30 text-emerald-400">{coverLetterJob.category}</Badge>
+                {coverLetterJob.location && <Badge variant="outline" className="text-slate-400">{coverLetterJob.location}</Badge>}
+                {coverLetterJob.budget && <Badge variant="outline" className="text-amber-400 border-amber-500/30">R{coverLetterJob.budget.toLocaleString()}</Badge>}
+              </div>
+            </div>
+
+            {/* Cover letter textarea */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-slate-300">Your Cover Letter</label>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-7 px-3 text-xs gap-1.5 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
+                  onClick={() => generateCoverLetter(coverLetterJob)}
+                  disabled={isGeneratingCoverLetter}
+                  data-testid="btn-ai-cover-letter"
+                >
+                  {isGeneratingCoverLetter ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : (
+                    <Sparkles className="w-3 h-3" />
+                  )}
+                  {isGeneratingCoverLetter ? "Generating…" : "AI Write"}
+                </Button>
+              </div>
+              <Textarea
+                value={coverLetterText}
+                onChange={(e) => setCoverLetterText(e.target.value)}
+                placeholder="Introduce yourself, highlight your relevant skills, and explain why you're the best fit for this role…"
+                className="min-h-[180px] bg-slate-900 border-slate-700 text-slate-200 placeholder:text-slate-500 focus:border-emerald-500/50 resize-none"
+                data-testid="textarea-cover-letter"
+              />
+              <p className="text-xs text-muted-foreground">{coverLetterText.length}/2000 characters · A strong cover letter doubles your response rate</p>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3 pt-1">
+              <Button
+                variant="outline"
+                className="flex-1 border-slate-700 text-slate-300 hover:bg-slate-800"
+                onClick={() => { setCoverLetterJob(null); setCoverLetterText(""); }}
+                data-testid="btn-cancel-apply"
+              >
+                Cancel
+              </Button>
+              <Button
+                className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold gap-2"
+                onClick={() => firebaseApplyMutation.mutate({ job: coverLetterJob, coverLetter: coverLetterText })}
+                disabled={firebaseApplyMutation.isPending}
+                data-testid="btn-submit-apply"
+              >
+                {firebaseApplyMutation.isPending ? (
+                  <><Loader2 className="w-4 h-4 animate-spin" /> Submitting…</>
+                ) : (
+                  <><Send className="w-4 h-4" /> Submit Application</>
+                )}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
       {applyModalJob && (
         <ApplyModal
           job={applyModalJob}
