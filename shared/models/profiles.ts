@@ -16,6 +16,7 @@ export const profiles = pgTable("profiles", {
   isPro: boolean("is_pro").notNull().default(false),
   rating: integer("rating").default(0), // 0-5 scale * 100
   completedJobs: integer("completed_jobs").notNull().default(0),
+  responseRate: integer("response_rate"),
   // Publish state — tracks whether the freelancer's profile is visible to employers
   publishedProfile: boolean("published_profile").notNull().default(false),
   publishedAt: timestamp("published_at"),

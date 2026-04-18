@@ -13,6 +13,8 @@ import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Loader2, Shield, Zap, Globe 
 import {
   loginWithEmail,
   loginWithGoogle,
+  loginWithFacebook,
+  loginWithApple,
   registerWithEmail,
   sendFirebaseResetEmail,
 } from "@/lib/firebaseAuth";
@@ -311,6 +313,35 @@ export default function Auth() {
       });
     },
   });
+
+  async function handleSocialAuth(provider: "facebook" | "apple") {
+    if (!isFirebaseConfigured) {
+      toast({ title: "Firebase not configured", description: "Set VITE_FIREBASE_* environment variables and restart.", variant: "destructive" });
+      return;
+    }
+    if (!isLogin && !validateSignupProfile()) return;
+    try {
+      const user = provider === "facebook" ? await loginWithFacebook() : await loginWithApple();
+      if (!isLogin) {
+        const skillList = formData.skills.split(",").map((s) => s.trim()).filter(Boolean);
+        upsertJobApplicationProfile({
+          userId: user.id, email: user.email,
+          firstName: formData.firstName || null, lastName: formData.lastName || null,
+          userType: formData.userType, phoneNumber: formData.phoneNumber.trim(),
+          country: formData.country.trim(), location: formData.location.trim(),
+          title: formData.title.trim(), bio: formData.bio.trim(),
+          skills: skillList, yearsExperience: Number(formData.yearsExperience),
+        }).catch(() => {});
+        trackFirebaseEvent("sign_up", { method: provider }).catch(() => {});
+      } else {
+        trackFirebaseEvent("login", { method: provider }).catch(() => {});
+      }
+      queryClient.setQueryData(["/api/auth/user"], user);
+      await completeAuthSuccess(user);
+    } catch (error: any) {
+      toast({ title: `${provider === "facebook" ? "Facebook" : "Apple"} sign-in failed`, description: getSocialAuthErrorMessage(error), variant: "destructive" });
+    }
+  }
 
   useEffect(() => {
     setIsLogin(detectAuthMode());
@@ -639,6 +670,7 @@ export default function Auth() {
                         className="pl-10 pr-10"
                         required
                         minLength={6}
+                        autoComplete={isLogin ? "current-password" : "new-password"}
                         data-testid="input-password"
                       />
                       <button
@@ -707,12 +739,7 @@ export default function Auth() {
                       type="button"
                       variant="outline"
                       className="h-11 rounded-xl font-medium flex flex-col gap-0.5 py-1 text-xs text-[#1877F2] border-[#1877F2]/30 hover:bg-[#1877F2]/10 hover:border-[#1877F2]/60"
-                      onClick={() => {
-                        toast({
-                          title: "Facebook login — coming soon",
-                          description: "We're enabling Facebook sign-in shortly. Use Google or email for now.",
-                        });
-                      }}
+                      onClick={() => handleSocialAuth("facebook")}
                       data-testid="button-auth-facebook"
                     >
                       <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#1877F2] text-white text-[11px] font-bold">
@@ -724,13 +751,8 @@ export default function Auth() {
                     <Button
                       type="button"
                       variant="outline"
-                      className="h-11 rounded-xl font-medium flex flex-col gap-0.5 py-1 text-xs text-slate-200 border-slate-600/50 hover:bg-slate-800/50"
-                      onClick={() => {
-                        toast({
-                          title: "Apple login — coming soon",
-                          description: "Apple Sign In is being configured. Use Google or email for now.",
-                        });
-                      }}
+                      className="h-11 rounded-xl font-medium flex flex-col gap-0.5 py-1 text-xs text-slate-200 border-slate-600/50 hover:bg-slate-800/50 hover:border-slate-400/50"
+                      onClick={() => handleSocialAuth("apple")}
                       data-testid="button-auth-apple"
                     >
                       <span className="inline-flex h-5 w-5 items-center justify-center text-base leading-none">

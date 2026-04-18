@@ -333,8 +333,20 @@ export default function FreelancerProfile() {
                     <div className="text-xs text-muted-foreground">Job Success</div>
                   </div>
                   <div data-testid="stat-jobs-done">
-                    <div className="font-bold text-lg text-primary">0</div>
+                    <div className="font-bold text-lg text-primary">{profile.completedJobs ?? 0}</div>
                     <div className="text-xs text-muted-foreground">Jobs Done</div>
+                  </div>
+                  <div data-testid="stat-response-rate">
+                    <div className="font-bold text-lg text-primary">
+                      {profile.responseRate != null ? `${profile.responseRate}%` : "—"}
+                    </div>
+                    <div className="text-xs text-muted-foreground">Response Rate</div>
+                  </div>
+                  <div data-testid="stat-rating">
+                    <div className="font-bold text-lg text-primary">
+                      {profile.rating ? (profile.rating / 100).toFixed(1) : "New"}
+                    </div>
+                    <div className="text-xs text-muted-foreground">Avg Rating</div>
                   </div>
                 </div>
 
