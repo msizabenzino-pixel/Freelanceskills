@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
@@ -105,6 +105,21 @@ export default function CVUpload() {
   const [, setLocation] = useLocation();
   const { user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
+
+  // Welcome toast for new registrations (?welcome=1)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("welcome") === "1") {
+      const t = setTimeout(() => {
+        toast({
+          title: "Welcome to FreelanceSkills! 🎉",
+          description: "Upload your CV or paste your details below — our AI will build your profile in seconds.",
+        });
+      }, 600);
+      return () => clearTimeout(t);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [phase, setPhase] = useState<Phase>("upload");
   const [cvText, setCvText] = useState("");

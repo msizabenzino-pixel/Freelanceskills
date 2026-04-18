@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ApplyModal } from "@/components/ApplyModal";
+import { ProfileReadinessGate } from "@/components/ProfileReadinessGate";
 import { AuthRequiredModal } from "@/components/AuthRequiredModal";
 import { AIBriefGenerator } from "@/components/AIBriefGenerator";
 import { Button } from "@/components/ui/button";
@@ -142,6 +143,8 @@ export default function Jobs() {
   const [coverLetterJob, setCoverLetterJob] = useState<Job | null>(null);
   const [coverLetterText, setCoverLetterText] = useState("");
   const [isGeneratingCoverLetter, setIsGeneratingCoverLetter] = useState(false);
+  const [readinessGateJob, setReadinessGateJob] = useState<Job | null>(null);
+  const [readinessGateAggJob, setReadinessGateAggJob] = useState<AggregatedJob | null>(null);
   const [activeTab, setActiveTab] = useState("all");
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authModalRedirect, setAuthModalRedirect] = useState("/jobs");
@@ -287,14 +290,15 @@ export default function Jobs() {
     }
   }, [user, isGeneratingCoverLetter, toast]);
 
-  // ── Aggregated apply — opens AI Apply Modal ───────────────────────────────
+  // ── Aggregated apply — gate through readiness, then open AI Apply Modal ─────
   const handleAggregatedApply = useCallback((job: AggregatedJob) => {
     if (!user?.id) {
       setAuthModalRedirect("/jobs");
       setShowAuthModal(true);
       return;
     }
-    setApplyModalJob(job);
+    // Show readiness gate first — if ready, onReady() opens the apply modal
+    setReadinessGateAggJob(job);
   }, [user]);
 
   // ── Filtered Firebase jobs ────────────────────────────────────────────────
@@ -705,8 +709,7 @@ export default function Jobs() {
                                   setShowAuthModal(true);
                                   return;
                                 }
-                                setCoverLetterJob(job);
-                                setCoverLetterText("");
+                                setReadinessGateJob(job);
                               }}
                             />
                           ))}
@@ -790,8 +793,7 @@ export default function Jobs() {
                             setShowAuthModal(true);
                             return;
                           }
-                          setCoverLetterJob(job);
-                          setCoverLetterText("");
+                          setReadinessGateJob(job);
                         }}
                       />
                     ))}
@@ -802,6 +804,37 @@ export default function Jobs() {
           </Tabs>
         </div>
       </main>
+      {/* ── Profile Readiness Gate — Firebase jobs ───────────────────────────── */}
+      {readinessGateJob && (
+        <ProfileReadinessGate
+          open={true}
+          jobTitle={readinessGateJob.title}
+          onClose={() => setReadinessGateJob(null)}
+          onReady={() => {
+            // Profile is confirmed ready — proceed to cover letter
+            const job = readinessGateJob;
+            setReadinessGateJob(null);
+            setCoverLetterJob(job);
+            setCoverLetterText("");
+          }}
+        />
+      )}
+
+      {/* ── Profile Readiness Gate — Aggregated/external jobs ────────────────── */}
+      {readinessGateAggJob && (
+        <ProfileReadinessGate
+          open={true}
+          jobTitle={readinessGateAggJob.title}
+          onClose={() => setReadinessGateAggJob(null)}
+          onReady={() => {
+            // Profile is confirmed ready — proceed to AI apply modal
+            const job = readinessGateAggJob;
+            setReadinessGateAggJob(null);
+            setApplyModalJob(job);
+          }}
+        />
+      )}
+
       {/* ── Cover Letter Modal (Firebase / local jobs) ────────────────────────── */}
       {coverLetterJob && (
         <Dialog open={true} onOpenChange={(open) => { if (!open) { setCoverLetterJob(null); setCoverLetterText(""); } }}>

@@ -362,6 +362,100 @@ export async function registerRoutes(
     }
   });
 
+  // ── Profile readiness check — tells the client exactly what's blocking an application ──
+  // Returns structured readiness data so the UI can give precise, actionable guidance
+  // instead of leaving users in confusion loops.
+  app.get("/api/profile/check-readiness", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const profile = await storage.getProfile(userId) as any;
+
+      if (!profile) {
+        return res.json({
+          ready: false,
+          profileStatus: "none",
+          score: 0,
+          nextAction: "create_profile",
+          message: "You don't have a profile yet. Build your AI profile in 60 seconds to start applying.",
+          missingItems: [
+            { field: "profile", label: "Create your profile", critical: true, href: "/cv-upload" },
+          ],
+          completedItems: [],
+        });
+      }
+
+      const isPublished = Boolean(profile.publishedProfile);
+
+      // Score each field that matters for a compelling profile
+      type ReadinessItem = { field: string; label: string; critical: boolean; href: string };
+      const checks: Array<{ field: string; label: string; critical: boolean; href: string; value: unknown }> = [
+        { field: "title",          label: "Professional title",              critical: true,  href: "/cv-upload#basics",    value: profile.title },
+        { field: "bio",            label: "Professional bio (2+ sentences)", critical: true,  href: "/cv-upload#basics",    value: profile.bio && (profile.bio as string).length > 40 ? profile.bio : null },
+        { field: "skills",         label: "At least 3 skills listed",        critical: true,  href: "/cv-upload#skills",    value: Array.isArray(profile.skills) && profile.skills.length >= 3 ? profile.skills : null },
+        { field: "hourlyRate",     label: "Hourly rate (ZAR)",               critical: true,  href: "/cv-upload#rates",     value: profile.hourlyRate && profile.hourlyRate > 0 ? profile.hourlyRate : null },
+        { field: "location",       label: "Your location",                   critical: false, href: "/cv-upload#basics",    value: profile.location },
+        { field: "category",       label: "Work category",                   critical: false, href: "/cv-upload#basics",    value: profile.category },
+        { field: "publishedProfile", label: "Profile published (visible to employers)", critical: true, href: "/cv-upload#preview", value: isPublished ? true : null },
+      ];
+
+      const missing: ReadinessItem[] = [];
+      const completed: ReadinessItem[] = [];
+
+      for (const c of checks) {
+        const item = { field: c.field, label: c.label, critical: c.critical, href: c.href };
+        if (c.value) {
+          completed.push(item);
+        } else {
+          missing.push(item);
+        }
+      }
+
+      const totalWeight = checks.length;
+      const doneWeight = completed.length;
+      const score = Math.round((doneWeight / totalWeight) * 100);
+
+      const criticalMissing = missing.filter((m) => m.critical);
+      const ready = criticalMissing.length === 0;
+
+      let nextAction = "ready";
+      let message = "Your profile is complete! You're ready to apply.";
+
+      if (!isPublished && missing.find((m) => m.field === "publishedProfile")) {
+        if (criticalMissing.length === 1 && criticalMissing[0].field === "publishedProfile") {
+          nextAction = "publish_profile";
+          message = "Almost there! Publish your profile to make it visible to employers and unlock job applications.";
+        } else {
+          nextAction = "complete_profile";
+          message = `Complete ${criticalMissing.length} required ${criticalMissing.length === 1 ? "field" : "fields"} and publish your profile to apply for jobs.`;
+        }
+      } else if (!ready) {
+        nextAction = "complete_profile";
+        message = `Finish ${criticalMissing.length} more required ${criticalMissing.length === 1 ? "item" : "items"} to unlock job applications.`;
+      }
+
+      res.json({
+        ready,
+        profileStatus: isPublished ? "published" : (profile.title || profile.bio ? "draft" : "empty"),
+        score,
+        nextAction,
+        message,
+        missingItems: missing,
+        completedItems: completed,
+      });
+    } catch (err) {
+      console.error("[check-readiness] Error:", err);
+      res.status(500).json({
+        ready: false,
+        profileStatus: "none",
+        score: 0,
+        nextAction: "create_profile",
+        message: "Unable to check profile status. Please try again.",
+        missingItems: [],
+        completedItems: [],
+      });
+    }
+  });
+
   // Profile routes
   app.get("/api/profile", isAuthenticated, async (req: any, res) => {
     try {

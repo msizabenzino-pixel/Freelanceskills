@@ -29,6 +29,7 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
   const { isDark, toggle: toggleDarkMode } = useDarkMode();
   const [highContrast, setHighContrast] = useState(() => localStorage.getItem("high-contrast") === "true");
   const [pointsBalance, setPointsBalance] = useState<number | null>(null);
+  const [profileStatus, setProfileStatus] = useState<"none" | "draft" | "published" | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated || !user?.id) return;
@@ -37,6 +38,15 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
       .then(d => { if (typeof d.balance === "number") setPointsBalance(d.balance); })
       .catch(() => {});
   }, [isAuthenticated, user?.id]);
+
+  // Fetch profile publish status for the nav badge — refreshes whenever auth changes
+  useEffect(() => {
+    if (!isAuthenticated) { setProfileStatus(null); return; }
+    fetch("/api/profile/check-readiness", { credentials: "include" })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d?.profileStatus) setProfileStatus(d.profileStatus as any); })
+      .catch(() => {});
+  }, [isAuthenticated, location]); // re-check on navigation so it refreshes after /cv-upload
   const useSolidNav = true;
 
   useEffect(() => {
@@ -443,6 +453,32 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
                   <span className="text-xs font-bold text-emerald-400">{pointsBalance.toLocaleString()} pts</span>
                 </button>
               )}
+              {/* Profile status dot — tells freelancers instantly if they're live or in draft */}
+              {profileStatus && profileStatus !== "published" && (
+                <button
+                  onClick={() => navigate("/cv-upload")}
+                  title={profileStatus === "draft" ? "Profile is Draft — click to publish and unlock job applications" : "Create your profile to apply for jobs"}
+                  className="hidden md:flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 transition-all"
+                  data-testid="badge-profile-draft"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                  <span className="text-[10px] font-semibold text-amber-400">
+                    {profileStatus === "draft" ? "Draft" : "No Profile"}
+                  </span>
+                </button>
+              )}
+              {profileStatus === "published" && (
+                <button
+                  onClick={() => navigate("/dashboard")}
+                  title="Profile is Live — visible to employers"
+                  className="hidden md:flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all"
+                  data-testid="badge-profile-live"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  <span className="text-[10px] font-semibold text-emerald-400">Live</span>
+                </button>
+              )}
+
               <div className="flex items-center gap-2">
                 {user?.profileImageUrl ? (
                   <img src={user.profileImageUrl} alt="" className="w-8 h-8 rounded-full" />

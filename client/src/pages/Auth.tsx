@@ -155,12 +155,17 @@ export default function Auth() {
 
       trackFirebaseEvent("sign_up", { method: "password" }).catch(() => {});
       queryClient.setQueryData(["/api/auth/user"], user);
+
+      const isFreelancer = formData.userType !== "client";
       toast({
         title: "Account created! 🎉",
-        description: "Let's complete your profile so you can start applying.",
+        description: isFreelancer
+          ? "Your account is ready. Let's build your profile with AI — takes 60 seconds."
+          : "Welcome! You can now post jobs and find talent.",
       });
-      // Send new registrations directly to the onboarding wizard
-      navigate("/onboarding");
+
+      // Freelancers → AI profile builder; clients → post a job
+      navigate(isFreelancer ? "/cv-upload?welcome=1" : "/post-job");
     },
     onError: (error: Error) => {
       const msg = error.message || "";
