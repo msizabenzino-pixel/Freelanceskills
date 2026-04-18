@@ -5,7 +5,7 @@ import {
   setDoc,
   type Timestamp,
 } from "firebase/firestore";
-import { firebaseDb, isFirebaseConfigured } from "./firebase";
+import { firebaseDb, firebaseAuth, isFirebaseConfigured } from "./firebase";
 
 export type JobApplicationProfile = {
   userId: string;
@@ -32,10 +32,27 @@ function ensureFirebaseDbReady() {
   }
 }
 
+async function refreshAuthToken(): Promise<void> {
+  const user = firebaseAuth?.currentUser;
+  if (user) {
+    try {
+      await user.getIdToken(true);
+    } catch {
+      // Non-fatal — proceed even if refresh fails
+    }
+  }
+}
+
 export async function upsertJobApplicationProfile(
   profile: JobApplicationProfile
 ): Promise<void> {
   ensureFirebaseDbReady();
+
+  // Force a fresh ID token so the Firestore security rules can validate
+  // the newly-created auth user — avoids "Missing or insufficient permissions"
+  // race condition immediately after createUserWithEmailAndPassword.
+  await refreshAuthToken();
+
   const ref = doc(firebaseDb!, "profiles", profile.userId);
   const existing = await getDoc(ref);
   await setDoc(

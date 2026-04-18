@@ -1,4 +1,5 @@
 import { Navbar } from "@/components/Navbar";
+import { LevelBadge, getLevelFromStats, type FreelancerLevel } from "@/components/LevelBadge";
 import { Footer } from "@/components/Footer";
 import { AuthGuard } from "@/components/AuthGuard";
 import { Input } from "@/components/ui/input";
@@ -564,6 +565,17 @@ export default function Messages() {
   const ContextPanel = () => {
     const other = selectedConversation?.otherUser;
     if (!other) return null;
+
+    const completedJobs = Number(other.completedJobs ?? other.jobsDone ?? 0);
+    const rating = Number(other.rating ?? other.averageRating ?? 0);
+    const earningsCents = Number(other.totalEarningsCents ?? 0);
+    const level: FreelancerLevel = (other.isPro || other.isVerifiedPro)
+      ? "pro"
+      : getLevelFromStats(completedJobs, rating, earningsCents);
+    const hourlyRate = other.hourlyRate ?? other.hourlyRateZAR;
+    const responseRate = other.responseRate ?? other.responseRatePercent;
+    const responseTime = other.responseTime ?? other.avgResponseTime ?? "< 1h";
+
     return (
       <div className="w-72 bg-slate-950 border-l border-border/50 flex flex-col overflow-hidden">
         <div className="p-5 border-b border-border/50 text-center">
@@ -573,10 +585,24 @@ export default function Messages() {
           </Avatar>
           <h3 className="font-bold text-white">{other.name}</h3>
           <p className="text-xs text-muted-foreground capitalize mt-0.5">{other.role}</p>
+
+          {/* Level badge */}
+          <div className="flex items-center justify-center gap-2 mt-2">
+            <LevelBadge level={level} size="sm" data-testid="context-level-badge" />
+          </div>
+
+          {/* Online status */}
           <div className={cn("flex items-center justify-center gap-1.5 mt-2 text-xs", isOnline ? "text-emerald-400" : "text-slate-500")}>
             <span className={cn("w-2 h-2 rounded-full", isOnline ? "bg-emerald-400 animate-pulse" : "bg-slate-600")} />
             {isOnline ? "Online now" : "Offline"}
           </div>
+
+          {/* Hourly rate pill */}
+          {hourlyRate && (
+            <div className="mt-2 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-semibold" data-testid="context-hourly-rate">
+              R{Number(hourlyRate).toLocaleString()}/hr
+            </div>
+          )}
         </div>
 
         <ScrollArea className="flex-1">
@@ -605,12 +631,12 @@ export default function Messages() {
               </h4>
               <div className="grid grid-cols-2 gap-2">
                 {[
-                  { label: "Jobs Done", value: "47" },
-                  { label: "Rating", value: "4.9★" },
-                  { label: "Response", value: "< 1h" },
-                  { label: "On Time", value: "98%" },
+                  { label: "Jobs Done", value: completedJobs > 0 ? String(completedJobs) : "—" },
+                  { label: "Rating", value: rating > 0 ? `${rating.toFixed(1)}★` : "New" },
+                  { label: "Response", value: responseTime },
+                  { label: "Response Rate", value: responseRate ? `${responseRate}%` : "—" },
                 ].map(s => (
-                  <div key={s.label} className="bg-slate-900 rounded-lg p-2.5 border border-slate-800 text-center">
+                  <div key={s.label} className="bg-slate-900 rounded-lg p-2.5 border border-slate-800 text-center" data-testid={`context-stat-${s.label.toLowerCase().replace(/\s/g,"-")}`}>
                     <p className="text-sm font-bold text-emerald-400">{s.value}</p>
                     <p className="text-[10px] text-slate-500 mt-0.5">{s.label}</p>
                   </div>

@@ -74,6 +74,46 @@ function mapSocialAuthError(error: unknown, provider: "google" | "apple" | "face
   }
 }
 
+function mapRegistrationError(error: unknown): Error {
+  if (!(error instanceof FirebaseError)) {
+    return new Error("Registration failed. Please try again.");
+  }
+  switch (error.code) {
+    case "auth/email-already-in-use":
+      return Object.assign(
+        new Error("An account already exists with this email address. Try signing in instead."),
+        { code: "EMAIL_EXISTS" }
+      );
+    case "auth/weak-password":
+      return Object.assign(
+        new Error("Password is too weak. Use at least 6 characters with a mix of letters and numbers."),
+        { code: "WEAK_PASSWORD" }
+      );
+    case "auth/invalid-email":
+      return Object.assign(
+        new Error("The email address is not valid. Please check and try again."),
+        { code: "INVALID_EMAIL" }
+      );
+    case "auth/network-request-failed":
+      return Object.assign(
+        new Error("Network error. Please check your connection and try again."),
+        { code: "NETWORK_ERROR" }
+      );
+    case "auth/too-many-requests":
+      return Object.assign(
+        new Error("Too many attempts. Please wait a few minutes before trying again."),
+        { code: "TOO_MANY_REQUESTS" }
+      );
+    case "auth/operation-not-allowed":
+      return Object.assign(
+        new Error("Email/password sign-up is not enabled. Please contact support."),
+        { code: "NOT_ALLOWED" }
+      );
+    default:
+      return new Error(error.message || "Registration failed. Please try again.");
+  }
+}
+
 export async function registerWithEmail(data: {
   email: string;
   password: string;
@@ -81,19 +121,23 @@ export async function registerWithEmail(data: {
   lastName?: string;
 }): Promise<User> {
   ensureFirebaseReady();
-  const credential = await createUserWithEmailAndPassword(
-    firebaseAuth!,
-    data.email,
-    data.password
-  );
-  const displayName = [data.firstName?.trim(), data.lastName?.trim()]
-    .filter(Boolean)
-    .join(" ")
-    .trim();
-  if (displayName) {
-    await updateProfile(credential.user, { displayName });
+  try {
+    const credential = await createUserWithEmailAndPassword(
+      firebaseAuth!,
+      data.email,
+      data.password
+    );
+    const displayName = [data.firstName?.trim(), data.lastName?.trim()]
+      .filter(Boolean)
+      .join(" ")
+      .trim();
+    if (displayName) {
+      await updateProfile(credential.user, { displayName });
+    }
+    return mapFirebaseUser(credential.user);
+  } catch (error) {
+    throw mapRegistrationError(error);
   }
-  return mapFirebaseUser(credential.user);
 }
 
 export async function loginWithEmail(data: {

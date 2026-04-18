@@ -5,6 +5,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ApplyModal } from "@/components/ApplyModal";
+import { AuthRequiredModal } from "@/components/AuthRequiredModal";
+import { AIBriefGenerator } from "@/components/AIBriefGenerator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -135,6 +137,8 @@ export default function Jobs() {
   const [applyingId, setApplyingId] = useState<string | null>(null);
   const [applyModalJob, setApplyModalJob] = useState<AggregatedJob | null>(null);
   const [activeTab, setActiveTab] = useState("all");
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authModalRedirect, setAuthModalRedirect] = useState("/jobs");
 
   // 400ms debounce prevents an API call on every keystroke.
   // Users see results update smoothly ~400ms after they stop typing.
@@ -245,12 +249,12 @@ export default function Jobs() {
   // ── Aggregated apply — opens AI Apply Modal ───────────────────────────────
   const handleAggregatedApply = useCallback((job: AggregatedJob) => {
     if (!user?.id) {
-      toast({ title: "Sign in required", description: "Please sign in to apply for jobs." });
-      navigate(`/login?redirect=${encodeURIComponent("/jobs")}`);
+      setAuthModalRedirect("/jobs");
+      setShowAuthModal(true);
       return;
     }
     setApplyModalJob(job);
-  }, [user, navigate, toast]);
+  }, [user]);
 
   // ── Filtered Firebase jobs ────────────────────────────────────────────────
   const filteredFirebaseJobs = useMemo(() => {
@@ -344,6 +348,17 @@ export default function Jobs() {
               >
                 <Search className="w-4 h-4" /> Search
               </Button>
+            </div>
+
+            {/* ── Hiring? AI Brief Generator callout ───────────────────── */}
+            <div className="mb-4 bg-emerald-500/8 border border-emerald-500/25 rounded-xl p-3 flex items-center gap-3" data-testid="ai-brief-callout">
+              <div className="shrink-0 w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                <BrainCircuit className="w-4 h-4 text-emerald-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-semibold text-emerald-300 mb-1">Posting a job? Let AI write your brief</p>
+                <AIBriefGenerator compact />
+              </div>
             </div>
 
             {/* ── GeoIntelligence Selector ─────────────────────────────── */}
@@ -645,7 +660,8 @@ export default function Jobs() {
                                   return;
                                 }
                                 if (!user?.id) {
-                                  navigate(`/login?redirect=${encodeURIComponent(`/jobs/${job.id}`)}`);
+                                  setAuthModalRedirect(`/jobs/${job.id}`);
+                                  setShowAuthModal(true);
                                   return;
                                 }
                                 firebaseApplyMutation.mutate(job);
@@ -728,7 +744,8 @@ export default function Jobs() {
                             return;
                           }
                           if (!user?.id) {
-                            navigate(`/login?redirect=${encodeURIComponent(`/jobs/${job.id}`)}`);
+                            setAuthModalRedirect(`/jobs/${job.id}`);
+                            setShowAuthModal(true);
                             return;
                           }
                           firebaseApplyMutation.mutate(job);
@@ -751,6 +768,12 @@ export default function Jobs() {
           }}
         />
       )}
+      <AuthRequiredModal
+        open={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        redirectPath={authModalRedirect}
+        context="apply"
+      />
       <Footer />
     </div>
   );

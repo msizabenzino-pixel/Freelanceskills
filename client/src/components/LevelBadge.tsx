@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
-import { Star, TrendingUp, Award, Zap, Crown } from "lucide-react";
+import { Star, TrendingUp, Award, Zap, Crown, BadgeCheck } from "lucide-react";
 
-export type FreelancerLevel = "new" | "rising" | "level1" | "level2" | "top_rated";
+export type FreelancerLevel = "new" | "rising" | "level1" | "level2" | "top_rated" | "pro";
 
 interface LevelBadgeProps {
   level: FreelancerLevel;
@@ -64,6 +64,15 @@ const LEVEL_CONFIG: Record<FreelancerLevel, {
     ring: "ring-emerald-700/40",
     glow: "shadow-emerald-500/25",
   },
+  pro: {
+    label: "Pro Verified",
+    Icon: BadgeCheck,
+    bg: "bg-gradient-to-r from-violet-950/90 to-emerald-950/90",
+    text: "text-violet-300",
+    border: "border-violet-500/60",
+    ring: "ring-violet-600/40",
+    glow: "shadow-violet-500/30",
+  },
 };
 
 const SIZE_CLASSES = {
@@ -79,6 +88,7 @@ export function LevelBadge({ level, size = "sm", showIcon = true, className }: L
   const { Icon } = cfg;
 
   if (level === "new") return null;
+  const isPro = level === "pro";
 
   return (
     <span
@@ -88,6 +98,7 @@ export function LevelBadge({ level, size = "sm", showIcon = true, className }: L
         cfg.bg, cfg.text, cfg.border,
         sz.badge,
         cfg.glow && `shadow-md ${cfg.glow}`,
+        isPro && "ring-1 ring-violet-500/40",
         className
       )}
     >
@@ -111,6 +122,7 @@ export function getLevelProgress(level: FreelancerLevel): { current: number; nex
     case "rising": return { current: 20, next: "Level 1", tip: "Complete 5 jobs with 4.0+ rating" };
     case "level1": return { current: 45, next: "Level 2", tip: "Complete 20 jobs with 4.5+ rating" };
     case "level2": return { current: 70, next: "Top Rated", tip: "Complete 50 jobs with 4.8+ rating & R5,000+ earned" };
-    case "top_rated": return { current: 100, next: "Top Rated", tip: "You've reached the highest level!" };
+    case "top_rated": return { current: 90, next: "Pro Verified", tip: "Apply for Pro verification through the vetting programme" };
+    case "pro": return { current: 100, next: "Pro Verified", tip: "You hold the highest Pro Verified status!" };
   }
 }

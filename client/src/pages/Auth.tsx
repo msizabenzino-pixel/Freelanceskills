@@ -130,28 +130,60 @@ export default function Auth() {
         .map((s) => s.trim())
         .filter(Boolean);
 
-      await upsertJobApplicationProfile({
-        userId: user.id,
-        email: user.email,
-        firstName: formData.firstName || null,
-        lastName: formData.lastName || null,
-        userType: formData.userType,
-        phoneNumber: formData.phoneNumber.trim(),
-        country: formData.country.trim(),
-        location: formData.location.trim(),
-        title: formData.title.trim(),
-        bio: formData.bio.trim(),
-        skills: skillList,
-        yearsExperience: Number(formData.yearsExperience),
-      });
+      // Profile write is best-effort — if it fails (e.g. Firestore permissions race
+      // condition right after account creation) we still complete the auth flow.
+      // The user will be directed to the onboarding wizard to fill in their profile.
+      try {
+        await upsertJobApplicationProfile({
+          userId: user.id,
+          email: user.email,
+          firstName: formData.firstName || null,
+          lastName: formData.lastName || null,
+          userType: formData.userType,
+          phoneNumber: formData.phoneNumber.trim(),
+          country: formData.country.trim(),
+          location: formData.location.trim(),
+          title: formData.title.trim(),
+          bio: formData.bio.trim(),
+          skills: skillList,
+          yearsExperience: Number(formData.yearsExperience),
+        });
+      } catch (profileErr) {
+        // Non-fatal — profile can be completed in onboarding wizard
+        console.warn("[Auth] Profile save deferred to onboarding:", profileErr);
+      }
 
       trackFirebaseEvent("sign_up", { method: "password" }).catch(() => {});
       queryClient.setQueryData(["/api/auth/user"], user);
-      toast({ title: "Account created!", description: "Profile saved and ready for job applications." });
-      await completeAuthSuccess(user);
+      toast({
+        title: "Account created! 🎉",
+        description: "Let's complete your profile so you can start applying.",
+      });
+      // Send new registrations directly to the onboarding wizard
+      navigate("/onboarding");
     },
     onError: (error: Error) => {
-      toast({ title: "Registration failed", description: error.message, variant: "destructive" });
+      const msg = error.message || "";
+      const isEmailExists =
+        msg.toLowerCase().includes("already exists") ||
+        msg.toLowerCase().includes("email-already-in-use") ||
+        ("code" in error && (error as any).code === "EMAIL_EXISTS");
+
+      if (isEmailExists) {
+        // Auto-switch to login tab and show a helpful message
+        setIsLogin(true);
+        toast({
+          title: "Account already exists",
+          description: "We switched you to Sign In — use your existing password, or reset it below.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Registration failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
     },
   });
 
@@ -640,11 +672,11 @@ export default function Auth() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-3">
+                  <div className="grid grid-cols-3 gap-2">
                     <Button
                       type="button"
                       variant="outline"
-                      className="h-11 rounded-xl font-medium"
+                      className="h-11 rounded-xl font-medium flex flex-col gap-0.5 py-1 text-xs"
                       onClick={() => {
                         if (!isFirebaseConfigured) {
                           toast({
@@ -660,10 +692,46 @@ export default function Auth() {
                       disabled={socialAuthMutation.isPending}
                       data-testid="button-auth-google"
                     >
-                      <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white border border-border text-[11px] font-bold text-slate-900">
+                      <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-white border border-border text-[11px] font-bold text-slate-900">
                         G
                       </span>
                       Google
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="h-11 rounded-xl font-medium flex flex-col gap-0.5 py-1 text-xs text-[#1877F2] border-[#1877F2]/30 hover:bg-[#1877F2]/10 hover:border-[#1877F2]/60"
+                      onClick={() => {
+                        toast({
+                          title: "Facebook login — coming soon",
+                          description: "We're enabling Facebook sign-in shortly. Use Google or email for now.",
+                        });
+                      }}
+                      data-testid="button-auth-facebook"
+                    >
+                      <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#1877F2] text-white text-[11px] font-bold">
+                        f
+                      </span>
+                      Facebook
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="h-11 rounded-xl font-medium flex flex-col gap-0.5 py-1 text-xs text-slate-200 border-slate-600/50 hover:bg-slate-800/50"
+                      onClick={() => {
+                        toast({
+                          title: "Apple login — coming soon",
+                          description: "Apple Sign In is being configured. Use Google or email for now.",
+                        });
+                      }}
+                      data-testid="button-auth-apple"
+                    >
+                      <span className="inline-flex h-5 w-5 items-center justify-center text-base leading-none">
+                        
+                      </span>
+                      Apple
                     </Button>
                   </div>
                 </form>
