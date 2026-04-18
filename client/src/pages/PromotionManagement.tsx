@@ -4,7 +4,7 @@
  * ║  9 Tabs. 20 Superpowers. 3 Years ahead of every competitor.                  ║
  * ╚══════════════════════════════════════════════════════════════════════════════╝
  *
- * 9 TABS vs Fiverr=0, Freelancer=1, Upwork=0, Toptal=0, PPH=1
+ * 9 TABS vs FSN-competitor-A=0, Freelancer=1, FSN-competitor-B=0, FSN-competitor-C=0, PPH=1
  *
  * 📋 Active       — sortable by ROI/CTR/predicted uplift + bulk + extend
  * 🛍️ Catalog     — 6 slot types, live inventory, AI pricing preview, create

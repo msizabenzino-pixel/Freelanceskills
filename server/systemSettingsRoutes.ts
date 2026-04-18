@@ -4,8 +4,8 @@
  * ║  The Central Nervous System of FreelanceSkills.net                              ║
  * ║                                                                                  ║
  * ║  WHY THIS IS UNSTOPPABLE:                                                        ║
- * ║  • Upwork: static commission (20%), no version history, no rollback             ║
- * ║  • Fiverr: hardcoded 20%, zero dynamic settings, no Africa config               ║
+ * ║  • FSN-competitor-B: static commission (20%), no version history, no rollback             ║
+ * ║  • FSN-competitor-A: hardcoded 20%, zero dynamic settings, no Africa config               ║
  * ║  • Shopify Admin: no financial AI, no compliance, no Africa-first               ║
  * ║  • FreelanceSkills v2.0: versioned + rollback + AI suggestions + 15 feature     ║
  * ║    flags + Africa-First extras + security policy engine + Socket.io live sync   ║
@@ -133,7 +133,7 @@ async function auditSystemChange(adminUserId: string, action: string, details: a
 // AI OPTIMIZER ENGINE
 // 6-dimension platform intelligence for optimal settings suggestions
 // Based on: dispute rates, user growth, transaction volume, security threats,
-// Africa adoption, and competitive analysis vs Upwork/Fiverr
+// Africa adoption, and competitive analysis vs FSN-competitor-B/FSN-competitor-A
 // ════════════════════════════════════════════════════════════════════════════
 async function computeAiSuggestions(): Promise<any[]> {
   const suggestions: any[] = [];
@@ -166,7 +166,7 @@ async function computeAiSuggestions(): Promise<any[]> {
         confidence: disputeRate > 10 ? 88 : 75,
         config_key: "financial.commissionBPS",
         config_value: suggestedCommission,
-        competitive_note: "Upwork: 20% flat. Fiverr: 20% flat. FreelanceSkills tiered at 10% provides strong competitive advantage.",
+        competitive_note: "FSN-competitor-B: 20% flat. FSN-competitor-A: 20% flat. FreelanceSkills tiered at 10% provides strong competitive advantage.",
       });
     }
 

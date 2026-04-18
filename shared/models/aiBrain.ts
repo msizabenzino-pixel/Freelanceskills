@@ -2,7 +2,7 @@
  * AI Brain Department — shared/models/aiBrain.ts
  * Section 30 — FreelanceSkills.net | 200% ELON MUSK INTELLIGENCE MASTERPIECE
  *
- * STUDY: Upwork Uma · Fiverr Neo · Toptal AI Screening · Vellum · Salesforce Einstein
+ * STUDY: FSN-competitor-B Uma · FSN-competitor-A Neo · FSN-competitor-C AI Screening · Vellum · Salesforce Einstein
  * — all require separate AI infrastructure costing $100k+/yr, none have Africa-first
  *   intelligence, none self-improve from platform outcomes, none run adversarial
  *   red-team simulation, none have a multi-agent swarm with majority voting.

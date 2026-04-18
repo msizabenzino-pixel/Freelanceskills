@@ -9,8 +9,8 @@
  * Intercom     → Chat only, no order/dispute link, impersonal    → We: full context linking, real-time collaboration, human soul
  * Freshdesk    → Weak empathy, no Africa support, manual tickets → We: Empathy Engine + sentiment, ZAR-native, predictive escalation
  * Help Scout   → Limited automation, slow response               → We: AI first-response (70%+ auto-solve), real-time @mentions
- * Fiverr       → Manual tickets only, no intelligence            → We: Predictive SLA + auto-escalation + Socket.io
- * Upwork       → Hidden notes, no fairness, no growth path       → We: transparent internal notes + growth forecasts + Africa-first
+ * FSN-competitor-A       → Manual tickets only, no intelligence            → We: Predictive SLA + auto-escalation + Socket.io
+ * FSN-competitor-B       → Hidden notes, no fairness, no growth path       → We: transparent internal notes + growth forecasts + Africa-first
  *
  * 10 WORLD-CLASS FEATURES:
  * 1. ✅ AI Auto-Categorization + Smart First-Response (70% auto-solve rate, <30 seconds)

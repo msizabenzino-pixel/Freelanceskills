@@ -15,7 +15,7 @@
 
 
  * Freelancer → No analytics                → We: Heatmaps, funnels, AI forecasts, skill gap map
- * PeoplePerHour → No Africa awareness      → We: USSD, M-Pesa, 11 languages, Africa-first intelligence
+ * FSN-competitor-D → No Africa awareness      → We: USSD, M-Pesa, 11 languages, Africa-first intelligence
 
  */
 import { useState, useEffect, useCallback } from "react";

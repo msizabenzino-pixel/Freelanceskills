@@ -3,7 +3,7 @@
  * Section 27 UPGRADED — FreelanceSkills.net | FreelanceSkills.net Admin Platform
  *
  * We studied freelancerskills.net: zero roles, zero permissions.
- * Upwork: 3 flat roles. Fiverr: 4 roles. Shopify: dropdown.
+ * FSN-competitor-B: 3 flat roles. FSN-competitor-A: 4 roles. Shopify: dropdown.
  * Salesforce: $150/user/month for RBAC. Auth0: $2/user/month.
  * We built the most intelligent, fine-grained, risk-aware, Africa-optimized,
  * auto-suggesting, conditionally-scoped, immutably-logged RBAC on earth — free.

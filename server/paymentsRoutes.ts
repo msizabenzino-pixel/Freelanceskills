@@ -298,7 +298,7 @@ export function registerPaymentsRoutes(app: Express) {
   });
 
   // ─── POST /api/payments/transactions/:id/release ──────────────────────────
-  // One-tap escrow release — beats Fiverr's 24h delay
+  // One-tap escrow release — beats FSN-competitor-A's 24h delay
   app.post("/api/payments/transactions/:id/release", isAuthenticated, requireAdmin, async (req: any, res: Response) => {
     try {
       const { id } = req.params;
@@ -407,7 +407,7 @@ export function registerPaymentsRoutes(app: Express) {
   });
 
   // ─── POST /api/payments/bulk-release ─────────────────────────────────────
-  // Bulk release — beats all competitors (Upwork does this one by one)
+  // Bulk release — beats all competitors (FSN-competitor-B does this one by one)
   app.post("/api/payments/bulk-release", isAuthenticated, requireAdmin, async (req: any, res: Response) => {
     try {
       const { ids } = req.body as { ids: string[] };

@@ -47,10 +47,10 @@ const SA_STATS = [
   { label: "SA Bootcamp Grads Unemployed", value: "68%", detail: "after 6 months" },
   { label: "AI Freelancers with SA Skills", value: "< 2%", detail: "of global market" },
   { label: "Avg AI Freelance Rate", value: "$200/hr", detail: "R3,800/hr USD remote" },
-  { label: "AI Job Demand Growth", value: "+312%", detail: "Upwork 2026 data" },
+  { label: "AI Job Demand Growth", value: "+312%", detail: "Global market 2026 data" },
 ];
 
-const UPWORK_TRENDS = [
+const AI_DEMAND_TRENDS = [
   { skill: "AI Agent Development", growth: 312, rate: "$150–$400/hr" },
   { skill: "AI Video Production", growth: 329, rate: "$80–$250/hr" },
   { skill: "AI Integration", growth: 178, rate: "$120–$350/hr" },
@@ -266,16 +266,16 @@ export default function AcademyAIHub() {
         </div>
       </div>
 
-      {/* ── Upwork 2026 Trends ── */}
+      {/* ── 2026 AI Demand Trends ── */}
       <div className="bg-slate-900 border-y border-slate-800 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold text-white mb-2 text-center">
-            📊 Upwork 2026 AI Demand Data — Why These Skills Pay
+            📊 2026 Global AI Demand Data — Why These Skills Pay
           </h2>
           <p className="text-slate-400 text-center mb-8">Real market data driving course selection and ranking</p>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {UPWORK_TRENDS.map(trend => (
+            {AI_DEMAND_TRENDS.map(trend => (
               <div key={trend.skill} className="bg-slate-800/50 border border-slate-700 rounded-xl p-4">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-sm font-semibold text-white">{trend.skill}</h3>

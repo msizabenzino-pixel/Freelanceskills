@@ -11,7 +11,7 @@
  *         device battery level, data plan, language, rehab status,
  *         fatigue score, payment consent, timezone, Academy progress.
  *
- *  Fiverr / Upwork → 1 generic email per event. 22% open rate.
+ *  FSN-competitor-A / FSN-competitor-B → 1 generic email per event. 22% open rate.
  *    → We: Context-aware 6-channel cascade. 74% avg open rate.
  *         Tone-matched, timing-optimised, consent-gated.
  *

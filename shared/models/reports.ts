@@ -4,7 +4,7 @@
  * THE SAFEST, MOST REHABILITATIVE TRUST & SAFETY SYSTEM IN AFRICA
  *
  * Competitor Weaknesses We Fix:
- * Fiverr/Upwork  → Slow manual review, opaque decisions      → We: AI severity scoring + transparent audit trail
+ * FSN-competitor-A/FSN-competitor-B  → Slow manual review, opaque decisions      → We: AI severity scoring + transparent audit trail
  * X/Instagram    → Reactive only, no rehabilitation           → We: Predictive Risk Engine + Academy rehab path
  * Reddit/Discord → Weak rehabilitation, permabans are common → We: Growth-first approach + appeal windows
  * TikTok         → No context, blanket suspensions           → We: Evidence Intelligence Vault + full context

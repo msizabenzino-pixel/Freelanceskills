@@ -1,6 +1,6 @@
 /**
  * AdminDashboard — FreelanceSkills.net
- * Fiverr-inspired admin UI for a $1B platform
+ * FreelanceSkills premium admin UI for a $1B platform
  * Performance: Infinite scroll, React state caching, debounced search
  * Security: All inputs sanitized, admin-only routes enforced server-side
  */
@@ -18,7 +18,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 
 // ─── Design System ────────────────────────────────────────────────────────────
-const G = "#1DBF73"; // Fiverr green / FreelanceSkills brand
+const G = "#1DBF73"; // FreelanceSkills brand green
 const ADMIN_ID = "user_2Pz69BfA5yS3R8M";
 
 // ─── Types ────────────────────────────────────────────────────────────────────

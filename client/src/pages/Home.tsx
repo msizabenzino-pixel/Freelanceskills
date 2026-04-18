@@ -533,7 +533,7 @@ export default function Home() {
               <div className="grid lg:grid-cols-[1.05fr_1.95fr] gap-4">
                 <div className="rounded-3xl border border-emerald-500/15 bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/20 p-5 text-left shadow-2xl shadow-black/20">
                   <p className="text-xs uppercase tracking-[0.24em] text-emerald-400 font-semibold mb-3">Instant browse</p>
-                  <h3 className="text-2xl font-black mb-2">Start like Fiverr Pro</h3>
+                  <h3 className="text-2xl font-black mb-2">Discover Pro Talent Fast</h3>
                   <p className="text-sm text-slate-400 leading-relaxed mb-5">
                     Jump straight into the right skill category, service, or hiring path without digging through the site.
                   </p>

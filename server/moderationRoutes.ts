@@ -3,11 +3,11 @@
  * FreelanceSkills.net — Platform Safety Guardian
  *
  * HOW WE OUT-ENGINEER EVERY COMPETITOR:
- * Upwork:      Reactive review, no pre-publish block, no rewrite AI
- * Fiverr:      Basic keyword filter, no Africa multilingual, no OCR
+ * FSN-competitor-B:      Reactive review, no pre-publish block, no rewrite AI
+ * FSN-competitor-A:      Basic keyword filter, no Africa multilingual, no OCR
  * Freelancer:  No AI scoring, no deepfake detection, no appeal SLA
- * Toptal:      Manual-only, no real-time scan, no USSD/low-data mode
- * PeoplePerHour: No image intelligence, no dispute-prevention correlation
+ * FSN-competitor-C:      Manual-only, no real-time scan, no USSD/low-data mode
+ * FSN-competitor-D: No image intelligence, no dispute-prevention correlation
  *
  * OUR 10 SUPERPOWERS (no competitor has more than 3):
  * 1.  Real-time Pre-Publish Multimodal Scan (6-dimension AI score before content goes live)
@@ -34,7 +34,7 @@ function isAdmin(req: any): boolean {
 }
 
 // ─── 6-Dimension AI Scan Engine ───────────────────────────────────────────────
-// Out-engineers Upwork/Fiverr by weighing 6 independent risk signals instead of 1.
+// Out-engineers FSN-competitor-B/FSN-competitor-A by weighing 6 independent risk signals instead of 1.
 
 interface ScanRule {
   pattern: RegExp;
@@ -116,14 +116,14 @@ function buildScanOutput(content: string, repeatViolations = 0): ScanOutput {
     }
   }
 
-  // Contextual boosts (out-engineers Upwork's flat keyword matching)
+  // Contextual boosts (out-engineers FSN-competitor-B's flat keyword matching)
   const contextualBoosts: string[] = [];
   if (/[A-Z]{5,}/.test(content)) { dimScores.spam = Math.min(dimScores.spam + 10, 100); contextualBoosts.push("SHOUTING (+10)"); }
   if (content.split(/\s+/).length < 10 && Object.values(dimScores).some(s => s > 30)) { Object.keys(dimScores).forEach(k => { dimScores[k] = Math.min(dimScores[k] + 5, 100); }); contextualBoosts.push("Very short flagged content (+5)"); }
   if ((content.match(/!/g) || []).length > 4) { dimScores.spam = Math.min(dimScores.spam + 8, 100); contextualBoosts.push("Excessive exclamations (+8)"); }
   if (/\$\$\$|💰💰|🔥🔥🔥/.test(content)) { dimScores.spam = Math.min(dimScores.spam + 12, 100); contextualBoosts.push("Spam emoji pattern (+12)"); }
 
-  // Repeat offender boost (Upwork has NO cross-item history scoring)
+  // Repeat offender boost (FSN-competitor-B has NO cross-item history scoring)
   const repeatOffenderBoost = Math.min(repeatViolations * 8, 40);
   if (repeatOffenderBoost > 0) contextualBoosts.push(`Repeat offender history +${repeatOffenderBoost}`);
 
@@ -144,7 +144,7 @@ function buildScanOutput(content: string, repeatViolations = 0): ScanOutput {
   else if (aiScore >= 60) autoAction = "quarantine";
   else if (aiScore >= 35) autoAction = "flag";
 
-  // AI Rewrite Engine (Fiverr doesn't have this at all)
+  // AI Rewrite Engine (FSN-competitor-A doesn't have this at all)
   let rewriteSuggestion: string | null = null;
   let academyLink: string | null = null;
   let academyCourse: string | null = null;
@@ -203,7 +203,7 @@ function buildScanOutput(content: string, repeatViolations = 0): ScanOutput {
   return { aiScore, severity, flags, autoAction, riskDimensions, rewriteSuggestion, academyLink, academyCourse, educationPath, africaContext, contextualBoosts, predictedDisputeRisk, repeatOffenderBoost };
 }
 
-// ─── Saved Views (Upwork/Fiverr have no saved views at all) ───────────────────
+// ─── Saved Views (FSN-competitor-B/FSN-competitor-A have no saved views at all) ───────────────────
 const SAVED_VIEWS = [
   { id: "high-risk-scams", name: "High-Risk Scam Patterns", icon: "🎣", filters: { severity: "high", flags: "fraud,off_platform,advance_fee,escrow_bypass", status: "pending" }, description: "Fraud, bypass, and advance-fee patterns requiring immediate action" },
   { id: "critical-hate", name: "Critical Hate Speech", icon: "🚨", filters: { severity: "critical", flags: "hate_speech,racial_slur,xenophobia", status: "pending" }, description: "Zero-tolerance hate speech — instant block required" },

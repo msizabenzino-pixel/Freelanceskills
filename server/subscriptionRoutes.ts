@@ -8,13 +8,13 @@
  *
  * HOW WE OUT-ENGINEER EVERY COMPETITOR (2024–2029):
  *
- * vs Upwork Plus ($49.99/mo):
+ * vs FSN-competitor-B Plus ($49.99/mo):
  *    - Static 80 connects/mo. No AI. No metered billing. No grace period.
  *    - We: Agentic AI that auto-detects when user's earnings justify upgrade,
  *           hybrid billing (fixed + per-proposal overages), grace periods with
  *           feature retention, dynamic pricing that adjusts in real-time.
  *
- * vs Fiverr Pro/Business ($29.99/mo):
+ * vs FSN-competitor-A Pro/Business ($29.99/mo):
  *    - Seller levels only. No subscription agency suite. No team billing.
  *    - We: Full agency/team management, sub-accounts with granular RBAC,
  *           invoice splitting, white-label client portals, shared analytics.
@@ -84,7 +84,7 @@ function q(s: string | null | undefined) { return (s || "").replace(/'/g, "''");
 // ┌─────────────────────────────────────────────────────────────────────────────┐
 // │  SUPERPOWER #1: AGENTIC AI PERSONALIZATION ENGINE                           │
 // │  Analyzes 15+ signals, auto-suggests, enables 1-click upgrade               │
-// │  vs Upwork: They show static pricing. We analyze your EXACT earnings,       │
+// │  vs FSN-competitor-B: They show static pricing. We analyze your EXACT earnings,       │
 // │             proposal win-rate, gig pricing trajectory, and team size         │
 // │             to tell you EXACTLY when upgrading is profitable.                │
 // └─────────────────────────────────────────────────────────────────────────────┘
@@ -207,7 +207,7 @@ function agenticAIRecommendation(signals: {
 // ┌─────────────────────────────────────────────────────────────────────────────┐
 // │  SUPERPOWER #2+3: PREDICTIVE CHURN PREVENTION + DYNAMIC PRICING ENGINE      │
 // │  9-signal churn model. Auto-adjust price/perks to retain at-risk users.     │
-// │  vs Fiverr: They just send one "we miss you" email. We offer AI-personalized │
+// │  vs FSN-competitor-A: They just send one "we miss you" email. We offer AI-personalized │
 // │             discounts, feature unlocks, and loyalty token injections.        │
 // └─────────────────────────────────────────────────────────────────────────────┘
 // ════════════════════════════════════════════════════════════════════════════════
@@ -345,7 +345,7 @@ function calculateMeterBill(usage: {
 // ┌─────────────────────────────────────────────────────────────────────────────┐
 // │  SUPERPOWER #7: COHORT ANALYTICS ENGINE                                     │
 // │  Groups users by signup month, tracks LTV per cohort 36 months forward.     │
-// │  vs All competitors: None of Upwork/Fiverr/Patreon/Substack expose cohort   │
+// │  vs All competitors: None of FSN-competitor-B/FSN-competitor-A/Patreon/Substack expose cohort   │
 // │  analytics to operators. We do — and it's what drives $100M+ ARR decisions. │
 // └─────────────────────────────────────────────────────────────────────────────┘
 // ════════════════════════════════════════════════════════════════════════════════

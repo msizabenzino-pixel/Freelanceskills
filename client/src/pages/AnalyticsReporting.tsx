@@ -4,8 +4,8 @@
  * ║  Section 24 — FreelanceSkills.net                                                        ║
  * ║                                                                                          ║
  * ║  WHY THIS OBLITERATES EVERY COMPETITOR UNTIL 2029:                                       ║
- * ║  Upwork      — no NLP analyst, no anomaly detection, no Africa SDG layer, no cohort BI  ║
- * ║  Fiverr      — basic trendlines, no AI forecasting, no cross-dept integration           ║
+ * ║  FSN-competitor-B      — no NLP analyst, no anomaly detection, no Africa SDG layer, no cohort BI  ║
+ * ║  FSN-competitor-A      — basic trendlines, no AI forecasting, no cross-dept integration           ║
  * ║  Shopify     — no predictive BI, no Africa intelligence, custom exports only            ║
  * ║  Mixpanel    — event funnel only, no revenue AI, no executive summary generator         ║
  * ║  Power BI    — weeks of setup, not platform-native, no NLP, no Africa heatmap          ║

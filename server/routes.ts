@@ -1355,7 +1355,7 @@ User: ${message}`;
     res.json(VERIFICATION_LEVELS);
   });
 
-  // ============ PRIVATE FEEDBACK SYSTEM (Fiverr-style double testimonial) ============
+  // ============ PRIVATE FEEDBACK SYSTEM (double testimonial — hidden until both parties review) ============
   
   // Submit private feedback after order completion
   app.post("/api/bookings/:id/private-feedback", isAuthenticated, async (req: any, res) => {
@@ -5781,7 +5781,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     const healthScoreData = {
       overall: 87.4,
       dimensions: [{ name: "User Growth", score: 91, trend: "up", weight: 20 }, { name: "Revenue Health", score: 88, trend: "up", weight: 25 }, { name: "Engagement", score: 84, trend: "stable", weight: 20 }, { name: "Trust & Safety", score: 89, trend: "up", weight: 15 }, { name: "Platform Performance", score: 95, trend: "up", weight: 10 }, { name: "Support Quality", score: 82, trend: "down", weight: 10 }],
-      competitors: [{ name: "Upwork SA", score: 72 }, { name: "Fiverr ZA", score: 68 }, { name: "Freelancer.com", score: 61 }, { name: "FreelanceSkills.net", score: 87.4, us: true }],
+      competitors: [{ name: "Platform A (Global)", score: 72 }, { name: "Platform B (Global)", score: 68 }, { name: "Platform C (Global)", score: 61 }, { name: "FreelanceSkills.net", score: 87.4, us: true }],
       history: Array.from({ length: 12 }, (_, i) => ({ month: i + 1, score: 75 + i * 1.2 + rand(0, 2) })),
     };
 
@@ -5869,7 +5869,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
 
     // ══ S86 — Competitive Intelligence v4.0 ═══════════════════════════════
     const competitorData = {
-      competitors: [{ name: "Upwork", region: "Global/SA", monthlyVisits: 12400000, freelancers: 18000000, commission: "5-20%", strengths: ["Brand recognition","Volume","Enterprise"], weaknesses: ["High fees","Poor local support","USD only"], rating: 3.8 }, { name: "Fiverr", region: "Global/SA", monthlyVisits: 8200000, freelancers: 4000000, commission: "20%+", strengths: ["Gig model","Marketing","Volume"], weaknesses: ["Quality control","Commoditisation","No ZAR"], rating: 3.6 }, { name: "Freelancer.com", region: "Global", monthlyVisits: 4100000, freelancers: 70000000, commission: "10-20%", strengths: ["Volume","Variety"], weaknesses: ["Bidding wars","Quality","UI"], rating: 3.2 }],
+      competitors: [{ name: "Global Platform A", region: "Global/SA", monthlyVisits: 12400000, freelancers: 18000000, commission: "5-20%", strengths: ["Brand recognition","Volume","Enterprise"], weaknesses: ["High fees","Poor local support","USD only"], rating: 3.8 }, { name: "Global Platform B", region: "Global/SA", monthlyVisits: 8200000, freelancers: 4000000, commission: "20%+", strengths: ["Gig model","Marketing","Volume"], weaknesses: ["Quality control","Commoditisation","No ZAR"], rating: 3.6 }, { name: "Global Platform C", region: "Global", monthlyVisits: 4100000, freelancers: 70000000, commission: "10-20%", strengths: ["Volume","Variety"], weaknesses: ["Bidding wars","Quality","UI"], rating: 3.2 }],
       ourAdvantages: ["100% South African focus","ZAR payments + PayFast","11 SA languages","POPIA compliant","USSD access","Africa-First pricing","SARS VAT compliant","BBBEE level 2"],
       swot: { strengths: ["Africa-first","ZAR support","POPIA","USSD"], weaknesses: ["Brand awareness","Volume vs global"], opportunities: ["Kenya launch","SADC expansion","B2B enterprise"], threats: ["Global platform expansion","Rand volatility"] },
     };
@@ -5952,7 +5952,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
       uptime: { last30d: 99.94, last90d: 99.91, slaTarget: 99.9 },
       throughput: { rps: 284, peakRps: 1241, cacheHitRate: 87.4 },
       apdex: { score: 0.94, target: 0.9, users: "satisfied" },
-      competitors: [{ name: "Upwork", pageLoad: 2840, uptime: 99.7 }, { name: "Fiverr", pageLoad: 2410, uptime: 99.8 }, { name: "FreelanceSkills.net", pageLoad: 820, uptime: 99.94 }],
+      competitors: [{ name: "Global Platform A", pageLoad: 2840, uptime: 99.7 }, { name: "Global Platform B", pageLoad: 2410, uptime: 99.8 }, { name: "FreelanceSkills.net", pageLoad: 820, uptime: 99.94 }],
     };
 
     app.get("/api/benchmarking/dashboard", (req: any, res) => { if (!auth(req, res)) return; res.json({ pageLoad: benchmarkData.pageLoad, uptime: benchmarkData.uptime, apdex: benchmarkData.apdex, throughput: benchmarkData.throughput }); });
@@ -5998,8 +5998,8 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
     console.log("[routes] Smart Notification Orchestrator v4.0: /api/smart-notifications/* | Dashboard·6-Channels·CascadeRules·USSD·WhatsApp·Push·Suppression·AI-Timing");
 
     // ══ S95 — Platform Migration Tools v4.0 ════════════════════════════════
-    const migrationJobs = [{ id: uuidv4(), source: "Upwork", freelancers: 842, status: "completed", completedAt: new Date(Date.now() - 30 * 86400000), portfoliosImported: 821, gigsCreated: 1284 }, { id: uuidv4(), source: "Fiverr", freelancers: 412, status: "in_progress", completedAt: undefined, portfoliosImported: 241, gigsCreated: 389 }, { id: uuidv4(), source: "Freelancer.com", freelancers: 284, status: "queued", completedAt: undefined, portfoliosImported: 0, gigsCreated: 0 }];
-    const importedUsers = [{ platform: "Upwork", count: 842, topSkills: ["React", "Node.js", "Python"], avgRating: 4.6 }, { platform: "Fiverr", count: 412, topSkills: ["Design", "Writing", "Video"], avgRating: 4.4 }];
+    const migrationJobs = [{ id: uuidv4(), source: "External Platform A", freelancers: 842, status: "completed", completedAt: new Date(Date.now() - 30 * 86400000), portfoliosImported: 821, gigsCreated: 1284 }, { id: uuidv4(), source: "External Platform B", freelancers: 412, status: "in_progress", completedAt: undefined, portfoliosImported: 241, gigsCreated: 389 }, { id: uuidv4(), source: "External Platform C", freelancers: 284, status: "queued", completedAt: undefined, portfoliosImported: 0, gigsCreated: 0 }];
+    const importedUsers = [{ platform: "External Platform A", count: 842, topSkills: ["React", "Node.js", "Python"], avgRating: 4.6 }, { platform: "External Platform B", count: 412, topSkills: ["Design", "Writing", "Video"], avgRating: 4.4 }];
 
     app.get("/api/migration/dashboard", (req: any, res) => { if (!auth(req, res)) return; res.json({ totalMigrated: migrationJobs.filter(j => j.status === "completed").reduce((s, j) => s + j.freelancers, 0), inProgress: migrationJobs.filter(j => j.status === "in_progress").length, platforms: migrationJobs.length, portfoliosImported: migrationJobs.reduce((s, j) => s + j.portfoliosImported, 0) }); });
     app.get("/api/migration/jobs", (req: any, res) => { if (!auth(req, res)) return; res.json({ jobs: migrationJobs, total: migrationJobs.length }); });

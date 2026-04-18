@@ -13,7 +13,7 @@
  *   → We: Evidence Intelligence Vault with deepfake + manipulation AI
  * Reddit/Discord → Permabans without growth offers, mod burnout
  *   → We: Personalised rehab paths + real-time agent collaboration to reduce burnout
- * Fiverr/Upwork  → Manual reviews slow (days), no predictive prevention
+ * FSN-competitor-A/FSN-competitor-B  → Manual reviews slow (days), no predictive prevention
  *   → We: AI severity in <1s, scam ring pattern detection, USSD zero-data Africa
  *
  * 10 WORLD-CLASS AI FEATURES:

@@ -49,7 +49,7 @@ export const LEVEL_COLORS: Record<FreelancerLevel, string> = {
   new: "#6b7280", rising: "#3b82f6", level1: "#8b5cf6", level2: "#f59e0b", top_rated: "#1DBF73",
 };
 
-/** Dynamic commission by level — beats Fiverr flat 20%, Upwork 5-20% tiered */
+/** Dynamic commission by level — beats FSN-competitor-A flat 20%, FSN-competitor-B 5-20% tiered */
 export const LEVEL_AUTO_COMMISSION: Record<FreelancerLevel, number> = {
   new: 1200, rising: 1100, level1: 1000, level2: 900, top_rated: 800,
 };

@@ -2,7 +2,7 @@
  * AI Brain Department v1.0 — client/src/pages/AiBrainDepartment.tsx
  * Section 30 — FreelanceSkills.net | 200% ELON MUSK INTELLIGENCE MASTERPIECE
  *
- * We studied Upwork Uma ($30M/yr), Fiverr Neo ($2–3 per transaction premium), Toptal
+ * We studied FSN-competitor-B Uma ($30M/yr), FSN-competitor-A Neo ($2–3 per transaction premium), FSN-competitor-C
  * (5 human reviewers per candidate), Vellum ($0.10/1K tokens), Salesforce Einstein
  * ($75/user/mo). None have Africa-first intelligence. None self-improve from outcomes.
  * None run adversarial red-team simulation. None embed in the product at $0.0001/call.

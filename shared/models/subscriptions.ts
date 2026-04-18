@@ -8,9 +8,9 @@ import { sql } from "drizzle-orm";
  * ╚══════════════════════════════════════════════════════════════════════════════╝
  *
  * OUT-ENGINEERS:
- * - Upwork: Static 3 tiers (Basic/Plus/Freelancer Plus). We have AI-personalized
+ * - FSN-competitor-B: Static 3 tiers (Basic/Plus/Freelancer Plus). We have AI-personalized
  *           dynamic pricing + hybrid metered billing + auto-upgrade intelligence.
- * - Fiverr: Seller levels (no subscription). We have full tiered subscriptions
+ * - FSN-competitor-A: Seller levels (no subscription). We have full tiered subscriptions
  *           with agency/team features + loyalty token economy.
  * - Patreon: Creator-only, zero marketplace intelligence. We embed gig performance,
  *            earnings trajectory, proposal success rate into plan recommendations.

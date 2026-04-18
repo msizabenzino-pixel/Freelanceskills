@@ -55,7 +55,7 @@ export const freelancerVerifications = pgTable("freelancer_verifications", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Private Feedback (Fiverr-style double testimonial)
+// Private Feedback (FSN-competitor-A-style double testimonial)
 export const privateFeedback = pgTable("private_feedback", {
   id: uuid("id").defaultRandom().primaryKey(),
   bookingId: text("booking_id").notNull(),

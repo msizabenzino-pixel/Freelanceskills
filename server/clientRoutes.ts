@@ -2,10 +2,10 @@
  * Client Management Routes — /api/clients/*
  *
  * HOW WE BEAT THE COMPETITION:
- * ✦ Fiverr: No client-side analytics → we expose spend trends, LTV, dispute rate, hire quality
- * ✦ Upwork: Fraud detection is reactive → our AI score flags clients BEFORE they cause damage
- * ✦ Toptal: Only premium enterprise clients → we support all 4 tiers dynamically
- * ✦ PeoplePerHour: No predictive analytics → 12-month LTV + churn risk scoring
+ * ✦ FSN-competitor-A: No client-side analytics → we expose spend trends, LTV, dispute rate, hire quality
+ * ✦ FSN-competitor-B: Fraud detection is reactive → our AI score flags clients BEFORE they cause damage
+ * ✦ FSN-competitor-C: Only premium enterprise clients → we support all 4 tiers dynamically
+ * ✦ FSN-competitor-D: No predictive analytics → 12-month LTV + churn risk scoring
  * ✦ Guru: No Academy link → Hire Quality Score shows ROI of Academy-certified freelancers
  */
 
@@ -46,7 +46,7 @@ async function auditLog(performedBy: string, userId: string, action: string, det
   } catch {}
 }
 
-/** AI Fraud Risk Score 0–100 — transparent model (beats Upwork's reactive approach) */
+/** AI Fraud Risk Score 0–100 — transparent model (beats FSN-competitor-B's reactive approach) */
 function computeFraudRisk(p: {
   totalSpentCents: number; totalJobsPosted: number; disputeCount: number;
   refundCount: number; kycStatus: string; createdAt: string | Date | null;
@@ -94,7 +94,7 @@ function computeClientLevel(totalSpentCents: number, disputeCount: number, total
   return "new";
 }
 
-/** Predictive LTV (beats PeoplePerHour static view) */
+/** Predictive LTV (beats FSN-competitor-D static view) */
 function predictiveLTV(monthlyAvg: number, ageMonths: number, disputeRate: number): number {
   const retentionMultiplier = disputeRate > 0.2 ? 0.5 : disputeRate > 0.1 ? 0.75 : 1.2;
   const yearsLeft = Math.max(5 - ageMonths / 12, 1);
@@ -466,7 +466,7 @@ export function registerClientRoutes(app: Express) {
   });
 
   // ─── POST /api/clients/:id/refund ─────────────────────────────────────────
-  // One-tap escrow refund — beats Fiverr/Upwork speed
+  // One-tap escrow refund — beats FSN-competitor-A/FSN-competitor-B speed
   app.post("/api/clients/:id/refund", isAuthenticated, requireAdmin, async (req: any, res: Response) => {
     try {
       const { id } = req.params;

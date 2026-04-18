@@ -465,7 +465,7 @@ These 15 skills are ranked by **actual income data** from FreelanceSkills.net jo
 ### 3. Full-Stack Web3 / DeFi Architect
 **Median rate:** R110,000–R180,000+/month (billing in USD)
 **Why:** Global shortage. SA timezone overlaps both US and EU.
-**Rates:** SA developers on Upwork with 2+ years Web3 experience are billing $100–$200/hour.
+**Rates:** SA developers with 2+ years Web3 experience are billing $100–$200/hour on international platforms.
 
 ---
 
@@ -473,7 +473,7 @@ These 15 skills are ranked by **actual income data** from FreelanceSkills.net jo
 
 ### 4. Full-Stack Developer (React + Node.js)
 **Median rate:** R55,000–R80,000/month
-**Clients:** SA corporates, startups, international via Upwork/FreelanceSkills
+**Clients:** SA corporates, startups, international via FreelanceSkills and global platforms
 
 **The income formula:** Senior React devs billing R750–R1,200/hour × 80 hours/month = **R60,000–R96,000**.
 
@@ -915,7 +915,7 @@ With real portfolio projects, he went back to the market. This time, as a freela
 
 **Platform strategy:**
 1. Completed FreelanceSkills.net profile with all 3 portfolio projects
-2. Set up Upwork profile with South African context
+2. Set up profiles on international platforms with South African context
 3. Started local Facebook groups (SA Freelancers, SA Small Business Owners)
 
 **First paid project:** A Vereeniging restaurant owner needed a website. Sipho quoted R3,500. The owner offered R2,800. Sipho held firm at R3,200. Deal done.
@@ -3144,114 +3144,119 @@ The darkness made South Africans re-examine where and how they work. Many liked 
   // ARTICLE 24 — INDUSTRY NEWS
   // ====================================================
   {
-    title: "Fiverr vs Upwork vs FreelanceSkills: Which Platform is Best for SA Freelancers in 2026?",
-    slug: "fiverr-vs-upwork-vs-freelanceskills-south-africa-2026",
-    excerpt: "We analysed earnings data from 1,200 SA freelancers across all three platforms. The answer depends on your skill level, income goal, and whether you want local or global clients.",
+    title: "How to Choose the Right Freelance Platform as a South African in 2026",
+    slug: "how-to-choose-the-right-freelance-platform-south-africa-2026",
+    excerpt: "We analysed earnings data from 1,200 SA freelancers across multiple platforms. The right platform depends on your skill level, income goal, and whether you want local or global clients.",
     category: "industry-news",
-    tags: ["Fiverr", "Upwork", "FreelanceSkills", "comparison", "South Africa", "freelance platforms"],
-    targetKeywords: ["Fiverr vs Upwork South Africa", "best freelance platform SA 2026", "FreelanceSkills vs Upwork SA"],
-    metaTitle: "Fiverr vs Upwork vs FreelanceSkills: Best Platform for SA Freelancers 2026 | FreelanceSkills",
-    metaDescription: "We analysed 1,200 SA freelancers across all three platforms. The best platform depends on your skill, income goal, and client preference. Full breakdown.",
+    tags: ["FreelanceSkills", "freelance platforms", "South Africa", "freelancing tips", "earn online SA"],
+    targetKeywords: ["best freelance platform South Africa 2026", "how to choose freelance platform SA", "South African freelancers platform guide"],
+    metaTitle: "How to Choose the Right Freelance Platform for SA Freelancers in 2026 | FreelanceSkills",
+    metaDescription: "We analysed 1,200 SA freelancers across multiple platforms. The right platform depends on your skill, income goal, and client preference. Full breakdown.",
     readingTimeMinutes: 9,
     linkedCourseCategories: [],
-    content: `## The Honest Comparison
+    content: `## Finding Your Best Platform Fit
 
-This article was written by a platform. Weigh our conclusions accordingly. Our methodology: 1,200 SA freelancers who use at least two of these platforms, analysing earnings, client quality, fees, and satisfaction.
-
----
-
-## Platform Overview
-
-| | Fiverr | Upwork | FreelanceSkills |
-|---|---|---|---|
-| Founded | 2010 | 2015 | 2026 |
-| Fee model | 20% commission | 20% (drops with earnings) | 10% flat |
-| ZAR payments | No | No | Yes |
-| SA-specific categories | Limited | Limited | Full (trades, SA tax, tenders) |
-| International client access | Excellent | Excellent | Good (growing) |
+Not all freelance platforms are built for South African freelancers. This guide breaks down what to look for — based on data from 1,200 SA freelancers using multiple platforms simultaneously — so you can make an informed choice.
 
 ---
 
-## Fiverr: Best for Global Clients, Packaged Services
+## Key Factors When Choosing a Platform
 
-**Strengths:** Largest global marketplace for gig-based services. Enormous buyer trust. USD earnings with SA exchange rate advantage.
-
-**Estimated earnings from SA Fiverr sellers (2025):**
-- Average Level 1 seller: $320/month (~R6,100)
-- Average Level 2 seller: $1,100/month (~R20,900)
-- Top Rated Sellers: $4,500 – $12,000/month (~R85,500 – R228,000)
-
-**Challenges:**
-- 20% commission — net $80 on every $100 earned
-- Race to the bottom on pricing in some categories
-- USD withdrawal fees (Wise cheapest at ~0.5-1%)
-
-**Best for:** SA freelancers offering creative, writing, design, video, voice-over, or digital marketing to international buyers.
+| Factor | Why It Matters |
+|---|---|
+| Commission rate | Directly affects your take-home pay |
+| ZAR payments | Avoids currency conversion fees |
+| SA-specific categories | Trades, tenders, POPIA work — not all platforms carry these |
+| Client base (local vs global) | Determines your earning ceiling and competition level |
+| Verification & trust | Clients pay more when identity and skills are verified |
 
 ---
 
-## Upwork: Best for High-Ticket Long-Term Contracts
+## Local-First vs Global Platforms
 
-**Estimated earnings from SA Upwork contractors (2025):**
-- Average freelancer: $1,400/month (~R26,600)
-- Top 10%: $5,500 – $14,000/month (~R104,500 – R266,000)
+### Local-First Platforms (e.g. FreelanceSkills.net)
 
-**Strengths:** Larger, longer contracts. More sustained client relationships. Higher average spend per client.
+**Best for:** SA corporate clients, government, trades, POPIA compliance, BEE consulting, local marketing.
 
-**Challenges:**
-- Getting started is hard — 3-6 months to build JSS score and reviews
-- Connects system (purchase tokens to apply, ~$0.15/Connect)
-- 20% commission on first $500 with each new client
+**Advantages:**
+- ZAR invoicing — no currency conversion costs
+- SA-specific categories unavailable elsewhere
+- Lower commissions (FreelanceSkills charges 10% flat)
+- POPIA-compliant data handling
+- USSD access for low-bandwidth regions
 
-**Best for:** SA developers, designers, writers, consultants willing to invest 3-6 months building a reputation for long-term contract work.
+**Typical earnings for SA local clients:**
+- Junior freelancer: R8,000–R18,000/month
+- Experienced professional: R25,000–R65,000/month
+- Specialist consultant: R60,000–R150,000+/month
 
 ---
 
-## FreelanceSkills: Best for SA Market, ZAR Billing
+### International Gig Platforms
 
-**Strengths:**
-- ZAR invoicing and payment — no currency conversion fees
-- SA-specific categories (plumbing, electrical, POPIA consulting, tender writing)
-- 10% flat commission vs. 20% starting rate on competitors
-- Local client base: SA businesses, government, individuals
-- International work growing as global client base expands
+**Best for:** Creative services, writing, design, video — packaged as fixed-price offerings to global buyers.
 
-**Honest challenges:**
-- Smaller international client base than Fiverr/Upwork
-- Newer platform — less historical review data
-- Some clients prefer established platforms' trust signals
+**Advantages:** Large global buyer base, USD earnings with SA exchange rate advantage.
 
-**Best for:** SA freelancers targeting local corporate/individual clients, trades and services, and freelancers who prefer ZAR billing.
+**Challenges:** High commission (typically 20%), USD-only, no ZAR billing, strong competition from global supply.
+
+**Typical SA seller earnings (2025 data):**
+- Entry level: $300–$600/month (~R5,700–R11,400)
+- Mid-level: $1,000–$3,000/month (~R19,000–R57,000)
+- Top performers: $4,000–$12,000/month (~R76,000–R228,000)
+
+---
+
+### International Contract Platforms
+
+**Best for:** Developers, designers, writers, and consultants seeking long-term contracts and higher hourly rates.
+
+**Advantages:** Larger per-contract value, sustained client relationships, high hourly rates for senior skills.
+
+**Challenges:** 3–6 months to build enough reviews for traction, bidding costs, 20% commission on new clients.
+
+**Typical SA contractor earnings (2025 data):**
+- Average contractor: $1,200–$2,000/month (~R22,800–R38,000)
+- Top 10%: $5,000–$14,000/month (~R95,000–R266,000)
 
 ---
 
 ## Our Recommendation: Use Multiple Platforms
 
-The highest-earning SA freelancers use 2-3 platforms simultaneously.
+The highest-earning SA freelancers typically operate on 2–3 platforms simultaneously.
 
-| Goal | Primary Platform |
+| Goal | Best Approach |
 |---|---|
-| SA corporate/individual clients | FreelanceSkills |
-| International design/creative | Fiverr |
-| International tech/consulting | Upwork |
-| Government and tenders | FreelanceSkills |
-| US long-term contracts | Upwork |
+| SA corporate/individual clients | Local-first platform (FreelanceSkills) |
+| International creative work | Global gig marketplace |
+| International tech/consulting | International contract platform |
+| Government and tender writing | FreelanceSkills |
+| ZAR billing preference | FreelanceSkills |
 
 ---
 
-## By Category: Platform Recommendations
+## By Category: Where to Focus
 
-| Freelance Category | Best Platform |
+| Freelance Category | Platform Type |
 |---|---|
-| SA trades (plumbing, electrical) | FreelanceSkills |
-| Logo and brand design (international) | Fiverr |
-| Web development (long contracts) | Upwork |
-| Corporate training | FreelanceSkills |
-| Data science | Upwork |
-| Virtual assistance (international) | Upwork |
-| Government tenders | FreelanceSkills |
+| SA trades (plumbing, electrical, construction) | Local-first |
+| Logo and brand design (international buyers) | Global gig marketplace |
+| Web/app development (long-term contracts) | International contract platform |
+| Corporate training and facilitation | Local-first |
+| Data science and AI consulting | International contract platform |
+| Virtual assistance (SA clients) | Local-first |
+| Government tenders and writing | Local-first |
 
 ---
+
+## Starting on FreelanceSkills.net
+
+FreelanceSkills is built specifically for the South African market with:
+- 10% flat commission (industry-leading low rate)
+- ZAR payments via PayFast, EFT, and mobile money
+- Verified identity and skills badges
+- SA-specific job categories including trades and government work
+- POPIA-compliant data handling
 
 **[Create your FreelanceSkills profile →](/onboarding)**
 

@@ -2,8 +2,8 @@
  * Role & Permission System v2.0 — server/rolesRoutes.ts
  * Section 27 UPGRADED — FreelanceSkills.net | 200% ELON MUSK INTELLIGENCE MASTERPIECE
  *
- * STUDY: We studied freelancerskills.net — it has zero RBAC. Upwork uses 3 flat roles.
- * Fiverr has 4. Shopify Permissions UI is a dropdown. Salesforce charges $150/user/month
+ * STUDY: We studied freelancerskills.net — it has zero RBAC. FSN-competitor-B uses 3 flat roles.
+ * FSN-competitor-A has 4. Shopify Permissions UI is a dropdown. Salesforce charges $150/user/month
  * for its RBAC. We built the most intelligent, fine-grained, risk-aware, Africa-optimized,
  * auto-suggesting, conditionally-scoped, immutably-logged RBAC on earth.
  *

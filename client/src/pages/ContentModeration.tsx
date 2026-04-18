@@ -3,9 +3,9 @@
  * FreelanceSkills.net — Platform Safety Guardian
  *
  * HOW WE OUT-ENGINEER EVERY COMPETITOR:
- * • Upwork:  No saved views, no sortable queue, no rewrite AI, reactive only
- * • Fiverr:  No 6D scoring, no education loop, no USSD Africa mode
- * • Toptal:  Manual-only, no image intelligence, no bulk tools
+ * • FSN-competitor-B:  No saved views, no sortable queue, no rewrite AI, reactive only
+ * • FSN-competitor-A:  No 6D scoring, no education loop, no USSD Africa mode
+ * • FSN-competitor-C:  Manual-only, no image intelligence, no bulk tools
  * • Others:  No repeat-offender engine, no dispute-prevention ROI, no appeals SLA
  *
  * 7 TABS — NO COMPETITOR HAS MORE THAN 2:

@@ -6,11 +6,11 @@
  *
  * HOW WE OUT-ENGINEER EVERY COMPETITOR:
  *
- * vs Fiverr:         They have "Seller Coupons" (static, manual). We have autonomous AI
+ * vs FSN-competitor-A:         They have "Seller Coupons" (static, manual). We have autonomous AI
  *                    Campaign Brain that self-optimises A/B variants in real-time using
  *                    live open/click signals, churn scores, and LTV predictions.
  *
- * vs Upwork:         They have "Promoted" boosts (pay-per-impression, zero intelligence).
+ * vs FSN-competitor-B:         They have "Promoted" boosts (pay-per-impression, zero intelligence).
  *                    We have Viral Coefficient tracking (k-factor), dynamic referral tiers,
  *                    blockchain-verified fraud-proof commissions, and Africa USSD flows.
  *
@@ -69,7 +69,7 @@ function isAdmin(req: any): boolean { return (req.session as any)?.userId === AD
 function q(s: string | null | undefined) { return (s || "").replace(/'/g, "''"); }
 
 // ── BLOCKCHAIN: SHA-256 sign a referral event (fraud-proof commission proof) ──
-// OUT-ENGINEERS all platforms: Fiverr/Upwork have zero cryptographic referral verification.
+// OUT-ENGINEERS all platforms: FSN-competitor-A/FSN-competitor-B have zero cryptographic referral verification.
 // Every payout has an immutable on-chain hash that can be audited forever.
 function signReferralEvent(referralCode: string, refereeId: string, eventType: string, ts: string): string {
   return crypto.createHash("sha256")
@@ -194,7 +194,7 @@ export function registerMarketingRoutes(app: Express) {
   });
 
   // ── AI BRAIN: Autonomously builds optimised campaign variants ──────────────
-  // SUPERPOWER #1: No competitor has this. Fiverr/Upwork/Klaviyo all require manual copy.
+  // SUPERPOWER #1: No competitor has this. FSN-competitor-A/FSN-competitor-B/Klaviyo all require manual copy.
   app.post("/api/marketing/campaigns/:id/ai-brain", async (req, res) => {
     if (!isAdmin(req)) return res.status(403).json({ message: "Forbidden" });
     try {

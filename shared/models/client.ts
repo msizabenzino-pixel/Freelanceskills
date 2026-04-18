@@ -2,10 +2,10 @@
  * Client Profiles schema — extends the base users/profiles tables
  *
  * HOW WE BEAT THE COMPETITION:
- * ✦ Fiverr: No client analytics → we track spend trends, LTV, dispute rate, Academy hire correlation
- * ✦ Upwork: Payment verification is manual → our AI Fraud Score auto-flags risky clients in real-time
- * ✦ Toptal: Premium clients only → we handle all client tiers with dynamic Bronze→Gold levelling
- * ✦ PeoplePerHour: Static profiles → predictive churn forecast + LTV projection
+ * ✦ FSN-competitor-A: No client analytics → we track spend trends, LTV, dispute rate, Academy hire correlation
+ * ✦ FSN-competitor-B: Payment verification is manual → our AI Fraud Score auto-flags risky clients in real-time
+ * ✦ FSN-competitor-C: Premium clients only → we handle all client tiers with dynamic Bronze→Gold levelling
+ * ✦ FSN-competitor-D: Static profiles → predictive churn forecast + LTV projection
  * ✦ Guru: No Academy integration → Hire Quality Score shows Academy freelancer ROI to clients
  */
 import { sql } from "drizzle-orm";
@@ -42,7 +42,7 @@ export const clientProfiles = pgTable("client_profiles", {
   predictiveLtvCents: integer("predictive_ltv_cents").notNull().default(0),
   churnRiskPct: integer("churn_risk_pct").notNull().default(0),       // 0–100
 
-  // Level system (smarter than Fiverr's buyer rewards)
+  // Level system (smarter than FSN-competitor-A's buyer rewards)
   clientLevel: text("client_level").notNull().default("new"), // "new" | "bronze" | "silver" | "gold"
   isVerifiedPayer: boolean("is_verified_payer").notNull().default(false),
   verifiedPayerAt: timestamp("verified_payer_at"),
@@ -75,7 +75,7 @@ export type InsertClientProfile = z.infer<typeof insertClientProfileSchema>;
 export const CLIENT_LEVELS = ["new", "bronze", "silver", "gold"] as const;
 export type ClientLevel = typeof CLIENT_LEVELS[number];
 
-/** Dynamic level thresholds (smarter than Fiverr/Upwork flat tiers) */
+/** Dynamic level thresholds (smarter than FSN-competitor-A/FSN-competitor-B flat tiers) */
 export const CLIENT_LEVEL_CONFIG: Record<ClientLevel, {
   label: string; icon: string; color: string; bg: string;
   minSpentCents: number; maxDisputeRatePct: number;

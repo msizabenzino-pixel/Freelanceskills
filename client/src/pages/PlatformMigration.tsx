@@ -7,12 +7,12 @@ export default function PlatformMigration() {
   const { data: imported } = useQuery({ queryKey:["/api/migration/imported"], queryFn:()=>fetch("/api/migration/imported",{credentials:"include"}).then(r=>r.json()), staleTime:15000, enabled:tab==="imported" });
   const d=(dash as any)||{};
   const statusColor=(s:string)=>({completed:"#1DBF73",in_progress:"#6366f1",queued:"#eab308",failed:"#ef4444"}[s]||"#9ca3af");
-  const platformIcon=(p:string)=>({Upwork:"💼",Fiverr:"🟢","Freelancer.com":"🔵"}[p]||"📋");
+  const platformIcon=(p:string)=>({External:"💼",Portfolio:"🟢","Other":"🔵"}[p]||"📋");
   return (
     <div className="min-h-screen p-6" style={{background:"#080d1a"}}>
       <div className="max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold text-white mb-1">Platform Migration Tools</h1>
-        <p className="text-sm text-gray-500 mb-5">Import from Upwork · Fiverr · Freelancer.com · Portfolio Transfer · Review Migration · Profile Mapping</p>
+        <p className="text-sm text-gray-500 mb-5">Import from other platforms · Portfolio Transfer · Review Migration · Profile Mapping</p>
         <div className="grid grid-cols-4 gap-3 mb-5">
           {[{l:"Migrated",v:d.totalMigrated||0,c:"#1DBF73"},{l:"In Progress",v:d.inProgress||0,c:"#6366f1"},{l:"Platforms",v:d.platforms||0,c:"#eab308"},{l:"Portfolios",v:d.portfoliosImported||0,c:"#f97316"}].map((s,i)=>(
             <div key={i} className="rounded-xl p-4" style={{background:`${s.c}10`,border:`1px solid ${s.c}25`}}><div className="text-2xl font-black" style={{color:s.c}}>{s.v}</div><div className="text-xs text-gray-500 mt-1">{s.l}</div></div>

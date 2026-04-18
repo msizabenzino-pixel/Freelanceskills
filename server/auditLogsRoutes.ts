@@ -7,7 +7,7 @@
  * ║  • Stripe's audit logs: basic append-only, no AI, no Africa, no hash chain      ║
  * ║  • GitHub Audit Log: no predictive risk, no USSD, no multilingual, no diffs     ║
  * ║  • Salesforce Event Monitoring: expensive add-on, no Africa, no hash chain      ║
- * ║  • Upwork/Fiverr: literally no audit trail at all for admin actions             ║
+ * ║  • FSN-competitor-B/FSN-competitor-A: literally no audit trail at all for admin actions             ║
  * ║  • FreelanceSkills v2.0: SHA-256 hash chain + AI 12-pattern anomaly +          ║
  * ║    predictive insider threat scoring + 10 dept integration hooks + Africa        ║
  * ║    USSD export + PDF with digital signature + role-based access + real-time     ║
@@ -186,7 +186,7 @@ function computeLogHash(
 // PREDICTIVE INSIDER THREAT RISK SCORING ENGINE
 // 5-factor behavioral risk model. Score 0-100.
 // 0-25: Safe (green), 26-50: Monitor (yellow), 51-75: Elevated (orange), 76-100: Critical (red)
-// This is what no Upwork/Fiverr/Stripe audit trail does — predict threats BEFORE they happen
+// This is what no FSN-competitor-B/FSN-competitor-A/Stripe audit trail does — predict threats BEFORE they happen
 // ════════════════════════════════════════════════════════════════════════════
 async function computeRiskScore(
   admin_user_id: string, action: string, severity: string,
@@ -354,7 +354,7 @@ async function detectAnomalies(entry: {
 // Fires for critical/high severity actions:
 //   1. Socket.io admin_room emit → live feed in admin dashboard
 //   2. Notifications system push → mobile alert for admin
-// No Upwork/Fiverr/Stripe audit system does this
+// No FSN-competitor-B/FSN-competitor-A/Stripe audit system does this
 // ════════════════════════════════════════════════════════════════════════════
 async function fireCriticalAlert(entry: {
   id: number | null; admin_user_id: string; action: string;

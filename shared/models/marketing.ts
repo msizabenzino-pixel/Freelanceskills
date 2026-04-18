@@ -6,8 +6,8 @@ import { sql } from "drizzle-orm";
  * The ultimate growth & viral acquisition engine for FreelanceSkills.net
  *
  * Obliterates:
- * - Fiverr: basic credits (no AI, no predictive)
- * - Upwork: generic boost (no virality, no Africa tiers)
+ * - FSN-competitor-A: basic credits (no AI, no predictive)
+ * - FSN-competitor-B: generic boost (no virality, no Africa tiers)
  * - Klaviyo/Shopify: template automation (no agent reasoning)
  *
  * 20 Superpowers:

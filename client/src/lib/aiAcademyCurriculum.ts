@@ -1,7 +1,7 @@
 /**
  * FreelanceSkills AI Academy — 35 Emerging AI Skills Courses
  * 2026–2036 Curriculum | Ranked by Freelance Revenue Potential
- * Based on Upwork 2026 data: AI Integration +178%, AI Agents +312%, AI Video +329%
+ * Based on global market 2026 data: AI Integration +178%, AI Agents +312%, AI Video +329%
  *
  * IDs: 31–65 (non-overlapping with existing 30 courses)
  * Each course: micro (10–25 hours), project-based, capstone = sellable portfolio piece
@@ -17,7 +17,7 @@ export const AI_COURSES: Course[] = [
     id: 31,
     slug: "ai-agent-development",
     title: "AI Agent Development: LangChain, CrewAI & AutoGen",
-    tagline: "Build autonomous AI agents that earn $150–$400/hr on Upwork.",
+    tagline: "Build autonomous AI agents that earn $150–$400/hr on global platforms.",
     description: "The #1 most-hired AI skill of 2026. Learn to build multi-agent systems that reason, plan, and execute complex tasks autonomously. LangChain, CrewAI, AutoGen, and LangGraph — hands-on with real client deliverables.",
     category: "AI & Machine Learning",
     difficulty: "Advanced",
@@ -79,7 +79,7 @@ executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
 result = executor.invoke({"input": "What are the top AI freelance skills in 2026?"})
 \`\`\`
 
-**SA Context:** Remote AI agent developers from Cape Town, Johannesburg, and Durban are billing $150–$280/hr USD on Toptal and Upwork. At R19 exchange rate, that's R2,850–R5,320/hr. A 40-hr project pays R114k–R213k.`,
+**SA Context:** Remote AI agent developers from Cape Town, Johannesburg, and Durban are billing $150–$280/hr USD on global platforms. At R19 exchange rate, that's R2,850–R5,320/hr. A 40-hr project pays R114k–R213k.`,
           },
           {
             id: "l31-1-2",
@@ -279,7 +279,7 @@ chain = ConversationChain(llm=llm, memory=memory)
 
 **Portfolio Presentation:**
 - Record a 2-minute demo video showing a topic → full research report in under 3 minutes
-- List on Upwork as "AI Research Agent" service: $500–$2,000 per report
+- List on FreelanceSkills.net as "AI Research Agent" service: $500–$2,000 per report
 - Target: market research firms, startups, investors, consulting companies
 
 **Live Demo URL:** Include a URL where potential clients can run a free sample report on any topic they choose. This becomes your best sales tool.
@@ -766,7 +766,7 @@ retriever = ContextualCompressionRetriever(base_compressor=reranker, base_retrie
     id: 34,
     slug: "ai-video-production",
     title: "AI Video Production: Runway, Sora & HeyGen Mastery",
-    tagline: "AI video production grew 329% on Upwork in 2026. Earn R15k–R50k/video.",
+    tagline: "AI video production grew 329% globally in 2026. Earn R15k–R50k/video.",
     description: "Master the new era of video creation: text-to-video with Runway Gen-3, AI avatars with HeyGen, voice cloning with ElevenLabs, and automated video pipelines. Build a video production business that scales.",
     category: "AI & Machine Learning",
     difficulty: "Beginner",
@@ -793,7 +793,7 @@ retriever = ContextualCompressionRetriever(base_compressor=reranker, base_retrie
             duration: "20 min",
             content: `## The AI Video Revolution Is Happening Now
 
-AI video production grew **329% on Upwork in 2026**. Traditional video production costs R50k–R200k. AI production costs R5k–R15k in tools and delivers in days, not months.
+AI video production grew **329% globally in 2026**. Traditional video production costs R50k–R200k. AI production costs R5k–R15k in tools and delivers in days, not months.
 
 **The AI Video Tool Stack:**
 
@@ -874,7 +874,7 @@ Add at the end of every prompt: "Shot on ARRI ALEXA, Zeiss Supreme lenses, Rec.7
             duration: "10 min",
             content: "Test your AI video production knowledge.",
             quiz: [
-              { q: "AI video production grew by what percentage on Upwork in 2026?", options: ["89%", "178%", "329%", "54%"], answer: 2 },
+              { q: "AI video production grew by what percentage globally in 2026?", options: ["89%", "178%", "329%", "54%"], answer: 2 },
               { q: "Which tool is best for creating realistic AI avatar presenters?", options: ["Runway", "HeyGen", "Suno", "Descript"], answer: 1 },
               { q: "What is the best workflow for consistent characters across multiple videos?", options: ["Same text prompt", "Image-to-video from reference frame", "Same voice actor", "Manual editing"], answer: 1 },
             ],
@@ -1767,7 +1767,7 @@ Price: R60,000 one-time setup (hire native speakers for coaching)`,
     id: 38,
     slug: "ai-data-annotation-rlhf",
     title: "AI Data Annotation & RLHF Pipeline Engineering",
-    tagline: "AI annotation grew 154% on Upwork. Run a team earning R50k–R200k/month.",
+    tagline: "AI annotation grew 154% globally. Run a team earning R50k–R200k/month.",
     description: "The foundation of all AI training. Learn to build, manage, and automate data annotation pipelines for computer vision, NLP, and RLHF (the technique behind ChatGPT). Hire and manage remote annotation teams across Africa.",
     category: "AI & Machine Learning",
     difficulty: "Intermediate",
@@ -2010,7 +2010,7 @@ dpo_trainer.train()
 
 **First Client Strategy:**
 1. Create free Sample Pack (500 annotated images) in your target domain
-2. Post on Upwork, LinkedIn, and Appen partner program
+2. Post on FreelanceSkills.net, LinkedIn, and Appen partner program
 3. Offer 2-day free trial for qualified enterprise clients
 4. Target: computer vision startups, AI labs, autonomous vehicle companies
 
@@ -3070,7 +3070,7 @@ Weekly Report: Total processed, exceptions, average processing time
 - [ ] Self-hosted n8n instance on Hetzner (R199/month)
 - [ ] Video demos of all 5 workflows (Loom)
 - [ ] One-page pricing sheet (fixed-price packages)
-- [ ] LinkedIn/Upwork profile: "AI Automation Specialist | n8n + OpenAI"
+- [ ] FreelanceSkills.net profile: "AI Automation Specialist | n8n + OpenAI"
 - [ ] Free 30-min discovery call offer
 
 **Revenue Targets:**
@@ -3589,7 +3589,7 @@ for bg in backgrounds:
 
 **Marketing Strategy:**
 - LinkedIn: Post 3 AI-generated images/day with "generated with AI" disclosure
-- Upwork: Create profile with "AI Image Production" as specialty
+- Add "AI Image Production" as a specialty to your FreelanceSkills.net profile
 - Instagram: Build portfolio showing SA-specific imagery (massive engagement)
 - Direct outreach: Email Takealot's top 100 sellers (LinkedIn scraping)`,
           },
@@ -8224,8 +8224,8 @@ class CAPSKnowledgeGraph:
  * and SA market demand.
  */
 export const AI_ACADEMY_LAUNCH_PRIORITY = [
-  { rank: 1, courseId: 31, title: "AI Agent Development", projectedMonthly: "R180,000", reason: "Fastest growing Upwork skill +312%" },
-  { rank: 2, courseId: 34, title: "AI Video Production", projectedMonthly: "R150,000", reason: "329% Upwork growth, low barrier, high demand" },
+  { rank: 1, courseId: 31, title: "AI Agent Development", projectedMonthly: "R180,000", reason: "Fastest growing AI skill globally +312%" },
+  { rank: 2, courseId: 34, title: "AI Video Production", projectedMonthly: "R150,000", reason: "329% global demand growth, low barrier, high demand" },
   { rank: 3, courseId: 42, title: "n8n + AI Automation", projectedMonthly: "R130,000", reason: "Every SA business needs automation" },
   { rank: 4, courseId: 38, title: "AI Data Annotation", projectedMonthly: "R120,000", reason: "Free course = large funnel, paid upsells" },
   { rank: 5, courseId: 57, title: "Africa AI Applications", projectedMonthly: "R100,000", reason: "Free + uniquely SA = massive differentiation" },

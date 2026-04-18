@@ -1,5 +1,5 @@
 // Content moderation and safety filters for FreelanceSkill
-// Based on safety measures from Fiverr, Upwork, Guru, PeoplePerHour, FlexJobs, TaskRabbit
+// Based on safety measures from FSN-competitor-A, FSN-competitor-B, Guru, FSN-competitor-D, FlexJobs, TaskRabbit
 
 // Patterns to detect off-platform transaction attempts
 const BLOCKED_PATTERNS = {

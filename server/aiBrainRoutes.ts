@@ -2,8 +2,8 @@
  * AI Brain Department v1.0 — server/aiBrainRoutes.ts
  * Section 30 — FreelanceSkills.net | 200% ELON MUSK INTELLIGENCE MASTERPIECE
  *
- * STUDY: Upwork Uma costs >$30M/yr to run · Fiverr Neo adds $2–3 per transaction overhead ·
- * Toptal screening requires 5 human reviewers · Vellum charges $0.10/1K tokens premium ·
+ * STUDY: FSN-competitor-B Uma costs >$30M/yr to run · FSN-competitor-A Neo adds $2–3 per transaction overhead ·
+ * FSN-competitor-C screening requires 5 human reviewers · Vellum charges $0.10/1K tokens premium ·
  * Salesforce Einstein requires $75/user/mo add-on.
  * We built ALL OF IT embedded in the product using GPT-4o-mini at ~$0.0001 per call.
  *
@@ -636,7 +636,7 @@ export async function registerAiBrainRoutes(app: Express, isAuthenticated: any) 
   // Background loop runs every 10 minutes automatically.
   // This is how the fraud detection improves without human labeling — the
   // RedTeamSimulator continuously generates novel attacks, and every miss
-  // becomes a training signal. Upwork has no equivalent. Fiverr has no equivalent.
+  // becomes a training signal. FSN-competitor-B has no equivalent. FSN-competitor-A has no equivalent.
   app.post("/api/ai/auto-train", async (req: Request, res: Response) => {
     if (!requireAdmin(req, res)) return;
     if (AUTO_TRAIN.running) return res.json({ message: "Training cycle already running", status: AUTO_TRAIN }) as any;

@@ -6,23 +6,23 @@
  * THE WORLD'S MOST INTELLIGENT FREELANCE TAXONOMY ENGINE
  * ── HOW WE OBLITERATE EVERY COMPETITOR ──────────────────────────────────────
  *
- * Upwork (2024 market leader):
+ * FSN-competitor-B (2024 market leader):
  *   ❌ 2012 taxonomy, zero AI, no synonym detection, no user submissions
  *   ✅ WE: Real-time AI scanner, 6-signal duplicate detection, living taxonomy
  *
- * Fiverr:
+ * FSN-competitor-A:
  *   ❌ 3-level flat tree, no proficiency, no skill verification, no badges
  *   ✅ WE: Infinite depth tree, 5-level proficiency, Academy badge integration
  *
- * Freelancer.com:
+ * FSN-competitor-E:
  *   ❌ 1,200 skills in a dropdown, no analytics, no emerging skill detection
  *   ✅ WE: Full analytics suite: heatmaps, funnels, 30-day AI forecast
  *
- * PeoplePerHour:
+ * FSN-competitor-D:
  *   ❌ Static tags, no region awareness, no bulk ops, no import/export
  *   ✅ WE: Africa-first intelligence, USSD skills, 11 local languages, bulk ops
  *
- * Toptal:
+ * FSN-competitor-C:
  *   ❌ Invite-only, no user suggestions, zero democratisation
  *   ✅ WE: Open suggestion queue + voting + AI confidence scoring + approve flow
  *
@@ -173,7 +173,7 @@ const SEED_SKILLS: SkillSeed[] = [
 const SEED_SUGGESTIONS = [
   { id: "sug-001", type: "skill", name: "Vibe Coding", description: "AI-assisted development using natural language prompts with tools like Cursor, Replit Agent", parentCategoryId: "sub-001", source: "ai", reason: "Detected 420+ freelancer profile descriptions mentioning this term in the last 30 days", evidence: "GitHub: +8,200 repos tagged 'vibe-coding'. Stack Overflow questions up 340%. Google Trends SA: +280%", status: "approved", votes: 87, aiConfidence: 96, qualityScore: 94 },
   { id: "sug-002", type: "skill", name: "WhatsApp Business API", description: "Integration and automation using the WhatsApp Business API for African SMEs", parentCategoryId: "sub-001", source: "user", reason: "Huge demand in SA market — many clients need WhatsApp chatbot developers", evidence: "12 gig posts with 'WhatsApp API' this week. 94% SA businesses use WhatsApp", status: "approved", votes: 62, aiConfidence: 91, qualityScore: 88 },
-  { id: "sug-003", type: "category", name: "Agriculture & AgriTech", description: "Precision farming, farm management software, drone mapping, crop analytics for African farms", parentCategoryId: null, source: "ai", reason: "SA AgriTech sector grew 34% in 2025. Zero presence in current taxonomy. R2.4B market.", evidence: "Freelancer.com: 890 AgriTech jobs this month. Our platform: 0 matching category. Blue ocean.", status: "pending", votes: 44, aiConfidence: 82, qualityScore: 76 },
+  { id: "sug-003", type: "category", name: "Agriculture & AgriTech", description: "Precision farming, farm management software, drone mapping, crop analytics for African farms", parentCategoryId: null, source: "ai", reason: "SA AgriTech sector grew 34% in 2025. Zero presence in current taxonomy. R2.4B market.", evidence: "FSN-competitor-E: 890 AgriTech jobs this month. Our platform: 0 matching category. Blue ocean.", status: "pending", votes: 44, aiConfidence: 82, qualityScore: 76 },
   { id: "sug-004", type: "skill", name: "Zulu/Xhosa Content Creation", description: "Creating digital content in indigenous South African languages — social, web, e-commerce", parentCategoryId: "cat-004", source: "user", reason: "African language content gap — 25M+ speakers with only 4% of SA internet content", evidence: "0 competitors cover this. 25 clients searched this week with zero freelancer matches.", status: "approved", votes: 134, aiConfidence: 94, qualityScore: 91 },
   { id: "sug-005", type: "skill", name: "Solana Smart Contracts", description: "High-performance blockchain development on Solana — NFTs, DeFi, Web3", parentCategoryId: "sub-001", source: "ai", reason: "Solana developer demand up 280% YoY globally. Africa's Web3 community growing fast.", evidence: "5 clients searched 'Solana' this week with no results. GitHub: +44% Solana repos in 30d", status: "pending", votes: 38, aiConfidence: 74, qualityScore: 68 },
   { id: "sug-006", type: "subcategory", name: "No-Code / Low-Code", description: "Bubble, Webflow, Zapier, Make.com, Airtable — accessible app building", parentCategoryId: "cat-001", source: "user", reason: "Massive SA small business demand — can't afford custom dev but need digital tools", evidence: "Bubble.io: 40% of new users from Africa. Webflow: 32% growth in ZA market.", status: "approved", votes: 98, aiConfidence: 88, qualityScore: 84 },

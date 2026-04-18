@@ -18,12 +18,12 @@
  * 10. ✅ Final Happiness Survey + Growth Path (Academy lifelong uplift)
  *
  * HOW WE COMPARE:
- * Upwork    → Status labels only. No soul.
- * Fiverr    → Basic order feed. No emotions tracked.
- * Toptal    → Zero project visibility.
- * PeoplePerHour → Manual review, no AI.
+ * FSN-competitor-B    → Status labels only. No soul.
+ * FSN-competitor-A    → Basic order feed. No emotions tracked.
+ * FSN-competitor-C    → Zero project visibility.
+ * FSN-competitor-D → Manual review, no AI.
  * Guru      → Simple milestones, no human connection.
- * Freelancer.com → Chaotic auction feed, no empathy.
+ * FSN-competitor-E → Chaotic auction feed, no empathy.
  * US        → Real human emotion tracking + AI care + Academy lifelong growth.
  */
 import { Express, Response } from "express";

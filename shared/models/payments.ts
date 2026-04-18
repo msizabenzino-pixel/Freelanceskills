@@ -84,7 +84,7 @@ export type InsertPaymentEscrow = z.infer<typeof insertPaymentEscrowSchema>;
 
 /**
  * EscrowReleaseRule — smart auto-release engine
- * Beats Fiverr/Upwork by tying release logic to freelancer quality + Academy certification
+ * Beats FSN-competitor-A/FSN-competitor-B by tying release logic to freelancer quality + Academy certification
  */
 export const escrowReleaseRules = pgTable("escrow_release_rules", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),

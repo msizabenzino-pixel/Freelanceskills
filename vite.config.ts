@@ -39,6 +39,19 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "vendor-react": ["react", "react-dom"],
+          "vendor-query": ["@tanstack/react-query"],
+          "vendor-ui": ["lucide-react", "framer-motion"],
+          "vendor-charts": ["recharts"],
+          "academy-ai": ["./client/src/lib/aiAcademyCurriculum.ts"],
+          "academy-core": ["./client/src/lib/academyCurriculum.ts"],
+        },
+      },
+    },
   },
   server: {
     host: "0.0.0.0",

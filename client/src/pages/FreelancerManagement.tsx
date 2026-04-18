@@ -5,7 +5,7 @@
 
 
 
- * ✦ PeoplePerHour: No earnings forecasting → 12-month predictive dashboard
+ * ✦ FSN-competitor-D: No earnings forecasting → 12-month predictive dashboard
  * ✦ Guru: No academy integration → cert-by-cert earnings lift timeline
  *
  * 10 new feature upgrades:

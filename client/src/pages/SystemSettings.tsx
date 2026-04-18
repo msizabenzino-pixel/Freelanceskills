@@ -4,11 +4,11 @@
  * FreelanceSkills.net — System Settings                  ║
  * ║                                                                                  ║
  * ║  HOW WE BEAT EVERY COMPETITOR:                                                   ║
- * ║  Upwork   — flat 20% commission, no version history, no Africa config           ║
- * ║  Fiverr   — hardcoded 20%, zero dynamic settings, no compliance engine          ║
+ * ║  FSN-competitor-B   — flat 20% commission, no version history, no Africa config           ║
+ * ║  FSN-competitor-A   — hardcoded 20%, zero dynamic settings, no compliance engine          ║
  * ║  Shopify  — no financial AI, no A/B testing on configs, no rollback             ║
  * ║  Stripe   — no platform config layer, no feature flags, no USSD                 ║
- * ║  Freelancer.com — no AI optimizer, no Africa-first, no analytics dashboard      ║
+ * ║  FSN-competitor-E — no AI optimizer, no Africa-first, no analytics dashboard      ║
  * ║                                                                                  ║
  * ║  10-Tab Architecture:                                                            ║
  * ║  1. ⚙️  Platform Overview    — maintenance, KPIs, broadcast, integration sync   ║

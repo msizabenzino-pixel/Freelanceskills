@@ -2,10 +2,10 @@
  * Freelancer Management Routes — /api/freelancers/*
  *
  * HOW WE BEAT THE COMPETITION:
- * ✦ Fiverr: Fixed 20% commission → we do dynamic 8-12% based on level + performance rules
- * ✦ Upwork: JSS locked black-box → our JSS is transparent, explainable, multi-factor
- * ✦ Toptal: 6-week human screening → our 5-stage pipeline completes in hours via AI + USSD
- * ✦ PeoplePerHour: Static profiles → our AI auto-scores portfolios + predicts future earnings
+ * ✦ FSN-competitor-A: Fixed 20% commission → we do dynamic 8-12% based on level + performance rules
+ * ✦ FSN-competitor-B: JSS locked black-box → our JSS is transparent, explainable, multi-factor
+ * ✦ FSN-competitor-C: 6-week human screening → our 5-stage pipeline completes in hours via AI + USSD
+ * ✦ FSN-competitor-D: Static profiles → our AI auto-scores portfolios + predicts future earnings
  * ✦ Guru: No academy integration → we compound earnings lift from every certification
  */
 
@@ -36,7 +36,7 @@ function requireAdmin(req: any, res: Response, next: any) {
     }).catch(() => res.status(403).json({ error: "Admin only" }));
 }
 
-/** Job Success Score 0–100 — transparent algorithm (beats Upwork's black-box JSS) */
+/** Job Success Score 0–100 — transparent algorithm (beats FSN-competitor-B's black-box JSS) */
 function computeJSS(completedJobs: number, ratingX100: number, kycStatus: string, certCount: number): number {
   const jobScore   = Math.min(completedJobs / 50, 1) * 40;
   const ratingScore = (ratingX100 / 500) * 30;
@@ -45,7 +45,7 @@ function computeJSS(completedJobs: number, ratingX100: number, kycStatus: string
   return Math.round(jobScore + ratingScore + kycScore + certScore);
 }
 
-/** AI Portfolio Score breakdown — beats PeoplePerHour static scoring */
+/** AI Portfolio Score breakdown — beats FSN-competitor-D static scoring */
 function computeAIPortfolioScore(completedJobs: number, ratingX100: number, kycStatus: string, certCount: number, skills: string[] | null, bio: string | null) {
   const skillScore   = Math.min((skills?.length || 0) / 10, 1) * 25; // up to 25
   const certScore    = Math.min(certCount / 5, 1) * 25;              // up to 25
@@ -69,7 +69,7 @@ function generatePortfolioSuggestions(completedJobs: number, ratingX100: number,
   return suggestions;
 }
 
-/** Auto-compute dynamic commission based on level + JSS — smarter than Fiverr/Upwork */
+/** Auto-compute dynamic commission based on level + JSS — smarter than FSN-competitor-A/FSN-competitor-B */
 function autoCommission(level: string, jss: number): number {
   const base = LEVEL_AUTO_COMMISSION[level as keyof typeof LEVEL_AUTO_COMMISSION] || 1000;
   // JSS bonus: every 10 JSS points above 70 reduces commission by 50bps, floor 750
@@ -86,7 +86,7 @@ function computeLevel(jss: number, completedJobs: number, certCount: number): st
   return "new";
 }
 
-/** Multi-stage verification pipeline (beats Toptal 6-week process) */
+/** Multi-stage verification pipeline (beats FSN-competitor-C 6-week process) */
 function computeVerificationStages(profile: any, fp: any, certCount: number): object {
   return {
     email_verified:   { done: true, label: "Email Verified", icon: "📧" },
@@ -118,7 +118,7 @@ function computePredictiveForecast(monthlyAvgCents: number, level: string, certC
   });
 }
 
-/** Auto-suggest Gig Packages from skills — beats Fiverr manual package setup */
+/** Auto-suggest Gig Packages from skills — beats FSN-competitor-A manual package setup */
 function suggestGigPackages(skills: string[] | null, hourlyRateCents: number | null, level: string) {
   const topSkill = skills?.[0] || "Freelance Service";
   const rate = hourlyRateCents || 50000;
@@ -367,7 +367,7 @@ export function registerFreelancerRoutes(app: Express) {
         profile.completedJobs, profile.rating || 0, profile.kycStatus, certs.length, profile.skills, profile.bio
       );
 
-      // AI portfolio score breakdown for transparency (beats Upwork's black box)
+      // AI portfolio score breakdown for transparency (beats FSN-competitor-B's black box)
       const aiScoreBreakdown = [
         { label: "Skills diversity", score: Math.round(Math.min((profile.skills?.length || 0) / 10, 1) * 25), max: 25 },
         { label: "Academy certifications", score: Math.round(Math.min(certs.length / 5, 1) * 25), max: 25 },
@@ -514,7 +514,7 @@ export function registerFreelancerRoutes(app: Express) {
   });
 
   // ─── POST /api/freelancers/:id/gig-packages ──────────────────────────────
-  // Save admin-edited gig packages — beats Fiverr manual setup with AI suggestions
+  // Save admin-edited gig packages — beats FSN-competitor-A manual setup with AI suggestions
   app.post("/api/freelancers/:id/gig-packages", isAuthenticated, requireAdmin, async (req: any, res: Response) => {
     try {
       const { id } = req.params;
@@ -574,7 +574,7 @@ export function registerFreelancerRoutes(app: Express) {
       } else if (action === "suspend") {
         await db.update(profiles).set({ status: "suspended", updatedAt: new Date() }).where(inArray(profiles.userId, userIds));
       } else if (action === "auto_commission") {
-        // Smart bulk: set commission based on each user's level — beats Fiverr's flat rate
+        // Smart bulk: set commission based on each user's level — beats FSN-competitor-A's flat rate
         for (const uid of userIds) {
           await ensureFreelancerProfile(uid);
           const [p] = await db.select({ level: freelancerProfiles.level, jss: profiles.completedJobs })

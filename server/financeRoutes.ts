@@ -17,12 +17,12 @@
  * 10. ✅ Predictive Revenue Simulator ("If 20% more Academy, revenue +X%")
  *
  * HOW WE DESTROY COMPETITION:
- * Fiverr    → 14-day hold, no logic shown    → We: <24h via explainable AI, freelancer sees every factor
- * Upwork    → 30 days + fees hidden         → We: real-time ZAR breakdown, zero surprises
- * Toptal    → Wire fees kill Africa         → We: PayFast + Mobile Money, zero forex
+ * FSN-competitor-A    → 14-day hold, no logic shown    → We: <24h via explainable AI, freelancer sees every factor
+ * FSN-competitor-B    → 30 days + fees hidden         → We: real-time ZAR breakdown, zero surprises
+ * FSN-competitor-C    → Wire fees kill Africa         → We: PayFast + Mobile Money, zero forex
  * PPH       → Queue black hole             → We: auto-approve Academy, manual only if needed
  * Guru      → Manual SafePay, slow         → We: AI decision + human override option
- * Freelancer.com → Reactive weeks later     → We: predictive hold before fraud happens
+ * FSN-competitor-E → Reactive weeks later     → We: predictive hold before fraud happens
  */
 import { Express, Response } from "express";
 import { db } from "./db";

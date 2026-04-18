@@ -16,12 +16,12 @@
  * 10. ✅ Final Resolution Survey + Happiness Pulse for both parties
  *
  * HOW WE BEAT EVERY COMPETITOR:
- * Fiverr    → 14-day hold, no fairness logic        → We: explainable AI, <4h resolution, Academy integration
- * Upwork    → Manual review weeks, hidden fairness  → We: instant AI suggestion + 5-factor transparency
- * Toptal    → No growth path, basic hold            → We: post-dispute growth + earnings forecast
+ * FSN-competitor-A    → 14-day hold, no fairness logic        → We: explainable AI, <4h resolution, Academy integration
+ * FSN-competitor-B    → Manual review weeks, hidden fairness  → We: instant AI suggestion + 5-factor transparency
+ * FSN-competitor-C    → No growth path, basic hold            → We: post-dispute growth + earnings forecast
  * PPH       → Forum chaos, no mediation             → We: AI mediator + compassionate templates
  * Guru      → SafePay checkbox, no explanation      → We: show every factor + emotional intelligence
- * Freelancer.com → Reactive, takes weeks            → We: predictive risk + happiness surveys
+ * FSN-competitor-E → Reactive, takes weeks            → We: predictive risk + happiness surveys
  */
 
 import { Express, Response } from "express";

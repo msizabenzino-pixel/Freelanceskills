@@ -50,7 +50,7 @@ async function auditLog(adminId: string, action: string, details: any) {
 
 /**
  * Feature 1: AI Quality Score (0-100)
- * Real-time, explainable factors vs Upwork JSS (hidden algorithm)
+ * Real-time, explainable factors vs FSN-competitor-B JSS (hidden algorithm)
  */
 function calculateQualityScore(proposal: any, freelancer: any): { score: number; factors: Record<string, number> } {
   const factors: Record<string, number> = {};

@@ -7,14 +7,14 @@
  *
  * WHY THIS BEATS EVERY COMPETITOR — SPECIFIC TECHNICAL DIFFERENTIATORS:
  *
- * vs Upwork (2024):
+ * vs FSN-competitor-B (2024):
  *   - Manual ID review (48-72h SLA). No AI scoring. No behavioral biometrics.
  *   - IDs uploaded via email; no deepfake detection.
  *   - Suspensions happen AFTER harm is reported, not before.
  *   WE: Real-time 7-dimension AI scoring. Auto-quarantine before harm. Deepfake
  *       detection on every KYC submission. Behavioral biometrics on every session.
  *
- * vs Fiverr (2024):
+ * vs FSN-competitor-A (2024):
  *   - Basic phone + photo ID. No Africa flows. Simple IP blocking (no CIDR ranges).
  *   - No behavioral biometrics. No velocity rules. No device fingerprinting.
  *   WE: USSD offline KYC (*120*KYC#). Mobile-money as identity anchor. Airtime
@@ -26,7 +26,7 @@
  *   WE: 7-dimension identity+behavioral+financial+network+device+geo+velocity
  *       engine. Auto-quarantine. Cross-department integration hooks.
  *
- * vs Toptal (2024):
+ * vs FSN-competitor-C (2024):
  *   - Manual screening. No AI. No Africa-first. No real-time alerts.
  *   WE: Perpetual AI re-scoring every 24h. Auto-escalation. Africa-first USSD.
  *
@@ -207,7 +207,7 @@ function computeAIRiskScore(signals: {
 // ┌──────────────────────────────────────────────────────────────────────┐
 // │  SUPERPOWER #2 — BEHAVIORAL BIOMETRICS ENGINE                       │
 // │  Analyzes keystroke cadence, mouse dynamics, session duration.      │
-// │  vs Upwork/Fiverr/Toptal/Airbnb: none of them have this.           │
+// │  vs FSN-competitor-B/FSN-competitor-A/FSN-competitor-C/Airbnb: none of them have this.           │
 // └──────────────────────────────────────────────────────────────────────┘
 function analyzeBiometrics(data: {
   keystroke_intervals?: number[]; mouse_velocities?: number[];
@@ -274,7 +274,7 @@ function analyzeBiometrics(data: {
 // ┌──────────────────────────────────────────────────────────────────────┐
 // │  SUPERPOWER #3 — DEEPFAKE & MULTIMODAL VERIFICATION VAULT           │
 // │  AI authenticity scoring for ID + selfie + video + voice.           │
-// │  vs Upwork: email-uploaded IDs, no liveness. vs Fiverr: selfie only.│
+// │  vs FSN-competitor-B: email-uploaded IDs, no liveness. vs FSN-competitor-A: selfie only.│
 // │  We: 5-signal multi-modal analysis with temporal consistency check. │
 // └──────────────────────────────────────────────────────────────────────┘
 function analyzeDeepfakeVault(media: {

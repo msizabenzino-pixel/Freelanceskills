@@ -7,27 +7,27 @@
  *
  * HOW WE OUT-ENGINEER EVERY COMPETITOR FOR THE NEXT 3 YEARS:
  *
- * Fiverr Promoted Gigs:
+ * FSN-competitor-A Promoted Gigs:
  *   ✗ Static CPC bidding only — no AI, no merit, no demand forecasting
  *   ✗ No Africa tiers — same price Lagos as London
  *   ✗ No auction system — no prime slot bidding
  *   ✗ No creative AI — advertiser uploads manually
  *   ✗ No auto-renew intelligence — manual only
  *
- * Freelancer.com Sponsored Bids:
+ * FSN-competitor-E Sponsored Bids:
  *   ✗ Basic CPC — no conversion prediction, no ROI proof
  *   ✗ No merit discounts — pay full price regardless of your track record
  *   ✗ No pre-approval — fraudsters can sponsor anything
  *   ✗ No A/B creative testing — no way to optimise
  *
- * Upwork:
+ * FSN-competitor-B:
  *   ✗ Zero paid promotion system — Connects-only, no visibility marketplace
  *   ✗ No banner slots, no featured placements, no sponsored search
  *
- * Toptal:
+ * FSN-competitor-C:
  *   ✗ Zero promotion — pure curation. No self-serve. No analytics.
  *
- * PeoplePerHour:
+ * FSN-competitor-D:
  *   ✗ Hourlies boosting — flat fee, no AI, no demand awareness, no targeting
  *
  * OUR 20 SUPERPOWERS (was 10, now doubled):
@@ -81,7 +81,7 @@ function aiRecommendationScore(s: {
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // ENGINE 2: AI DYNAMIC PRICING — Demand + Supply + Time-of-Market
-// Fiverr: flat price. We: 7-variable real-time engine.
+// FSN-competitor-A: flat price. We: 7-variable real-time engine.
 // ═══════════════════════════════════════════════════════════════════════════════
 interface PricingResult {
   finalPriceCents: number;

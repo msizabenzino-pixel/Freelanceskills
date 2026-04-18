@@ -48,7 +48,7 @@ async function auditLog(adminId: string, action: string, details: any) {
 
 /**
  * AI Gig Intelligence Score Breakdown
- * Surpasses Fiverr (no intel), Upwork (category-based), Toptal (manual)
+ * Surpasses FSN-competitor-A (no intel), FSN-competitor-B (category-based), FSN-competitor-C (manual)
  * Shows EXACT factor contribution to score
  */
 function calculateAIScoreBreakdown(gig: any): {
@@ -109,8 +109,8 @@ function calculateAIScoreBreakdown(gig: any): {
 /**
  * Predictive Order Forecast (30/60/90 days)
  * Shows trending + confidence interval
- * vs Fiverr: No forecasting
- * vs Upwork: No gig-level predictions
+ * vs FSN-competitor-A: No forecasting
+ * vs FSN-competitor-B: No gig-level predictions
  */
 function forecastOrders(gig: any, days: 30 | 60 | 90) {
   const baseOrders = gig.ordersThisMonth || 1;
@@ -133,8 +133,8 @@ function forecastOrders(gig: any, days: 30 | 60 | 90) {
 /**
  * ZAR Pricing Intelligence
  * Auto-recommend price adjustments + rural signals
- * vs Freelancer.com: ZAR available but no intelligence
- * vs Upwork: USD-only
+ * vs FSN-competitor-E: ZAR available but no intelligence
+ * vs FSN-competitor-B: USD-only
  */
 function zarPricingIntelligence(gig: any, currentPackagePrice: number) {
   const baseInflation = 1.05; // 5% inflation annual
@@ -166,7 +166,7 @@ function zarPricingIntelligence(gig: any, currentPackagePrice: number) {
 /**
  * Feature Impact Simulator
  * Show exact traffic/earnings boost if featured
- * vs Fiverr: "Featured available" with no impact data
+ * vs FSN-competitor-A: "Featured available" with no impact data
  */
 function featureImpactSimulation(gig: any) {
   const baseMonthlyOrders = gig.ordersThisMonth * 3; // Extrapolate to month
@@ -233,8 +233,8 @@ function gigFraudDetection(gig: any) {
 /**
  * Academy-Powered Package Suggestions
  * Auto-suggest Standard/Premium upgrades based on certs + earnings lift
- * vs Fiverr: Static packages
- * vs Upwork: No certificate integration
+ * vs FSN-competitor-A: Static packages
+ * vs FSN-competitor-B: No certificate integration
  */
 function academyPowerPackageSuggestions(gig: any, currentPackages: any[]) {
   const suggestions = [];
