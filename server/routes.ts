@@ -1986,6 +1986,27 @@ User: ${message}`;
     }
   });
 
+  app.post("/api/profile/projects", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      if (!userId) return res.status(401).json({ success: false, message: "Session expired — please sign in again." });
+      const { title, description, link, technologies } = req.body || {};
+      if (!title || !String(title).trim()) {
+        return res.status(400).json({ success: false, message: "Project title is required." });
+      }
+      const profile = await storage.savePortfolioProject(userId, {
+        title: String(title).trim(),
+        description: String(description || "").trim(),
+        link: String(link || "").trim(),
+        technologies: Array.isArray(technologies) ? technologies.map((t) => String(t).trim()).filter(Boolean) : [],
+      });
+      res.json({ success: true, message: "Project added successfully!", profile });
+    } catch (err) {
+      console.error("[profile/projects] Error:", err);
+      res.status(500).json({ success: false, message: "Could not save project. Please try again." });
+    }
+  });
+
   // GET /api/profile/status — returns publish status for the logged-in user.
   app.get("/api/profile/status", isAuthenticated, async (req: any, res) => {
     try {

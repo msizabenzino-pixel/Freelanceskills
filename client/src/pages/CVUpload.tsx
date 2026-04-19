@@ -184,6 +184,7 @@ export default function CVUpload() {
   const [portfolioProjects, setPortfolioProjects] = useState<PortfolioProject[]>([]);
   const [projectModalOpen, setProjectModalOpen] = useState(false);
   const [projectDraft, setProjectDraft] = useState({ title: "", description: "", link: "", technologies: "" });
+  const [projectSaving, setProjectSaving] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
@@ -351,19 +352,36 @@ export default function CVUpload() {
   const toggleLanguage = (l: string) => updateField("languages", formData.languages.includes(l) ? formData.languages.filter((x) => x !== l) : [...formData.languages, l]);
 
   const openAddProject = () => setProjectModalOpen(true);
-  const saveProject = () => {
-    if (!projectDraft.title.trim()) return;
-    const item: PortfolioProject = {
-      id: String(Date.now()),
-      title: projectDraft.title.trim(),
-      description: projectDraft.description.trim(),
-      link: projectDraft.link.trim(),
-      technologies: projectDraft.technologies.split(",").map((s) => s.trim()).filter(Boolean),
-    };
-    setPortfolioProjects((prev) => [item, ...prev]);
-    setProjectModalOpen(false);
-    setProjectDraft({ title: "", description: "", link: "", technologies: "" });
-    toast({ title: "Project added!", description: "Your portfolio update is saved." });
+  const saveProject = async () => {
+    if (!projectDraft.title.trim() || projectSaving) return;
+    setProjectSaving(true);
+    try {
+      await syncSessionNow();
+      const result = await apiJson<any>("/api/profile/projects", {
+        method: "POST",
+        json: {
+          title: projectDraft.title.trim(),
+          description: projectDraft.description.trim(),
+          link: projectDraft.link.trim(),
+          technologies: projectDraft.technologies.split(",").map((s) => s.trim()).filter(Boolean),
+        },
+      });
+      const item: PortfolioProject = {
+        id: String(result?.profile?.portfolioProjectsJson?.[0]?.id ?? Date.now()),
+        title: projectDraft.title.trim(),
+        description: projectDraft.description.trim(),
+        link: projectDraft.link.trim(),
+        technologies: projectDraft.technologies.split(",").map((s) => s.trim()).filter(Boolean),
+      };
+      setPortfolioProjects((prev) => [item, ...prev]);
+      setProjectModalOpen(false);
+      setProjectDraft({ title: "", description: "", link: "", technologies: "" });
+      toast({ title: "Project added successfully!", description: "Your portfolio update is saved." });
+    } catch (error: any) {
+      toast({ variant: "destructive", title: "Could not save project", description: error?.message || "Please try again." });
+    } finally {
+      setProjectSaving(false);
+    }
   };
 
   if (isAuthLoading) return <div className="flex items-center justify-center min-h-screen"><Loader2 className="w-8 h-8 animate-spin text-emerald-500" /></div>;
@@ -523,7 +541,7 @@ export default function CVUpload() {
                 <Input placeholder="Link" value={projectDraft.link} onChange={(e) => setProjectDraft((p) => ({ ...p, link: e.target.value }))} data-testid="input-project-link" />
                 <Input placeholder="Technologies, comma separated" value={projectDraft.technologies} onChange={(e) => setProjectDraft((p) => ({ ...p, technologies: e.target.value }))} data-testid="input-project-tech" />
               </div>
-              <div className="flex gap-2"><Button variant="outline" className="flex-1" onClick={() => setProjectModalOpen(false)} data-testid="btn-cancel-project">Cancel</Button><Button className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white" onClick={saveProject} data-testid="btn-save-project">Save Project</Button></div>
+              <div className="flex gap-2"><Button variant="outline" className="flex-1" onClick={() => setProjectModalOpen(false)} data-testid="btn-cancel-project">Cancel</Button><Button className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white" onClick={saveProject} disabled={projectSaving} data-testid="btn-save-project">{projectSaving ? "Saving..." : "Save Project"}</Button></div>
             </CardContent>
           </Card>
         </div>

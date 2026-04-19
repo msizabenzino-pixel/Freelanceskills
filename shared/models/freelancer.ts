@@ -26,6 +26,7 @@ export const freelancerProfiles = pgTable("freelancer_profiles", {
   totalEarningsCents: integer("total_earnings_cents").notNull().default(0),
   monthlyAvgEarningsCents: integer("monthly_avg_earnings_cents").notNull().default(0),
   proposalSuccessCount: integer("proposal_success_count").default(0),
+  portfolioProjectsJson: text("portfolio_projects_json"),
   gigPackagesJson: text("gig_packages_json"),
   verificationStagesJson: text("verification_stages_json"),
   updatedAt: timestamp("updated_at").defaultNow(),

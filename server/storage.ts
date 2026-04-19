@@ -33,6 +33,7 @@ export interface IStorage {
   getProfile(userId: string): Promise<Profile | undefined>;
   getProfileById(id: string): Promise<Profile | undefined>;
   updateProfile(userId: string, updates: Partial<InsertProfile>): Promise<Profile | undefined>;
+  savePortfolioProject(userId: string, project: { title: string; description: string; link: string; technologies: string[] }): Promise<Profile | undefined>;
   searchFreelancers(query?: string, location?: string, opts?: { verifiedOnly?: boolean; availableNow?: boolean; maxRateCents?: number; minRating?: number; limit?: number; offset?: number }): Promise<Profile[]>;
 
   // Service Package operations (TaskRabbit-style)
@@ -219,6 +220,18 @@ class DatabaseStorage implements IStorage {
       .where(eq(profiles.userId, userId))
       .returning();
     return profile;
+  }
+
+  async savePortfolioProject(userId: string, project: { title: string; description: string; link: string; technologies: string[] }): Promise<Profile | undefined> {
+    const profile = await this.getProfile(userId);
+    const existing = Array.isArray((profile as any)?.portfolioProjectsJson) ? (profile as any).portfolioProjectsJson : [];
+    const next = [{ id: String(Date.now()), ...project }, ...existing].slice(0, 12);
+    const [updated] = await db
+      .update(profiles)
+      .set({ portfolioProjectsJson: next as any, updatedAt: new Date() })
+      .where(eq(profiles.userId, userId))
+      .returning();
+    return updated;
   }
 
   async searchFreelancers(
