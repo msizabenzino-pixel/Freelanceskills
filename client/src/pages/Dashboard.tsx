@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AuthGuard } from "@/components/AuthGuard";
+import { SectionBoundary } from "@/components/ErrorBoundary";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +12,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
+import { useProfileStatus } from "@/hooks/use-profile-status";
 import { useCurrency } from "@/lib/currency";
+import { ProfileStrengthMeter } from "@/components/ProfileStrengthMeter";
 import {
   fetchFreelancerProfile,
   fetchApplicationsForFreelancer,
@@ -37,6 +40,9 @@ import {
   ChevronRight,
   Save,
   Camera,
+  Zap,
+  Globe,
+  Edit3,
 } from "lucide-react";
 
 type NavSection = "Overview" | "My Jobs" | "Messages" | "Payments" | "Settings";
@@ -62,6 +68,7 @@ export default function Dashboard() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const { user } = useAuth();
   const { formatAmount } = useCurrency();
+  const profileStatus = useProfileStatus(user?.id);
   const queryClient = useQueryClient();
   const [, navigate] = useLocation();
 
@@ -206,36 +213,130 @@ export default function Dashboard() {
     { key: "Settings", icon: Settings },
   ];
 
-  const renderOverview = () => (
-    <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm">Jobs Posted</CardTitle>
-        </CardHeader>
-        <CardContent className="text-2xl font-bold">{postedJobs.length}</CardContent>
-      </Card>
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm">Applications Sent</CardTitle>
-        </CardHeader>
-        <CardContent className="text-2xl font-bold">{myApplications.length}</CardContent>
-      </Card>
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm">Conversations</CardTitle>
-        </CardHeader>
-        <CardContent className="text-2xl font-bold">{myChats.length}</CardContent>
-      </Card>
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm">Total Paid</CardTitle>
-        </CardHeader>
-        <CardContent className="text-2xl font-bold">
-          {formatAmount(myPayments.reduce((acc, p) => acc + (p.amount || 0), 0))}
-        </CardContent>
-      </Card>
-    </div>
-  );
+  const renderOverview = () => {
+    // Build a strength input from the Firestore profile (if available)
+    const fp = profileStatus.profile;
+    const strengthInput = {
+      firstName: fp?.fullName?.split(" ")[0] ?? "",
+      lastName: fp?.fullName?.split(" ").slice(1).join(" ") ?? "",
+      title: fp?.title,
+      bio: fp?.bio,
+      skills: fp?.skills,
+      category: fp?.categories?.[0],
+      hourlyRate: fp?.hourlyRate,
+      location: fp?.location,
+      photo: fp?.profilePhotoUrl,
+      portfolioUrl: fp?.portfolioLinks?.[0],
+      languages: [],
+      availability: fp?.availability,
+    };
+
+    const statusCfg = {
+      loading: { label: "Checking…",  dot: "bg-slate-500 animate-pulse", badge: "border-slate-700 text-slate-400" },
+      none:    { label: "No Profile", dot: "bg-red-500",                 badge: "border-red-500/30 text-red-400" },
+      draft:   { label: "Draft",      dot: "bg-amber-500 animate-pulse", badge: "border-amber-500/30 text-amber-400" },
+      published:{ label: "Live ✓",   dot: "bg-emerald-500",             badge: "border-emerald-500/30 text-emerald-400" },
+    }[profileStatus.status];
+
+    return (
+      <div className="space-y-6">
+        {/* Profile strength + status */}
+        <div className="grid md:grid-cols-2 gap-4">
+          <ProfileStrengthMeter data={strengthInput} />
+
+          {/* Status card */}
+          <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4 flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold text-foreground">Profile Status</span>
+              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${statusCfg.badge}`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${statusCfg.dot}`} />
+                {statusCfg.label}
+              </span>
+            </div>
+            {profileStatus.status === "draft" && (
+              <p className="text-xs text-amber-300/80 leading-relaxed">
+                Your profile is saved but not visible to employers yet. Publish it to start receiving enquiries.
+              </p>
+            )}
+            {profileStatus.status === "none" && (
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                You don't have a profile yet. Build one in 60 seconds with our AI builder.
+              </p>
+            )}
+            {profileStatus.status === "published" && (
+              <p className="text-xs text-emerald-300/80 leading-relaxed">
+                Your profile is live and visible to employers. Keep it up to date to attract more work.
+              </p>
+            )}
+            <div className="flex gap-2 mt-auto">
+              {profileStatus.status === "published" ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-1.5 text-xs border-slate-700"
+                  onClick={() => navigate("/cv-upload")}
+                  data-testid="btn-edit-profile"
+                >
+                  <Edit3 className="w-3 h-3" /> Edit Profile
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  className="gap-1.5 text-xs bg-emerald-600 hover:bg-emerald-500 text-white"
+                  onClick={() => navigate("/cv-upload")}
+                  data-testid="btn-build-profile"
+                >
+                  <Zap className="w-3 h-3" />
+                  {profileStatus.status === "draft" ? "Publish Profile" : "Build Profile"}
+                </Button>
+              )}
+              {profileStatus.status !== "none" && (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="gap-1.5 text-xs text-muted-foreground"
+                  onClick={() => navigate(`/find-talent/${user?.id ?? ""}`)}
+                  data-testid="btn-view-profile"
+                >
+                  <Globe className="w-3 h-3" /> View Public Profile
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Activity stat cards */}
+        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm">Jobs Posted</CardTitle>
+            </CardHeader>
+            <CardContent className="text-2xl font-bold" data-testid="stat-jobs-posted">{postedJobs.length}</CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm">Applications Sent</CardTitle>
+            </CardHeader>
+            <CardContent className="text-2xl font-bold" data-testid="stat-applications-sent">{myApplications.length}</CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm">Conversations</CardTitle>
+            </CardHeader>
+            <CardContent className="text-2xl font-bold" data-testid="stat-conversations">{myChats.length}</CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm">Total Paid</CardTitle>
+            </CardHeader>
+            <CardContent className="text-2xl font-bold" data-testid="stat-total-paid">
+              {formatAmount(myPayments.reduce((acc, p) => acc + (p.amount || 0), 0))}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  };
 
   const renderMyJobs = () => (
     <div className="space-y-6">
@@ -516,11 +617,11 @@ export default function Dashboard() {
                       </CardContent>
                     </Card>
                   )}
-                  {activeNav === "Overview" && renderOverview()}
-                  {activeNav === "My Jobs" && renderMyJobs()}
-                  {activeNav === "Messages" && renderMessages()}
-                  {activeNav === "Payments" && renderPayments()}
-                  {activeNav === "Settings" && renderSettings()}
+                  {activeNav === "Overview" && <SectionBoundary>{renderOverview()}</SectionBoundary>}
+                  {activeNav === "My Jobs" && <SectionBoundary>{renderMyJobs()}</SectionBoundary>}
+                  {activeNav === "Messages" && <SectionBoundary>{renderMessages()}</SectionBoundary>}
+                  {activeNav === "Payments" && <SectionBoundary>{renderPayments()}</SectionBoundary>}
+                  {activeNav === "Settings" && <SectionBoundary>{renderSettings()}</SectionBoundary>}
                 </div>
               </div>
             )}

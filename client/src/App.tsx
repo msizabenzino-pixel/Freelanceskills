@@ -231,8 +231,16 @@ const AdminMissionControl = lazy(() => import("@/pages/admin/MissionControl"));
 
 function PageLoader() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-4">
+      {/* Animated logo-style ring */}
+      <div className="relative w-14 h-14">
+        <div className="absolute inset-0 rounded-full border-4 border-emerald-500/20" />
+        <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-emerald-500 animate-spin" />
+        <div className="absolute inset-[6px] rounded-full bg-emerald-500/10 flex items-center justify-center">
+          <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
+        </div>
+      </div>
+      <p className="text-sm text-muted-foreground animate-pulse">Loading…</p>
     </div>
   );
 }

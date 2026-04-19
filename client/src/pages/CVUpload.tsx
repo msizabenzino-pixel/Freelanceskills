@@ -17,6 +17,8 @@ import { Progress } from "@/components/ui/progress";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { earnPoints } from "@/lib/earnPoints";
+import { calcStrength } from "@/lib/profileStrength";
+import { ProfileStrengthMeter } from "@/components/ProfileStrengthMeter";
 import { SERVICE_CATEGORIES } from "@shared/categories";
 import {
   Upload, FileText, Sparkles, Check, User, Briefcase,
@@ -60,24 +62,6 @@ const AI_PARSE_STEPS = [
   { label: "Building profile preview", icon: Eye },
   { label: "Profile ready!", icon: CheckCircle2 },
 ];
-
-// ─── PROFILE COMPLETION SCORER ────────────────────────────────────────────
-function calcCompletion(data: FormData): { score: number; tips: string[] } {
-  const tips: string[] = [];
-  let score = 0;
-  if (data.firstName && data.lastName) score += 10; else tips.push("Add your full name");
-  if (data.title) score += 10; else tips.push("Add a professional title");
-  if (data.bio && data.bio.length > 80) score += 15; else tips.push("Write a bio (80+ characters)");
-  if (data.skills.length >= 5) score += 15; else tips.push(`Add ${5 - data.skills.length} more skills`);
-  if (data.category) score += 10; else tips.push("Select your service category");
-  if (data.hourlyRate) score += 10; else tips.push("Set your hourly rate");
-  if (data.location) score += 5; else tips.push("Add your location");
-  if (data.photo) score += 10; else tips.push("Upload a profile photo");
-  if (data.portfolioUrl) score += 5; else tips.push("Add a portfolio link");
-  if (data.languages.length > 0) score += 5; else tips.push("Add languages you speak");
-  if (data.availability) score += 5; else tips.push("Set your availability");
-  return { score, tips };
-}
 
 // ─── TYPES ────────────────────────────────────────────────────────────────
 interface FormData {
@@ -136,7 +120,13 @@ export default function CVUpload() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
 
-  const { score: completionScore, tips: completionTips } = calcCompletion(formData);
+  const {
+    score: completionScore,
+    tips: completionTips,
+    label: scoreLabel,
+    color: _scoreColorClass,
+  } = calcStrength(formData);
+  const scoreColor = completionScore >= 80 ? "text-emerald-500" : completionScore >= 50 ? "text-amber-500" : "text-red-500";
   const marketRate = MARKET_RATES[formData.category] ?? MARKET_RATES.default;
   const skillSuggestions = SKILL_SUGGESTIONS[formData.category] ?? SKILL_SUGGESTIONS.default;
 
@@ -539,7 +529,7 @@ Google Professional Cloud Developer (2022)`;
                 </CardContent>
               </Card>
 
-              {/* CTA */}
+              {/* CTA — AI mode */}
               <Button
                 size="lg"
                 className="w-full h-14 text-base font-bold gap-3 bg-emerald-600 hover:bg-emerald-500 text-white shadow-xl shadow-emerald-500/20"
@@ -551,6 +541,16 @@ Google Professional Cloud Developer (2022)`;
                 Extract Profile with AI
                 <ChevronRight className="w-5 h-5" />
               </Button>
+
+              {/* Manual mode fallback */}
+              <button
+                onClick={() => setPhase("review")}
+                className="w-full h-10 rounded-xl border border-slate-700/60 text-sm text-muted-foreground hover:text-foreground hover:border-slate-500 transition-colors flex items-center justify-center gap-2"
+                data-testid="btn-manual-mode"
+              >
+                <FileText className="w-4 h-4" />
+                Fill in my profile manually instead
+              </button>
 
               {/* Trust signals */}
               <div className="grid grid-cols-3 gap-3 text-center text-xs text-muted-foreground">
@@ -630,8 +630,7 @@ Google Professional Cloud Developer (2022)`;
   const removeSkill = (s: string) => updateField("skills", formData.skills.filter((x) => x !== s));
   const toggleLanguage = (l: string) => updateField("languages", formData.languages.includes(l) ? formData.languages.filter((x) => x !== l) : [...formData.languages, l]);
 
-  const scoreColor = completionScore >= 80 ? "text-emerald-500" : completionScore >= 50 ? "text-amber-500" : "text-red-500";
-  const scoreLabel = completionScore >= 80 ? "Strong" : completionScore >= 50 ? "Good" : "Weak";
+
 
   const TABS = [
     { id: "basics", label: "Basics", icon: User },
@@ -1081,27 +1080,8 @@ Google Professional Cloud Developer (2022)`;
               {/* ── RIGHT: Sticky sidebar ── */}
               <div className="hidden lg:block">
                 <div className="sticky top-[140px] space-y-4">
-                  {/* Profile strength */}
-                  <Card className="border-border shadow-sm">
-                    <CardContent className="p-5">
-                      <div className="flex items-center justify-between mb-3">
-                        <p className="text-sm font-bold text-foreground">Profile Strength</p>
-                        <span className={`text-sm font-bold ${scoreColor}`}>{scoreLabel}</span>
-                      </div>
-                      <Progress value={completionScore} className="h-3 mb-3" />
-                      <p className={`text-2xl font-bold ${scoreColor} mb-4`}>{completionScore}%</p>
-                      {completionTips.slice(0, 3).map((tip, i) => (
-                        <div key={i} className="flex items-start gap-2 text-xs text-muted-foreground mb-2">
-                          <AlertCircle className="w-3 h-3 text-amber-500 shrink-0 mt-0.5" /> {tip}
-                        </div>
-                      ))}
-                      {completionScore === 100 && (
-                        <div className="flex items-center gap-2 text-xs text-emerald-600 font-medium">
-                          <CheckCircle2 className="w-4 h-4" /> Perfect profile! You're ready.
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
+                  {/* Profile strength meter */}
+                  <ProfileStrengthMeter data={formData} />
 
                   {/* Mini profile preview */}
                   <Card className="border-border shadow-sm">
