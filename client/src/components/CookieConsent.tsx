@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { X } from "lucide-react";
 
@@ -9,7 +8,8 @@ export function CookieConsent() {
   useEffect(() => {
     const consent = localStorage.getItem("cookie-consent");
     if (!consent) {
-      setIsVisible(true);
+      const timer = setTimeout(() => setIsVisible(true), 1500);
+      return () => clearTimeout(timer);
     }
   }, []);
 
@@ -26,45 +26,41 @@ export function CookieConsent() {
   if (!isVisible) return null;
 
   return (
-    <div 
-      className="fixed bottom-0 left-0 right-0 z-[60] p-4 bg-background/95 backdrop-blur-sm border-t border-border shadow-2xl animate-in slide-in-from-bottom-full duration-500"
+    <div
+      className="fixed bottom-0 left-0 right-0 z-[60] bg-slate-950/95 backdrop-blur-sm border-t border-slate-800 shadow-2xl animate-in slide-in-from-bottom-2 duration-300"
       data-testid="banner-cookie-consent"
     >
-      <div className="container mx-auto max-w-7xl flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="text-sm text-muted-foreground">
-          We use cookies to improve your experience. By continuing, you agree to our{" "}
+      <div className="container mx-auto max-w-7xl px-4 py-2.5 flex items-center justify-between gap-4">
+        <p className="text-xs text-slate-400 leading-none">
+          We use cookies to improve your experience.{" "}
           <Link href="/privacy">
-            <a className="text-primary hover:underline font-medium" data-testid="link-cookie-policy">
+            <a className="text-emerald-400 hover:underline font-medium" data-testid="link-cookie-policy">
               Cookie Policy
             </a>
           </Link>
-          .
-        </div>
-        <div className="flex items-center gap-2 w-full md:w-auto">
-          <Button 
-            variant="outline" 
-            className="flex-1 md:flex-none min-h-[44px] text-sm"
+        </p>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <button
             onClick={handleDecline}
+            className="text-xs text-slate-500 hover:text-slate-300 transition-colors px-2 py-1"
             data-testid="button-decline-cookies"
           >
             Decline
-          </Button>
-          <Button 
-            variant="default" 
-            className="flex-1 md:flex-none min-h-[44px] text-sm"
+          </button>
+          <button
             onClick={handleAccept}
+            className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-colors"
             data-testid="button-accept-cookies"
           >
             Accept
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="hidden md:flex" 
+          </button>
+          <button
             onClick={() => setIsVisible(false)}
+            className="p-1 text-slate-600 hover:text-slate-400 transition-colors"
+            aria-label="Dismiss"
           >
-            <X className="h-4 w-4" />
-          </Button>
+            <X className="h-3.5 w-3.5" />
+          </button>
         </div>
       </div>
     </div>

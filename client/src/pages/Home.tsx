@@ -402,12 +402,12 @@ export default function Home() {
   const activeTopics = discoveryCategories.find((category) => category.name === activeCategory)?.topics ?? [];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white font-sans flex flex-col overflow-x-hidden" style={{ paddingTop: 56 }}>
+    <div className="min-h-screen bg-slate-950 text-white font-sans flex flex-col overflow-x-hidden pt-[102px] md:pt-14">
       {applyJob && <InstantApplyModal job={applyJob} onClose={() => setApplyJob(null)} />}
       <Navbar topOffset={0} />
 
       {/* ══ HERO ══════════════════════════════════════════════════════════════════ */}
-      <section className="relative min-h-[94vh] flex items-center justify-center overflow-hidden" data-testid="section-hero">
+      <section className="relative min-h-[90vh] sm:min-h-[94vh] flex items-start sm:items-center justify-center overflow-hidden" data-testid="section-hero">
         {/* Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-950 to-emerald-950/20" />
         <div className="absolute inset-0 opacity-[0.035]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2310b981' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
@@ -425,7 +425,7 @@ export default function Home() {
           <HeroProfileCard name="David K." title="Mobile Dev · JHB" rate={formatAmount(800)} img="https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&q=80&w=80&h=80" delay={1.1} />
         </div>
 
-        <div className="container relative z-10 px-4 md:px-6 py-10 md:py-20">
+        <div className="container relative z-10 px-4 md:px-6 py-8 md:py-20">
           <div className="max-w-4xl mx-auto text-center">
             {/* Live jobs badge */}
             <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
@@ -486,7 +486,7 @@ export default function Home() {
                       Search
                     </button>
                   </div>
-                  <div className="flex flex-wrap gap-2 mt-3 justify-center">
+                  <div className="hidden sm:flex flex-wrap gap-2 mt-3 justify-center">
                     {["React Developer", "Plumber", "Brand Designer", "Remote Finance", "Government Tender"].map((s, i) => (
                       <button key={i} type="button" onClick={() => { setSearchQuery(s); navigate(`/jobs?q=${encodeURIComponent(s)}`); }}
                         className="text-[11px] px-3 py-1 rounded-full bg-slate-900/60 border border-slate-800 hover:border-emerald-500/40 text-slate-500 hover:text-emerald-400 transition-all"
@@ -507,21 +507,23 @@ export default function Home() {
 
             {/* CTAs — visible immediately after search, above the fold */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6 flex-wrap">
+              className="flex flex-wrap items-center justify-center gap-2.5 mb-5">
               <Link href="/auth?mode=register"
-                className="group inline-flex items-center gap-2.5 px-7 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-base shadow-xl shadow-emerald-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="group inline-flex items-center gap-2 px-6 py-3 sm:px-7 sm:py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm sm:text-base shadow-xl shadow-emerald-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
                 data-testid="button-hero-join-free">
-                <BadgeCheck className="w-5 h-5" /> Join Free — Create Your Profile
+                <BadgeCheck className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="sm:hidden">Join Free</span>
+                <span className="hidden sm:inline">Join Free — Create Your Profile</span>
               </Link>
               <Link href="/jobs"
-                className="group inline-flex items-center gap-2.5 px-7 py-4 rounded-2xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 text-white font-bold text-base backdrop-blur-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="group inline-flex items-center gap-2 px-6 py-3 sm:px-7 sm:py-4 rounded-2xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 text-white font-bold text-sm sm:text-base backdrop-blur-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
                 data-testid="button-hero-browse-jobs">
                 Browse Jobs <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </Link>
               <Link href="/post-job"
-                className="group inline-flex items-center gap-2.5 px-7 py-4 rounded-2xl border border-slate-700 hover:border-emerald-500/40 text-slate-300 hover:text-emerald-400 font-semibold text-base transition-all hover:bg-emerald-500/5"
+                className="group inline-flex items-center gap-2 px-6 py-3 sm:px-7 sm:py-4 rounded-2xl border border-slate-700 hover:border-emerald-500/40 text-slate-300 hover:text-emerald-400 font-semibold text-sm sm:text-base transition-all hover:bg-emerald-500/5"
                 data-testid="button-hero-post-project">
-                <Briefcase className="w-5 h-5" /> Hire Talent
+                <Briefcase className="w-4 h-4 sm:w-5 sm:h-5" /> Hire Talent
               </Link>
             </motion.div>
 

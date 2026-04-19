@@ -8,6 +8,7 @@ import { securityHeaders, corsMiddleware, auditMiddleware, tieredRateLimiter, st
 import { pool, db } from "./db";
 import { runDbOptimizations } from "./dbOptimize";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
+import { seedFreelancersIfEmpty } from "./seedFreelancers";
 
 const app = express();
 app.disable("x-powered-by");
@@ -259,6 +260,9 @@ app.use((req, res, next) => {
   // ── Run DB optimizations before accepting traffic ─────────────────────────
   // Creates all performance indexes + ANALYZE — safe to run on every boot.
   await runDbOptimizations();
+
+  // ── Seed demo freelancer profiles (idempotent — only runs once) ───────────
+  await seedFreelancersIfEmpty();
 
   await registerRoutes(httpServer, app);
 
