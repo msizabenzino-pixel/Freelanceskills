@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useAuth, syncSessionNow } from "@/hooks/use-auth";
@@ -27,7 +27,7 @@ import {
 
 type Phase = "upload" | "parsing" | "review";
 
-type FormData = {
+type ProfileFormData = {
   firstName: string;
   lastName: string;
   title: string;
@@ -90,7 +90,7 @@ const AI_PARSE_STEPS = [
   { label: "Profile ready!" },
 ];
 
-const defaultForm: FormData = {
+const defaultForm: ProfileFormData = {
   firstName: "",
   lastName: "",
   title: "",
@@ -112,7 +112,7 @@ const defaultForm: FormData = {
   tagline: "",
 };
 
-function parseResponse(data: any, prev: FormData): FormData {
+function parseResponse(data: any, prev: ProfileFormData): ProfileFormData {
   return {
     ...prev,
     firstName: data.firstName || prev.firstName,
@@ -138,7 +138,7 @@ export default function CVUpload() {
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
   const [uploadedFileRef, setUploadedFileRef] = useState<File | null>(null);
   const [parseScanStep, setParseScanStep] = useState(0);
-  const [formData, setFormData] = useState<FormData>(defaultForm);
+  const [formData, setFormData] = useState<ProfileFormData>(defaultForm);
   const [skillInput, setSkillInput] = useState("");
   const [langInput, setLangInput] = useState("");
   const [activeTab, setActiveTab] = useState<"basics" | "skills" | "portfolio" | "rates" | "preview">("basics");
@@ -204,7 +204,7 @@ export default function CVUpload() {
   });
 
   const uploadFileMutation = useMutation({
-    mutationFn: async (fd: FormData) => {
+    mutationFn: async (fd: globalThis.FormData) => {
       try {
         return await apiJson<any>("/api/cv/upload", { method: "POST", body: fd });
       } catch (err: any) {
@@ -227,7 +227,7 @@ export default function CVUpload() {
   });
 
   const profileMutation = useMutation({
-    mutationFn: async (data: FormData) => {
+    mutationFn: async (data: ProfileFormData) => {
       if (!data.firstName || !data.lastName || !data.title || !data.category) {
         throw new Error("Please fill in your Name, Title and Category before going live.");
       }
@@ -285,7 +285,7 @@ export default function CVUpload() {
     setUploadedFile(null);
   };
 
-  const updateField = (key: keyof FormData, value: any) => setFormData((p) => ({ ...p, [key]: value }));
+  const updateField = (key: keyof ProfileFormData, value: any) => setFormData((p) => ({ ...p, [key]: value }));
   const addSkill = (s: string) => { if (s && !formData.skills.includes(s)) updateField("skills", [...formData.skills, s]); };
   const removeSkill = (s: string) => updateField("skills", formData.skills.filter((x) => x !== s));
   const toggleLanguage = (l: string) => updateField("languages", formData.languages.includes(l) ? formData.languages.filter((x) => x !== l) : [...formData.languages, l]);
@@ -366,12 +366,6 @@ export default function CVUpload() {
     </div>
   );
 
-  const toList = (value: string) => value.split(",").map((item) => item.trim()).filter(Boolean);
-  const updateField = (key: keyof FormData, value: any) => setFormData((p) => ({ ...p, [key]: value }));
-  const addSkill = (s: string) => { if (s && !formData.skills.includes(s)) updateField("skills", [...formData.skills, s]); };
-  const removeSkill = (s: string) => updateField("skills", formData.skills.filter((x) => x !== s));
-  const toggleLanguage = (l: string) => updateField("languages", formData.languages.includes(l) ? formData.languages.filter((x) => x !== l) : [...formData.languages, l]);
-  const scoreLabelText = completionScore >= 80 ? "Strong" : completionScore >= 50 ? "Good" : "Weak";
   const TABS = [
     { id: "basics", label: "Basics", icon: User },
     { id: "skills", label: "Skills", icon: Target },
@@ -398,7 +392,7 @@ export default function CVUpload() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="hidden sm:block text-right"><p className={`text-sm font-bold ${scoreColor}`}>{completionScore}% — {scoreLabelText}</p><p className="text-xs text-muted-foreground">Profile strength</p></div>
+                <div className="hidden sm:block text-right"><p className={`text-sm font-bold ${scoreColor}`}>{completionScore}% — {scoreLabel}</p><p className="text-xs text-muted-foreground">Profile strength</p></div>
                 <div className="w-12 h-12 rounded-full border-4 border-border flex items-center justify-center relative" data-testid="completion-ring"><span className={`text-xs font-bold ${scoreColor}`}>{completionScore}</span></div>
                 <Button size="sm" variant="ghost" onClick={() => { setPhase("upload"); setFormData(defaultForm); }} data-testid="btn-start-over" className="text-xs"><RefreshCw className="w-3 h-3 mr-1" /> Start over</Button>
               </div>
