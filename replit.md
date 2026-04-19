@@ -1,6 +1,17 @@
 # FreelanceSkills - Global Freelance Marketplace
 
-## April 2026 — Fiverr Pro Features (Better): LevelBadge, AI Brief, Rewards, Auth
+## April 2026 — Onboarding Unification + Dashboard Sync Fix
+
+### Root Cause Fixed
+The core bug was a Firestore ↔ PostgreSQL desync: CVUpload wrote ONLY to PostgreSQL, but `useProfileStatus` on the Dashboard reads ONLY from Firestore's `freelancerProfiles` collection — so after completing the wizard, Dashboard always showed "No Profile".
+
+### Changes Made
+- **One canonical wizard**: `/onboarding`, `/freelancer-onboarding`, `/profile-builder` all now route to `/cv-upload`. Three wizards → ONE.
+- **CVUpload go-live fix** (`client/src/pages/CVUpload.tsx`): After `/api/profile/go-live` succeeds, also calls `saveFreelancerProfile()` with `publishedProfile: true` so Firestore is updated and `useProfileStatus` instantly reflects "published" on the Dashboard.
+- **FreelancerOnboarding hardened** (`client/src/pages/FreelancerOnboarding.tsx`): Now sets `publishedProfile: true` in Firestore AND calls `/api/profile/go-live` for PostgreSQL sync on submission.
+- **FreelancerProfile type** (`client/src/lib/firebaseAppData.ts`): Added `publishedProfile?: boolean` field.
+
+### April 2026 — Fiverr Pro Features (Better): LevelBadge, AI Brief, Rewards, Auth
 
 ### New Features Shipped
 - **LevelBadge component** (`client/src/components/LevelBadge.tsx`) — 5-tier system (New/Rising Star/Level 1/Level 2/Top Rated) with `getLevelFromStats()` + `getLevelProgress()`. Integrated into FreelancerProfile.tsx and FindTalent.tsx cards.

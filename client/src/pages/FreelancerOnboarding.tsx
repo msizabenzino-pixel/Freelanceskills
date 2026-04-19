@@ -90,10 +90,6 @@ function FreelancerOnboardingContent() {
         .split(",")
         .map((item) => item.trim())
         .filter(Boolean);
-      const certificationsList = certifications
-        .split(",")
-        .map((item) => item.trim())
-        .filter(Boolean);
 
       await saveFreelancerProfile({
         userId: user.id,
@@ -111,10 +107,25 @@ function FreelancerOnboardingContent() {
         availability,
         role: "freelancer",
         onboardingCompleted: true,
+        publishedProfile: true,
       });
 
-      if (certificationsList.length > 0 || yearsOfExperience) {
-        // Extended onboarding details can be added in a dedicated profile details doc later.
+      const res = await fetch("/api/profile/go-live", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          bio: bio.trim(),
+          title: professionalTitle.trim(),
+          skills,
+          hourlyRate: Number(hourlyRate || 0),
+          location: location.trim(),
+          isPro: false,
+        }),
+      });
+      if (!res.ok && res.status !== 401) {
+        const body = await res.json().catch(() => ({})) as any;
+        console.warn("[FreelancerOnboarding] go-live sync failed:", body?.message);
       }
     },
     onSuccess: () => {

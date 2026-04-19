@@ -150,6 +150,7 @@ export interface FreelancerProfile {
   availability: string;
   role: "freelancer";
   onboardingCompleted: boolean;
+  publishedProfile?: boolean;
   completedJobs?: number;
   rating?: number;
   responseRate?: number | null;

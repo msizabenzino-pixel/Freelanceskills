@@ -16,6 +16,7 @@ import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { earnPoints } from "@/lib/earnPoints";
 import { apiJson } from "@/lib/api";
+import { saveFreelancerProfile } from "@/lib/firebaseAppData";
 import { calcStrength } from "@/lib/profileStrength";
 import { ProfileStrengthMeter } from "@/components/ProfileStrengthMeter";
 import { SERVICE_CATEGORIES } from "@shared/categories";
@@ -316,6 +317,28 @@ export default function CVUpload() {
     },
     onSuccess: async (res) => {
       fireConfetti();
+      if (user?.id) {
+        try {
+          await saveFreelancerProfile({
+            userId: user.id,
+            fullName: `${formData.firstName} ${formData.lastName}`.trim() || user.displayName || "Freelancer",
+            profilePhotoUrl: formData.photo || "",
+            bio: formData.bio,
+            title: formData.title,
+            skills: formData.skills,
+            expertise: [],
+            categories: formData.category ? [formData.category] : [],
+            hourlyRate: formData.hourlyRate ? Math.round(parseFloat(formData.hourlyRate) * 100) : 0,
+            location: formData.location,
+            portfolioLinks: formData.portfolioUrl ? [formData.portfolioUrl] : [],
+            experienceLevel: formData.experienceLevel,
+            availability: formData.availability,
+            role: "freelancer",
+            onboardingCompleted: true,
+            publishedProfile: true,
+          });
+        } catch {}
+      }
       try {
         const pts = await earnPoints("profile_complete", user?.id ?? "");
         if (pts?.success) {

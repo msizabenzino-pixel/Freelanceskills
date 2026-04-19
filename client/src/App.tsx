@@ -469,9 +469,9 @@ function Router() {
         <Route path="/referral" component={Referral} />
         <Route path="/rewards" component={RewardsHub} />
         <Route path="/checkout" component={Checkout} />
-        <Route path="/onboarding" component={FreelancerOnboarding} />
-        <Route path="/freelancer-onboarding" component={FreelancerOnboarding} />
-        <Route path="/profile-builder" component={ProfileBuilder} />
+        <Route path="/onboarding" component={CVUpload} />
+        <Route path="/freelancer-onboarding" component={CVUpload} />
+        <Route path="/profile-builder" component={CVUpload} />
         <Route path="/cv-upload" component={CVUpload} />
         <Route path="/payments-hub" component={PaymentsHub} />
         <Route path="/credentials" component={Credentials} />
