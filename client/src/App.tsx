@@ -529,7 +529,7 @@ function App() {
             <div id="floating-fab"><FloatingActionButton /></div>
             <div id="floating-support"><SupportChat /></div>
             <CookieConsent />
-            <OnboardingCarousel />
+            {/* OnboardingCarousel removed — users go straight to the site */}
             <OfflineScreen />
           </TooltipProvider>
         </CountryProvider>

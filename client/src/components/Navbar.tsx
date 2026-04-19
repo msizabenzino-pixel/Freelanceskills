@@ -1,333 +1,72 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Menu, X, Zap, LogOut, HelpCircle, Users, Briefcase, ChevronDown, Sparkles, Moon, Sun, Mic, GraduationCap, Bell, AlertTriangle, Download, Trophy } from "lucide-react";
+import {
+  Menu, X, LogOut, Briefcase, Search, Bell, MessageSquare,
+  User, ChevronDown, LayoutDashboard, Settings, Trophy, BookOpen,
+  Sparkles, Globe, FileText, Moon, Sun
+} from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useDarkMode } from "@/hooks/use-dark-mode";
-import { VoiceSearch } from "./VoiceSearch";
-import { CountrySelector } from "./CountrySelector";
-import { NotificationBell } from "./NotificationBell";
 import { BrandLogo } from "@/components/BrandLogo";
+import { NotificationBell } from "./NotificationBell";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type NavbarProps = {
   topOffset?: number;
 };
 
 export function Navbar({ topOffset = 0 }: NavbarProps) {
-  const globalLaunchBarOffset = 0;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [showVoiceSearch, setShowVoiceSearch] = useState(false);
-  const [location, navigate] = useLocation();
-  const { user, isLoading, isAuthenticated, logout } = useAuth();
-  const { isDark, toggle: toggleDarkMode } = useDarkMode();
-  const [highContrast, setHighContrast] = useState(() => localStorage.getItem("high-contrast") === "true");
-  const [pointsBalance, setPointsBalance] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [profileStatus, setProfileStatus] = useState<"none" | "draft" | "published" | null>(null);
+  const [location, navigate] = useLocation();
+  const { user, isAuthenticated, logout } = useAuth();
+  const { isDark, toggle: toggleDarkMode } = useDarkMode();
+  const searchRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (!isAuthenticated || !user?.id) return;
-    fetch(`/api/rewards?userId=${user.id}`)
-      .then(r => r.json())
-      .then(d => { if (typeof d.balance === "number") setPointsBalance(d.balance); })
-      .catch(() => {});
-  }, [isAuthenticated, user?.id]);
-
-  // Fetch profile publish status for the nav badge — refreshes whenever auth changes
   useEffect(() => {
     if (!isAuthenticated) { setProfileStatus(null); return; }
     fetch("/api/profile/check-readiness", { credentials: "include" })
       .then(r => r.ok ? r.json() : null)
-      .then(d => { if (d?.profileStatus) setProfileStatus(d.profileStatus as any); })
+      .then(d => { if (d?.profileStatus) setProfileStatus(d.profileStatus); })
       .catch(() => {});
-  }, [isAuthenticated, location]); // re-check on navigation so it refreshes after /cv-upload
-  const useSolidNav = true;
+  }, [isAuthenticated, location]);
 
-  useEffect(() => {
-    if (highContrast) {
-      document.body.classList.add("high-contrast");
-    } else {
-      document.body.classList.remove("high-contrast");
-    }
-    localStorage.setItem("high-contrast", highContrast.toString());
-  }, [highContrast]);
-
-  const toggleHighContrast = () => setHighContrast(!highContrast);
-
-  const mainNavGroups: Array<{
-    name: string;
-    items: Array<{ name: string; href: string; icon?: any; description?: string }>;
-  }> = [
-    {
-      name: "Discover",
-      items: [
-        { name: "Explore", href: "/explore", icon: Sparkles, description: "Browse opportunities and categories" },
-        { name: "Services", href: "/services", icon: Users, description: "Book local taskers and pros" },
-        { name: "Pricing", href: "/pricing", icon: Zap, description: "Compare plans and fees" },
-        { name: "Blog", href: "/blog", icon: GraduationCap, description: "Guides and marketplace insights" },
-      ],
-    },
-    {
-      name: "Learn",
-      items: [
-        { name: "Academy", href: "/academy", icon: GraduationCap, description: "65 expert courses across 15 languages" },
-        { name: "AI Skills Hub", href: "/academy/ai-hub", icon: Sparkles, description: "35 AI courses with verified certificates" },
-        { name: "How It Works", href: "/how-it-works", icon: HelpCircle, description: "Platform overview" },
-        { name: "How to Hire", href: "/how-to-hire", icon: Users, description: "Client onboarding" },
-        { name: "How to Get Hired", href: "/how-to-get-hired", icon: Briefcase, description: "Freelancer onboarding" },
-      ],
-    },
-    {
-      name: "Platform",
-      items: [
-        { name: "Vuma AI", href: "/vuma", icon: Sparkles, description: "AI tools and automations" },
-        { name: "Support", href: "/support", icon: HelpCircle, description: "Get help and FAQs" },
-        { name: "Resolution Center", href: "/resolution-center", icon: Briefcase, description: "Disputes and case resolution" },
-      ],
-    },
-    ...(isAuthenticated
-      ? [
-          {
-            name: "My Account",
-            items: [
-              { name: "Messages", href: "/messages", icon: Users, description: "Chat and conversations" },
-              { name: "Dashboard", href: "/dashboard", icon: Briefcase, description: "Manage your account and jobs" },
-            ],
-          },
-        ]
-      : []),
-  ];
-
-  const FindWorkMenu = () => {
-    const findWorkPaths = ["/job-board", "/jobs", "/opportunity-finder", "/cv-upload"];
-    const isFindWorkActive = findWorkPaths.includes(location);
-
-    return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button
-            className={cn(
-              "flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors",
-              useSolidNav
-                ? isFindWorkActive
-                  ? "text-primary bg-primary/8 font-semibold"
-                  : "text-muted-foreground hover:text-primary hover:bg-muted"
-                : isFindWorkActive
-                  ? "text-white font-semibold bg-white/15"
-                  : "text-white/90 hover:text-white hover:bg-white/10"
-            )}
-            data-testid="button-find-work-menu"
-          >
-            <span>Find Work</span>
-            <ChevronDown className="h-3 w-3" />
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-64">
-          <Link href="/job-board">
-            <DropdownMenuItem className="cursor-pointer py-3" data-testid="link-job-board">
-              <div className="flex items-start gap-3">
-                <Briefcase className="h-5 w-5 text-primary mt-0.5" />
-                <div>
-                  <div className="font-medium">Global Job Board</div>
-                  <div className="text-xs text-muted-foreground">Browse all international jobs</div>
-                </div>
-              </div>
-            </DropdownMenuItem>
-          </Link>
-          <Link href="/jobs">
-            <DropdownMenuItem className="cursor-pointer py-3" data-testid="link-browse-jobs">
-              <div className="flex items-start gap-3">
-                <Users className="h-5 w-5 text-blue-500 mt-0.5" />
-                <div>
-                  <div className="font-medium">Browse Jobs</div>
-                  <div className="text-xs text-muted-foreground">Find local and remote tasks</div>
-                </div>
-              </div>
-            </DropdownMenuItem>
-          </Link>
-          <Link href="/opportunity-finder">
-            <DropdownMenuItem className="cursor-pointer py-3" data-testid="link-ai-finder">
-              <div className="flex items-start gap-3">
-                <Sparkles className="h-5 w-5 text-accent mt-0.5" />
-                <div>
-                  <div className="font-medium">AI Opportunity Finder</div>
-                  <div className="text-xs text-muted-foreground">Smart matching for your skills</div>
-                </div>
-              </div>
-            </DropdownMenuItem>
-          </Link>
-          <Link href="/cv-upload">
-            <DropdownMenuItem className="cursor-pointer py-3" data-testid="link-upload-cv">
-              <div className="flex items-start gap-3">
-                <HelpCircle className="h-5 w-5 text-green-500 mt-0.5" />
-                <div>
-                  <div className="font-medium">Upload CV</div>
-                  <div className="text-xs text-muted-foreground">Get noticed by employers</div>
-                </div>
-              </div>
-            </DropdownMenuItem>
-          </Link>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    );
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) navigate(`/jobs?q=${encodeURIComponent(searchQuery.trim())}`);
   };
 
-  const HelpMenu = () => (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button 
+  const userInitials = user
+    ? (user.firstName?.[0] || "") + (user.lastName?.[0] || "") || user.email?.[0]?.toUpperCase() || "U"
+    : "U";
+  const userName = user?.firstName ? `${user.firstName}${user.lastName ? " " + user.lastName : ""}` : user?.email?.split("@")[0] || "User";
+
+  const navLink = (href: string, label: string, testId: string) => {
+    const active = location === href || location.startsWith(href + "?");
+    return (
+      <Link href={href}>
+        <button
           className={cn(
-            "flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors",
-            useSolidNav 
-              ? "text-muted-foreground hover:text-primary hover:bg-muted" 
-              : "text-white/90 hover:text-white hover:bg-white/10"
+            "px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap",
+            active
+              ? "text-primary bg-primary/8 font-semibold"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted"
           )}
-          data-testid="button-help-menu"
+          data-testid={testId}
         >
-          <HelpCircle className="h-4 w-4" />
-          <span>Help</span>
-          <ChevronDown className="h-3 w-3" />
+          {label}
         </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-64">
-        <Link href="/how-it-works">
-          <DropdownMenuItem className="cursor-pointer py-3" data-testid="link-how-it-works">
-            <div className="flex items-start gap-3">
-              <HelpCircle className="h-5 w-5 text-primary mt-0.5" />
-              <div>
-                <div className="font-medium">How It Works</div>
-                <div className="text-xs text-muted-foreground">Learn the basics</div>
-              </div>
-            </div>
-          </DropdownMenuItem>
-        </Link>
-        <Link href="/how-to-hire">
-          <DropdownMenuItem className="cursor-pointer py-3" data-testid="link-how-to-hire">
-            <div className="flex items-start gap-3">
-              <Users className="h-5 w-5 text-blue-500 mt-0.5" />
-              <div>
-                <div className="font-medium">I Need to Hire Someone</div>
-                <div className="text-xs text-muted-foreground">Find & book professionals</div>
-              </div>
-            </div>
-          </DropdownMenuItem>
-        </Link>
-        <Link href="/how-to-get-hired">
-          <DropdownMenuItem className="cursor-pointer py-3" data-testid="link-how-to-get-hired">
-            <div className="flex items-start gap-3">
-              <Briefcase className="h-5 w-5 text-amber-500 mt-0.5" />
-              <div>
-                <div className="font-medium">I Want to Find Work</div>
-                <div className="text-xs text-muted-foreground">Start earning money</div>
-              </div>
-            </div>
-          </DropdownMenuItem>
-        </Link>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-
-  const MainHeadingMenu = ({
-    name,
-    items,
-  }: {
-    name: string;
-    items: Array<{ name: string; href: string; icon?: any; description?: string }>;
-  }) => {
-    const isActive = items.some((item) => location === item.href);
-
-    return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button
-            className={cn(
-              "flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors",
-              useSolidNav
-                ? isActive
-                  ? "text-primary bg-primary/8 font-semibold"
-                  : "text-muted-foreground hover:text-primary hover:bg-muted"
-                : isActive
-                  ? "text-white font-semibold bg-white/15"
-                  : "text-white/90 hover:text-white hover:bg-white/10"
-            )}
-            data-testid={`button-main-heading-${name.toLowerCase().replace(/\s+/g, "-")}`}
-          >
-            <span>{name}</span>
-            <ChevronDown className="h-3 w-3" />
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-64">
-          {items.map((item) => (
-            <Link key={item.name} href={item.href}>
-              <DropdownMenuItem
-                className="cursor-pointer py-3"
-                data-testid={`link-subheading-${item.name.toLowerCase().replace(/\s+/g, "-")}`}
-              >
-                <div className="flex items-start gap-3">
-                  {item.icon ? <item.icon className="h-5 w-5 text-primary mt-0.5" /> : null}
-                  <div>
-                    <div className="font-medium">{item.name}</div>
-                    {item.description ? <div className="text-xs text-muted-foreground">{item.description}</div> : null}
-                  </div>
-                </div>
-              </DropdownMenuItem>
-            </Link>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    );
-  };
-
-  const UrgentAlertsMenu = () => {
-    const urgentCount = 3;
-
-    return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button
-            className={cn(
-              "relative p-2 rounded-lg transition-colors",
-              useSolidNav
-                ? "text-muted-foreground hover:bg-muted hover:text-primary"
-                : "text-white/90 hover:bg-white/10"
-            )}
-            aria-label="Urgent alerts"
-            data-testid="button-urgent-alerts"
-          >
-            <Bell className="h-4 w-4" />
-            {urgentCount > 0 ? (
-              <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
-                {urgentCount}
-              </span>
-            ) : null}
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-72">
-          <div className="px-3 py-2 border-b">
-            <p className="text-sm font-semibold">Urgent Alerts</p>
-            <p className="text-xs text-muted-foreground">{urgentCount} jobs need immediate attention</p>
-          </div>
-          <DropdownMenuItem
-            className="cursor-pointer py-3"
-            onClick={() => navigate("/jobs?urgent=true")}
-            data-testid="link-urgent-jobs-popup"
-          >
-            <div className="flex items-start gap-3">
-              <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5" />
-              <div>
-                <div className="font-medium">3 urgent jobs need attention</div>
-                <div className="text-xs text-muted-foreground">Open filtered jobs and apply quickly</div>
-              </div>
-            </div>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      </Link>
     );
   };
 
@@ -335,319 +74,273 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
     <nav
       role="navigation"
       aria-label="Main navigation"
-      style={{ top: `${topOffset + globalLaunchBarOffset}px` }}
-      className={cn(
-        "fixed left-0 right-0 z-50 transition-all duration-300 border-b border-transparent",
-        useSolidNav
-          ? "bg-background/95 backdrop-blur-md border-border py-3 shadow-sm"
-          : "bg-transparent py-3 text-white"
-      )}
+      style={{ top: `${topOffset}px` }}
+      className="fixed left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border shadow-sm"
     >
-      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-background focus:px-4 focus:py-2 focus:border-2 focus:border-primary focus:rounded-md">Skip to main content</a>
-      <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
-        {/* Logo + Nav Links */}
-        <div className="flex items-center gap-10">
-          <Link href="/" className="flex items-center group" aria-label="FreelanceSkills home">
-            <BrandLogo imageClassName="h-12 md:h-14 max-w-[260px] md:max-w-[320px]" />
-          </Link>
+      <div className="container mx-auto px-4 md:px-6 h-14 flex items-center gap-3">
 
-          <div className="hidden md:flex items-center gap-1">
-            <FindWorkMenu />
-            {mainNavGroups.map((group) => (
-              <MainHeadingMenu key={group.name} name={group.name} items={group.items} />
-            ))}
+        {/* Logo */}
+        <Link href="/" className="flex-shrink-0 flex items-center" aria-label="FreelanceSkills home">
+          <BrandLogo imageClassName="h-8 md:h-9 max-w-[180px]" />
+        </Link>
+
+        {/* Search bar — hidden on mobile, grows to fill space */}
+        <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md mx-2">
+          <div className="relative w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+            <input
+              ref={searchRef}
+              type="search"
+              placeholder="Search skills, jobs, freelancers..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="w-full h-9 pl-9 pr-4 rounded-full bg-muted border border-border text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+              data-testid="input-nav-search"
+            />
           </div>
+        </form>
+
+        {/* Desktop nav links */}
+        <div className="hidden md:flex items-center gap-0.5 flex-shrink-0">
+          {navLink("/jobs", "Find Work", "link-find-work")}
+          {navLink("/find-talent", "Find Talent", "link-find-talent")}
+          {navLink("/academy", "Learn", "link-academy")}
         </div>
 
-        <div className="hidden md:flex items-center gap-4">
-          <button
-            onClick={() => setShowVoiceSearch(true)}
-            className={cn(
-              "p-2 rounded-lg transition-colors",
-              useSolidNav
-                ? "text-muted-foreground hover:bg-muted hover:text-primary"
-                : "text-white/90 hover:bg-white/10"
-            )}
-            aria-label="Voice Search"
-            data-testid="button-voice-search-navbar"
-          >
-            <Mic className="h-4 w-4" />
-          </button>
-          <HelpMenu />
-          <UrgentAlertsMenu />
-          <Link href="/install-app">
-            <button
-              className={cn(
-                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all border",
-                useSolidNav
-                  ? "text-emerald-600 bg-emerald-500/10 border-emerald-500/30 hover:bg-emerald-500/20"
-                  : "text-emerald-400 bg-emerald-500/10 border-emerald-500/30 hover:bg-emerald-500/20"
-              )}
-              aria-label="Install FreelanceSkills App"
-              data-testid="button-install-app-navbar"
-            >
-              <Download className="h-3.5 w-3.5" />
-              Get App
-            </button>
-          </Link>
-          <button
-            onClick={toggleHighContrast}
-            className={cn(
-              "p-2 rounded-lg transition-colors",
-              useSolidNav
-                ? "text-muted-foreground hover:bg-muted"
-                : "text-white/90 hover:bg-white/10"
-            )}
-            aria-label={highContrast ? "Disable high contrast" : "Enable high contrast"}
-            data-testid="button-high-contrast"
-          >
-            <Zap className={cn("h-4 w-4", highContrast && "fill-current")} />
-          </button>
+        {/* Right side */}
+        <div className="flex items-center gap-2 ml-auto flex-shrink-0">
+          {/* Dark mode toggle — subtle icon */}
           <button
             onClick={toggleDarkMode}
-            className={cn(
-              "p-2 rounded-lg transition-colors",
-              useSolidNav
-                ? "text-muted-foreground hover:bg-muted"
-                : "text-white/90 hover:bg-white/10"
-            )}
+            className="hidden md:flex p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
             aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
             data-testid="button-dark-mode"
           >
             {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
-          <div className={cn(
-            useSolidNav ? "text-muted-foreground" : "text-white/90"
-          )}>
-            <CountrySelector />
-          </div>
-          {isAuthenticated && (
-            <div className={cn(
-              useSolidNav ? "text-muted-foreground" : "text-white/90"
-            )}>
-              <NotificationBell />
-            </div>
-          )}
-          <Button 
-              variant="ghost" 
-              className={cn(
-                "hover:text-accent hover:bg-transparent font-medium",
-                useSolidNav ? "text-primary" : "text-white"
-              )}
-              data-testid="button-post-job-navbar"
-              onClick={() => navigate("/post-job")}
-            >
-              Post a Job
-            </Button>
+
           {isAuthenticated ? (
-            <div className="flex items-center gap-3">
-              {/* Points Balance Badge */}
-              {pointsBalance !== null && (
+            <>
+              {/* Messages */}
+              <Link href="/messages">
                 <button
-                  onClick={() => navigate("/rewards")}
-                  className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 hover:border-emerald-500/40 transition-all"
-                  data-testid="badge-points-balance"
-                  title="View your rewards"
+                  className="hidden md:flex p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                  aria-label="Messages"
+                  data-testid="link-messages-nav"
                 >
-                  <Trophy className="w-3 h-3 text-emerald-400" />
-                  <span className="text-xs font-bold text-emerald-400">{pointsBalance.toLocaleString()} pts</span>
+                  <MessageSquare className="h-4 w-4" />
                 </button>
-              )}
-              {/* Profile status dot — tells freelancers instantly if they're live or in draft */}
+              </Link>
+
+              {/* Notifications */}
+              <div className="hidden md:flex text-muted-foreground">
+                <NotificationBell />
+              </div>
+
+              {/* Profile status pill */}
               {profileStatus && profileStatus !== "published" && (
                 <button
                   onClick={() => navigate("/cv-upload")}
-                  title={profileStatus === "draft" ? "Profile is Draft — click to publish and unlock job applications" : "Create your profile to apply for jobs"}
-                  className="hidden md:flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 transition-all"
+                  className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/25 hover:bg-amber-500/20 transition-all text-[11px] font-semibold text-amber-500"
                   data-testid="badge-profile-draft"
+                  title="Complete your profile"
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-                  <span className="text-[10px] font-semibold text-amber-400">
-                    {profileStatus === "draft" ? "Draft" : "No Profile"}
-                  </span>
-                </button>
-              )}
-              {profileStatus === "published" && (
-                <button
-                  onClick={() => navigate("/dashboard")}
-                  title="Profile is Live — visible to employers"
-                  className="hidden md:flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all"
-                  data-testid="badge-profile-live"
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                  <span className="text-[10px] font-semibold text-emerald-400">Live</span>
+                  {profileStatus === "draft" ? "Draft" : "Set up profile"}
                 </button>
               )}
 
-              <div className="flex items-center gap-2">
-                {user?.profileImageUrl ? (
-                  <img src={user.profileImageUrl} alt="" className="w-8 h-8 rounded-full" />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm">
-                    {user?.firstName?.[0] || user?.email?.[0]?.toUpperCase() || "U"}
+              {/* Avatar dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    className="flex items-center gap-2 rounded-full hover:bg-muted px-2 py-1 transition-colors"
+                    data-testid="button-user-menu"
+                  >
+                    <Avatar className="h-7 w-7">
+                      <AvatarImage src={user?.profileImageUrl || ""} />
+                      <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">{userInitials}</AvatarFallback>
+                    </Avatar>
+                    <span className="hidden md:inline text-sm font-medium text-foreground max-w-[100px] truncate">{userName}</span>
+                    <ChevronDown className="h-3 w-3 text-muted-foreground hidden md:inline" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <div className="px-3 py-2 border-b border-border mb-1">
+                    <p className="text-sm font-semibold text-foreground truncate">{userName}</p>
+                    <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
                   </div>
-                )}
-                <span className={cn(
-                  "text-sm font-medium",
-                  useSolidNav ? "text-foreground" : "text-white"
-                )}>
-                  {user?.firstName || "User"}
-                </span>
-              </div>
-              <Button 
-                  variant="ghost" 
-                  size="sm"
-                  className={cn(
-                    "hover:text-red-500",
-                    useSolidNav ? "text-muted-foreground" : "text-white/80"
-                  )}
-                  data-testid="button-logout"
-                  onClick={logout}
-                >
-                  <LogOut className="w-4 h-4" />
-                </Button>
-            </div>
+                  <DropdownMenuItem onClick={() => navigate("/dashboard")} data-testid="link-dashboard">
+                    <LayoutDashboard className="h-4 w-4 mr-2 text-primary" /> Dashboard
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/cv-upload")} data-testid="link-my-profile">
+                    <User className="h-4 w-4 mr-2 text-blue-500" /> My Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/messages")} data-testid="link-messages-dropdown">
+                    <MessageSquare className="h-4 w-4 mr-2 text-violet-500" /> Messages
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/rewards")} data-testid="link-rewards-dropdown">
+                    <Trophy className="h-4 w-4 mr-2 text-amber-500" /> Rewards
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate("/post-job")} data-testid="link-post-job-dropdown">
+                    <Briefcase className="h-4 w-4 mr-2 text-emerald-500" /> Post a Job
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={logout}
+                    className="text-red-500 focus:text-red-500 focus:bg-red-50"
+                    data-testid="button-logout"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" /> Log Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
           ) : (
             <>
+              <Link href="/post-job">
+                <button
+                  className="hidden md:inline text-sm font-medium text-muted-foreground hover:text-foreground px-3 py-2 rounded-lg hover:bg-muted transition-colors"
+                  data-testid="button-post-job-navbar"
+                >
+                  Post a Job
+                </button>
+              </Link>
               <Link href="/login">
-                <Button 
+                <Button
                   variant="ghost"
-                  className={cn(
-                    "hover:text-accent hover:bg-transparent font-medium",
-                    useSolidNav ? "text-primary" : "text-white"
-                  )}
+                  size="sm"
+                  className="hidden md:inline-flex font-medium"
                   data-testid="button-login"
-                  aria-label="Log in to your account"
                 >
                   Log In
                 </Button>
               </Link>
-              <Link href="/signup">
-                <Button 
-                  className={cn(
-                    "font-semibold shadow-lg transition-all hover:scale-105 active:scale-95",
-                    useSolidNav 
-                      ? "bg-primary text-white hover:bg-primary/90" 
-                      : "bg-accent text-primary hover:bg-accent/90"
-                  )}
+              <Link href="/auth?mode=register">
+                <Button
+                  size="sm"
+                  className="bg-primary hover:bg-primary/90 text-white font-semibold shadow-sm"
                   data-testid="button-signup"
-                  aria-label="Sign up for a new account"
                 >
-                  Sign Up
+                  Join Free
                 </Button>
               </Link>
             </>
           )}
-        </div>
 
-        {/* Mobile Toggle */}
-        <button
-          className="md:hidden"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          data-testid="button-mobile-menu-toggle"
-          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={isMobileMenuOpen}
-        >
-          {isMobileMenuOpen ? (
-            <X className={cn("w-6 h-6", useSolidNav ? "text-primary" : "text-white")} />
-          ) : (
-            <Menu className={cn("w-6 h-6", useSolidNav ? "text-primary" : "text-white")} />
-          )}
-        </button>
+          {/* Mobile hamburger */}
+          <button
+            className="md:hidden p-2"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            data-testid="button-mobile-menu-toggle"
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+          >
+            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
-      {showVoiceSearch && (
-        <VoiceSearch variant="navbar" onClose={() => setShowVoiceSearch(false)} />
-      )}
+      {/* Mobile search bar */}
+      <div className="md:hidden px-4 pb-2.5">
+        <form onSubmit={handleSearch} className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+          <input
+            type="search"
+            placeholder="Search skills, jobs, freelancers..."
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            className="w-full h-9 pl-9 pr-4 rounded-full bg-muted border border-border text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+            data-testid="input-mobile-search"
+          />
+        </form>
+      </div>
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="absolute top-full left-0 right-0 bg-background border-b border-border p-4 flex flex-col gap-4 shadow-xl md:hidden animate-in slide-in-from-top-2 overflow-y-auto max-h-[80vh]">
-          <div className="flex flex-col gap-2">
-            <h3 className="text-xs font-semibold text-muted-foreground px-2 uppercase tracking-wider">Find Work</h3>
-            <Link href="/job-board" className="text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md flex items-center gap-2" data-testid="link-mobile-job-board">
-              <Briefcase className="h-4 w-4 text-primary" /> Global Job Board
-            </Link>
-            <Link href="/jobs" className="text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md flex items-center gap-2" data-testid="link-mobile-browse-jobs">
-              <Users className="h-4 w-4 text-blue-500" /> Browse Jobs
-            </Link>
-            <Link href="/opportunity-finder" className="text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md flex items-center gap-2" data-testid="link-mobile-ai-finder">
-              <Sparkles className="h-4 w-4 text-accent" /> AI Opportunity Finder
-            </Link>
-            <Link href="/cv-upload" className="text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md flex items-center gap-2" data-testid="link-mobile-cv-upload">
-              <HelpCircle className="h-4 w-4 text-green-500" /> Upload CV
-            </Link>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <h3 className="text-xs font-semibold text-muted-foreground px-2 uppercase tracking-wider">Navigation</h3>
-            {mainNavGroups.map((group) => (
-              <div key={group.name} className="space-y-1">
-                <h4 className="text-[11px] font-bold text-muted-foreground px-2 uppercase tracking-wider">{group.name}</h4>
-                {group.items.map((item) => {
-                  const isActive = location === item.href;
-                  return (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className={cn(
-                        "text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md flex items-center gap-2",
-                        isActive && "text-primary bg-primary/5"
-                      )}
-                      data-testid={`link-mobile-subheading-${item.name.toLowerCase().replace(/\s+/g, "-")}`}
-                    >
-                      {item.icon ? <item.icon className="h-4 w-4 text-primary" /> : null}
-                      {item.name}
-                    </Link>
-                  );
-                })}
-              </div>
+        <div className="absolute top-full left-0 right-0 bg-background border-b border-border shadow-xl md:hidden animate-in slide-in-from-top-2 overflow-y-auto max-h-[80vh]">
+          <div className="p-4 flex flex-col gap-1">
+            {[
+              { href: "/jobs", label: "Find Work", icon: Briefcase, color: "text-blue-500" },
+              { href: "/find-talent", label: "Find Talent", icon: Globe, color: "text-violet-500" },
+              { href: "/post-job", label: "Post a Job", icon: FileText, color: "text-emerald-500" },
+              { href: "/academy", label: "Learn & Upskill", icon: BookOpen, color: "text-amber-500" },
+              { href: "/explore", label: "Explore", icon: Sparkles, color: "text-pink-500" },
+            ].map(({ href, label, icon: Icon, color }) => (
+              <Link key={href} href={href}>
+                <button
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-foreground/80 hover:text-foreground hover:bg-muted transition-colors text-left"
+                  data-testid={`link-mobile-${label.toLowerCase().replace(/\s+/g, "-")}`}
+                >
+                  <Icon className={cn("h-5 w-5", color)} />
+                  <span className="font-medium">{label}</span>
+                </button>
+              </Link>
             ))}
-          </div>
 
-          <div className="h-px bg-border my-1" />
-          <Link href="/install-app" className="flex items-center gap-2 p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-600 font-bold text-sm" data-testid="link-mobile-install-app" onClick={() => setIsMobileMenuOpen(false)}>
-            <Download className="h-4 w-4" /> Install Free App
-            <span className="ml-auto text-xs bg-emerald-500/20 px-2 py-0.5 rounded-full">NEW</span>
-          </Link>
-          <div className="h-px bg-border my-1" />
-          <Link href="/jobs?urgent=true" className="text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md flex items-center gap-2" data-testid="link-mobile-urgent-alerts">
-            <Bell className="h-4 w-4 text-red-500" /> Urgent Jobs (3)
-          </Link>
-          <div className="h-px bg-border my-1" />
-          <Link href="/post-job" className="text-foreground/80 hover:text-primary font-medium p-2 block bg-muted/30 rounded-md" data-testid="link-mobile-post-job">
-              Post a Job
-          </Link>
-          <div className="h-px bg-border my-1" />
-          <div className="flex items-center justify-between p-2 bg-muted/30 rounded-md">
-            <span className="text-sm text-muted-foreground">Region & Currency</span>
-            <CountrySelector />
+            <div className="h-px bg-border my-2" />
+
+            {/* Dark mode */}
+            <button
+              onClick={toggleDarkMode}
+              className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-foreground/80 hover:text-foreground hover:bg-muted transition-colors"
+              data-testid="button-dark-mode-mobile"
+            >
+              {isDark ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-slate-400" />}
+              <span className="font-medium">{isDark ? "Light Mode" : "Dark Mode"}</span>
+            </button>
+
+            <div className="h-px bg-border my-2" />
+
+            {isAuthenticated ? (
+              <>
+                <div className="flex items-center gap-3 px-3 py-2 mb-1">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user?.profileImageUrl || ""} />
+                    <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">{userInitials}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="text-sm font-semibold">{userName}</p>
+                    <p className="text-xs text-muted-foreground">{user?.email}</p>
+                  </div>
+                </div>
+                {[
+                  { href: "/dashboard", label: "Dashboard" },
+                  { href: "/cv-upload", label: "My Profile" },
+                  { href: "/messages", label: "Messages" },
+                  { href: "/rewards", label: "Rewards" },
+                ].map(({ href, label }) => (
+                  <Link key={href} href={href}>
+                    <button
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted transition-colors"
+                      data-testid={`link-mobile-${label.toLowerCase()}`}
+                    >
+                      {label}
+                    </button>
+                  </Link>
+                ))}
+                <Button
+                  variant="outline"
+                  className="w-full mt-2 text-red-500 border-red-200 hover:bg-red-50"
+                  onClick={logout}
+                  data-testid="button-mobile-logout"
+                >
+                  <LogOut className="w-4 h-4 mr-2" /> Log Out
+                </Button>
+              </>
+            ) : (
+              <div className="flex flex-col gap-2">
+                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button variant="outline" className="w-full" data-testid="button-mobile-login">Log In</Button>
+                </Link>
+                <Link href="/auth?mode=register" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button className="w-full bg-primary text-white" data-testid="button-mobile-signup">Join Free</Button>
+                </Link>
+              </div>
+            )}
           </div>
-          <button
-            onClick={toggleDarkMode}
-            className="flex items-center justify-between p-2 bg-muted/30 rounded-md text-foreground/80"
-            data-testid="button-dark-mode-mobile"
-          >
-            <span className="text-sm font-medium">{isDark ? "Light Mode" : "Dark Mode"}</span>
-            {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </button>
-          <div className="h-px bg-border my-2" />
-          {isAuthenticated ? (
-              <Button variant="outline" className="w-full justify-center text-red-500 border-red-200 hover:bg-red-50" data-testid="button-mobile-logout"
-                onClick={logout}
-              >
-                <LogOut className="w-4 h-4 mr-2" /> Log Out
-              </Button>
-          ) : (
-            <>
-              <Link href="/login">
-                <Button variant="outline" className="w-full justify-center" data-testid="button-mobile-login">Log In</Button>
-              </Link>
-              <Link href="/signup">
-                <Button className="w-full justify-center bg-primary text-white" data-testid="button-mobile-signup">Sign Up</Button>
-              </Link>
-            </>
-          )}
         </div>
       )}
     </nav>
