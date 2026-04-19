@@ -4,6 +4,31 @@ import { storage } from "./storage";
 import { setupAuth, registerAuthRoutes } from "./replit_integrations/auth";
 import { ACADEMY_COURSES, getAcademyStats } from "./academyData";
 
+async function awardPoints(userId: string, action: string): Promise<void> {
+  if (!userId) return;
+  try {
+    const { db } = await import("./db");
+    const { pointTransactions, POINT_ACTIONS } = await import("../shared/models/rewards");
+    const { eq, desc } = await import("drizzle-orm");
+    const actionConfig = POINT_ACTIONS[action as keyof typeof POINT_ACTIONS];
+    if (!actionConfig) return;
+    const existing = await db.select().from(pointTransactions)
+      .where(eq(pointTransactions.userId, userId))
+      .orderBy(desc(pointTransactions.createdAt))
+      .limit(1);
+    const currentBalance = existing.length > 0 ? existing[0].balanceAfter : 0;
+    await db.insert(pointTransactions).values({
+      userId,
+      amount: actionConfig.points,
+      action,
+      description: actionConfig.label,
+      balanceAfter: currentBalance + actionConfig.points,
+    });
+  } catch (e) {
+    console.error(`[rewards] awardPoints failed for ${userId}/${action}:`, e);
+  }
+}
+
 export async function registerRoutes(
   httpServer: Server,
   app: Express
@@ -338,6 +363,8 @@ export async function registerRoutes(
         ...validatedData,
         clientId: userId,
       });
+
+      awardPoints(userId, "first_job_posted");
       
       res.status(201).json(job);
     } catch (error) {
@@ -742,6 +769,8 @@ export async function registerRoutes(
          VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
         [jobId, userId, toUserId, rating, title, comment, tags || []]
       );
+
+      if (Number(rating) === 5) awardPoints(toUserId, "five_star_review");
       
       res.status(201).json(review[0]);
     } catch (error) {
@@ -1732,8 +1761,10 @@ User: ${message}`;
   
   app.post("/api/ai/generate-proposal", isAuthenticated, async (req: any, res) => {
     try {
+      const userId = (req.session as any).userId;
       const validatedInput = generateProposalInputSchema.parse(req.body);
       const proposal = await generateProposalSuggestion(validatedInput);
+      awardPoints(userId, "proposal_sent");
       res.json(proposal);
     } catch (error: any) {
       if (error.name === "ZodError") {
@@ -1979,6 +2010,7 @@ User: ${message}`;
       }
 
       log(`[go-live] User ${userId} profile saved & published atomically`, "profile");
+      awardPoints(userId, "profile_complete");
       res.json({ success: true, message: "Your profile is now LIVE and visible to employers! 🎉", profile });
     } catch (err: any) {
       console.error("[go-live] Error:", err);
@@ -7745,6 +7777,8 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
       const content = data.choices?.[0]?.message?.content || "";
       try {
         const parsed = JSON.parse(content);
+        const uid = (req.session as any)?.userId;
+        if (uid) awardPoints(uid, "ai_brief_generated");
         return res.json(parsed);
       } catch {
         const fallback = generateFallbackBrief(description);
