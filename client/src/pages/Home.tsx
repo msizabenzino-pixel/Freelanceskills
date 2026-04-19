@@ -425,11 +425,11 @@ export default function Home() {
           <HeroProfileCard name="David K." title="Mobile Dev · JHB" rate={formatAmount(800)} img="https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&q=80&w=80&h=80" delay={1.1} />
         </div>
 
-        <div className="container relative z-10 px-4 md:px-6 py-24 md:py-32">
+        <div className="container relative z-10 px-4 md:px-6 py-10 md:py-20">
           <div className="max-w-4xl mx-auto text-center">
             {/* Live jobs badge */}
             <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-sm font-semibold mb-8 shadow-lg">
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-sm font-semibold mb-5 shadow-lg">
               <span className="relative flex h-2 w-2 mr-1">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
@@ -439,24 +439,23 @@ export default function Home() {
 
             {/* Headline */}
             <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.06] mb-6">
-              <span className="text-white">Your Professional</span><br />
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.06] mb-4">
+              <span className="text-white">Africa's #1 Platform for</span><br />
               <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500 bg-clip-text text-transparent">
-                Freelance Future
-              </span><br />
-              <span className="text-white/90">Starts Here</span>
+                Skills &amp; Opportunity
+              </span>
             </motion.h1>
 
             {/* Sub */}
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-              Skills-first network. AI matching. Secure escrow payments. Real opportunity.<br />
-              <span className="text-emerald-400 font-semibold">Find work. Hire fast. Get paid safely.</span>
+              className="text-base md:text-lg text-slate-400 max-w-xl mx-auto mb-6 leading-relaxed">
+              Find work. Hire verified talent. Get paid safely — all in one place.<br />
+              <span className="text-emerald-400 font-semibold">54 African countries · 11,400+ live jobs</span>
             </motion.p>
 
             {/* Hero Input — Search or AI Brief Mode */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}
-              className="relative max-w-2xl mx-auto mb-8" data-testid="hero-input-area">
+              className="relative max-w-2xl mx-auto mb-5" data-testid="hero-input-area">
               {/* Mode Toggle */}
               <div className="flex items-center justify-center gap-1 mb-3">
                 <button
@@ -506,10 +505,30 @@ export default function Home() {
               )}
             </motion.div>
 
+            {/* CTAs — visible immediately after search, above the fold */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }}
+              className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6 flex-wrap">
+              <Link href="/auth?mode=register"
+                className="group inline-flex items-center gap-2.5 px-7 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-base shadow-xl shadow-emerald-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                data-testid="button-hero-join-free">
+                <BadgeCheck className="w-5 h-5" /> Join Free — Create Your Profile
+              </Link>
+              <Link href="/jobs"
+                className="group inline-flex items-center gap-2.5 px-7 py-4 rounded-2xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 text-white font-bold text-base backdrop-blur-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+                data-testid="button-hero-browse-jobs">
+                Browse Jobs <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+              <Link href="/post-job"
+                className="group inline-flex items-center gap-2.5 px-7 py-4 rounded-2xl border border-slate-700 hover:border-emerald-500/40 text-slate-300 hover:text-emerald-400 font-semibold text-base transition-all hover:bg-emerald-500/5"
+                data-testid="button-hero-post-project">
+                <Briefcase className="w-5 h-5" /> Hire Talent
+              </Link>
+            </motion.div>
+
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.35 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
               className="max-w-6xl mx-auto mb-8"
               data-testid="panel-instant-discovery"
             >
@@ -596,26 +615,6 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-            </motion.div>
-
-            {/* CTAs */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10 flex-wrap">
-              <Link href="/freelancer-onboarding"
-                className="group inline-flex items-center gap-2.5 px-7 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-base shadow-xl shadow-emerald-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                data-testid="button-hero-create-profile">
-                <BadgeCheck className="w-5 h-5" /> Create Free Professional Profile
-              </Link>
-              <Link href="/jobs"
-                className="group inline-flex items-center gap-2.5 px-7 py-4 rounded-2xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 text-white font-bold text-base backdrop-blur-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
-                data-testid="button-hero-browse-jobs">
-                Browse Opportunities <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-              </Link>
-              <Link href="/post-job"
-                className="group inline-flex items-center gap-2.5 px-7 py-4 rounded-2xl border border-slate-700 hover:border-emerald-500/40 text-slate-300 hover:text-emerald-400 font-semibold text-base transition-all hover:bg-emerald-500/5"
-                data-testid="button-hero-post-project">
-                <Briefcase className="w-5 h-5" /> Hire Verified Talent
-              </Link>
             </motion.div>
 
             {/* Open to Freelance badge */}

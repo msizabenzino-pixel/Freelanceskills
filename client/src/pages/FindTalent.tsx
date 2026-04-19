@@ -299,24 +299,73 @@ export default function FindTalent() {
                 <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>Retry</Button>
               </div>
             ) : freelancers.length === 0 ? (
-              <div className="text-center py-24" data-testid="empty-state">
-                <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-40" />
-                <h3 className="text-xl font-bold text-foreground mb-2">No freelancers found</h3>
-                <p className="text-muted-foreground mb-6">
-                  {debouncedSearch || debouncedLocation
-                    ? `No results for "${debouncedSearch || debouncedLocation}". Try a different search.`
-                    : "No freelancers match your current filters."}
-                </p>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setSearchInput("");
-                    setLocationInput("");
-                    setActiveFilters({});
-                  }}
-                >
-                  Clear all filters
-                </Button>
+              <div data-testid="empty-state">
+                {/* Show demo/sample cards when there's no real data */}
+                {!debouncedSearch && !debouncedLocation && Object.keys(activeFilters).length === 0 ? (
+                  <div>
+                    <div className="text-center mb-8 py-8 rounded-2xl border border-dashed border-emerald-500/30 bg-emerald-500/5">
+                      <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-3">
+                        <Users className="w-6 h-6 text-emerald-400" />
+                      </div>
+                      <h3 className="text-lg font-bold text-foreground mb-1">Be among the first verified freelancers</h3>
+                      <p className="text-muted-foreground text-sm mb-4 max-w-md mx-auto">
+                        FreelanceSkills.net is growing fast across Africa. Create your profile today and get discovered by top clients.
+                      </p>
+                      <div className="flex items-center justify-center gap-3 flex-wrap">
+                        <Link href="/cv-upload">
+                          <Button className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold" data-testid="button-create-profile-empty">
+                            Create Your Profile — It's Free
+                          </Button>
+                        </Link>
+                        <Button variant="outline" onClick={() => { setSearchInput(""); setLocationInput(""); setActiveFilters({}); }}>
+                          Clear filters
+                        </Button>
+                      </div>
+                    </div>
+                    <p className="text-xs text-center text-muted-foreground mb-4 uppercase tracking-wider font-semibold">Sample profiles — join to get listed</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 opacity-50 pointer-events-none select-none">
+                      {[
+                        { name: "Amara Osei", title: "Full-Stack Developer", location: "Accra, Ghana", skills: ["React", "Node.js", "PostgreSQL"], rate: "R 520/hr", rating: 4.9, jobs: 43 },
+                        { name: "Fatima Diallo", title: "Brand & UI Designer", location: "Lagos, Nigeria", skills: ["Figma", "Branding", "Motion"], rate: "R 420/hr", rating: 5.0, jobs: 61 },
+                        { name: "Sipho Dlamini", title: "Digital Marketing Lead", location: "Johannesburg, SA", skills: ["Google Ads", "SEO", "Analytics"], rate: "R 380/hr", rating: 4.8, jobs: 29 },
+                        { name: "Zanele Mokoena", title: "Data Scientist", location: "Cape Town, SA", skills: ["Python", "ML", "Power BI"], rate: "R 650/hr", rating: 4.9, jobs: 37 },
+                      ].map((demo, i) => (
+                        <Card key={i} className="p-4 bg-card border border-border rounded-2xl" data-testid={`card-demo-freelancer-${i}`}>
+                          <div className="flex items-start gap-3 mb-3">
+                            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                              {demo.name.split(" ").map(n => n[0]).join("")}
+                            </div>
+                            <div className="min-w-0">
+                              <p className="font-bold text-sm text-foreground truncate">{demo.name}</p>
+                              <p className="text-xs text-muted-foreground truncate">{demo.title}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
+                            <MapPin className="w-3 h-3" />{demo.location}
+                          </div>
+                          <div className="flex flex-wrap gap-1 mb-3">
+                            {demo.skills.map(s => <span key={s} className="text-[10px] px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground">{s}</span>)}
+                          </div>
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="flex items-center gap-1 text-amber-400"><Star className="w-3 h-3 fill-amber-400" />{demo.rating} · {demo.jobs} jobs</span>
+                            <span className="font-bold text-emerald-400">{demo.rate}</span>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-24">
+                    <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-40" />
+                    <h3 className="text-xl font-bold text-foreground mb-2">No results found</h3>
+                    <p className="text-muted-foreground mb-6">
+                      {`No freelancers match "${debouncedSearch || debouncedLocation}". Try broadening your search.`}
+                    </p>
+                    <Button variant="outline" onClick={() => { setSearchInput(""); setLocationInput(""); setActiveFilters({}); }}>
+                      Clear all filters
+                    </Button>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
