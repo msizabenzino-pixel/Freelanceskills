@@ -485,16 +485,20 @@ export async function registerRoutes(
     try {
       const userId = (req.session as any).userId;
       const validatedData = insertProfileSchema.parse(req.body);
-      
-      const profile = await storage.createProfile({
-        ...validatedData,
-        userId,
-      });
-      
-      res.status(201).json(profile);
+
+      // Upsert: update if a profile already exists for this user, create otherwise.
+      const existing = await storage.getProfile(userId);
+      let profile: any;
+      if (existing) {
+        profile = await storage.updateProfile(userId, validatedData);
+        res.status(200).json(profile);
+      } else {
+        profile = await storage.createProfile({ ...validatedData, userId });
+        res.status(201).json(profile);
+      }
     } catch (error) {
-      console.error("Error creating profile:", error);
-      res.status(500).json({ message: "Failed to create profile" });
+      console.error("Error creating/updating profile:", error);
+      res.status(500).json({ message: "Failed to save profile" });
     }
   });
 

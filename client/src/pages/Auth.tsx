@@ -18,6 +18,7 @@ import {
   registerWithEmail,
   sendFirebaseResetEmail,
 } from "@/lib/firebaseAuth";
+import { syncSessionNow } from "@/hooks/use-auth";
 import { isFirebaseConfigured, trackFirebaseEvent } from "@/lib/firebase";
 import { upsertJobApplicationProfile } from "@/lib/firebaseProfiles";
 import {
@@ -107,6 +108,9 @@ export default function Auth() {
 
   const completeAuthSuccess = async (user: { id: string; email: string | null }) => {
     await continuePendingPlanIfNeeded(user.id);
+    // Sync the server session BEFORE navigating so the first API call on the
+    // next page is never a 401. This closes the Firebase → Express session gap.
+    await syncSessionNow();
     const destination = resolvePostAuthDestination();
     toast({ title: "Signed in", description: `Welcome, ${user.email || "user"}` });
     navigate(destination);
@@ -166,6 +170,8 @@ export default function Auth() {
           : "Welcome! You can now post jobs and find talent.",
       });
 
+      // Sync session BEFORE navigating so /cv-upload's first API call is never 401
+      await syncSessionNow();
       // Freelancers → AI profile builder; clients → post a job
       navigate(isFreelancer ? "/cv-upload?welcome=1" : "/post-job");
     },

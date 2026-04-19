@@ -132,7 +132,13 @@ export async function registerWithEmail(data: {
       .join(" ")
       .trim();
     if (displayName) {
-      await updateProfile(credential.user, { displayName });
+      try {
+        await updateProfile(credential.user, { displayName });
+      } catch (profileErr) {
+        // Non-fatal — the Firebase account is already created.
+        // Display name can be updated later in the profile wizard.
+        console.warn("[registerWithEmail] updateProfile non-fatal:", profileErr);
+      }
     }
     return mapFirebaseUser(credential.user);
   } catch (error) {

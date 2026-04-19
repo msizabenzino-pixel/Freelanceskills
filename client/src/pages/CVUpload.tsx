@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth, syncSessionNow } from "@/hooks/use-auth";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -177,12 +177,18 @@ export default function CVUpload() {
   // ── Parse mutation
   const parseMutation = useMutation({
     mutationFn: async (text: string) => {
-      const res = await fetch("/api/cv/parse", {
+      const doFetch = () => fetch("/api/cv/parse", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({ cvText: text }),
       });
+      let res = await doFetch();
+      // Auto-recover from session expiry: re-sync and retry once
+      if (res.status === 401) {
+        await syncSessionNow();
+        res = await doFetch();
+      }
       if (res.status === 401) {
         throw new Error("401:Please sign in before parsing your CV.");
       }
@@ -231,11 +237,17 @@ export default function CVUpload() {
   // ── File upload mutation (PDF/DOCX → server parsing → profile data)
   const uploadFileMutation = useMutation({
     mutationFn: async (fd: globalThis.FormData) => {
-      const res = await fetch("/api/cv/upload", {
+      const doUpload = () => fetch("/api/cv/upload", {
         method: "POST",
         credentials: "include",
-        body: fd, // no Content-Type header — browser sets multipart boundary
+        body: fd,
       });
+      let res = await doUpload();
+      // Auto-recover from session expiry: re-sync and retry once
+      if (res.status === 401) {
+        await syncSessionNow();
+        res = await doUpload();
+      }
       if (res.status === 401) throw new Error("401:Please sign in before uploading your CV.");
       if (!res.ok) {
         const body = await res.json().catch(() => ({})) as any;
@@ -307,8 +319,25 @@ export default function CVUpload() {
       return res.json();
     },
     onSuccess: async () => {
-      // 1 — Publish profile (flip publishedProfile flag)
-      await fetch("/api/profile/publish", { method: "POST", credentials: "include" }).catch(() => {});
+      // 1 — Publish profile with retry: if we get a 401, re-sync session and try once more
+      const tryPublish = async () => {
+        const r = await fetch("/api/profile/publish", { method: "POST", credentials: "include" });
+        if (r.status === 401) {
+          await syncSessionNow();
+          return fetch("/api/profile/publish", { method: "POST", credentials: "include" });
+        }
+        return r;
+      };
+      const pubRes = await tryPublish().catch(() => null);
+      if (!pubRes?.ok) {
+        // Publish failed — show a specific error but don't block the user
+        toast({
+          variant: "destructive",
+          title: "Profile saved but not published",
+          description: "Your profile was saved. Click Go Live again or go to Dashboard to publish.",
+        });
+        return;
+      }
       // 2 — Award 50 points for completing profile
       const pts = await earnPoints("profile_complete", user?.id ?? "");
       if (pts?.success) {
@@ -319,18 +348,22 @@ export default function CVUpload() {
       }
       // 3 — Success nav
       toast({
-        title: "Profile live!",
-        description: "Your profile is now visible to employers on FreelanceSkills.",
+        title: "Profile is live! 🎉",
+        description: "Employers can now see your profile on FreelanceSkills.",
       });
       setLocation("/dashboard");
     },
     onError: (error: Error) => {
       const is401 = error.message.startsWith("401:");
+      if (is401) {
+        // Session expired mid-flow — re-sync and tell the user exactly what happened
+        syncSessionNow().catch(() => {});
+      }
       toast({
         variant: "destructive",
-        title: is401 ? "Session expired" : "Could not publish profile",
+        title: is401 ? "Session expired — click Go Live again" : "Could not save profile",
         description: is401
-          ? "Please sign in again and then click Go Live."
+          ? "Your session refreshed automatically. Click Go Live one more time."
           : error.message,
       });
     },

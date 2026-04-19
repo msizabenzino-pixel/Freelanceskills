@@ -5,21 +5,33 @@ import { firebaseAuth, isFirebaseConfigured } from "@/lib/firebase";
 import { logoutFirebaseUser, mapFirebaseUserOrNull } from "@/lib/firebaseAuth";
 
 /**
- * Synchronises the Firebase auth state into the Express session.
- * This bridges the Firebase client auth ↔ server isAuthenticated middleware.
- * Called once per auth state change (not on every render).
+ * Synchronises a Firebase user's ID token into the Express session.
+ * Exported so Auth.tsx can call it immediately after login/register,
+ * before navigation — eliminating the race condition that causes 401s.
  */
-async function syncFirebaseSession(firebaseUser: import("firebase/auth").User): Promise<void> {
+export async function syncSessionNow(): Promise<void> {
+  const fbUser = firebaseAuth?.currentUser;
+  if (!fbUser) return;
   try {
-    const idToken = await firebaseUser.getIdToken();
-    await fetch("/api/auth/sync-session", {
+    const idToken = await fbUser.getIdToken(/* forceRefresh= */ false);
+    const res = await fetch("/api/auth/sync-session", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ uid: firebaseUser.uid, idToken }),
+      body: JSON.stringify({ uid: fbUser.uid, idToken }),
     });
+    if (!res.ok) {
+      // Force-refresh the token once and retry — handles token-expiry edge cases
+      const freshToken = await fbUser.getIdToken(true);
+      await fetch("/api/auth/sync-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ uid: fbUser.uid, idToken: freshToken }),
+      });
+    }
   } catch (err) {
-    console.warn("[use-auth] Session sync failed (non-critical):", err);
+    console.warn("[syncSessionNow] non-fatal:", err);
   }
 }
 
@@ -50,10 +62,10 @@ export function useAuth() {
     const unsubscribe = onAuthStateChanged(firebaseAuth, async (firebaseUser) => {
       if (firebaseUser) {
         setUser(mapFirebaseUserOrNull(firebaseUser));
-        // Only sync if this is a new user (not repeated renders)
+        // Always sync on first detection of a new UID (covers app reload / tab re-focus)
         if (lastSyncedUid.current !== firebaseUser.uid) {
           lastSyncedUid.current = firebaseUser.uid;
-          await syncFirebaseSession(firebaseUser);
+          await syncSessionNow();
         }
       } else {
         setUser(null);
