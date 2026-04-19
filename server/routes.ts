@@ -565,30 +565,51 @@ export async function registerRoutes(
         }
       );
 
-      const enriched = freelancers.map((f) => ({
-        id: f.id,
-        userId: f.userId,
-        name: f.title || "FreelanceSkills Pro",
-        title: f.bio?.substring(0, 80) || "Verified Freelancer",
-        skills: f.skills || [],
-        location: f.location || "South Africa",
-        hourlyRateCents: f.hourlyRate,
-        hourlyRateFormatted: f.hourlyRate
-          ? `R${(f.hourlyRate / 100).toFixed(0)}/hr`
-          : null,
-        rating: f.rating ? f.rating / 100 : null,
-        completedJobs: f.completedJobs,
-        isPro: f.isPro,
-        verified: f.kycStatus === "verified",
-        kycStatus: f.kycStatus,
-        country: f.country || "ZA",
-        avatarInitials: (f.title || "FS")
+      // Batch-fetch user names for all returned profiles
+      const { db: _db } = await import("./db");
+      const { users: usersTable } = await import("../shared/models/auth");
+      const { inArray } = await import("drizzle-orm");
+      const userIds = freelancers.map((f) => f.userId);
+      const userRows = userIds.length
+        ? await _db.select({ id: usersTable.id, firstName: usersTable.firstName, lastName: usersTable.lastName })
+            .from(usersTable)
+            .where(inArray(usersTable.id, userIds))
+        : [];
+      const userMap = Object.fromEntries(userRows.map((u) => [u.id, u]));
+
+      const enriched = freelancers.map((f) => {
+        const user = userMap[f.userId];
+        const fullName = user?.firstName && user?.lastName
+          ? `${user.firstName} ${user.lastName}`
+          : user?.firstName || null;
+        const displayName = fullName || f.title || "FreelanceSkills Pro";
+        const initials = displayName
           .split(" ")
-          .map((w) => w[0])
+          .map((w: string) => w[0])
           .slice(0, 2)
           .join("")
-          .toUpperCase(),
-      }));
+          .toUpperCase();
+        return {
+          id: f.id,
+          userId: f.userId,
+          name: displayName,
+          title: f.title || "Verified Freelancer",
+          bio: f.bio?.substring(0, 100) || "",
+          skills: f.skills || [],
+          location: f.location || "South Africa",
+          hourlyRateCents: f.hourlyRate,
+          hourlyRateFormatted: f.hourlyRate
+            ? `R${(f.hourlyRate / 100).toFixed(0)}/hr`
+            : null,
+          rating: f.rating ? f.rating / 100 : null,
+          completedJobs: f.completedJobs,
+          isPro: f.isPro,
+          verified: f.kycStatus === "verified",
+          kycStatus: f.kycStatus,
+          country: f.country || "ZA",
+          avatarInitials: initials || "FS",
+        };
+      });
 
       res.json({ freelancers: enriched, total: enriched.length });
     } catch (error) {
