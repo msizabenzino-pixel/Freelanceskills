@@ -278,9 +278,30 @@ export function registerAuthRoutes(app: Express): void {
       }
 
       const data = await verifyRes.json() as any;
-      const verifiedUid: string | undefined = data?.users?.[0]?.localId;
+      const firebaseUser = data?.users?.[0];
+      const verifiedUid: string | undefined = firebaseUser?.localId;
       if (!verifiedUid || verifiedUid !== uid) {
         return res.status(401).json({ success: false, message: "UID mismatch — token not valid for this user" });
+      }
+
+      // ── CRITICAL: upsert a users table row for this Firebase UID ────────────
+      // profiles.user_id has a FK → users.id. Without this upsert, every
+      // Firebase user's first profile save crashes with a FK constraint error.
+      try {
+        const displayName: string = firebaseUser.displayName || "";
+        const spaceIdx = displayName.indexOf(" ");
+        const firstName = spaceIdx > 0 ? displayName.slice(0, spaceIdx) : displayName || null;
+        const lastName = spaceIdx > 0 ? displayName.slice(spaceIdx + 1) : null;
+        await authStorage.upsertUser({
+          id: uid,
+          email: firebaseUser.email || null,
+          firstName,
+          lastName,
+          profileImageUrl: firebaseUser.photoUrl || null,
+        });
+      } catch (upsertErr) {
+        // Non-fatal — session still works, but log so we can debug if needed
+        console.warn("[sync-session] users upsert non-fatal:", upsertErr);
       }
 
       // Set the server session so isAuthenticated passes for this user.

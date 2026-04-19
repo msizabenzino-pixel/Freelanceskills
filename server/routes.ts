@@ -2063,6 +2063,11 @@ User: ${message}`;
       if (!title || !String(title).trim()) {
         return res.status(400).json({ success: false, message: "Project title is required." });
       }
+      // Ensure a profile row exists before trying to update it (avoids silent data loss)
+      const existing = await storage.getProfile(userId);
+      if (!existing) {
+        await storage.createProfile({ userId, userType: "freelancer", bio: null, title: null, skills: [], hourlyRate: 0, location: null, isPro: false, publishedProfile: false });
+      }
       const profile = await storage.savePortfolioProject(userId, {
         title: String(title).trim(),
         description: String(description || "").trim(),
