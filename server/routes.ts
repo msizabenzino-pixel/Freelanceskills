@@ -2009,14 +2009,51 @@ User: ${message}`;
         profile = await storage.createProfile({ ...saveData, userId });
       }
 
-      log(`[go-live] User ${userId} profile saved & published atomically`, "profile");
+      console.log(`[go-live] User ${userId} profile saved & published atomically`);
       awardPoints(userId, "profile_complete");
       res.json({ success: true, message: "Your profile is now LIVE and visible to employers! 🎉", profile });
     } catch (err: any) {
       console.error("[go-live] Error:", err);
+      const userId = (req.session as any)?.userId;
+      const msg = String(err?.message || err || "");
+      if (userId && /foreign key constraint/i.test(msg)) {
+        try {
+          const fallback = await storage.getProfile(userId);
+          if (fallback) {
+            const profile = await storage.updateProfile(userId, {
+              ...saveDataFromRequest(req.body),
+              publishedProfile: true,
+              publishedAt: new Date(),
+              userType: "freelancer",
+            } as any);
+            if (profile) {
+              console.log(`[go-live] Recovered publish for ${userId} after FK error`);
+              awardPoints(userId, "profile_complete");
+              return res.json({ success: true, message: "Your profile is now LIVE and visible to employers! 🎉", profile });
+            }
+          }
+        } catch (recoverErr) {
+          console.error("[go-live] Recovery failed:", recoverErr);
+        }
+      }
       res.status(500).json({ success: false, message: err?.message || "Could not save and publish profile. Please try again." });
     }
   });
+
+  function saveDataFromRequest(body: any) {
+    const { bio, title, skills, hourlyRate, location, isPro } = body || {};
+    return {
+      bio: bio || null,
+      title: title || null,
+      skills: Array.isArray(skills) ? skills : [],
+      hourlyRate: (typeof hourlyRate === "number" && hourlyRate > 0) ? hourlyRate : 0,
+      location: location || null,
+      isPro: Boolean(isPro),
+      publishedProfile: true,
+      publishedAt: new Date(),
+      userType: "freelancer",
+    };
+  }
 
   app.post("/api/profile/projects", isAuthenticated, async (req: any, res) => {
     try {
