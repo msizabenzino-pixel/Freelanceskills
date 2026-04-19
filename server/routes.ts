@@ -7858,7 +7858,7 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
 
       res.json({ balance, transactions, redemptions });
     } catch (error) {
-      log("Rewards fetch error: " + String(error), "rewards");
+      console.error("Rewards fetch error:", error);
       res.json({ balance: 0, transactions: [], redemptions: [] });
     }
   });
@@ -7892,10 +7892,10 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
         balanceAfter: newBalance,
       }).returning();
 
-      log(`[rewards] +${actionConfig.points} pts for ${userId} (${action}) → balance: ${newBalance}`, "rewards");
+      console.log(`[rewards] +${actionConfig.points} pts for ${userId} (${action}) → balance: ${newBalance}`);
       res.json({ transaction: tx, balance: newBalance, pointsEarned: actionConfig.points });
     } catch (error) {
-      log("Rewards earn error: " + String(error), "rewards");
+      console.error("Rewards earn error:", error);
       res.status(500).json({ error: "Failed to record points" });
     }
   });
@@ -7937,7 +7937,7 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
 
       res.json({ redemption, balance: newBalance });
     } catch (error) {
-      log("Rewards redeem error: " + String(error), "rewards");
+      console.error("Rewards redeem error:", error);
       res.status(500).json({ error: "Failed to redeem reward" });
     }
   });
