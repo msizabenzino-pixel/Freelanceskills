@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Loader2, Shield, Zap, Globe } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Loader2, Shield, Zap, Globe, Briefcase, Users } from "lucide-react";
 import {
   loginWithEmail,
   loginWithGoogle,
@@ -131,14 +131,6 @@ export default function Auth() {
   const registerMutation = useMutation({
     mutationFn: registerWithEmail,
     onSuccess: async (user) => {
-      const skillList = formData.skills
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean);
-
-      // Profile write is best-effort — if it fails (e.g. Firestore permissions race
-      // condition right after account creation) we still complete the auth flow.
-      // The user will be directed to the onboarding wizard to fill in their profile.
       try {
         await upsertJobApplicationProfile({
           userId: user.id,
@@ -146,18 +138,15 @@ export default function Auth() {
           firstName: formData.firstName || null,
           lastName: formData.lastName || null,
           userType: formData.userType,
-          phoneNumber: formData.phoneNumber.trim(),
-          country: formData.country.trim(),
-          location: formData.location.trim(),
-          title: formData.title.trim(),
-          bio: formData.bio.trim(),
-          skills: skillList,
-          yearsExperience: Number(formData.yearsExperience),
+          phoneNumber: null,
+          country: null,
+          location: null,
+          title: null,
+          bio: null,
+          skills: [],
+          yearsExperience: 0,
         });
-      } catch (profileErr) {
-        // Non-fatal — profile can be completed in onboarding wizard
-        console.warn("[Auth] Profile save deferred to onboarding:", profileErr);
-      }
+      } catch {}
 
       trackFirebaseEvent("sign_up", { method: "password" }).catch(() => {});
       queryClient.setQueryData(["/api/auth/user"], user);
@@ -170,9 +159,7 @@ export default function Auth() {
           : "Welcome! You can now post jobs and find talent.",
       });
 
-      // Sync session BEFORE navigating so /cv-upload's first API call is never 401
       await syncSessionNow();
-      // Freelancers → AI profile builder; clients → post a job
       navigate(isFreelancer ? "/cv-upload?welcome=1" : "/post-job");
     },
     onError: (error: Error) => {
@@ -215,46 +202,10 @@ export default function Auth() {
   });
 
   const validateSignupProfile = (): boolean => {
-    const isClient = formData.userType === "client";
-
     if (!formData.firstName.trim() || !formData.lastName.trim()) {
       toast({ title: "Missing details", description: "First and last name are required.", variant: "destructive" });
       return false;
     }
-    if (!formData.phoneNumber.trim()) {
-      toast({ title: "Missing details", description: "Phone number is required.", variant: "destructive" });
-      return false;
-    }
-    if (!formData.location.trim()) {
-      toast({ title: "Missing details", description: "Location is required.", variant: "destructive" });
-      return false;
-    }
-
-    if (!isClient) {
-      const skillsCount = formData.skills
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean).length;
-      const years = Number(formData.yearsExperience);
-
-      if (!formData.title.trim()) {
-        toast({ title: "Missing details", description: "Professional title is required.", variant: "destructive" });
-        return false;
-      }
-      if (skillsCount < 2) {
-        toast({ title: "Missing details", description: "Add at least 2 skills (comma separated).", variant: "destructive" });
-        return false;
-      }
-      if (Number.isNaN(years) || years < 0 || years > 50) {
-        toast({ title: "Invalid value", description: "Years of experience must be between 0 and 50.", variant: "destructive" });
-        return false;
-      }
-      if (formData.bio.trim().length < 40) {
-        toast({ title: "Missing details", description: "Bio must be at least 40 characters for job applications.", variant: "destructive" });
-        return false;
-      }
-    }
-
     return true;
   };
 
@@ -284,32 +235,16 @@ export default function Auth() {
     mutationFn: async () => {
       return loginWithGoogle();
     },
-    onSuccess: async (user) => {
-      if (!isLogin) {
-        const skillList = formData.skills
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean);
-        upsertJobApplicationProfile({
-          userId: user.id,
-          email: user.email,
-          firstName: formData.firstName || null,
-          lastName: formData.lastName || null,
-          userType: formData.userType,
-          phoneNumber: formData.phoneNumber.trim(),
-          country: formData.country.trim(),
-          location: formData.location.trim(),
-          title: formData.title.trim(),
-          bio: formData.bio.trim(),
-          skills: skillList,
-          yearsExperience: Number(formData.yearsExperience),
-        }).catch(() => {});
-        trackFirebaseEvent("sign_up", { method: "social" }).catch(() => {});
-      } else {
-        trackFirebaseEvent("login", { method: "social" }).catch(() => {});
-      }
+    onSuccess: async ({ user, isNewUser }) => {
+      trackFirebaseEvent(isNewUser ? "sign_up" : "login", { method: "social" }).catch(() => {});
       queryClient.setQueryData(["/api/auth/user"], user);
-      await completeAuthSuccess(user);
+      await syncSessionNow();
+      if (isNewUser) {
+        toast({ title: "Account created! 🎉", description: "Let's build your profile — takes 60 seconds." });
+        navigate(formData.userType !== "client" ? "/cv-upload?welcome=1" : "/post-job");
+      } else {
+        await completeAuthSuccess(user);
+      }
     },
     onError: (error: Error) => {
       toast({
@@ -325,25 +260,17 @@ export default function Auth() {
       toast({ title: "Firebase not configured", description: "Set VITE_FIREBASE_* environment variables and restart.", variant: "destructive" });
       return;
     }
-    if (!isLogin && !validateSignupProfile()) return;
     try {
-      const user = provider === "facebook" ? await loginWithFacebook() : await loginWithApple();
-      if (!isLogin) {
-        const skillList = formData.skills.split(",").map((s) => s.trim()).filter(Boolean);
-        upsertJobApplicationProfile({
-          userId: user.id, email: user.email,
-          firstName: formData.firstName || null, lastName: formData.lastName || null,
-          userType: formData.userType, phoneNumber: formData.phoneNumber.trim(),
-          country: formData.country.trim(), location: formData.location.trim(),
-          title: formData.title.trim(), bio: formData.bio.trim(),
-          skills: skillList, yearsExperience: Number(formData.yearsExperience),
-        }).catch(() => {});
-        trackFirebaseEvent("sign_up", { method: provider }).catch(() => {});
-      } else {
-        trackFirebaseEvent("login", { method: provider }).catch(() => {});
-      }
+      const { user, isNewUser } = provider === "facebook" ? await loginWithFacebook() : await loginWithApple();
+      trackFirebaseEvent(isNewUser ? "sign_up" : "login", { method: provider }).catch(() => {});
       queryClient.setQueryData(["/api/auth/user"], user);
-      await completeAuthSuccess(user);
+      await syncSessionNow();
+      if (isNewUser) {
+        toast({ title: "Account created! 🎉", description: "Let's build your profile — takes 60 seconds." });
+        navigate(formData.userType !== "client" ? "/cv-upload?welcome=1" : "/post-job");
+      } else {
+        await completeAuthSuccess(user);
+      }
     } catch (error: any) {
       toast({ title: `${provider === "facebook" ? "Facebook" : "Apple"} sign-in failed`, description: getSocialAuthErrorMessage(error), variant: "destructive" });
     }
@@ -522,116 +449,28 @@ export default function Auth() {
                   )}
 
                   {!isLogin && (
-                    <>
-                      <div className="rounded-lg border border-border bg-muted/30 px-3 py-2 text-xs text-card-foreground/75">
-                        Application Profile (required): this information is saved for job applications.
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                          <Label htmlFor="userType" className="text-sm font-medium text-card-foreground">Account Type</Label>
-                          <select
-                            id="userType"
-                            value={formData.userType}
-                            onChange={(e) => setFormData({ ...formData, userType: e.target.value as "client" | "freelancer" | "both" })}
-                            className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                            data-testid="select-user-type"
-                          >
-                            <option value="freelancer">Freelancer</option>
-                            <option value="client">Client</option>
-                            <option value="both">Both</option>
-                          </select>
-                        </div>
-                        <div>
-                          <Label htmlFor="phoneNumber" className="text-sm font-medium text-card-foreground">Phone Number</Label>
-                          <Input
-                            id="phoneNumber"
-                            placeholder="+27..."
-                            value={formData.phoneNumber}
-                            onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-                            required
-                            data-testid="input-phone-number"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                          <Label htmlFor="country" className="text-sm font-medium text-card-foreground">Country</Label>
-                          <Input
-                            id="country"
-                            placeholder="South Africa"
-                            value={formData.country}
-                            onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                            required
-                            data-testid="input-country"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="location" className="text-sm font-medium text-card-foreground">City / Location</Label>
-                          <Input
-                            id="location"
-                            placeholder="Cape Town"
-                            value={formData.location}
-                            onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                            required
-                            data-testid="input-location"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                          <Label htmlFor="title" className="text-sm font-medium text-card-foreground">Professional Title</Label>
-                          <Input
-                            id="title"
-                            placeholder="React Developer"
-                            value={formData.title}
-                            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                            required
-                            data-testid="input-title"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="yearsExperience" className="text-sm font-medium text-card-foreground">Years of Experience</Label>
-                          <Input
-                            id="yearsExperience"
-                            type="number"
-                            min={0}
-                            max={50}
-                            placeholder="3"
-                            value={formData.yearsExperience}
-                            onChange={(e) => setFormData({ ...formData, yearsExperience: e.target.value })}
-                            required
-                            data-testid="input-years-experience"
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="skills" className="text-sm font-medium text-card-foreground">Key Skills</Label>
-                        <Input
-                          id="skills"
-                          placeholder="React, TypeScript, Node.js"
-                          value={formData.skills}
-                          onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
-                          required
-                          data-testid="input-skills"
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="bio" className="text-sm font-medium text-card-foreground">Short Bio</Label>
-                        <textarea
-                          id="bio"
-                          placeholder="Tell clients about your experience, strengths, and what kind of jobs you are looking for."
-                          value={formData.bio}
-                          onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                          className="mt-1 min-h-20 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                          required
-                          data-testid="input-bio"
-                        />
-                      </div>
-                    </>
+                    <div className="grid grid-cols-2 gap-3" data-testid="user-type-selector">
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, userType: "freelancer" })}
+                        className={`p-4 rounded-xl border-2 text-left transition-all ${formData.userType === "freelancer" ? "border-emerald-500 bg-emerald-500/5" : "border-border hover:border-muted-foreground/40"}`}
+                        data-testid="btn-type-freelancer"
+                      >
+                        <Briefcase className={`w-5 h-5 mb-2 ${formData.userType === "freelancer" ? "text-emerald-500" : "text-muted-foreground"}`} />
+                        <div className="font-semibold text-sm text-foreground">I'm a Freelancer</div>
+                        <div className="text-xs text-muted-foreground mt-0.5">I want to find work</div>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, userType: "client" })}
+                        className={`p-4 rounded-xl border-2 text-left transition-all ${formData.userType === "client" ? "border-blue-500 bg-blue-500/5" : "border-border hover:border-muted-foreground/40"}`}
+                        data-testid="btn-type-client"
+                      >
+                        <Users className={`w-5 h-5 mb-2 ${formData.userType === "client" ? "text-blue-500" : "text-muted-foreground"}`} />
+                        <div className="font-semibold text-sm text-foreground">I'm Hiring</div>
+                        <div className="text-xs text-muted-foreground mt-0.5">I want to find talent</div>
+                      </button>
+                    </div>
                   )}
 
                   <div>

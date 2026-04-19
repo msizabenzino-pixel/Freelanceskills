@@ -117,13 +117,22 @@ export default function Login() {
     }
   };
 
+  const handleSocialAuthSuccess = ({ user, isNewUser }: { user: any; isNewUser: boolean }) => {
+    if (isNewUser) {
+      toast({ title: "Welcome to FreelanceSkills! 🎉", description: "Let's build your profile — takes 60 seconds." });
+      navigate("/cv-upload?welcome=1");
+    } else {
+      toast({ title: "Welcome back!", description: `Signed in as ${user?.email || "user"}.` });
+      handlePostAuthRedirect();
+    }
+  };
+
   const handleGoogleLogin = async () => {
     setAuthError(null);
     setIsGoogleLoading(true);
     try {
-      await loginWithGoogle();
-      toast({ title: "Welcome back!", description: "Signed in with Google." });
-      handlePostAuthRedirect();
+      const result = await loginWithGoogle();
+      handleSocialAuthSuccess(result);
     } catch (err: any) {
       const message =
         err?.message?.includes("popup-closed-by-user")
@@ -140,9 +149,8 @@ export default function Login() {
     setAuthError(null);
     setIsFacebookLoading(true);
     try {
-      await loginWithFacebook();
-      toast({ title: "Welcome back!", description: "Signed in with Facebook." });
-      handlePostAuthRedirect();
+      const result = await loginWithFacebook();
+      handleSocialAuthSuccess(result);
     } catch (err: any) {
       const message = err?.message?.includes("popup-closed-by-user")
         ? "Sign-in was cancelled. Please try again."
@@ -158,9 +166,8 @@ export default function Login() {
     setAuthError(null);
     setIsAppleLoading(true);
     try {
-      await loginWithApple();
-      toast({ title: "Welcome back!", description: "Signed in with Apple." });
-      handlePostAuthRedirect();
+      const result = await loginWithApple();
+      handleSocialAuthSuccess(result);
     } catch (err: any) {
       const message = err?.message?.includes("popup-closed-by-user")
         ? "Sign-in was cancelled. Please try again."

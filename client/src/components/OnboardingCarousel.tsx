@@ -26,11 +26,16 @@ const slides = [
   },
 ];
 
+const AUTH_PATHS = ["/login", "/auth", "/cv-upload", "/onboarding", "/freelancer-onboarding", "/profile-builder", "/signup"];
+
 export function OnboardingCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    const path = window.location.pathname.toLowerCase();
+    const isAuthPage = AUTH_PATHS.some((p) => path.startsWith(p));
+    if (isAuthPage) return;
     const completed = localStorage.getItem("onboarding_completed");
     if (!completed) {
       setIsVisible(true);
