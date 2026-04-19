@@ -1911,10 +1911,12 @@ User: ${message}`;
     }
   });
 
-  // POST /api/profile/publish — sets publishedProfile=true for the logged-in user's profile.
+  // POST /api/profile/publish — sets publishedProfile=true. UPSERT: creates minimal profile if none exists.
   app.post("/api/profile/publish", isAuthenticated, async (req: any, res) => {
     try {
       const userId = (req.session as any).userId;
+      if (!userId) return res.status(401).json({ success: false, message: "Session expired — please sign in again." });
+
       const { db } = await import("./db");
       const { profiles } = await import("../shared/models/profiles");
       const { eq } = await import("drizzle-orm");
@@ -1926,15 +1928,61 @@ User: ${message}`;
         .returning();
 
       if (!updated) {
-        return res.status(404).json({ success: false, message: "Profile not found. Create your profile first." });
+        // No profile row yet — insert a minimal one and mark it published immediately.
+        const [created] = await db
+          .insert(profiles)
+          .values({ userId, publishedProfile: true, publishedAt: new Date(), userType: "freelancer" })
+          .onConflictDoUpdate({
+            target: profiles.userId,
+            set: { publishedProfile: true, publishedAt: new Date() },
+          })
+          .returning();
+        log(`[profile/publish] Created+published profile for ${userId}`, "profile");
+        return res.json({ success: true, message: "Profile is now live and visible to employers!", profile: created });
       }
 
-      // Award points for first-time publish (if not already published)
       log(`[profile/publish] User ${userId} published profile`, "profile");
       res.json({ success: true, message: "Profile is now live and visible to employers!", profile: updated });
     } catch (err) {
       console.error("[profile/publish] Error:", err);
       res.status(500).json({ success: false, message: "Could not publish profile. Please try again." });
+    }
+  });
+
+  // POST /api/profile/go-live — atomic upsert + publish in one shot (eliminates the two-step race).
+  app.post("/api/profile/go-live", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      if (!userId) return res.status(401).json({ success: false, message: "Session expired — please sign in again." });
+
+      const { bio, title, skills, hourlyRate, location, isPro } = req.body;
+
+      const saveData: any = {
+        bio: bio || null,
+        title: title || null,
+        skills: Array.isArray(skills) ? skills : [],
+        hourlyRate: (typeof hourlyRate === "number" && hourlyRate > 0) ? hourlyRate : 0,
+        location: location || null,
+        isPro: Boolean(isPro),
+        publishedProfile: true,
+        publishedAt: new Date(),
+        userType: "freelancer",
+      };
+
+      const existing = await storage.getProfile(userId);
+      let profile: any;
+
+      if (existing) {
+        profile = await storage.updateProfile(userId, saveData);
+      } else {
+        profile = await storage.createProfile({ ...saveData, userId });
+      }
+
+      log(`[go-live] User ${userId} profile saved & published atomically`, "profile");
+      res.json({ success: true, message: "Your profile is now LIVE and visible to employers! 🎉", profile });
+    } catch (err: any) {
+      console.error("[go-live] Error:", err);
+      res.status(500).json({ success: false, message: err?.message || "Could not save and publish profile. Please try again." });
     }
   });
 

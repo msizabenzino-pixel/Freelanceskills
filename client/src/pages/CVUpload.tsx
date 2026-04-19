@@ -112,6 +112,43 @@ const defaultForm: ProfileFormData = {
   tagline: "",
 };
 
+function fireConfetti() {
+  const canvas = document.createElement("canvas");
+  canvas.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999";
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext("2d")!;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const pieces = Array.from({ length: 160 }, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height - canvas.height,
+    w: 8 + Math.random() * 12,
+    h: 5 + Math.random() * 8,
+    vx: (Math.random() - 0.5) * 3,
+    vy: 2 + Math.random() * 4,
+    color: ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899"][Math.floor(Math.random() * 6)],
+    angle: Math.random() * 360,
+    spin: (Math.random() - 0.5) * 8,
+  }));
+  let frame = 0;
+  const animate = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach((p) => {
+      p.x += p.vx; p.y += p.vy; p.angle += p.spin;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate((p.angle * Math.PI) / 180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    });
+    frame++;
+    if (frame < 120) requestAnimationFrame(animate);
+    else { canvas.remove(); }
+  };
+  animate();
+}
+
 function parseResponse(data: any, prev: ProfileFormData): ProfileFormData {
   return {
     ...prev,
@@ -199,6 +236,7 @@ export default function CVUpload() {
         title: msg.includes("Could not read this file") ? "Upload failed" : "AI extraction unavailable",
         description: msg.includes("Could not read this file") ? "We couldn’t read this file. Try a clean PDF or paste the text below." : "Fill in your details below — it only takes 2 minutes.",
       });
+      setShowRawPaste(true);
       setPhase("upload");
     },
   });
@@ -216,46 +254,68 @@ export default function CVUpload() {
       }
     },
     onSuccess: (result) => {
-      setFormData((prev) => parseResponse(result.data || {}, prev));
-      toast({ title: result.success ? "CV parsed!" : "Partial extraction", description: result.message || `Extracted ${result.extractedLength ?? "?"} characters.` });
-      setPhase("review");
+      if (result.success && result.data) {
+        setFormData((prev) => parseResponse(result.data, prev));
+        toast({ title: "CV analysed! ✨", description: `Extracted ${result.extractedLength ?? "?"} characters of experience.` });
+        setPhase("review");
+      } else if (result.extractedText && result.extractedText.length > 30) {
+        toast({ title: "Running AI analysis...", description: "Got your text — extracting profile details now." });
+        parseMutation.mutate(result.extractedText);
+      } else {
+        toast({ title: "Partial extraction", description: result.message || "We extracted limited data. Fill in the details below." });
+        setPhase("review");
+      }
     },
     onError: (error: Error) => {
-      toast({ variant: "destructive", title: "Upload failed", description: error.message || "We couldn’t read this file. Try a clean PDF or paste the text below." });
-      setPhase("upload");
+      const errMsg = error.message || '';
+      const isReadErr = errMsg.includes('Could not read') || errMsg.includes('empty') || errMsg.includes('image-only');
+      toast({
+        variant: 'destructive',
+        title: isReadErr ? 'Couldn’t read that file' : 'Upload failed',
+        description: isReadErr
+          ? 'This file may be image-based. A paste box has opened — paste your CV text to continue.'
+          : 'Something went wrong. Paste your CV text below and our AI will still extract everything.',
+      });
+      setShowRawPaste(true);
+      setPhase('upload');
     },
   });
 
   const profileMutation = useMutation({
     mutationFn: async (data: ProfileFormData) => {
-      if (!data.firstName || !data.lastName || !data.title || !data.category) {
-        throw new Error("Please fill in your Name, Title and Category before going live.");
-      }
-      return apiJson<any>("/api/profile", {
+      if (!data.title) throw new Error("Please add your professional title before going live.");
+      await syncSessionNow();
+      return apiJson<any>("/api/profile/go-live", {
         method: "POST",
         json: {
           bio: data.bio,
           title: data.title,
           skills: data.skills,
-          hourlyRate: data.hourlyRate ? parseInt(data.hourlyRate) * 100 : 0,
+          hourlyRate: data.hourlyRate ? Math.round(parseFloat(data.hourlyRate) * 100) : 0,
           location: data.location,
           isPro: false,
         },
       });
     },
-    onSuccess: async () => {
-      const pubRes = await apiJson<any>("/api/profile/publish", { method: "POST" });
-      if (!pubRes?.success) {
-        toast({ variant: "destructive", title: "Profile saved but not published", description: pubRes?.message || "Your profile was saved. Click Go Live again or go to Dashboard to publish." });
-        return;
-      }
-      const pts = await earnPoints("profile_complete", user?.id ?? "");
-      if (pts?.success) toast({ title: `+${pts.points} points earned! 🎉`, description: "You earned points for completing your profile." });
-      toast({ title: "Your profile is now LIVE and visible to employers!", description: "Employers can now see your profile on FreelanceSkills." });
-      setLocation("/dashboard");
+    onSuccess: async (res) => {
+      fireConfetti();
+      try {
+        const pts = await earnPoints("profile_complete", user?.id ?? "");
+        if (pts?.success) {
+          toast({ title: `+${pts.points} points earned!`, description: "Keep building your profile to unlock more rewards." });
+        }
+      } catch {}
+      toast({ title: "Your profile is now LIVE! 🎉", description: res?.message || "Employers can now find and hire you on FreelanceSkills." });
+      setTimeout(() => setLocation("/dashboard"), 1800);
     },
     onError: (error: Error) => {
-      toast({ variant: "destructive", title: "Could not save profile", description: error.message });
+      const msg = error.message || "";
+      if (msg.includes("401") || msg.includes("Session")) {
+        toast({ variant: "destructive", title: "Session expired", description: "Signing you back in — please tap Go Live again in a moment." });
+        syncSessionNow();
+      } else {
+        toast({ variant: "destructive", title: "Could not publish profile", description: msg || "Please check your details and try again." });
+      }
     },
   });
 
@@ -327,7 +387,7 @@ export default function CVUpload() {
                 ))}
               </div>
               <div className="grid gap-4 md:grid-cols-2 text-left">
-                <Card className="bg-slate-950/40 border-white/10"><CardContent className="p-5 space-y-3"><Label className="text-white/80">Paste CV text</Label><Textarea value={cvText} onChange={(e) => setCvText(e.target.value)} className="min-h-[160px] bg-white/5 border-white/10 text-white" placeholder="Paste CV text here..." data-testid="textarea-cv-paste" /><button onClick={() => setShowRawPaste((v) => !v)} className="text-xs text-emerald-300" data-testid="btn-toggle-raw-paste">{showRawPaste ? "Hide" : "Show"} manual mode</button></CardContent></Card>
+                <Card className={`bg-slate-950/40 border-white/10 transition-all duration-300 ${showRawPaste ? "ring-2 ring-emerald-400 shadow-lg shadow-emerald-400/20" : ""}`}><CardContent className="p-5 space-y-3">{showRawPaste && <div className="flex items-center gap-2 text-xs text-emerald-400 font-semibold mb-1"><Sparkles className="w-3 h-3" /> Paste your CV here — AI will extract everything</div>}<Label className="text-white/80">Paste CV text</Label><Textarea value={cvText} onChange={(e) => setCvText(e.target.value)} className="min-h-[160px] bg-white/5 border-white/10 text-white" placeholder="Paste CV text here..." data-testid="textarea-cv-paste" /><button onClick={() => setShowRawPaste((v) => !v)} className="text-xs text-emerald-300" data-testid="btn-toggle-raw-paste">{showRawPaste ? "Hide" : "Show"} manual mode</button></CardContent></Card>
                 <Card className="bg-slate-950/40 border-white/10"><CardContent className="p-5 space-y-4"><div onDragOver={(e) => { e.preventDefault(); setDragOver(true); }} onDragLeave={() => setDragOver(false)} onDrop={(e) => { e.preventDefault(); setDragOver(false); const file = e.dataTransfer.files?.[0]; if (file) handleFile(file); }} className={`rounded-2xl border-2 border-dashed p-8 text-center ${dragOver ? "border-emerald-400 bg-emerald-500/10" : "border-white/20 bg-white/5"}`}><Upload className="w-10 h-10 mx-auto mb-3 text-emerald-400" /><div className="font-semibold">Drop PDF/DOCX here</div><div className="text-xs text-white/60">or choose a file</div></div><Input ref={fileInputRef} type="file" accept=".pdf,.doc,.docx,.txt" className="hidden" onChange={(e) => { const file = e.target.files?.[0]; if (file) handleFile(file); }} data-testid="input-cv-file" /><div className="flex gap-2"><Button onClick={() => fileInputRef.current?.click()} className="flex-1" data-testid="btn-upload-cv">Upload CV</Button><Button variant="outline" onClick={loadSampleCV} className="flex-1" data-testid="btn-load-sample">Try sample</Button></div></CardContent></Card>
               </div>
               <div className="mt-6 flex gap-3 justify-center"><Button size="lg" className="bg-emerald-600 hover:bg-emerald-500 text-white" onClick={startParsing} disabled={!cvText.trim() && !uploadedFile} data-testid="btn-extract-ai"><Sparkles className="w-5 h-5" />Extract Profile with AI <ChevronRight className="w-5 h-5" /></Button><Button size="lg" variant="outline" onClick={() => { setManualMode(true); setPhase("review"); }} data-testid="btn-manual-mode">Paste / manual mode</Button></div>
@@ -441,7 +501,7 @@ export default function CVUpload() {
                 )}
 
                 {activeTab === "preview" && (
-                  <div className="space-y-6" data-testid="tab-content-preview"><Card className="border-border"><CardContent className="p-6"><div className="flex items-center justify-between mb-3"><p className="text-sm font-bold text-foreground">Preview Only — Not published</p><Badge variant="outline">{completionScore}% ready</Badge></div><div className="space-y-2 text-sm"><p><strong>{formData.firstName || "Your"} {formData.lastName || "Name"}</strong></p><p>{formData.title || "Your Title"}</p><p>{formData.bio || "Your bio will appear here."}</p><Progress value={completionScore} className="h-2" /></div></CardContent></Card><Card className="border-border"><CardContent className="p-5"><p className="text-sm font-semibold mb-2">What’s missing</p><div className="space-y-2 text-xs text-muted-foreground">{completionTips.slice(0, 5).map((tip) => <div key={tip}>• {tip}</div>)}</div></CardContent></Card><div className="flex gap-3"><Button variant="outline" onClick={() => setActiveTab("rates")} className="flex-1" data-testid="btn-back-rates">← Rates</Button><Button className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white" onClick={saveProfile} disabled={profileMutation.isPending} data-testid="btn-go-live">{profileMutation.isPending ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</> : publishLabel}</Button></div></div>
+                  <div className="space-y-6" data-testid="tab-content-preview"><Card className="border-border"><CardContent className="p-6"><div className="flex items-center justify-between mb-3"><p className="text-sm font-bold text-amber-500 flex items-center gap-1.5"><Eye className="w-4 h-4" /> PREVIEW ONLY — Not published yet</p><Badge variant="outline">{completionScore}% ready</Badge></div><div className="space-y-2 text-sm"><p><strong>{formData.firstName || "Your"} {formData.lastName || "Name"}</strong></p><p>{formData.title || "Your Title"}</p><p>{formData.bio || "Your bio will appear here."}</p><Progress value={completionScore} className="h-2" /></div></CardContent></Card><Card className="border-border"><CardContent className="p-5"><p className="text-sm font-semibold mb-2">What’s missing</p><div className="space-y-2 text-xs text-muted-foreground">{completionTips.slice(0, 5).map((tip) => <div key={tip}>• {tip}</div>)}</div></CardContent></Card><div className="flex gap-3"><Button variant="outline" onClick={() => setActiveTab("rates")} className="flex-1" data-testid="btn-back-rates">← Rates</Button><Button className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white" onClick={saveProfile} disabled={profileMutation.isPending || completionScore < 70} title={completionScore < 70 ? `Reach 70% profile strength to go live (currently ${completionScore}%)` : ""} data-testid="btn-go-live">{profileMutation.isPending ? <><Loader2 className="w-4 h-4 animate-spin" /> Publishing...</> : completionScore < 70 ? `Go Live (${completionScore}% — need 70%)` : publishLabel}</Button></div></div>
                 )}
               </div>
 
