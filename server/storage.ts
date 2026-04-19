@@ -224,11 +224,19 @@ class DatabaseStorage implements IStorage {
 
   async savePortfolioProject(userId: string, project: { title: string; description: string; link: string; technologies: string[] }): Promise<Profile | undefined> {
     const profile = await this.getProfile(userId);
-    const existing = Array.isArray((profile as any)?.portfolioProjectsJson) ? (profile as any).portfolioProjectsJson : [];
+    let existing: any[] = [];
+    try {
+      const raw = (profile as any)?.portfolioProjectsJson;
+      if (typeof raw === "string" && raw.trim().startsWith("[")) {
+        existing = JSON.parse(raw);
+      } else if (Array.isArray(raw)) {
+        existing = raw;
+      }
+    } catch { existing = []; }
     const next = [{ id: String(Date.now()), ...project }, ...existing].slice(0, 12);
     const [updated] = await db
       .update(profiles)
-      .set({ portfolioProjectsJson: next as any, updatedAt: new Date() })
+      .set({ portfolioProjectsJson: JSON.stringify(next) as any, updatedAt: new Date() })
       .where(eq(profiles.userId, userId))
       .returning();
     return updated;

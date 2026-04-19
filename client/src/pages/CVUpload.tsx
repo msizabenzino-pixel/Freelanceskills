@@ -202,6 +202,22 @@ export default function CVUpload() {
     }
   }, [toast]);
 
+  useEffect(() => {
+    fetch("/api/profile", { credentials: "include" })
+      .then(r => r.ok ? r.json() : null)
+      .then(profile => {
+        if (!profile) return;
+        try {
+          const raw = profile.portfolioProjectsJson;
+          if (typeof raw === "string" && raw.trim().startsWith("[")) {
+            const parsed: PortfolioProject[] = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length > 0) setPortfolioProjects(parsed);
+          }
+        } catch { /* ignore parse errors */ }
+      })
+      .catch(() => {});
+  }, []);
+
   const handleFile = useCallback((file: File) => {
     setUploadedFile(file.name);
     setUploadedFileRef(file);
