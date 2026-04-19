@@ -35,6 +35,7 @@ export const profiles = pgTable("profiles", {
   deletedAt: timestamp("deleted_at"),
   deletedBy: varchar("deleted_by", { length: 50 }),
   deleteReason: text("delete_reason"),
+  portfolioProjectsJson: text("portfolio_projects_json"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
