@@ -511,6 +511,12 @@ export async function registerRoutes(
   app.post("/api/profile", isAuthenticated, async (req: any, res) => {
     try {
       const userId = (req.session as any).userId;
+      // Guarantee user row before profile insert (prevents FK constraint)
+      try {
+        const { db: _db } = await import("./db");
+        const { users: usersTable } = await import("../shared/models/auth");
+        await _db.insert(usersTable).values({ id: userId }).onConflictDoNothing();
+      } catch (_) {}
       const validatedData = insertProfileSchema.parse(req.body);
 
       // Upsert: update if a profile already exists for this user, create otherwise.
@@ -2006,6 +2012,16 @@ User: ${message}`;
     try {
       const userId = (req.session as any).userId;
       if (!userId) return res.status(401).json({ success: false, message: "Session expired — please sign in again." });
+
+      // CRITICAL: Ensure user row exists BEFORE any profile operation.
+      // profiles.user_id has a FK → users.id. Without this the first profile
+      // save crashes with a FK constraint error for newly-created Firebase users.
+      // onConflictDoNothing preserves any existing email/name — safe to call always.
+      try {
+        const { db: _db } = await import("./db");
+        const { users: usersTable } = await import("../shared/models/auth");
+        await _db.insert(usersTable).values({ id: userId }).onConflictDoNothing();
+      } catch (_) {}
 
       const { bio, title, skills, hourlyRate, location, isPro } = req.body;
 

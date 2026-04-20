@@ -123,9 +123,9 @@ function FreelancerOnboardingContent() {
           isPro: false,
         }),
       });
-      if (!res.ok && res.status !== 401) {
+      if (!res.ok) {
         const body = await res.json().catch(() => ({})) as any;
-        console.warn("[FreelancerOnboarding] go-live sync failed:", body?.message);
+        throw new Error(body?.message || "Profile save failed — please try again.");
       }
     },
     onSuccess: () => {
