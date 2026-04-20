@@ -166,28 +166,12 @@ export async function loginWithGoogle(): Promise<SocialAuthResult> {
   provider.setCustomParameters({ prompt: "select_account" });
   try {
     const credential = await signInWithPopup(firebaseAuth!, provider);
-    const isNewUser = credential.user.metadata.creationTime === credential.user.metadata.lastSignInTime;
     return {
       user: mapFirebaseUser(credential.user),
-      isNewUser,
+      isNewUser: false,
     };
   } catch (error) {
     throw mapSocialAuthError(error, "google");
-  }
-}
-
-export async function loginWithApple(): Promise<SocialAuthResult> {
-  ensureFirebaseReady();
-  const provider = new OAuthProvider("apple.com");
-  try {
-    const credential = await signInWithPopup(firebaseAuth!, provider);
-    const isNewUser = credential.user.metadata.creationTime === credential.user.metadata.lastSignInTime;
-    return {
-      user: mapFirebaseUser(credential.user),
-      isNewUser,
-    };
-  } catch (error) {
-    throw mapSocialAuthError(error, "apple");
   }
 }
 
