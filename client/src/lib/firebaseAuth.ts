@@ -4,7 +4,6 @@ import {
   createUserWithEmailAndPassword,
   OAuthProvider,
   GoogleAuthProvider,
-  FacebookAuthProvider,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -167,28 +166,13 @@ export async function loginWithGoogle(): Promise<SocialAuthResult> {
   provider.setCustomParameters({ prompt: "select_account" });
   try {
     const credential = await signInWithPopup(firebaseAuth!, provider);
+    const isNewUser = credential.user.metadata.creationTime === credential.user.metadata.lastSignInTime;
     return {
       user: mapFirebaseUser(credential.user),
-      isNewUser: credential.additionalUserInfo?.isNewUser ?? false,
+      isNewUser,
     };
   } catch (error) {
     throw mapSocialAuthError(error, "google");
-  }
-}
-
-export async function loginWithFacebook(): Promise<SocialAuthResult> {
-  ensureFirebaseReady();
-  const provider = new FacebookAuthProvider();
-  provider.addScope("email");
-  provider.addScope("public_profile");
-  try {
-    const credential = await signInWithPopup(firebaseAuth!, provider);
-    return {
-      user: mapFirebaseUser(credential.user),
-      isNewUser: credential.additionalUserInfo?.isNewUser ?? false,
-    };
-  } catch (error) {
-    throw mapSocialAuthError(error, "facebook");
   }
 }
 
@@ -197,9 +181,10 @@ export async function loginWithApple(): Promise<SocialAuthResult> {
   const provider = new OAuthProvider("apple.com");
   try {
     const credential = await signInWithPopup(firebaseAuth!, provider);
+    const isNewUser = credential.user.metadata.creationTime === credential.user.metadata.lastSignInTime;
     return {
       user: mapFirebaseUser(credential.user),
-      isNewUser: credential.additionalUserInfo?.isNewUser ?? false,
+      isNewUser,
     };
   } catch (error) {
     throw mapSocialAuthError(error, "apple");

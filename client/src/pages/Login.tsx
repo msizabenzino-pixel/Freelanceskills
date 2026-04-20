@@ -10,7 +10,7 @@ import {
   Download, X, BadgeCheck, Globe, Star, Users, Briefcase, Smartphone
 } from "lucide-react";
 import { Link } from "wouter";
-import { loginWithEmail, loginWithGoogle, loginWithFacebook, loginWithApple } from "@/lib/firebaseAuth";
+import { loginWithEmail, loginWithGoogle } from "@/lib/firebaseAuth";
 import { consumePendingAuthRedirect } from "@/lib/authRedirect";
 
 interface BeforeInstallPromptEvent extends Event {
@@ -28,8 +28,6 @@ export default function Login() {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [isFacebookLoading, setIsFacebookLoading] = useState(false);
-  const [isAppleLoading, setIsAppleLoading] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [showFallbackModal, setShowFallbackModal] = useState(false);
@@ -98,7 +96,7 @@ export default function Login() {
     setAuthError(null);
     setIsLoading(true);
     try {
-      await loginWithEmail(email, password);
+      await loginWithEmail({ email, password });
       toast({ title: "Welcome back!", description: "You are now logged in." });
       handlePostAuthRedirect();
     } catch (err: any) {
@@ -142,40 +140,6 @@ export default function Login() {
       toast({ title: "Google sign-in failed", description: message, variant: "destructive" });
     } finally {
       setIsGoogleLoading(false);
-    }
-  };
-
-  const handleFacebookLogin = async () => {
-    setAuthError(null);
-    setIsFacebookLoading(true);
-    try {
-      const result = await loginWithFacebook();
-      handleSocialAuthSuccess(result);
-    } catch (err: any) {
-      const message = err?.message?.includes("popup-closed-by-user")
-        ? "Sign-in was cancelled. Please try again."
-        : err?.message || "Facebook sign-in failed. Please try again.";
-      setAuthError(message);
-      toast({ title: "Facebook sign-in failed", description: message, variant: "destructive" });
-    } finally {
-      setIsFacebookLoading(false);
-    }
-  };
-
-  const handleAppleLogin = async () => {
-    setAuthError(null);
-    setIsAppleLoading(true);
-    try {
-      const result = await loginWithApple();
-      handleSocialAuthSuccess(result);
-    } catch (err: any) {
-      const message = err?.message?.includes("popup-closed-by-user")
-        ? "Sign-in was cancelled. Please try again."
-        : err?.message || "Apple sign-in failed. Please try again.";
-      setAuthError(message);
-      toast({ title: "Apple sign-in failed", description: message, variant: "destructive" });
-    } finally {
-      setIsAppleLoading(false);
     }
   };
 
@@ -309,7 +273,7 @@ export default function Login() {
                 {/* Google */}
                 <button
                   onClick={handleGoogleLogin}
-                  disabled={isGoogleLoading || isFacebookLoading || isAppleLoading || isLoading}
+                  disabled={isGoogleLoading || isLoading}
                   className="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-xl border border-slate-700 bg-white/[0.03] hover:bg-white/[0.07] hover:border-slate-500 transition-all text-slate-100 font-semibold disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] shadow-sm"
                   data-testid="button-social-google"
                 >
@@ -483,7 +447,7 @@ export default function Login() {
 
               {/* Sign Up Links */}
               <div className="mt-8 pt-6 border-t border-slate-800 text-center" data-testid="signup-section">
-                <p className="text-slate-400 mb-4 text-sm">Don't have an account yet?</p>
+                <p className="text-slate-400 mb-4 text-sm">Need an account?</p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Link href="/auth?mode=register" asChild>
                     <Button
@@ -491,7 +455,7 @@ export default function Login() {
                       className="flex-1 border-emerald-500/60 text-emerald-400 hover:bg-emerald-500/10 hover:-translate-y-0.5 active:translate-y-0 transition-all"
                       data-testid="button-join-freelancer"
                     >
-                      Join as Freelancer
+                      Sign up as Freelancer
                     </Button>
                   </Link>
                   <Link href="/auth?mode=register" asChild>
@@ -500,7 +464,7 @@ export default function Login() {
                       className="flex-1 border-emerald-500/60 text-emerald-400 hover:bg-emerald-500/10 hover:-translate-y-0.5 active:translate-y-0 transition-all"
                       data-testid="button-join-client"
                     >
-                      Join as Client
+                      Sign up as Client
                     </Button>
                   </Link>
                 </div>

@@ -13,8 +13,6 @@ import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Loader2, Shield, Zap, Globe,
 import {
   loginWithEmail,
   loginWithGoogle,
-  loginWithFacebook,
-  loginWithApple,
   registerWithEmail,
   sendFirebaseResetEmail,
 } from "@/lib/firebaseAuth";
@@ -255,27 +253,6 @@ export default function Auth() {
     },
   });
 
-  async function handleSocialAuth(provider: "facebook" | "apple") {
-    if (!isFirebaseConfigured) {
-      toast({ title: "Firebase not configured", description: "Set VITE_FIREBASE_* environment variables and restart.", variant: "destructive" });
-      return;
-    }
-    try {
-      const { user, isNewUser } = provider === "facebook" ? await loginWithFacebook() : await loginWithApple();
-      trackFirebaseEvent(isNewUser ? "sign_up" : "login", { method: provider }).catch(() => {});
-      queryClient.setQueryData(["/api/auth/user"], user);
-      await syncSessionNow();
-      if (isNewUser) {
-        toast({ title: "Account created! 🎉", description: "Let's build your profile — takes 60 seconds." });
-        navigate(formData.userType !== "client" ? "/cv-upload?welcome=1" : "/post-job");
-      } else {
-        await completeAuthSuccess(user);
-      }
-    } catch (error: any) {
-      toast({ title: `${provider === "facebook" ? "Facebook" : "Apple"} sign-in failed`, description: getSocialAuthErrorMessage(error), variant: "destructive" });
-    }
-  }
-
   useEffect(() => {
     setIsLogin(detectAuthMode());
     setIsForgotPassword(false);
@@ -294,18 +271,18 @@ export default function Auth() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex flex-col">
       <Navbar />
       <main className="flex-grow flex items-center justify-center pt-24 pb-12 px-4">
-        <div className="w-full max-w-5xl grid md:grid-cols-2 gap-8 items-center">
+        <div className="w-full max-w-5xl grid md:grid-cols-2 gap-10 items-center">
           <div className="hidden md:block space-y-8">
             <div>
-              <h1 className="text-4xl font-bold text-foreground mb-3 leading-tight">
+              <h1 className="text-4xl font-bold text-foreground mb-3 leading-tight max-w-xl">
                 {isLogin
-                  ? "Good to see you again."
-                  : "Africa's #1 platform for skills & opportunity."}
+                  ? "Welcome back. Pick up where you left off."
+                  : "Create your account in under a minute."}
               </h1>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 {isLogin
-                  ? "Sign in and connect with thousands of clients, freelancers and opportunities — all in one place."
-                  : "Join over 500,000 professionals who work, hire, learn and grow on FreelanceSkills. Takes 60 seconds to start."}
+                  ? "Use Google, LinkedIn, or email to get back into your dashboard."
+                  : "Choose freelancer or client, then continue with Google, LinkedIn, or email."}
               </p>
             </div>
 
@@ -315,8 +292,8 @@ export default function Auth() {
                   <Globe className="h-5 w-5 text-blue-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">Work from anywhere</h3>
-                  <p className="text-sm text-muted-foreground mt-0.5">Thousands of jobs across South Africa and the world — remote, hybrid, on-site</p>
+                  <h3 className="font-semibold text-foreground">Simple start</h3>
+                  <p className="text-sm text-muted-foreground mt-0.5">Create a client or freelancer profile without friction.</p>
                 </div>
               </div>
               <div className="flex items-start gap-4 p-4 bg-white rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow">
@@ -324,8 +301,8 @@ export default function Auth() {
                   <Zap className="h-5 w-5 text-amber-500" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">AI matches you instantly</h3>
-                  <p className="text-sm text-muted-foreground mt-0.5">Vuma AI reads your profile and sends you the best-fit jobs automatically</p>
+                  <h3 className="font-semibold text-foreground">Instant next step</h3>
+                  <p className="text-sm text-muted-foreground mt-0.5">New users go straight to profile setup or posting a job.</p>
                 </div>
               </div>
               <div className="flex items-start gap-4 p-4 bg-white rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow">
@@ -333,8 +310,8 @@ export default function Auth() {
                   <Shield className="h-5 w-5 text-emerald-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">Get paid safely</h3>
-                  <p className="text-sm text-muted-foreground mt-0.5">Escrow-protected ZAR payments, verified profiles, dispute resolution built in</p>
+                  <h3 className="font-semibold text-foreground">Secure by default</h3>
+                  <p className="text-sm text-muted-foreground mt-0.5">Verified sessions, protected payments, and clear status flows.</p>
                 </div>
               </div>
             </div>
@@ -357,12 +334,12 @@ export default function Auth() {
                   <BrandLogo imageClassName="h-10 max-w-[200px]" />
                 </div>
                 <h2 className="text-xl font-bold text-card-foreground" data-testid="text-auth-title">
-                  {isForgotPassword ? "Reset Password" : (isLogin ? "Welcome back" : "Create your free account")}
+                  {isForgotPassword ? "Reset Password" : (isLogin ? "Sign in" : "Create account")}
                 </h2>
                 <p className="text-sm text-card-foreground/60 mt-1">
                   {isForgotPassword 
                     ? "Enter your email to receive a reset link" 
-                    : (isLogin ? "Enter your credentials to continue" : "Fill in your details to get started")}
+                    : (isLogin ? "Use Google, LinkedIn, or email" : "Choose who you are, then continue")}
                 </p>
               </div>
 
@@ -448,11 +425,10 @@ export default function Auth() {
                         <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
                         <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                       </svg>
-                      <span className="flex-1 text-left text-sm">{isLogin ? "Continue with Google" : "Sign up with Google"}</span>
+                      <span className="flex-1 text-left text-sm">{isLogin ? "Continue with Google" : "Start with Google"}</span>
                       {socialAuthMutation.isPending && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
                     </Button>
 
-                    {/* LinkedIn — server-side OAuth, always works */}
                     <Button
                       type="button"
                       variant="outline"
@@ -463,7 +439,7 @@ export default function Auth() {
                       <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="#0077B5" aria-hidden="true">
                         <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                       </svg>
-                      <span className="flex-1 text-left text-sm">{isLogin ? "Continue with LinkedIn" : "Sign up with LinkedIn"}</span>
+                      <span className="flex-1 text-left text-sm">{isLogin ? "Continue with LinkedIn" : "Start with LinkedIn"}</span>
                     </Button>
 
                     <div className="relative py-0.5">
@@ -520,8 +496,8 @@ export default function Auth() {
                         data-testid="btn-type-freelancer"
                       >
                         <Briefcase className={`w-5 h-5 mb-2 ${formData.userType === "freelancer" ? "text-emerald-500" : "text-muted-foreground"}`} />
-                        <div className="font-semibold text-sm text-foreground">I'm a Freelancer</div>
-                        <div className="text-xs text-muted-foreground mt-0.5">I want to find work</div>
+                        <div className="font-semibold text-sm text-foreground">Freelancer</div>
+                        <div className="text-xs text-muted-foreground mt-0.5">Find work</div>
                       </button>
                       <button
                         type="button"
@@ -530,8 +506,8 @@ export default function Auth() {
                         data-testid="btn-type-client"
                       >
                         <Users className={`w-5 h-5 mb-2 ${formData.userType === "client" ? "text-blue-500" : "text-muted-foreground"}`} />
-                        <div className="font-semibold text-sm text-foreground">I'm Hiring</div>
-                        <div className="text-xs text-muted-foreground mt-0.5">I want to find talent</div>
+                        <div className="font-semibold text-sm text-foreground">Client</div>
+                        <div className="text-xs text-muted-foreground mt-0.5">Hire talent</div>
                       </button>
                     </div>
                   )}
@@ -621,7 +597,7 @@ export default function Auth() {
                     className="text-sm text-primary hover:underline font-medium"
                     data-testid="button-toggle-auth-mode"
                   >
-                    {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
+                    {isLogin ? "Need an account? Sign up" : "Already have an account? Sign in"}
                   </button>
                 </div>
               )}
