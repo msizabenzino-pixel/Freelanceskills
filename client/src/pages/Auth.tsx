@@ -268,50 +268,57 @@ export default function Auth() {
   }, [location]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-950 to-emerald-950/20 flex flex-col">
       <Navbar />
       <main className="flex-grow flex items-center justify-center pt-24 pb-12 px-4">
         <div className="w-full max-w-5xl grid md:grid-cols-2 gap-10 items-center">
           <div className="hidden md:block space-y-8">
             <div>
-              <h1 className="text-4xl font-bold text-foreground mb-3 leading-tight max-w-xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-5">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                </span>
+                Africa's #1 Skilled Freelance Marketplace
+              </div>
+              <h1 className="text-4xl font-bold text-white mb-3 leading-tight max-w-xl">
                 {isLogin
                   ? "Welcome back. Pick up where you left off."
                   : "Create your account in under a minute."}
               </h1>
-              <p className="text-lg text-muted-foreground leading-relaxed">
+              <p className="text-lg text-slate-400 leading-relaxed">
                 {isLogin
                   ? "Use Google, LinkedIn, or email to get back into your dashboard."
-                  : "Clients can start posting right away. Freelancers can switch to work mode in one click."}
+                  : "Clients start posting immediately. Freelancers build a profile in 60 seconds."}
               </p>
             </div>
 
             <div className="space-y-3">
-              <div className="flex items-start gap-4 p-4 bg-white rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow">
-                <div className="p-2.5 rounded-xl bg-blue-50 flex-shrink-0">
-                  <Globe className="h-5 w-5 text-blue-600" />
+              <div className="flex items-start gap-4 p-4 bg-slate-800/60 rounded-2xl border border-slate-700/50 hover:border-emerald-500/30 transition-colors">
+                <div className="p-2.5 rounded-xl bg-blue-500/10 flex-shrink-0">
+                  <Globe className="h-5 w-5 text-blue-400" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">Simple start</h3>
-                  <p className="text-sm text-muted-foreground mt-0.5">Create a client or freelancer profile without friction.</p>
+                  <h3 className="font-semibold text-white">Simple start</h3>
+                  <p className="text-sm text-slate-400 mt-0.5">Create a client or freelancer profile without friction.</p>
                 </div>
               </div>
-              <div className="flex items-start gap-4 p-4 bg-white rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow">
-                <div className="p-2.5 rounded-xl bg-amber-50 flex-shrink-0">
-                  <Zap className="h-5 w-5 text-amber-500" />
+              <div className="flex items-start gap-4 p-4 bg-slate-800/60 rounded-2xl border border-slate-700/50 hover:border-emerald-500/30 transition-colors">
+                <div className="p-2.5 rounded-xl bg-amber-500/10 flex-shrink-0">
+                  <Zap className="h-5 w-5 text-amber-400" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">Instant next step</h3>
-                  <p className="text-sm text-muted-foreground mt-0.5">New users go straight to profile setup or posting a job.</p>
+                  <h3 className="font-semibold text-white">Instant next step</h3>
+                  <p className="text-sm text-slate-400 mt-0.5">New users go straight to profile setup or posting a job.</p>
                 </div>
               </div>
-              <div className="flex items-start gap-4 p-4 bg-white rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow">
-                <div className="p-2.5 rounded-xl bg-emerald-50 flex-shrink-0">
-                  <Shield className="h-5 w-5 text-emerald-600" />
+              <div className="flex items-start gap-4 p-4 bg-slate-800/60 rounded-2xl border border-slate-700/50 hover:border-emerald-500/30 transition-colors">
+                <div className="p-2.5 rounded-xl bg-emerald-500/10 flex-shrink-0">
+                  <Shield className="h-5 w-5 text-emerald-400" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">Secure by default</h3>
-                  <p className="text-sm text-muted-foreground mt-0.5">Verified sessions, protected payments, and clear status flows.</p>
+                  <h3 className="font-semibold text-white">Secure by default</h3>
+                  <p className="text-sm text-slate-400 mt-0.5">Verified sessions, escrow-protected payments, and dispute resolution.</p>
                 </div>
               </div>
             </div>
@@ -320,23 +327,23 @@ export default function Auth() {
             <div className="flex items-center gap-3 pt-2">
               <div className="flex -space-x-2">
                 {["K","Z","T","L","N"].map((l, i) => (
-                  <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gradient-to-br from-blue-400 to-violet-500 flex items-center justify-center text-white text-xs font-bold">{l}</div>
+                  <div key={i} className="w-8 h-8 rounded-full border-2 border-slate-900 bg-gradient-to-br from-emerald-400 to-blue-500 flex items-center justify-center text-white text-xs font-bold">{l}</div>
                 ))}
               </div>
-              <p className="text-sm text-muted-foreground"><span className="font-semibold text-foreground">500,000+</span> professionals already joined</p>
+              <p className="text-sm text-slate-400"><span className="font-semibold text-white">500,000+</span> professionals already joined</p>
             </div>
           </div>
 
-          <Card className="shadow-2xl border-border/70 bg-card/95 backdrop-blur" data-testid="auth-card">
+          <Card className="shadow-2xl border-slate-700/60 bg-slate-900/95 backdrop-blur" data-testid="auth-card">
             <CardContent className="p-8">
               <div className="text-center mb-6">
                 <div className="mx-auto mb-3 flex justify-center">
                   <BrandLogo imageClassName="h-10 max-w-[200px]" />
                 </div>
-                <h2 className="text-xl font-bold text-card-foreground" data-testid="text-auth-title">
+                <h2 className="text-xl font-bold text-white" data-testid="text-auth-title">
                   {isForgotPassword ? "Reset Password" : (isLogin ? "Sign in" : "Create account")}
                 </h2>
-                <p className="text-sm text-card-foreground/60 mt-1">
+                <p className="text-sm text-slate-400 mt-1">
                   {isForgotPassword 
                     ? "Enter your email to receive a reset link" 
                     : (isLogin ? "Use Google, LinkedIn, or email" : "Choose client or freelancer, then continue")}
@@ -346,25 +353,26 @@ export default function Auth() {
               {isForgotPassword ? (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                    <Label htmlFor="resetEmail" className="text-sm font-medium text-card-foreground">Email Address</Label>
+                    <Label htmlFor="resetEmail" className="text-sm font-medium text-slate-300">Email Address</Label>
                     <div className="relative mt-1">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-card-foreground/60" />
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
                       <Input
                         id="resetEmail"
                         type="email"
                         placeholder="you@example.com"
                         value={resetEmail}
                         onChange={(e) => setResetEmail(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 bg-slate-800/80 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-emerald-500"
                         required
+                        autoComplete="email"
                         data-testid="input-reset-email"
                       />
                     </div>
                   </div>
 
                   {resetLink && (
-                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg space-y-2">
-                      <p className="text-sm text-blue-800 font-medium" data-testid="link-reset-password">
+                    <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg space-y-2">
+                      <p className="text-sm text-emerald-400 font-medium" data-testid="link-reset-password">
                         {resetLink}
                       </p>
                     </div>
@@ -372,7 +380,7 @@ export default function Auth() {
 
                   <Button
                     type="submit"
-                    className="w-full h-12 font-semibold text-base gap-2 rounded-xl"
+                    className="w-full h-12 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-base gap-2 rounded-xl border-0"
                     disabled={isLoading}
                     data-testid="button-forgot-password-submit"
                   >
@@ -393,7 +401,7 @@ export default function Auth() {
                         setIsForgotPassword(false);
                         setResetLink("");
                       }}
-                      className="text-sm text-primary hover:underline font-medium"
+                      className="text-sm text-emerald-400 hover:text-emerald-300 hover:underline font-medium"
                       data-testid="button-back-to-login"
                     >
                       Back to Sign In
@@ -408,7 +416,7 @@ export default function Auth() {
                     <Button
                       type="button"
                       variant="outline"
-                      className="w-full h-11 rounded-xl font-semibold flex items-center gap-3 px-4 border-border hover:border-slate-400 hover:bg-muted/40 transition-all"
+                      className="w-full h-11 rounded-xl font-semibold flex items-center gap-3 px-4 border-slate-700 bg-white/[0.03] hover:border-slate-500 hover:bg-white/[0.07] text-slate-100 transition-all"
                       onClick={() => {
                         if (!isFirebaseConfigured) {
                           toast({ title: "Firebase not configured", description: "Set VITE_FIREBASE_* and restart.", variant: "destructive" });
@@ -444,10 +452,10 @@ export default function Auth() {
 
                     <div className="relative py-0.5">
                       <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t border-border" />
+                        <span className="w-full border-t border-slate-700" />
                       </div>
                       <div className="relative flex justify-center text-xs uppercase tracking-wide">
-                        <span className="bg-card px-3 text-card-foreground/50">Or use email</span>
+                        <span className="bg-slate-900 px-3 text-slate-500">Or use email</span>
                       </div>
                     </div>
                   </div>
@@ -455,30 +463,30 @@ export default function Auth() {
                   {!isLogin && (
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <Label htmlFor="firstName" className="text-sm font-medium text-card-foreground">First Name</Label>
+                        <Label htmlFor="firstName" className="text-sm font-medium text-slate-300">First Name</Label>
                         <div className="relative mt-1">
-                          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-card-foreground/60" />
+                          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
                           <Input
                             id="firstName"
                             placeholder="John"
                             value={formData.firstName}
                             onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                            className="pl-10"
+                            className="pl-10 bg-slate-800/80 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-emerald-500"
                             required
                             data-testid="input-first-name"
                           />
                         </div>
                       </div>
                       <div>
-                        <Label htmlFor="lastName" className="text-sm font-medium text-card-foreground">Last Name</Label>
+                        <Label htmlFor="lastName" className="text-sm font-medium text-slate-300">Last Name</Label>
                         <div className="relative mt-1">
-                          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-card-foreground/60" />
+                          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
                           <Input
                             id="lastName"
                             placeholder="Doe"
                             value={formData.lastName}
                             onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                            className="pl-10"
+                            className="pl-10 bg-slate-800/80 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-emerald-500"
                             required
                             data-testid="input-last-name"
                           />
@@ -492,38 +500,39 @@ export default function Auth() {
                       <button
                         type="button"
                         onClick={() => setFormData({ ...formData, userType: "freelancer" })}
-                        className={`p-4 rounded-2xl border-2 text-left transition-all ${formData.userType === "freelancer" ? "border-emerald-500 bg-emerald-500/5 shadow-sm" : "border-border hover:border-muted-foreground/40"}`}
+                        className={`p-4 rounded-2xl border-2 text-left transition-all ${formData.userType === "freelancer" ? "border-emerald-500 bg-emerald-500/10 shadow-sm" : "border-slate-700 hover:border-slate-500"}`}
                         data-testid="btn-type-freelancer"
                       >
-                        <Briefcase className={`w-5 h-5 mb-2 ${formData.userType === "freelancer" ? "text-emerald-500" : "text-muted-foreground"}`} />
-                        <div className="font-semibold text-sm text-foreground">Freelancer</div>
-                        <div className="text-xs text-muted-foreground mt-0.5">Find work</div>
+                        <Briefcase className={`w-5 h-5 mb-2 ${formData.userType === "freelancer" ? "text-emerald-400" : "text-slate-500"}`} />
+                        <div className="font-semibold text-sm text-white">Freelancer</div>
+                        <div className="text-xs text-slate-400 mt-0.5">Find work</div>
                       </button>
                       <button
                         type="button"
                         onClick={() => setFormData({ ...formData, userType: "client" })}
-                        className={`p-4 rounded-2xl border-2 text-left transition-all ${formData.userType === "client" ? "border-blue-500 bg-blue-500/5 shadow-sm" : "border-border hover:border-muted-foreground/40"}`}
+                        className={`p-4 rounded-2xl border-2 text-left transition-all ${formData.userType === "client" ? "border-blue-500 bg-blue-500/10 shadow-sm" : "border-slate-700 hover:border-slate-500"}`}
                         data-testid="btn-type-client"
                       >
-                        <Users className={`w-5 h-5 mb-2 ${formData.userType === "client" ? "text-blue-500" : "text-muted-foreground"}`} />
-                        <div className="font-semibold text-sm text-foreground">Client</div>
-                        <div className="text-xs text-muted-foreground mt-0.5">Hire talent</div>
+                        <Users className={`w-5 h-5 mb-2 ${formData.userType === "client" ? "text-blue-400" : "text-slate-500"}`} />
+                        <div className="font-semibold text-sm text-white">Client</div>
+                        <div className="text-xs text-slate-400 mt-0.5">Hire talent</div>
                       </button>
                     </div>
                   )}
 
                   <div>
-                    <Label htmlFor="email" className="text-sm font-medium text-card-foreground">Email Address</Label>
+                    <Label htmlFor="email" className="text-sm font-medium text-slate-300">Email Address</Label>
                     <div className="relative mt-1">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-card-foreground/60" />
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
                       <Input
                         id="email"
                         type="email"
                         placeholder="you@example.com"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="pl-10"
+                        className="pl-10 bg-slate-800/80 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-emerald-500"
                         required
+                        autoComplete="email"
                         data-testid="input-email"
                       />
                     </div>
@@ -531,12 +540,12 @@ export default function Auth() {
 
                   <div>
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="password" className="text-sm font-medium text-card-foreground">Password</Label>
+                      <Label htmlFor="password" className="text-sm font-medium text-slate-300">Password</Label>
                       {isLogin && (
                         <button
                           type="button"
                           onClick={() => setIsForgotPassword(true)}
-                          className="text-xs text-primary hover:underline font-medium"
+                          className="text-xs text-emerald-400 hover:text-emerald-300 hover:underline font-medium"
                           data-testid="button-forgot-password"
                         >
                           Forgot Password?
@@ -544,14 +553,14 @@ export default function Auth() {
                       )}
                     </div>
                     <div className="relative mt-1">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-card-foreground/60" />
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
                       <Input
                         id="password"
                         type={showPassword ? "text" : "password"}
                         placeholder={isLogin ? "Enter your password" : "Min 6 characters"}
                         value={formData.password}
                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                        className="pl-10 pr-10"
+                        className="pl-10 pr-10 bg-slate-800/80 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-emerald-500"
                         required
                         minLength={6}
                         autoComplete={isLogin ? "current-password" : "new-password"}
@@ -560,7 +569,7 @@ export default function Auth() {
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-card-foreground/60 hover:text-card-foreground"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
                         data-testid="button-toggle-password"
                       >
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -570,7 +579,7 @@ export default function Auth() {
 
                   <Button
                     type="submit"
-                    className="w-full h-12 font-semibold text-base gap-2 rounded-xl"
+                    className="w-full h-12 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-base gap-2 rounded-xl border-0 shadow-lg shadow-emerald-500/20 transition-all hover:-translate-y-0.5 active:translate-y-0"
                     disabled={isLoading}
                     data-testid="button-auth-submit"
                   >
@@ -584,7 +593,7 @@ export default function Auth() {
                     )}
                   </Button>
 
-                  <p className="text-center text-xs text-muted-foreground/50 mt-1">
+                  <p className="text-center text-xs text-slate-600 mt-1">
                     Secured with Firebase Auth · 256-bit encryption
                   </p>
                 </form>
@@ -594,7 +603,7 @@ export default function Auth() {
                 <div className="mt-6 text-center">
                   <button
                     onClick={() => setIsLogin(!isLogin)}
-                    className="text-sm text-primary hover:underline font-medium"
+                    className="text-sm text-emerald-400 hover:text-emerald-300 hover:underline font-medium"
                     data-testid="button-toggle-auth-mode"
                   >
                     {isLogin ? "Need an account? Sign up" : "Already have an account? Sign in"}
