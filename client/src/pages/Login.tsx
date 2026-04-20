@@ -326,51 +326,44 @@ export default function Login() {
                   {isGoogleLoading ? "Signing in..." : "Continue with Google"}
                 </button>
 
-                {/* Facebook */}
-                <button
-                  onClick={handleFacebookLogin}
-                  disabled={isGoogleLoading || isFacebookLoading || isAppleLoading || isLoading}
-                  className="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-xl border border-slate-700 bg-[#1877F2]/5 hover:bg-[#1877F2]/15 hover:border-[#1877F2]/60 transition-all text-slate-100 font-semibold disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] shadow-sm"
-                  data-testid="button-social-facebook"
-                >
-                  {isFacebookLoading ? (
-                    <div className="w-5 h-5 border-2 border-[#1877F2] border-t-transparent rounded-full animate-spin" />
-                  ) : (
-                    <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="#1877F2">
-                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                    </svg>
-                  )}
-                  {isFacebookLoading ? "Signing in..." : "Continue with Facebook"}
-                </button>
-
-                {/* Apple */}
-                <button
-                  onClick={handleAppleLogin}
-                  disabled={isGoogleLoading || isFacebookLoading || isAppleLoading || isLoading}
-                  className="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-xl border border-slate-700 bg-white/[0.03] hover:bg-white/[0.08] hover:border-slate-500 transition-all text-slate-100 font-semibold disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] shadow-sm"
-                  data-testid="button-social-apple"
-                >
-                  {isAppleLoading ? (
-                    <div className="w-5 h-5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
-                  ) : (
-                    <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701z" />
-                    </svg>
-                  )}
-                  {isAppleLoading ? "Signing in..." : "Continue with Apple"}
-                </button>
-
-                {/* LinkedIn — secondary */}
+                {/* LinkedIn */}
                 <button
                   onClick={handleLinkedInLogin}
-                  className="w-full flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl border border-slate-700/60 hover:border-[#0077B5]/60 hover:bg-[#0077B5]/8 transition-all text-slate-400 hover:text-slate-200 text-sm font-medium"
+                  disabled={isLoading || isGoogleLoading}
+                  className="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-xl border border-[#0077B5]/40 bg-[#0077B5]/5 hover:bg-[#0077B5]/15 hover:border-[#0077B5]/70 transition-all text-slate-100 font-semibold active:scale-[0.98] shadow-sm"
                   data-testid="button-social-linkedin"
                 >
-                  <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="#0077B5">
+                  <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="#0077B5">
                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                   </svg>
                   Continue with LinkedIn
                 </button>
+
+                {/* Facebook + Apple — coming soon, require Firebase Console setup */}
+                <div className="grid grid-cols-2 gap-2.5">
+                  <button
+                    disabled
+                    title="Facebook sign-in requires Firebase setup"
+                    className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-dashed border-slate-700/40 text-slate-600 cursor-not-allowed select-none"
+                    data-testid="button-social-facebook"
+                  >
+                    <svg className="w-4 h-4 shrink-0 opacity-40" viewBox="0 0 24 24" fill="#1877F2">
+                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                    </svg>
+                    <span className="text-xs font-medium">Facebook <span className="text-slate-600/50 text-[10px]">soon</span></span>
+                  </button>
+                  <button
+                    disabled
+                    title="Apple sign-in requires Apple Developer account"
+                    className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-dashed border-slate-700/40 text-slate-600 cursor-not-allowed select-none"
+                    data-testid="button-social-apple"
+                  >
+                    <svg className="w-4 h-4 shrink-0 opacity-40" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701z" />
+                    </svg>
+                    <span className="text-xs font-medium">Apple <span className="text-slate-600/50 text-[10px]">soon</span></span>
+                  </button>
+                </div>
               </div>
 
               {/* Divider */}
