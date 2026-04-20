@@ -409,11 +409,10 @@ export default function Home() {
       {/* ══ HERO ══════════════════════════════════════════════════════════════════ */}
       <section className="relative min-h-[90vh] sm:min-h-[94vh] flex items-start sm:items-center justify-center overflow-hidden" data-testid="section-hero">
         {/* Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-950 to-emerald-950/20" />
-        <div className="absolute inset-0 opacity-[0.035]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2310b981' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-        <div className="absolute top-1/4 -left-20 w-[700px] h-[700px] bg-emerald-500/5 rounded-full blur-[160px] pointer-events-none" />
-        <div className="absolute bottom-1/4 -right-20 w-[600px] h-[600px] bg-blue-500/4 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[400px] bg-emerald-500/2 rounded-full blur-[180px] pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-950 to-emerald-950/15" />
+        <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2310b981' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
+        <div className="absolute top-1/4 -left-20 w-[700px] h-[700px] bg-emerald-500/4 rounded-full blur-[160px] pointer-events-none" />
+        <div className="absolute bottom-1/4 -right-20 w-[600px] h-[600px] bg-blue-500/3 rounded-full blur-[140px] pointer-events-none" />
 
         {/* Floating profile cards — desktop only */}
         <div className="hidden xl:flex absolute left-8 2xl:left-16 top-1/2 -translate-y-1/2 flex-col gap-3 z-20">
