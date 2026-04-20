@@ -2,6 +2,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { RemoteAIJobsWidget } from "@/components/RemoteAIJobsWidget";
 import { AIBriefGenerator } from "@/components/AIBriefGenerator";
+import { LevelBadge, type FreelancerLevel } from "@/components/LevelBadge";
 import {
   ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users,
   Building2, Brain, Globe, ShieldCheck, Lock, Headphones, Star, Quote, Send,
@@ -1008,10 +1009,10 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { name: "Thabo M.", title: "Senior Software Engineer", location: "Soweto, GP", rate: formatAmount(750), rating: 5.0, reviews: 42, endorsements: 48, skills: ["Python", "Django", "React"], img: "https://images.unsplash.com/photo-1531384441138-2736e62e0919?auto=format&fit=crop&q=80&w=200&h=200", badge: "Top Rated", openToWork: true },
-                { name: "Sarah L.", title: "Brand Strategist & Designer", location: "Cape Town, WC", rate: formatAmount(600), rating: 4.9, reviews: 85, endorsements: 62, skills: ["Branding", "Logo", "Adobe CC"], img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200&h=200", badge: "Expert", openToWork: true },
-                { name: "David K.", title: "Mobile App Developer", location: "Johannesburg, GP", rate: formatAmount(800), rating: 4.8, reviews: 29, endorsements: 31, skills: ["Flutter", "iOS", "Firebase"], img: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&q=80&w=200&h=200", badge: "Rising Star", openToWork: false },
-                { name: "Nandi Z.", title: "Digital Marketing Specialist", location: "Durban, KZN", rate: formatAmount(450), rating: 5.0, reviews: 63, endorsements: 55, skills: ["SEO", "Google Ads", "Social"], img: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=200&h=200", badge: "Top Rated", openToWork: true },
+                { name: "Thabo M.", title: "Senior Software Engineer", location: "Soweto, GP", rate: formatAmount(750), rating: 5.0, reviews: 42, endorsements: 48, skills: ["Python", "Django", "React"], img: "https://images.unsplash.com/photo-1531384441138-2736e62e0919?auto=format&fit=crop&q=80&w=200&h=200", level: "top_rated" as FreelancerLevel, openToWork: true },
+                { name: "Sarah L.", title: "Brand Strategist & Designer", location: "Cape Town, WC", rate: formatAmount(600), rating: 4.9, reviews: 85, endorsements: 62, skills: ["Branding", "Logo", "Adobe CC"], img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200&h=200", level: "pro" as FreelancerLevel, openToWork: true },
+                { name: "David K.", title: "Mobile App Developer", location: "Johannesburg, GP", rate: formatAmount(800), rating: 4.8, reviews: 29, endorsements: 31, skills: ["Flutter", "iOS", "Firebase"], img: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&q=80&w=200&h=200", level: "rising" as FreelancerLevel, openToWork: false },
+                { name: "Nandi Z.", title: "Digital Marketing Specialist", location: "Durban, KZN", rate: formatAmount(450), rating: 5.0, reviews: 63, endorsements: 55, skills: ["SEO", "Google Ads", "Social"], img: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=200&h=200", level: "top_rated" as FreelancerLevel, openToWork: true },
               ].map((f, i) => (
                 <motion.button key={i} onClick={() => navigate("/find-talent")} whileHover={{ y: -3 }}
                   className="group bg-slate-900 border border-slate-800 hover:border-emerald-500/30 rounded-2xl p-5 text-left transition-colors duration-200 hover:shadow-xl hover:shadow-emerald-500/5"
@@ -1031,7 +1032,7 @@ export default function Home() {
                         </div>
                       )}
                     </div>
-                    <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">{f.badge}</span>
+                    <LevelBadge level={f.level} size="xs" />
                   </div>
                   <h3 className="font-bold text-white text-sm group-hover:text-emerald-400 transition-colors mt-2">{f.name}</h3>
                   <p className="text-slate-500 text-xs mt-0.5">{f.title}</p>
@@ -1195,16 +1196,24 @@ export default function Home() {
                   { name: "Kevin Naidoo", role: "IT Consultant", location: "Umhlanga, KZN", rating: 5, quote: "The verification process adds so much trust. Clients know they're hiring a professional, not just anyone.", photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=120&h=120" },
                 ].map((t, i) => (
                   <CarouselItem key={i} className="md:basis-1/2 lg:basis-1/3 pl-4">
-                    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 h-full flex flex-col" data-testid={`card-testimonial-${i}`}>
-                      <div className="flex gap-1 mb-4">
-                        {[...Array(5)].map((_, j) => <Star key={j} className={`w-3.5 h-3.5 ${j < t.rating ? "fill-amber-400 text-amber-400" : "text-slate-700"}`} />)}
+                    <div className="relative bg-slate-900 border border-slate-800 hover:border-emerald-500/20 rounded-2xl p-6 h-full flex flex-col overflow-hidden transition-colors" data-testid={`card-testimonial-${i}`}>
+                      {/* Left accent line */}
+                      <div className="absolute left-0 top-6 bottom-6 w-0.5 bg-gradient-to-b from-emerald-500/60 to-teal-500/20 rounded-full" />
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex gap-0.5">
+                          {[...Array(5)].map((_, j) => <Star key={j} className={`w-3.5 h-3.5 ${j < t.rating ? "fill-amber-400 text-amber-400" : "text-slate-700"}`} />)}
+                        </div>
+                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 uppercase tracking-wide">✓ Verified</span>
                       </div>
-                      <p className="text-slate-400 italic text-sm leading-relaxed flex-1 mb-5">"{t.quote}"</p>
-                      <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10 border border-emerald-500/20">
-                          <AvatarImage src={t.photo} alt={t.name} />
-                          <AvatarFallback className="bg-emerald-900 text-emerald-300 font-bold text-sm">{t.name.split(" ").map(n => n[0]).join("")}</AvatarFallback>
-                        </Avatar>
+                      <p className="text-slate-300 text-sm leading-relaxed flex-1 mb-5">"{t.quote}"</p>
+                      <div className="flex items-center gap-3 border-t border-slate-800 pt-4">
+                        <div className="relative">
+                          <Avatar className="h-10 w-10 border-2 border-emerald-500/30">
+                            <AvatarImage src={t.photo} alt={t.name} />
+                            <AvatarFallback className="bg-emerald-900 text-emerald-300 font-bold text-sm">{t.name.split(" ").map(n => n[0]).join("")}</AvatarFallback>
+                          </Avatar>
+                          <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border border-slate-900" />
+                        </div>
                         <div>
                           <div className="font-bold text-white text-sm" data-testid={`text-testimonial-name-${i}`}>{t.name}</div>
                           <div className="text-slate-500 text-xs">{t.role} · {t.location}</div>

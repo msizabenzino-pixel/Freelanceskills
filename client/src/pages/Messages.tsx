@@ -581,30 +581,50 @@ export default function Messages() {
     return (
       <div className="w-72 bg-slate-950 border-l border-border/50 flex flex-col overflow-hidden">
         <div className="p-5 border-b border-border/50 text-center">
-          <Avatar className="w-16 h-16 mx-auto mb-3">
-            <AvatarImage src={other.avatar} />
-            <AvatarFallback className="bg-emerald-900 text-emerald-300 text-xl font-bold">{(other.name || "?")[0]}</AvatarFallback>
-          </Avatar>
+          {/* Avatar with online ring */}
+          <div className="relative inline-block mb-3">
+            <div className={cn(
+              "p-[2px] rounded-full",
+              isOnline ? "bg-gradient-to-br from-emerald-400 to-teal-500" : "bg-slate-700"
+            )}>
+              <div className="p-[2px] rounded-full bg-slate-950">
+                <Avatar className="w-16 h-16">
+                  <AvatarImage src={other.avatar} />
+                  <AvatarFallback className="bg-emerald-900 text-emerald-300 text-xl font-bold">{(other.name || "?")[0]}</AvatarFallback>
+                </Avatar>
+              </div>
+            </div>
+            {isOnline && (
+              <span className="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-emerald-500 border-2 border-slate-950 animate-pulse" />
+            )}
+          </div>
+
           <h3 className="font-bold text-white">{other.name}</h3>
           <p className="text-xs text-muted-foreground capitalize mt-0.5">{other.role}</p>
 
           {/* Level badge */}
           <div className="flex items-center justify-center gap-2 mt-2">
-            <LevelBadge level={level} size="sm" data-testid="context-level-badge" />
+            <LevelBadge level={level} size="md" data-testid="context-level-badge" />
           </div>
 
-          {/* Online status */}
+          {/* Online status text */}
           <div className={cn("flex items-center justify-center gap-1.5 mt-2 text-xs", isOnline ? "text-emerald-400" : "text-slate-500")}>
-            <span className={cn("w-2 h-2 rounded-full", isOnline ? "bg-emerald-400 animate-pulse" : "bg-slate-600")} />
-            {isOnline ? "Online now" : "Offline"}
+            {isOnline ? "● Online now" : "○ Offline"}
           </div>
 
-          {/* Hourly rate pill */}
-          {hourlyRate && (
-            <div className="mt-2 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-semibold" data-testid="context-hourly-rate">
-              R{Number(hourlyRate).toLocaleString()}/hr
-            </div>
-          )}
+          {/* Hourly rate + response rate pills */}
+          <div className="flex items-center justify-center gap-2 mt-2 flex-wrap">
+            {hourlyRate && (
+              <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-bold" data-testid="context-hourly-rate">
+                R{Number(hourlyRate).toLocaleString()}/hr
+              </div>
+            )}
+            {responseRate && (
+              <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-300 text-xs font-bold" data-testid="context-response-rate">
+                {responseRate}% reply
+              </div>
+            )}
+          </div>
         </div>
 
         <ScrollArea className="flex-1">

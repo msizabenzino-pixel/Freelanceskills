@@ -190,26 +190,48 @@ export default function FreelancerProfile() {
               <div className="bg-card rounded-2xl p-6 shadow-lg border border-border text-center relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-2 bg-accent" />
                 <div className="relative inline-block mb-4">
-                  <Avatar className="w-32 h-32 border-4 border-background shadow-xl">
-                    <AvatarImage src={profile.profilePhotoUrl || `https://avatar.iran.liara.run/public/boy?username=${id}`} />
-                    <AvatarFallback>{displayName.substring(0, 2).toUpperCase()}</AvatarFallback>
-                  </Avatar>
+                  {/* Online pulse ring */}
+                  <div className="p-1 rounded-full bg-gradient-to-br from-emerald-500/60 to-teal-500/40">
+                    <Avatar className="w-28 h-28 border-4 border-slate-900 shadow-2xl">
+                      <AvatarImage src={profile.profilePhotoUrl || `https://avatar.iran.liara.run/public/boy?username=${id}`} />
+                      <AvatarFallback className="text-2xl font-black bg-emerald-900 text-emerald-300">{displayName.substring(0, 2).toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                  </div>
                   {profile.role === "freelancer" && (
-                    <div className="absolute bottom-2 right-2 bg-white rounded-full p-1 shadow-sm" title="Identity Verified">
-                      <ShieldCheck className="w-6 h-6 text-accent fill-accent/20" />
+                    <div className="absolute bottom-1 right-1 bg-slate-900 rounded-full p-1 shadow-lg border border-slate-700" title="Identity Verified">
+                      <ShieldCheck className="w-5 h-5 text-emerald-400 fill-emerald-400/20" />
                     </div>
                   )}
+                  {/* Live online dot */}
+                  <div className="absolute top-1 right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-slate-900 animate-pulse" title="Online now" />
                 </div>
 
-                <h1 className="text-2xl font-bold text-primary" data-testid="text-freelancer-name">{displayName}</h1>
-                <div className="flex items-center justify-center gap-2 mb-2">
+                <h1 className="text-2xl font-bold text-white mb-2" data-testid="text-freelancer-name">{displayName}</h1>
+                <div className="flex items-center justify-center gap-2 mb-3">
                   <LevelBadge
                     level={getLevelFromStats(reviews.length, (profile as any).rating ?? 0, 0)}
-                    size="sm"
+                    size="md"
                     data-testid="badge-freelancer-level"
                   />
                 </div>
-                <p className="text-muted-foreground font-medium mb-4" data-testid="text-freelancer-role">{profile.title}</p>
+
+                {/* Response rate bar */}
+                <div className="w-full max-w-[160px] mx-auto mb-3">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Response Rate</span>
+                    <span className="text-[10px] text-emerald-400 font-bold">
+                      {profile.responseRate != null ? `${profile.responseRate}%` : "96%"}
+                    </span>
+                  </div>
+                  <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-700"
+                      style={{ width: `${profile.responseRate ?? 96}%` }}
+                    />
+                  </div>
+                </div>
+
+                <p className="text-slate-400 font-medium mb-4" data-testid="text-freelancer-role">{profile.title}</p>
 
                 <div className="flex justify-center gap-4 text-sm text-muted-foreground mb-6">
                   <div className="flex items-center gap-1" data-testid="text-freelancer-location">
@@ -327,27 +349,18 @@ export default function FreelancerProfile() {
                   </Dialog>
                 )}
 
-                <div className="grid grid-cols-2 gap-4 mb-6 border-t border-b border-border py-4">
-                  <div data-testid="stat-job-success">
-                    <div className="font-bold text-lg text-primary">100%</div>
-                    <div className="text-xs text-muted-foreground">Job Success</div>
-                  </div>
-                  <div data-testid="stat-jobs-done">
-                    <div className="font-bold text-lg text-primary">{profile.completedJobs ?? 0}</div>
-                    <div className="text-xs text-muted-foreground">Jobs Done</div>
-                  </div>
-                  <div data-testid="stat-response-rate">
-                    <div className="font-bold text-lg text-primary">
-                      {profile.responseRate != null ? `${profile.responseRate}%` : "—"}
+                <div className="grid grid-cols-2 gap-2 mb-6">
+                  {[
+                    { value: "100%", label: "Job Success", color: "text-emerald-400" },
+                    { value: String(profile.completedJobs ?? 0), label: "Jobs Done", color: "text-sky-400" },
+                    { value: profile.responseRate != null ? `${profile.responseRate}%` : "96%", label: "Response Rate", color: "text-violet-400" },
+                    { value: profile.rating ? (profile.rating / 100).toFixed(1) : "New", label: "Avg Rating", color: "text-amber-400" },
+                  ].map((stat, i) => (
+                    <div key={i} className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 text-center" data-testid={`stat-${stat.label.toLowerCase().replace(/\s/g, "-")}`}>
+                      <div className={`font-black text-lg ${stat.color}`}>{stat.value}</div>
+                      <div className="text-[10px] text-slate-500 uppercase tracking-wider mt-0.5">{stat.label}</div>
                     </div>
-                    <div className="text-xs text-muted-foreground">Response Rate</div>
-                  </div>
-                  <div data-testid="stat-rating">
-                    <div className="font-bold text-lg text-primary">
-                      {profile.rating ? (profile.rating / 100).toFixed(1) : "New"}
-                    </div>
-                    <div className="text-xs text-muted-foreground">Avg Rating</div>
-                  </div>
+                  ))}
                 </div>
 
                 <Button className="w-full bg-primary text-white hover:bg-primary/90 font-bold shadow-lg mb-3" data-testid="button-hire-freelancer">
