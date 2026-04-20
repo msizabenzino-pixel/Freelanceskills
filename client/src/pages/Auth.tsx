@@ -51,7 +51,7 @@ export default function Auth() {
     password: "",
     firstName: "",
     lastName: "",
-    userType: "freelancer" as "client" | "freelancer" | "both",
+    userType: "client" as "client" | "freelancer" | "both",
     phoneNumber: "",
     country: "South Africa",
     location: "",
@@ -133,8 +133,8 @@ export default function Auth() {
         await upsertJobApplicationProfile({
           userId: user.id,
           email: user.email,
-          firstName: formData.firstName || null,
-          lastName: formData.lastName || null,
+          firstName: formData.firstName.trim(),
+          lastName: formData.lastName.trim(),
           userType: formData.userType,
           phoneNumber: null,
           country: null,
@@ -327,8 +327,8 @@ export default function Auth() {
             </div>
           </div>
 
-          <Card className="shadow-xl border-border" data-testid="auth-card">
-            <CardContent className="p-7">
+          <Card className="shadow-2xl border-border/70 bg-card/95 backdrop-blur" data-testid="auth-card">
+            <CardContent className="p-8">
               <div className="text-center mb-6">
                 <div className="mx-auto mb-3 flex justify-center">
                   <BrandLogo imageClassName="h-10 max-w-[200px]" />
@@ -492,7 +492,7 @@ export default function Auth() {
                       <button
                         type="button"
                         onClick={() => setFormData({ ...formData, userType: "freelancer" })}
-                        className={`p-4 rounded-xl border-2 text-left transition-all ${formData.userType === "freelancer" ? "border-emerald-500 bg-emerald-500/5" : "border-border hover:border-muted-foreground/40"}`}
+                        className={`p-4 rounded-2xl border-2 text-left transition-all ${formData.userType === "freelancer" ? "border-emerald-500 bg-emerald-500/5 shadow-sm" : "border-border hover:border-muted-foreground/40"}`}
                         data-testid="btn-type-freelancer"
                       >
                         <Briefcase className={`w-5 h-5 mb-2 ${formData.userType === "freelancer" ? "text-emerald-500" : "text-muted-foreground"}`} />
@@ -502,7 +502,7 @@ export default function Auth() {
                       <button
                         type="button"
                         onClick={() => setFormData({ ...formData, userType: "client" })}
-                        className={`p-4 rounded-xl border-2 text-left transition-all ${formData.userType === "client" ? "border-blue-500 bg-blue-500/5" : "border-border hover:border-muted-foreground/40"}`}
+                        className={`p-4 rounded-2xl border-2 text-left transition-all ${formData.userType === "client" ? "border-blue-500 bg-blue-500/5 shadow-sm" : "border-border hover:border-muted-foreground/40"}`}
                         data-testid="btn-type-client"
                       >
                         <Users className={`w-5 h-5 mb-2 ${formData.userType === "client" ? "text-blue-500" : "text-muted-foreground"}`} />
