@@ -71,7 +71,7 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
       <Link href={href}>
         <button
           className={cn(
-            "px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap",
+            "px-3 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap",
             active
               ? "text-primary bg-primary/8 font-semibold"
               : "text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -89,9 +89,9 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
       role="navigation"
       aria-label="Main navigation"
       style={{ top: `${topOffset}px` }}
-      className="fixed left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border shadow-sm"
+      className="fixed left-0 right-0 z-50 bg-background/92 backdrop-blur-xl border-b border-border/70"
     >
-      <div className="container mx-auto px-4 md:px-6 h-14 flex items-center gap-3">
+        <div className="container mx-auto px-4 md:px-6 h-14 flex items-center gap-3">
 
         {/* Logo */}
         <Link href="/" className="flex-shrink-0 flex items-center" aria-label="FreelanceSkills home">
@@ -99,7 +99,7 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
         </Link>
 
         {/* Search bar — hidden on mobile, grows to fill space */}
-        <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md mx-2">
+        <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-lg mx-2">
           <div className="relative w-full">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
             <input
@@ -115,7 +115,7 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
         </form>
 
         {/* Desktop nav links */}
-        <div className="hidden md:flex items-center gap-0.5 flex-shrink-0">
+        <div className="hidden md:flex items-center gap-1 flex-shrink-0">
           {navLink("/jobs", "Find Work", "link-find-work")}
           {navLink("/find-talent", "Find Talent", "link-find-talent")}
           {navLink("/academy", "Learn", "link-academy")}
@@ -126,7 +126,7 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
           {/* Dark mode toggle — subtle icon */}
           <button
             onClick={toggleDarkMode}
-            className="hidden md:flex p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            className="hidden md:flex p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/70 transition-colors"
             aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
             data-testid="button-dark-mode"
           >
@@ -138,7 +138,7 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
               {/* Messages */}
               <Link href="/messages">
                 <button
-                  className="hidden md:flex p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                  className="hidden md:flex p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/70 transition-colors"
                   aria-label="Messages"
                   data-testid="link-messages-nav"
                 >
@@ -235,7 +235,7 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
             <>
               <Link href="/post-job">
                 <button
-                  className="hidden md:inline text-sm font-medium text-muted-foreground hover:text-foreground px-3 py-2 rounded-lg hover:bg-muted transition-colors"
+                  className="hidden md:inline text-sm font-medium text-muted-foreground hover:text-foreground px-3 py-2 rounded-full hover:bg-muted/70 transition-colors"
                   data-testid="button-post-job-navbar"
                 >
                   Post a Job
