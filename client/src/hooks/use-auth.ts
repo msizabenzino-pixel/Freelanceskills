@@ -61,12 +61,15 @@ export function useAuth() {
 
     const unsubscribe = onAuthStateChanged(firebaseAuth, async (firebaseUser) => {
       if (firebaseUser) {
-        setUser(mapFirebaseUserOrNull(firebaseUser));
-        // Always sync on first detection of a new UID (covers app reload / tab re-focus)
+        // Sync the Express session FIRST so that any query fired immediately
+        // after setUser() already has a valid session cookie. Without this
+        // ordering, useProfileStatus fires against /api/profile before the
+        // session exists, gets a 401, and shows "No Profile" incorrectly.
         if (lastSyncedUid.current !== firebaseUser.uid) {
           lastSyncedUid.current = firebaseUser.uid;
           await syncSessionNow();
         }
+        setUser(mapFirebaseUserOrNull(firebaseUser));
       } else {
         setUser(null);
         if (lastSyncedUid.current !== null) {

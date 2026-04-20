@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AuthGuard } from "@/components/AuthGuard";
@@ -65,6 +65,7 @@ function FreelancerOnboardingContent() {
 
   const { user } = useAuth();
   const [, navigate] = useLocation();
+  const queryClient = useQueryClient();
 
   const uploadPhotoMutation = useMutation({
     mutationFn: async (file: File) => {
@@ -129,6 +130,8 @@ function FreelancerOnboardingContent() {
       }
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/profile/check-readiness"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/profile-status"] });
       setSubmitted(true);
       setApiError(null);
     },

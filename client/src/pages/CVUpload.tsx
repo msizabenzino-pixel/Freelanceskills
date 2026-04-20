@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useAuth, syncSessionNow } from "@/hooks/use-auth";
 import { Navbar } from "@/components/Navbar";
@@ -169,6 +169,7 @@ function parseResponse(data: any, prev: ProfileFormData): ProfileFormData {
 export default function CVUpload() {
   const [, setLocation] = useLocation();
   const { user, isLoading: isAuthLoading } = useAuth();
+  const queryClient = useQueryClient();
   const { toast } = useToast();
   const [phase, setPhase] = useState<Phase>("upload");
   const [cvText, setCvText] = useState("");
@@ -316,6 +317,10 @@ export default function CVUpload() {
       });
     },
     onSuccess: async (res) => {
+      // Immediately bust the readiness-gate cache so Apply sees the new profile
+      // right away instead of serving the stale "No Profile" result for 30-60s.
+      queryClient.invalidateQueries({ queryKey: ["/api/profile/check-readiness"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/profile-status"] });
       fireConfetti();
       if (user?.id) {
         try {

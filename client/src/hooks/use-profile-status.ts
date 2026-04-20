@@ -1,11 +1,12 @@
 /**
  * useProfileStatus — reads the current user's profile from the Postgres API.
  *
- * This deliberately avoids Firestore so the Dashboard status badge and the
- * Apply button both read from the SAME source of truth, eliminating the
- * "profile created but Apply says No Profile" bug.
+ * Reads from the SAME source as the Apply button (/api/profile) so the
+ * Dashboard badge and Apply gate always agree — no Firestore split-brain.
  *
- * Polls every 4 seconds after a go-live action so the badge flips instantly.
+ * 401 is treated as "loading" (session not ready yet) rather than "none"
+ * because setUser() now waits for syncSessionNow() before firing, so a
+ * transient 401 on first render means the session is still being established.
  */
 
 import { useQuery } from "@tanstack/react-query";
@@ -18,6 +19,8 @@ interface ProfileStatusResult {
   score: number;
   refetch: () => void;
 }
+
+const SENTINEL_401 = "__SESSION_NOT_READY__";
 
 function computeScore(p: any): number {
   if (!p) return 0;
@@ -33,21 +36,27 @@ function computeScore(p: any): number {
 
 export function useProfileStatus(userId: string | undefined): ProfileStatusResult {
   const { data, isLoading, refetch } = useQuery<any>({
-    queryKey: ["/api/profile", userId],
+    queryKey: ["/api/profile-status", userId],
     queryFn: async () => {
       if (!userId) return null;
       const res = await fetch("/api/profile", { credentials: "include" });
-      if (res.status === 401) return null;
+      if (res.status === 401) return SENTINEL_401;
       if (!res.ok) return null;
       return res.json();
     },
     enabled: !!userId,
-    refetchInterval: 5000,
-    staleTime: 2000,
+    refetchInterval: 4000,
+    staleTime: 1000,
+    retry: false,
   });
 
   if (!userId) return { status: "none", profile: null, score: 0, refetch };
-  if (isLoading) return { status: "loading", profile: null, score: 0, refetch };
+
+  // Still in-flight or got a 401 (session not established yet) — stay loading
+  if (isLoading || data === SENTINEL_401) {
+    return { status: "loading", profile: null, score: 0, refetch };
+  }
+
   if (!data) return { status: "none", profile: null, score: 0, refetch };
 
   const status: ProfileStatus = data.publishedProfile ? "published" : "draft";

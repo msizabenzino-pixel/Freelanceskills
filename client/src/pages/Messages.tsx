@@ -81,7 +81,9 @@ export default function Messages() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showQuickReplies, setShowQuickReplies] = useState(false);
-  const [showContext, setShowContext] = useState(false);
+  const [showContext, setShowContext] = useState(() =>
+    typeof window !== "undefined" && window.innerWidth >= 1024
+  );
   const [showProposalCard, setShowProposalCard] = useState(false);
   const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
   const [reactions, setReactions] = useState<Record<string, Reaction[]>>({});

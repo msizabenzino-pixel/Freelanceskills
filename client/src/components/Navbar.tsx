@@ -1,6 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useState, useRef, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import {
   Menu, X, LogOut, Briefcase, Search, Bell, MessageSquare,
@@ -32,6 +33,19 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
   const { user, isAuthenticated, logout } = useAuth();
   const { isDark, toggle: toggleDarkMode } = useDarkMode();
   const searchRef = useRef<HTMLInputElement>(null);
+
+  const { data: rewardsData } = useQuery<{ balance: number }>({
+    queryKey: ["/api/rewards", user?.id],
+    queryFn: async () => {
+      const res = await fetch(`/api/rewards?userId=${user?.id ?? ""}`, { credentials: "include" });
+      if (!res.ok) return { balance: 0 };
+      return res.json();
+    },
+    enabled: isAuthenticated && !!user?.id,
+    staleTime: 60_000,
+    refetchInterval: 120_000,
+  });
+  const pointsBalance = rewardsData?.balance ?? 0;
 
   useEffect(() => {
     if (!isAuthenticated) { setProfileStatus(null); return; }
@@ -137,6 +151,20 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
                 <NotificationBell />
               </div>
 
+              {/* Points counter */}
+              {pointsBalance > 0 && (
+                <Link href="/rewards">
+                  <button
+                    className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/25 hover:bg-amber-500/20 transition-all text-[11px] font-bold text-amber-400"
+                    data-testid="badge-points-balance"
+                    title="Your reward points"
+                  >
+                    <Trophy className="h-3 w-3" />
+                    {pointsBalance.toLocaleString()}
+                  </button>
+                </Link>
+              )}
+
               {/* Profile status pill */}
               {profileStatus && profileStatus !== "published" && (
                 <button
@@ -180,7 +208,13 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
                     <MessageSquare className="h-4 w-4 mr-2 text-violet-500" /> Messages
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate("/rewards")} data-testid="link-rewards-dropdown">
-                    <Trophy className="h-4 w-4 mr-2 text-amber-500" /> Rewards
+                    <Trophy className="h-4 w-4 mr-2 text-amber-500" />
+                    <span className="flex-1">Rewards</span>
+                    {pointsBalance > 0 && (
+                      <span className="ml-auto text-[10px] font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded-full">
+                        {pointsBalance.toLocaleString()} pts
+                      </span>
+                    )}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => navigate("/post-job")} data-testid="link-post-job-dropdown">
