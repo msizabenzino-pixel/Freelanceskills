@@ -282,7 +282,7 @@ export default function Auth() {
               <p className="text-lg text-muted-foreground leading-relaxed">
                 {isLogin
                   ? "Use Google, LinkedIn, or email to get back into your dashboard."
-                  : "Choose freelancer or client, then continue with Google, LinkedIn, or email."}
+                  : "Clients can start posting right away. Freelancers can switch to work mode in one click."}
               </p>
             </div>
 
@@ -339,7 +339,7 @@ export default function Auth() {
                 <p className="text-sm text-card-foreground/60 mt-1">
                   {isForgotPassword 
                     ? "Enter your email to receive a reset link" 
-                    : (isLogin ? "Use Google, LinkedIn, or email" : "Choose who you are, then continue")}
+                    : (isLogin ? "Use Google, LinkedIn, or email" : "Choose client or freelancer, then continue")}
                 </p>
               </div>
 
