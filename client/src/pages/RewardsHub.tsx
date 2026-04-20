@@ -82,18 +82,93 @@ export default function RewardsHub() {
   const progress = nextTier ? Math.min(100, ((balance - tier.min) / (nextTier.min - tier.min)) * 100) : 100;
 
   if (!isAuthenticated) {
+    const PREVIEW_TIERS = [
+      { name: "Bronze", icon: "🥉", color: "text-amber-700", bg: "bg-amber-900/20 border-amber-800/40", pts: "0" },
+      { name: "Silver", icon: "🥈", color: "text-slate-300", bg: "bg-slate-800/40 border-slate-700/40", pts: "500" },
+      { name: "Gold", icon: "🥇", color: "text-amber-400", bg: "bg-amber-900/20 border-amber-600/30", pts: "2,000" },
+      { name: "Diamond", icon: "💎", color: "text-violet-400", bg: "bg-violet-900/20 border-violet-600/30", pts: "10,000" },
+    ];
+    const PREVIEW_REWARDS = [
+      { name: "Feature Boost (7 Days)", pts: "500", icon: "⚡" },
+      { name: "Pro Badge (1 Month)", pts: "1,000", icon: "🏅" },
+      { name: "Zero Commission Week", pts: "2,500", icon: "💸" },
+      { name: "Priority Support Pass", pts: "750", icon: "🎯" },
+      { name: "R250 Cash Voucher", pts: "3,000", icon: "💰" },
+      { name: "Verified Pro Status", pts: "5,000", icon: "✅" },
+    ];
     return (
       <div className="min-h-screen bg-slate-950 text-white">
         <Navbar />
-        <div className="container max-w-2xl mx-auto px-4 py-32 text-center">
-          <Trophy className="w-16 h-16 text-emerald-400 mx-auto mb-6" />
-          <h1 className="text-3xl font-bold mb-4">FreelanceSkills Rewards</h1>
-          <p className="text-slate-400 mb-8">Log in to earn points and unlock exclusive rewards.</p>
-          <Link href="/login">
-            <button className="px-8 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl transition-all" data-testid="button-login-rewards">
-              Log In to Earn Rewards
-            </button>
-          </Link>
+        <div className="relative overflow-hidden">
+          {/* Background glows */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-emerald-500/8 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute top-20 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-[100px] pointer-events-none" />
+
+          <div className="container max-w-5xl mx-auto px-4 pt-24 pb-20 relative z-10">
+            {/* Header */}
+            <div className="text-center mb-14">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-6">
+                <Trophy className="w-3.5 h-3.5" /> FreelanceSkills Rewards
+              </div>
+              <h1 className="text-4xl md:text-5xl font-black mb-4 leading-tight">
+                Earn Points.<br />
+                <span className="text-emerald-400">Unlock Rewards.</span>
+              </h1>
+              <p className="text-slate-400 text-lg max-w-xl mx-auto mb-8">
+                Every job completed, review received, and profile action earns you points. Redeem for real perks — commission-free weeks, cash vouchers, and Pro status.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center mb-4">
+                <Link href="/auth">
+                  <button className="inline-flex items-center gap-2 px-8 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02]" data-testid="button-login-rewards">
+                    <Zap className="w-4 h-4" /> Join Free — Start Earning
+                  </button>
+                </Link>
+                <Link href="/login">
+                  <button className="inline-flex items-center gap-2 px-8 py-3.5 border border-slate-700 hover:border-emerald-500/40 text-slate-300 hover:text-emerald-400 font-semibold rounded-xl transition-all">
+                    Log In to Your Account
+                  </button>
+                </Link>
+              </div>
+              <p className="text-slate-600 text-xs">50,000+ members earning rewards · Free to join</p>
+            </div>
+
+            {/* Tier preview */}
+            <div className="mb-12">
+              <h2 className="text-center text-sm font-bold uppercase tracking-widest text-slate-500 mb-5">Membership Tiers</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {PREVIEW_TIERS.map((tier, i) => (
+                  <div key={i} className={`rounded-2xl border p-4 text-center ${tier.bg}`}>
+                    <div className="text-3xl mb-2">{tier.icon}</div>
+                    <div className={`font-black text-base ${tier.color}`}>{tier.name}</div>
+                    <div className="text-slate-600 text-[10px] mt-1">{tier.pts}+ pts</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Rewards catalogue preview — blurred/locked */}
+            <div className="relative">
+              <h2 className="text-center text-sm font-bold uppercase tracking-widest text-slate-500 mb-5">Rewards Catalogue</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {PREVIEW_REWARDS.map((r, i) => (
+                  <div key={i} className="bg-slate-900/70 border border-slate-800 rounded-2xl p-4 flex items-center gap-3">
+                    <span className="text-2xl">{r.icon}</span>
+                    <div>
+                      <div className="font-semibold text-white text-sm">{r.name}</div>
+                      <div className="text-emerald-400 text-xs font-bold mt-0.5">{r.pts} pts</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* Lock overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent rounded-2xl flex flex-col items-center justify-end pb-6">
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900/90 border border-slate-700">
+                  <Lock className="w-4 h-4 text-slate-400" />
+                  <span className="text-slate-400 text-sm font-medium">Sign in to unlock all rewards</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <Footer />
       </div>

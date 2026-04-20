@@ -63,30 +63,31 @@ function FreelancerCard({ f, onSelect, selected }: { f: FreelancerResult; onSele
     >
       <div className="flex flex-col items-center text-center gap-4">
         <div className="relative">
-          <Avatar className="w-20 h-20 ring-2 ring-border group-hover:ring-primary transition-all">
-            <AvatarFallback className="bg-gradient-to-br from-primary/20 to-accent/20 text-primary font-bold text-xl">
-              {f.avatarInitials}
-            </AvatarFallback>
-          </Avatar>
-          {f.verified && (
-            <div className="absolute -bottom-1 -right-1 bg-emerald-500 rounded-full p-0.5">
-              <ShieldCheck className="w-4 h-4 text-white" />
+          <div className={`p-0.5 rounded-full ${f.isPro ? "bg-gradient-to-br from-violet-500 to-emerald-500" : "bg-gradient-to-br from-emerald-500/40 to-teal-500/30"}`}>
+            <div className="p-0.5 rounded-full bg-card">
+              <Avatar className="w-20 h-20">
+                <AvatarFallback className="bg-gradient-to-br from-slate-800 to-slate-900 text-emerald-300 font-bold text-xl">
+                  {f.avatarInitials}
+                </AvatarFallback>
+              </Avatar>
             </div>
-          )}
-          {f.isPro && (
-            <div className="absolute -top-1 -right-1 bg-primary rounded-full px-1.5 py-0.5 text-[9px] font-bold text-white">PRO</div>
+          </div>
+          {f.verified && (
+            <div className="absolute -bottom-1 -right-1 bg-slate-900 rounded-full p-0.5 border border-emerald-500/40 shadow-lg">
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            </div>
           )}
         </div>
 
         <div className="w-full">
-          <h3 className="font-bold text-base text-foreground leading-tight">{f.name}</h3>
+          <h3 className="font-bold text-base text-white leading-tight">{f.name}</h3>
           <div className="flex justify-center mt-1 mb-0.5">
             <LevelBadge
-              level={getLevelFromStats(f.completedJobs ?? 0, f.rating ?? 0, 0)}
+              level={f.isPro ? "pro" : getLevelFromStats(f.completedJobs ?? 0, f.rating ?? 0, 0)}
               size="xs"
             />
           </div>
-          <p className="text-muted-foreground text-sm mt-0.5 line-clamp-2">{f.title}</p>
+          <p className="text-slate-400 text-sm mt-0.5 line-clamp-2">{f.title}</p>
           {f.location && (
             <p className="text-xs text-muted-foreground mt-1 flex items-center justify-center gap-1">
               <MapPin className="w-3 h-3" /> {f.location}
@@ -110,24 +111,24 @@ function FreelancerCard({ f, onSelect, selected }: { f: FreelancerResult; onSele
         <div className="flex items-center justify-between w-full text-sm">
           {ratingDisplay ? (
             <div className="flex items-center gap-1">
-              <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
-              <span className="font-semibold">{ratingDisplay}</span>
+              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+              <span className="font-semibold text-white">{ratingDisplay}</span>
             </div>
           ) : (
-            <span className="text-muted-foreground text-xs">New</span>
+            <span className="text-slate-500 text-xs">New</span>
           )}
-          <div className="flex items-center gap-1 text-muted-foreground">
+          <div className="flex items-center gap-1 text-slate-500">
             <Briefcase className="w-3 h-3" />
             <span className="text-xs">{f.completedJobs} jobs</span>
           </div>
           {f.hourlyRateFormatted && (
-            <span className="font-bold text-primary text-sm">{f.hourlyRateFormatted}</span>
+            <span className="font-black text-emerald-400 text-sm">{f.hourlyRateFormatted}</span>
           )}
         </div>
 
         <Link href={`/freelancer-profile/${f.userId}`} className="w-full" onClick={(e) => e.stopPropagation()}>
-          <Button className="w-full h-9 text-sm" data-testid={`button-view-profile-${f.id}`}>
-            View Profile
+          <Button variant="outline" className="w-full h-9 text-sm border-slate-700 text-slate-300 hover:border-emerald-500/50 hover:text-emerald-400 hover:bg-emerald-500/5 transition-all" data-testid={`button-view-profile-${f.id}`}>
+            View Profile →
           </Button>
         </Link>
       </div>
