@@ -1,14 +1,15 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CountryProvider, CountrySelectorDialog } from "@/components/CountrySelector";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState, useCallback } from "react";
 import { SupportChat } from "@/components/SupportChat";
 import { CookieConsent } from "@/components/CookieConsent";
 import { OnboardingCarousel } from "@/components/OnboardingCarousel";
+import { CommandPalette } from "@/components/CommandPalette";
 import { OfflineScreen } from "@/components/OfflineScreen";
 import { AuthGuard } from "@/components/AuthGuard";
 import { FloatingActionButton } from "@/components/FloatingActionButton";
@@ -404,7 +405,13 @@ function AdminRouter() {
 }
 
 function Router() {
+  const [location] = useLocation();
   return (
+    <div
+      key={location}
+      className="animate-in fade-in duration-200"
+      style={{ willChange: "opacity" }}
+    >
     <Suspense fallback={<PageLoader />}>
       <Switch>
         <Route path="/" component={Home} />
@@ -512,10 +519,25 @@ function Router() {
         <Route component={NotFound} />
       </Switch>
     </Suspense>
+    </div>
   );
 }
 
 function App() {
+  const [cmdOpen, setCmdOpen] = useState(false);
+
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+      e.preventDefault();
+      setCmdOpen(prev => !prev);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
+
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
@@ -529,11 +551,12 @@ function App() {
             </a>
             <Toaster />
             <CountrySelectorDialog />
+            <CommandPalette open={cmdOpen} onOpenChange={setCmdOpen} />
             <Router />
             <div id="floating-fab"><FloatingActionButton /></div>
             <div id="floating-support"><SupportChat /></div>
             <CookieConsent />
-            {/* OnboardingCarousel removed — users go straight to the site */}
+            <OnboardingCarousel />
             <OfflineScreen />
           </TooltipProvider>
         </CountryProvider>

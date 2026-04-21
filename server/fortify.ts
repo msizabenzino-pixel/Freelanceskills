@@ -703,7 +703,7 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
   res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
   res.setHeader("Permissions-Policy",
     "camera=(self), microphone=(self), geolocation=(), payment=(self), " +
-    "usb=(), bluetooth=(), serial=(), hid=(), midi=(), " +
+    "usb=(), serial=(), midi=(), " +
     "accelerometer=(), gyroscope=(), magnetometer=(), " +
     "fullscreen=(self), autoplay=(self), picture-in-picture=(self)"
   );

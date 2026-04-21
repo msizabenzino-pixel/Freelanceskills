@@ -121,9 +121,19 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
               placeholder="Search skills, jobs, freelancers..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full h-9 pl-9 pr-4 rounded-full bg-muted border border-border text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+              className="w-full h-9 pl-9 pr-16 rounded-full bg-muted border border-border text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
               data-testid="input-nav-search"
             />
+            <button
+              type="button"
+              title="Open command palette (⌘K)"
+              onClick={() => document.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true, bubbles: true }))}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5 opacity-50 hover:opacity-100 transition-opacity"
+              data-testid="button-cmd-palette-hint"
+              tabIndex={-1}
+            >
+              <kbd className="pointer-events-none inline-flex h-5 select-none items-center rounded border border-border bg-background px-1.5 font-mono text-[10px] font-medium text-muted-foreground">⌘K</kbd>
+            </button>
           </div>
         </form>
 
