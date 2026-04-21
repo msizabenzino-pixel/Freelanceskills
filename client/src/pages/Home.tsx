@@ -1173,9 +1173,9 @@ export default function Home() {
               <div className="flex-1 max-w-sm mx-auto">
                 <div className="grid grid-cols-2 gap-4">
                   {[
-                    { val: "11,400+", label: "Live Jobs", color: "text-emerald-400" },
+                    { val: totalJobs > 0 ? `${totalJobs.toLocaleString()}+` : "11,400+", label: "Live Jobs", color: "text-emerald-400" },
                     { val: "54", label: "Countries Covered", color: "text-blue-400" },
-                    { val: "R2.4M+", label: "Paid Out Monthly", color: "text-amber-400" },
+                    { val: totalFreelancers > 0 ? `${totalFreelancers.toLocaleString()}+` : "8,200+", label: "Verified Freelancers", color: "text-amber-400" },
                     { val: "1M", label: "Africans by 2031", color: "text-violet-400" },
                   ].map((stat, i) => (
                     <div key={i} className="bg-slate-900 border border-slate-800 rounded-2xl p-5 text-center" data-testid={`coverage-stat-${i}`}>

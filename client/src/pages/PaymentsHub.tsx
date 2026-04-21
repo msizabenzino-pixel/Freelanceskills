@@ -28,8 +28,6 @@ import {
   ArrowRightLeft,
   Building2,
   Star,
-  Copy,
-  CheckCheck,
   Minus,
   AlertCircle,
   Receipt,
@@ -155,17 +153,6 @@ function CryptoChangeBadge({ change }: { change: string }) {
 }
 
 function CryptoWalletCard({ crypto }: { crypto: typeof cryptoCurrencies[0] }) {
-  const [connected, setConnected] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const mockAddress = `${crypto.walletPrefix}7f4a8c2b9d3e1f6a5b0c8d4e7f2a3b9c1d5e8f0a`;
-
-  const handleConnect = () => setConnected(true);
-  const handleCopy = () => {
-    navigator.clipboard.writeText(mockAddress).catch(() => {});
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   return (
     <Card className="hover:shadow-xl transition-shadow border-border" data-testid={`card-crypto-${crypto.code}`}>
       <CardContent className="p-6">
@@ -179,35 +166,11 @@ function CryptoWalletCard({ crypto }: { crypto: typeof cryptoCurrencies[0] }) {
         <p className="text-sm text-muted-foreground mb-1">{crypto.code} · {crypto.network}</p>
         <div className="text-xl font-bold text-foreground" data-testid={`text-crypto-price-${crypto.code}`}>{crypto.price}</div>
         <div className="text-xs text-muted-foreground mb-4">{crypto.priceZar}</div>
-        {connected ? (
-          <div className="space-y-2" data-testid={`wallet-connected-${crypto.code}`}>
-            <div className="flex items-center gap-1 text-xs text-green-600 font-medium mb-2">
-              <CheckCircle2 className="w-3.5 h-3.5" /> Wallet Connected
-            </div>
-            <div className="bg-muted rounded-lg p-2.5 flex items-center gap-2">
-              <span className="text-xs font-mono text-muted-foreground truncate flex-1" data-testid={`text-wallet-address-${crypto.code}`}>
-                {mockAddress.slice(0, 8)}...{mockAddress.slice(-6)}
-              </span>
-              <button
-                onClick={handleCopy}
-                className="shrink-0 text-muted-foreground hover:text-primary transition-colors"
-                data-testid={`button-copy-address-${crypto.code}`}
-              >
-                {copied ? <CheckCheck className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
-              </button>
-            </div>
-          </div>
-        ) : (
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full gap-2"
-            onClick={handleConnect}
-            data-testid={`button-connect-${crypto.code}`}
-          >
-            <Wallet className="w-4 h-4" /> Connect Wallet
-          </Button>
-        )}
+        <div className="rounded-lg border border-dashed border-border p-3 text-center" data-testid={`wallet-coming-soon-${crypto.code}`}>
+          <Clock className="w-4 h-4 text-muted-foreground mx-auto mb-1" />
+          <p className="text-xs text-muted-foreground font-medium">Crypto payouts coming Q3 2025</p>
+          <p className="text-[10px] text-muted-foreground/60 mt-0.5">Use PayFast or bank transfer for now</p>
+        </div>
       </CardContent>
     </Card>
   );

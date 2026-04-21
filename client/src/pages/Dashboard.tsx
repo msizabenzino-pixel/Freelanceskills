@@ -51,6 +51,8 @@ import {
   ArrowRight,
   User,
   Plus,
+  Lock,
+  ShieldCheck,
 } from "lucide-react";
 
 type NavSection = "Overview" | "My Jobs" | "Applications" | "Payments" | "Settings";
@@ -399,8 +401,31 @@ export default function Dashboard() {
 
   const renderPayments = () => (
     <div className="space-y-5">
+      {/* Escrow Protection Banner */}
+      <div className="rounded-2xl border border-emerald-500/20 bg-gradient-to-r from-emerald-950/40 to-slate-900 p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center" data-testid="escrow-protection-banner">
+        <div className="w-11 h-11 rounded-xl bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center flex-shrink-0">
+          <Lock className="w-5 h-5 text-emerald-400" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-0.5">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="text-sm font-bold text-white">PayFast Escrow Protection — Active</span>
+          </div>
+          <p className="text-xs text-slate-400 leading-relaxed">All payments are held securely in escrow until you approve the work. Funds are released only when you're satisfied.</p>
+        </div>
+        <Button
+          size="sm"
+          variant="outline"
+          className="border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 text-xs gap-1.5 flex-shrink-0"
+          onClick={() => navigate("/payments-hub")}
+          data-testid="btn-view-escrow-details"
+        >
+          <ArrowRight className="w-3.5 h-3.5" /> View Details
+        </Button>
+      </div>
+
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-bold text-white">Payments</h3>
+        <h3 className="text-lg font-bold text-white">Payment History</h3>
         <div className="text-right">
           <p className="text-xs text-slate-400">Total earnings</p>
           <p className="text-xl font-bold text-emerald-400" data-testid="stat-total-earnings">

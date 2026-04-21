@@ -173,6 +173,17 @@ export default function FindTalent() {
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
   const { formatRate } = useCurrency();
 
+  const { data: platformStats } = useQuery<any>({
+    queryKey: ["/api/stats/public"],
+    queryFn: async () => {
+      const res = await fetch("/api/stats/public");
+      if (!res.ok) return null;
+      return res.json();
+    },
+    staleTime: 10 * 60 * 1000,
+  });
+  const realFreelancerCount: number = platformStats?.stats?.totalFreelancers || 0;
+
   const debouncedSearch = useDebounce(searchInput, 400);
   const debouncedLocation = useDebounce(locationInput, 400);
 
@@ -251,10 +262,10 @@ export default function FindTalent() {
 
             <div className="flex items-center justify-center gap-8 flex-wrap">
               {[
-                { val: "50K+", label: "Verified Freelancers" },
+                { val: realFreelancerCount > 0 ? `${realFreelancerCount.toLocaleString()}+` : "Verified", label: "Freelancers" },
                 { val: "4.9★", label: "Avg Rating" },
                 { val: "54", label: "African Countries" },
-                { val: "R100M+", label: "Total Paid Out" },
+                { val: data?.total ? `${data.total.toLocaleString()}+` : "Active", label: "Available Now" },
               ].map(({ val, label }) => (
                 <div key={label} className="text-center">
                   <div className="text-lg font-black text-white">{val}</div>
