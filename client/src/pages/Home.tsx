@@ -325,7 +325,7 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [heroMode, setHeroMode] = useState<"search" | "ai">("search");
   const [applyJob, setApplyJob] = useState<{ title: string; company: string; budget: string; location: string } | null>(null);
-  const [profileCompletion] = useState(42); // demo completion %
+  const [profileCompletion] = useState(42);
   const [activeCategory, setActiveCategory] = useState("Development");
 
   const { data: realJobsData } = useQuery<any>({
@@ -721,7 +721,7 @@ export default function Home() {
                 </button>
               </div>
 
-              {/* Right: Interactive mock profile card */}
+              {/* Right: Interactive profile card */}
               <div className="flex-1 max-w-sm w-full mx-auto">
                 <div className="bg-slate-900 border border-slate-700 rounded-2xl overflow-hidden shadow-2xl">
                   {/* Cover */}
@@ -999,9 +999,9 @@ export default function Home() {
                   <Award className="w-3.5 h-3.5" /> Verified Top Professionals
                 </div>
                 <h2 id="top-freelancers-heading" className="text-3xl md:text-4xl font-black text-white mb-2">
-                  Meet Africa's Best Freelancers
+                  Meet the People Clients Hire First
                 </h2>
-                <p className="text-slate-400">ID-verified. Skills-tested. Endorsed by real clients.</p>
+                <p className="text-slate-400">ID-verified. Skills-tested. Endorsed by real clients. Built for fast hiring.</p>
               </div>
               <button onClick={() => navigate("/find-talent")} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-700 hover:border-blue-500/40 text-slate-300 hover:text-blue-400 font-semibold text-sm transition-all" data-testid="button-browse-talent">
                 Browse All Talent <ArrowRight className="w-4 h-4" />
@@ -1149,7 +1149,7 @@ export default function Home() {
                     { country: "🇰🇪 Kenya", status: "M-Pesa · KES · Live", primary: true },
                     { country: "🇳🇬 Nigeria", status: "NGN · Bank Transfer · Live", primary: true },
                     { country: "🇬🇭 Ghana", status: "GHS · Mobile Money", primary: false },
-                    { country: "🇪🇬 Egypt", status: "EGP · Expanding next", primary: false },
+                  { country: "🇪🇬 Egypt", status: "EGP · Expanding next", primary: false },
                     { country: "🌍 + 49 Countries", status: "Global Remote Jobs", primary: false },
                   ].map((c, i) => (
                     <div key={i} className={`p-3 rounded-xl border ${c.primary ? "border-emerald-500/20 bg-emerald-500/5" : "border-slate-800 bg-slate-900/50"}`} data-testid={`coverage-country-${i}`}>
@@ -1285,7 +1285,7 @@ export default function Home() {
                   <PWAInstallButton />
                   <p className="text-slate-600 text-xs mt-3">Android · iOS · Windows · macOS · Linux</p>
                 </div>
-                {/* Phone mockup */}
+                {/* Product preview */}
                 <div className="hidden md:flex items-center justify-center">
                   <div className="w-52 h-[420px] bg-slate-900 border border-slate-700 rounded-[3rem] shadow-2xl shadow-black/50 overflow-hidden relative">
                     <div className="absolute top-6 left-1/2 -translate-x-1/2 w-24 h-5 bg-slate-800 rounded-full" />
@@ -1323,7 +1323,7 @@ export default function Home() {
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-wider mb-4">
                   <TrendingUp className="w-3.5 h-3.5" /> Knowledge Hub
                 </div>
-                <h2 className="text-3xl md:text-4xl font-black text-white mb-2">Learn. Earn. Grow.</h2>
+                <h2 className="text-3xl md:text-4xl font-black text-white mb-2">Learn what helps you earn faster.</h2>
                 <p className="text-slate-400 text-base max-w-xl">South Africa's most practical freelancing guides — from winning tenders to filing for SARS.</p>
               </div>
               <button onClick={() => navigate("/blog")} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-700 hover:border-amber-500/40 text-slate-300 hover:text-amber-400 font-semibold text-sm transition-all" data-testid="button-view-blog">
