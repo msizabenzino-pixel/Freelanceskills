@@ -1139,7 +1139,7 @@ export default function Home() {
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-bold uppercase tracking-wider mb-5">
                   <Globe className="w-3.5 h-3.5" /> Pan-African Reach
                 </div>
-                <h2 className="text-3xl md:text-4xl font-black text-white mb-4">Local. Continental. Global.</h2>
+                <h2 className="text-3xl md:text-4xl font-black text-white mb-4">Local. Continental. Global. One Marketplace.</h2>
                 <p className="text-slate-400 text-lg mb-6 leading-relaxed">
                   Localised payment rails, currency support, and compliance for each African market. One platform, the whole continent.
                 </p>
@@ -1149,7 +1149,7 @@ export default function Home() {
                     { country: "🇰🇪 Kenya", status: "M-Pesa · KES · Live", primary: true },
                     { country: "🇳🇬 Nigeria", status: "NGN · Bank Transfer · Live", primary: true },
                     { country: "🇬🇭 Ghana", status: "GHS · Mobile Money", primary: false },
-                    { country: "🇪🇬 Egypt", status: "EGP · Coming Soon", primary: false },
+                    { country: "🇪🇬 Egypt", status: "EGP · Expanding next", primary: false },
                     { country: "🌍 + 49 Countries", status: "Global Remote Jobs", primary: false },
                   ].map((c, i) => (
                     <div key={i} className={`p-3 rounded-xl border ${c.primary ? "border-emerald-500/20 bg-emerald-500/5" : "border-slate-800 bg-slate-900/50"}`} data-testid={`coverage-country-${i}`}>
