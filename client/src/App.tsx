@@ -53,7 +53,6 @@ const Enterprise = lazy(() => import("@/pages/Enterprise"));
 const Referral = lazy(() => import("@/pages/Referral"));
 const RewardsHub = lazy(() => import("@/pages/RewardsHub"));
 const Checkout = lazy(() => import("@/pages/Checkout"));
-const FreelancerOnboarding = lazy(() => import("@/pages/FreelancerOnboarding"));
 const ProfileBuilder = lazy(() => import("@/pages/ProfileBuilder"));
 const CVUpload = lazy(() => import("@/pages/CVUpload"));
 const Credentials = lazy(() => import("@/pages/Credentials"));
@@ -470,7 +469,6 @@ function Router() {
         <Route path="/rewards" component={RewardsHub} />
         <Route path="/checkout" component={Checkout} />
         <Route path="/onboarding" component={CVUpload} />
-        <Route path="/freelancer-onboarding" component={CVUpload} />
         <Route path="/profile-builder" component={CVUpload} />
         <Route path="/cv-upload" component={CVUpload} />
         <Route path="/payments-hub" component={PaymentsHub} />

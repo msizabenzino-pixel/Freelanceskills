@@ -26,7 +26,7 @@ const slides = [
   },
 ];
 
-const AUTH_PATHS = ["/login", "/auth", "/cv-upload", "/onboarding", "/freelancer-onboarding", "/profile-builder", "/signup"];
+const AUTH_PATHS = ["/login", "/auth", "/onboarding", "/profile-builder", "/signup"];
 
 export function OnboardingCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0);

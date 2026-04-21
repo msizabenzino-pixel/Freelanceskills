@@ -158,7 +158,7 @@ export default function Auth() {
       });
 
       await syncSessionNow();
-      navigate(isFreelancer ? "/cv-upload?welcome=1" : "/post-job");
+      navigate(isFreelancer ? "/onboarding?welcome=1" : "/post-job");
     },
     onError: (error: Error) => {
       const msg = error.message || "";
@@ -239,7 +239,7 @@ export default function Auth() {
       await syncSessionNow();
       if (isNewUser) {
         toast({ title: "Account created! 🎉", description: "Let's build your profile — takes 60 seconds." });
-        navigate(formData.userType !== "client" ? "/cv-upload?welcome=1" : "/post-job");
+        navigate(formData.userType !== "client" ? "/onboarding?welcome=1" : "/post-job");
       } else {
         await completeAuthSuccess(user);
       }

@@ -118,7 +118,7 @@ export default function Login() {
   const handleSocialAuthSuccess = ({ user, isNewUser }: { user: any; isNewUser: boolean }) => {
     if (isNewUser) {
       toast({ title: "Welcome to FreelanceSkills! 🎉", description: "Let's build your profile — takes 60 seconds." });
-      navigate("/cv-upload?welcome=1");
+      navigate("/onboarding?welcome=1");
     } else {
       toast({ title: "Welcome back!", description: `Signed in as ${user?.email || "user"}.` });
       handlePostAuthRedirect();

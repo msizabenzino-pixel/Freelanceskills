@@ -622,7 +622,7 @@ export default function Home() {
             {/* Open to Freelance badge */}
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.55 }}
               className="flex items-center justify-center">
-              <button onClick={() => navigate("/freelancer-onboarding")}
+              <button onClick={() => navigate("/onboarding")}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900/70 border border-slate-800 hover:border-emerald-500/40 transition-all group"
                 data-testid="badge-open-to-work">
                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -714,7 +714,7 @@ export default function Home() {
                     </div>
                   ))}
                 </div>
-                <button onClick={() => navigate("/freelancer-onboarding")}
+                <button onClick={() => navigate("/onboarding")}
                   className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-blue-500 hover:bg-blue-400 text-white font-bold text-sm shadow-lg shadow-blue-500/20 transition-all hover:scale-[1.02]"
                   data-testid="button-build-profile">
                   <PenLine className="w-4 h-4" /> Build My Professional Profile →
@@ -805,7 +805,7 @@ export default function Home() {
                       ))}
                     </div>
 
-                    <button onClick={() => navigate("/freelancer-onboarding")}
+                    <button onClick={() => navigate("/onboarding")}
                       className="w-full py-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold hover:bg-emerald-500/20 transition-all"
                       data-testid="button-profile-cta">
                       Build a Profile Like This →
@@ -1391,7 +1391,7 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-                <button onClick={() => navigate("/freelancer-onboarding")}
+                <button onClick={() => navigate("/onboarding")}
                   className="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm transition-all hover:shadow-lg hover:shadow-emerald-500/20"
                   data-testid="button-cta-freelancer">
                   Create Free Profile →
