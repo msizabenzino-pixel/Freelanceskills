@@ -98,7 +98,7 @@ function FreelancerCard({ f, onSelect, selected }: { f: FreelancerResult; onSele
           </div>
           <p className="text-slate-400 text-sm mt-0.5 line-clamp-2">{f.title}</p>
           {f.location && (
-            <p className="text-xs text-muted-foreground mt-1 flex items-center justify-center gap-1">
+            <p className="text-xs text-slate-500 mt-1 flex items-center justify-center gap-1">
               <MapPin className="w-3 h-3" /> {f.location}
             </p>
           )}
@@ -149,17 +149,17 @@ function SkeletonCard() {
   return (
     <Card className="p-6 animate-pulse">
       <div className="flex flex-col items-center gap-4">
-        <div className="w-20 h-20 bg-muted rounded-full" />
+        <div className="w-20 h-20 bg-slate-800 rounded-full" />
         <div className="w-full space-y-2">
-          <div className="h-4 bg-muted rounded w-3/4 mx-auto" />
+          <div className="h-4 bg-slate-800 rounded w-3/4 mx-auto" />
           <div className="h-3 bg-muted rounded w-full" />
-          <div className="h-3 bg-muted rounded w-2/3 mx-auto" />
+          <div className="h-3 bg-slate-800 rounded w-2/3 mx-auto" />
         </div>
         <div className="flex gap-1">
-          <div className="h-5 w-12 bg-muted rounded-full" />
-          <div className="h-5 w-16 bg-muted rounded-full" />
+          <div className="h-5 w-12 bg-slate-800 rounded-full" />
+          <div className="h-5 w-16 bg-slate-800 rounded-full" />
         </div>
-        <div className="h-9 bg-muted rounded w-full" />
+        <div className="h-9 bg-slate-800 rounded w-full" />
       </div>
     </Card>
   );
@@ -210,13 +210,13 @@ export default function FindTalent() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-slate-950 flex flex-col">
       <Navbar />
 
       <main id="main-content">
 
         {/* ── Hero ──────────────────────────────────────────────────────────────── */}
-        <div className="pt-20 pb-10 bg-gradient-to-b from-slate-950 via-slate-950 to-background relative overflow-hidden">
+        <div className="pt-20 pb-10 bg-gradient-to-b from-slate-950 via-slate-950 to-slate-950 relative overflow-hidden">
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-10 left-1/4 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl" />
             <div className="absolute top-0 right-1/4 w-64 h-64 bg-teal-500/5 rounded-full blur-3xl" />
@@ -270,7 +270,7 @@ export default function FindTalent() {
           <div className="container mx-auto px-4 md:px-6">
             <div className="flex flex-col md:flex-row gap-3 items-center">
               <div className="relative flex-1 w-full">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 w-4 h-4" />
                 <Input
                   placeholder="Search electricians, developers, designers..."
                   className="pl-10 h-10"
@@ -280,7 +280,7 @@ export default function FindTalent() {
                 />
                 {searchInput && (
                   <button
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
                     onClick={() => setSearchInput("")}
                   >
                     <X className="w-4 h-4" />
@@ -288,7 +288,7 @@ export default function FindTalent() {
                 )}
               </div>
               <div className="relative w-full md:w-60">
-                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 w-4 h-4" />
                 <Input
                   placeholder="Sandton, Cape Town..."
                   className="pl-10 h-10"
@@ -297,12 +297,12 @@ export default function FindTalent() {
                   data-testid="input-location-talent"
                 />
               </div>
-              <div className="flex bg-muted p-1 rounded-lg shrink-0">
+              <div className="flex bg-slate-900 p-1 rounded-lg shrink-0">
                 <button
                   onClick={() => setView("list")}
                   className={cn(
                     "px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2",
-                    view === "list" ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-primary"
+                    view === "list" ? "bg-slate-800 text-emerald-400 shadow-sm" : "text-slate-400 hover:text-emerald-400"
                   )}
                   data-testid="button-view-list"
                 >
@@ -312,7 +312,7 @@ export default function FindTalent() {
                   onClick={() => setView("map")}
                   className={cn(
                     "px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2",
-                    view === "map" ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-primary"
+                    view === "map" ? "bg-slate-800 text-emerald-400 shadow-sm" : "text-slate-400 hover:text-emerald-400"
                   )}
                   data-testid="button-view-map"
                 >
@@ -371,7 +371,7 @@ export default function FindTalent() {
                       <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-3">
                         <Users className="w-6 h-6 text-emerald-400" />
                       </div>
-                      <h3 className="text-lg font-bold text-foreground mb-1">Be among the first verified freelancers</h3>
+                      <h3 className="text-lg font-bold text-white mb-1">Be among the first verified freelancers</h3>
                       <p className="text-muted-foreground text-sm mb-4 max-w-md mx-auto">
                         FreelanceSkills.net is growing fast across Africa. Create your profile today and get discovered by top clients.
                       </p>
@@ -394,7 +394,7 @@ export default function FindTalent() {
                         { name: "Sipho Dlamini", title: "Digital Marketing Lead", location: "Johannesburg, SA", skills: ["Google Ads", "SEO", "Analytics"], rate: "R 380/hr", rating: 4.8, jobs: 29 },
                         { name: "Zanele Mokoena", title: "Data Scientist", location: "Cape Town, SA", skills: ["Python", "ML", "Power BI"], rate: "R 650/hr", rating: 4.9, jobs: 37 },
                       ].map((demo, i) => (
-                        <Card key={i} className="p-4 bg-card border border-border rounded-2xl" data-testid={`card-demo-freelancer-${i}`}>
+                        <Card key={i} className="p-4 bg-slate-900 border border-slate-800 rounded-2xl" data-testid={`card-demo-freelancer-${i}`}>
                           <div className="flex items-start gap-3 mb-3">
                             <div className="w-11 h-11 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                               {demo.name.split(" ").map(n => n[0]).join("")}
@@ -408,7 +408,7 @@ export default function FindTalent() {
                             <MapPin className="w-3 h-3" />{demo.location}
                           </div>
                           <div className="flex flex-wrap gap-1 mb-3">
-                            {demo.skills.map(s => <span key={s} className="text-[10px] px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground">{s}</span>)}
+                            {demo.skills.map(s => <span key={s} className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">{s}</span>)}
                           </div>
                           <div className="flex items-center justify-between text-xs">
                             <span className="flex items-center gap-1 text-amber-400"><Star className="w-3 h-3 fill-amber-400" />{demo.rating} · {demo.jobs} jobs</span>
@@ -420,9 +420,9 @@ export default function FindTalent() {
                   </div>
                 ) : (
                   <div className="text-center py-24">
-                    <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-40" />
-                    <h3 className="text-xl font-bold text-foreground mb-2">No results found</h3>
-                    <p className="text-muted-foreground mb-6">
+                    <Users className="w-16 h-16 text-slate-600 mx-auto mb-4 opacity-40" />
+                    <h3 className="text-xl font-bold text-white mb-2">No results found</h3>
+                    <p className="text-slate-400 mb-6">
                       {`No freelancers match "${debouncedSearch || debouncedLocation}". Try broadening your search.`}
                     </p>
                     <Button variant="outline" onClick={() => { setSearchInput(""); setLocationInput(""); setActiveFilters({}); }}>
@@ -445,11 +445,11 @@ export default function FindTalent() {
             )}
           </div>
         ) : (
-          <div className="relative w-full h-[calc(100vh-180px)] bg-muted overflow-hidden">
+          <div className="relative w-full h-[calc(100vh-180px)] bg-slate-900 overflow-hidden">
             <div className="absolute inset-0 opacity-40 bg-[url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Map_of_Pretoria%2C_South_Africa.svg/2000px-Map_of_Pretoria%2C_South_Africa.svg.png')] bg-cover bg-center grayscale" />
 
             {isLoading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-background/60 z-10">
+              <div className="absolute inset-0 flex items-center justify-center bg-slate-950/60 z-10">
                 <Loader2 className="w-8 h-8 text-primary animate-spin" />
               </div>
             )}
@@ -477,7 +477,7 @@ export default function FindTalent() {
                     {f.avatarInitials}
                   </div>
                   <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-accent -mt-1 relative z-0" />
-                  <div className="absolute top-12 bg-white dark:bg-card px-3 py-1 rounded-full shadow-md text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity border border-border">
+                  <div className="absolute top-12 bg-slate-900 px-3 py-1 rounded-full shadow-md text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity border border-slate-700">
                     {f.hourlyRateFormatted || f.name}
                   </div>
                 </div>
@@ -488,7 +488,7 @@ export default function FindTalent() {
               <div className="absolute bottom-8 left-4 right-4 md:left-8 md:w-96 z-40 animate-in slide-in-from-bottom-4">
                 <Card className="p-4 shadow-2xl border-accent/20 relative" data-testid="map-freelancer-card">
                   <button
-                    className="absolute top-2 right-2 text-muted-foreground hover:text-foreground p-1"
+                    className="absolute top-2 right-2 text-slate-500 hover:text-white p-1"
                     onClick={() => setSelectedId(null)}
                     aria-label="Close"
                   >
@@ -504,12 +504,12 @@ export default function FindTalent() {
                       <div className="flex justify-between items-start pr-4">
                         <h3 className="font-bold text-lg text-foreground truncate">{selectedPro.name}</h3>
                         {selectedPro.hourlyRateFormatted && (
-                          <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300 shrink-0 ml-2">
+                          <Badge variant="secondary" className="bg-emerald-900/30 text-emerald-400 shrink-0 ml-2">
                             {selectedPro.hourlyRateFormatted}
                           </Badge>
                         )}
                       </div>
-                      <p className="text-muted-foreground text-sm mb-1 line-clamp-1">{selectedPro.title}</p>
+                      <p className="text-slate-400 text-sm mb-1 line-clamp-1">{selectedPro.title}</p>
                       <div className="flex items-center gap-3 text-sm">
                         {selectedPro.rating && (
                           <span className="flex items-center gap-1">

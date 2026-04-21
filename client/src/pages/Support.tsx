@@ -51,12 +51,12 @@ export default function Support() {
   const [expandedFaq, setExpandedFaq] = useState<string | null>(null);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-slate-950">
       <Navbar />
       
       <main id="main-content">
         {/* Hero */}
-        <section className="bg-gradient-to-br from-primary to-primary/80 text-white pt-32 pb-16">
+        <section className="bg-gradient-to-br from-emerald-900/60 via-slate-950 to-slate-950 text-white pt-32 pb-16">
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">How Can We Help?</h1>
             <p className="text-xl text-white/90 max-w-2xl mx-auto">
@@ -66,22 +66,22 @@ export default function Support() {
         </section>
 
         {/* Contact Options */}
-        <section className="py-12 bg-muted">
+        <section className="py-12 bg-slate-900">
           <div className="container mx-auto px-4">
             <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
               <a 
                 href="https://wa.me/27722324636"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-card p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow text-center group"
+                className="bg-slate-800 p-6 rounded-xl shadow-sm hover:shadow-lg hover:border-emerald-500/30 transition-all text-center group"
               >
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                  <MessageCircle className="h-8 w-8 text-green-600" />
+                <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                  <MessageCircle className="h-8 w-8 text-green-400" />
                 </div>
                 <h3 className="font-semibold text-lg mb-1">WhatsApp</h3>
-                <p className="text-green-600 font-medium">+27 72 232 4636</p>
-                <p className="text-sm text-muted-foreground mt-2">Fastest response - usually &lt; 5 mins</p>
-                <div className="flex items-center justify-center gap-1 mt-3 text-sm text-primary">
+                <p className="text-green-400 font-medium">+27 72 232 4636</p>
+                <p className="text-sm text-slate-400 mt-2">Fastest response - usually &lt; 5 mins</p>
+                <div className="flex items-center justify-center gap-1 mt-3 text-sm text-emerald-400">
                   <span>Chat Now</span>
                   <ExternalLink className="h-3 w-3" />
                 </div>
@@ -89,30 +89,30 @@ export default function Support() {
 
               <a 
                 href="mailto:support@freelanceskills.co.za"
-                className="bg-card p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow text-center group"
+                className="bg-slate-800 p-6 rounded-xl shadow-sm hover:shadow-lg hover:border-emerald-500/30 transition-all text-center group"
               >
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                  <Phone className="h-8 w-8 text-blue-600" />
+                <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                  <Phone className="h-8 w-8 text-blue-400" />
                 </div>
                 <h3 className="font-semibold text-lg mb-1">Email Support</h3>
-                <p className="text-blue-600 font-medium">support@freelanceskills.co.za</p>
-                <p className="text-sm text-muted-foreground mt-2">We respond within 4 business hours</p>
+                <p className="text-blue-400 font-medium">support@freelanceskills.co.za</p>
+                <p className="text-sm text-slate-400 mt-2">We respond within 4 business hours</p>
               </a>
 
               <a 
                 href="mailto:support@freelanceskills.co.za"
-                className="bg-card p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow text-center group"
+                className="bg-slate-800 p-6 rounded-xl shadow-sm hover:shadow-lg hover:border-emerald-500/30 transition-all text-center group"
               >
-                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                  <Mail className="h-8 w-8 text-purple-600" />
+                <div className="w-16 h-16 bg-purple-500/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                  <Mail className="h-8 w-8 text-purple-400" />
                 </div>
                 <h3 className="font-semibold text-lg mb-1">Email</h3>
-                <p className="text-purple-600 font-medium">support@freelanceskills.co.za</p>
-                <p className="text-sm text-muted-foreground mt-2">We reply within 24 hours</p>
+                <p className="text-purple-400 font-medium">support@freelanceskills.co.za</p>
+                <p className="text-sm text-slate-400 mt-2">We reply within 24 hours</p>
               </a>
             </div>
 
-            <div className="flex items-center justify-center gap-2 mt-8 text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 mt-8 text-slate-400">
               <Clock className="h-4 w-4" />
               <span className="text-sm">
                 <strong>Support Hours:</strong> Mon-Fri 8am-8pm | Sat-Sun 9am-5pm
@@ -136,26 +136,26 @@ export default function Support() {
               </button>
 
               <Link href="/how-to-hire">
-                <div className="p-6 bg-card border rounded-xl hover:shadow-md transition-shadow text-left h-full">
+                <div className="p-6 bg-slate-800 border border-slate-700 rounded-xl hover:shadow-md transition-shadow text-left h-full">
                   <Users className="h-8 w-8 text-blue-500 mb-3" />
                   <h3 className="font-semibold mb-1">Hiring Guide</h3>
-                  <p className="text-sm text-muted-foreground">Learn how to hire someone</p>
+                  <p className="text-sm text-slate-400">Learn how to hire someone</p>
                 </div>
               </Link>
 
               <Link href="/how-to-get-hired">
-                <div className="p-6 bg-card border rounded-xl hover:shadow-md transition-shadow text-left h-full">
+                <div className="p-6 bg-slate-800 border border-slate-700 rounded-xl hover:shadow-md transition-shadow text-left h-full">
                   <FileText className="h-8 w-8 text-amber-500 mb-3" />
                   <h3 className="font-semibold mb-1">Getting Hired</h3>
-                  <p className="text-sm text-muted-foreground">Start earning on the platform</p>
+                  <p className="text-sm text-slate-400">Start earning on the platform</p>
                 </div>
               </Link>
 
               <Link href="/how-it-works">
-                <div className="p-6 bg-card border rounded-xl hover:shadow-md transition-shadow text-left h-full">
+                <div className="p-6 bg-slate-800 border border-slate-700 rounded-xl hover:shadow-md transition-shadow text-left h-full">
                   <Shield className="h-8 w-8 text-green-500 mb-3" />
                   <h3 className="font-semibold mb-1">Safety & Trust</h3>
-                  <p className="text-sm text-muted-foreground">How we protect you</p>
+                  <p className="text-sm text-slate-400">How we protect you</p>
                 </div>
               </Link>
             </div>
@@ -163,33 +163,33 @@ export default function Support() {
         </section>
 
         {/* FAQ */}
-        <section className="py-12 bg-muted">
+        <section className="py-12 bg-slate-900">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold text-center mb-8">Frequently Asked Questions</h2>
             <div className="max-w-3xl mx-auto space-y-6">
               {FAQ_ITEMS.map((section, i) => (
                 <div key={i}>
                   <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                    <HelpCircle className="h-5 w-5 text-primary" />
+                    <HelpCircle className="h-5 w-5 text-emerald-400" />
                     {section.category}
                   </h3>
                   <div className="space-y-2">
                     {section.questions.map((faq, j) => (
                       <div 
                         key={j}
-                        className="bg-card rounded-lg border overflow-hidden"
+                        className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden"
                       >
                         <button
                           onClick={() => setExpandedFaq(expandedFaq === `${i}-${j}` ? null : `${i}-${j}`)}
-                          className="w-full p-4 text-left flex items-center justify-between hover:bg-muted"
+                          className="w-full p-4 text-left flex items-center justify-between hover:bg-slate-700/50"
                         >
                           <span className="font-medium">{faq.q}</span>
-                          <ChevronRight className={`h-4 w-4 text-muted-foreground transition-transform ${
+                          <ChevronRight className={`h-4 w-4 text-slate-400 transition-transform ${
                             expandedFaq === `${i}-${j}` ? "rotate-90" : ""
                           }`} />
                         </button>
                         {expandedFaq === `${i}-${j}` && (
-                          <div className="px-4 pb-4 text-muted-foreground">
+                          <div className="px-4 pb-4 text-slate-400">
                             {faq.a}
                           </div>
                         )}
@@ -206,7 +206,7 @@ export default function Support() {
         <section className="py-12">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-2xl font-bold mb-4">Still need help?</h2>
-            <p className="text-muted-foreground mb-6">
+            <p className="text-slate-400 mb-6">
               Our friendly team is just a message away. We're here to help you succeed!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

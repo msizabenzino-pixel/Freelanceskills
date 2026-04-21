@@ -17,7 +17,7 @@ const OPEN_ROLES = [
     type: "Full-time · Remote (SA-based)",
     location: "Cape Town / Remote",
     icon: Code,
-    color: "bg-blue-100 dark:bg-blue-900/30 text-blue-600",
+    color: "bg-blue-900/30 text-blue-400",
     description: "Build the core marketplace platform — API design, React frontend, real-time notifications, and AI integrations. You'll own high-impact features used by thousands of users.",
     skills: ["React", "TypeScript", "Node.js", "PostgreSQL", "Drizzle ORM", "Redis"],
     urgency: "Urgent"
@@ -29,7 +29,7 @@ const OPEN_ROLES = [
     type: "Full-time · Hybrid",
     location: "Cape Town (Camps Bay office)",
     icon: Brain,
-    color: "bg-purple-100 dark:bg-purple-900/30 text-purple-600",
+    color: "bg-purple-900/30 text-purple-400",
     description: "Power the Vuma AI assistant — smart job matching, AI proposal generation, fraud detection, and an Africa-first freelance intelligence engine.",
     skills: ["Python", "OpenAI API", "LangChain", "Vector DBs", "Fine-tuning", "FastAPI"],
     urgency: "High Priority"
@@ -41,7 +41,7 @@ const OPEN_ROLES = [
     type: "Full-time · Remote",
     location: "South Africa",
     icon: TrendingUp,
-    color: "bg-amber-100 dark:bg-amber-900/30 text-amber-600",
+    color: "bg-amber-900/30 text-amber-400",
     description: "Own our growth funnel — from SEO and content to paid acquisition and referral loops. Target: 1 million registered users by 2031.",
     skills: ["SEO", "Google Ads", "Meta Ads", "Analytics", "Copywriting", "CRO"],
     urgency: null
@@ -53,7 +53,7 @@ const OPEN_ROLES = [
     type: "Full-time · Remote",
     location: "South Africa",
     icon: Users,
-    color: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600",
+    color: "bg-emerald-900/30 text-emerald-400",
     description: "Build and manage the freelance community. Produce the blog roadmap. Host webinars, WhatsApp groups, and live Q&As.",
     skills: ["Content Writing", "Community Building", "SA Market Knowledge", "Social Media", "Canva"],
     urgency: null
@@ -65,7 +65,7 @@ const OPEN_ROLES = [
     type: "Full-time · Hybrid",
     location: "Johannesburg / Cape Town",
     icon: Headphones,
-    color: "bg-rose-100 dark:bg-rose-900/30 text-rose-600",
+    color: "bg-rose-900/30 text-rose-400",
     description: "Be the first voice our clients and freelancers hear. Resolve disputes, onboard power users, and build trust in the platform.",
     skills: ["Customer Service", "Conflict Resolution", "CRM Tools", "Empathy", "SA Languages a plus"],
     urgency: null
@@ -77,7 +77,7 @@ const OPEN_ROLES = [
     type: "Contract · Remote",
     location: "South Africa",
     icon: GraduationCap,
-    color: "bg-teal-100 dark:bg-teal-900/30 text-teal-600",
+    color: "bg-teal-900/30 text-teal-400",
     description: "Design the AI upskilling courses that help more people earn in the digital economy. Build impactful learning content for Africa.",
     skills: ["Instructional Design", "AI Knowledge", "Video Production", "LMS Tools", "SA Context"],
     urgency: null
@@ -106,7 +106,7 @@ export default function Careers() {
   const [, navigate] = useLocation();
 
   return (
-    <div className="min-h-screen bg-background font-sans">
+    <div className="min-h-screen bg-slate-950 font-sans">
       <Navbar />
 
       {/* Hero */}
@@ -153,24 +153,24 @@ export default function Careers() {
       <main id="main-content">
 
         {/* Why Join Us */}
-        <section className="py-20 bg-muted/20">
+        <section className="py-20 bg-slate-900/50">
           <div className="container mx-auto px-4 md:px-6">
             <div className="text-center max-w-2xl mx-auto mb-14">
-              <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">Why FreelanceSkills?</h2>
-              <p className="text-muted-foreground text-lg">This isn't a job. It's a defining chapter of your career.</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Why FreelanceSkills?</h2>
+              <p className="text-slate-400 text-lg">This isn't a job. It's a defining chapter of your career.</p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {PERKS.map((perk, i) => (
                 <div
                   key={i}
-                  className="bg-card rounded-2xl p-6 border border-border hover:border-primary/30 hover:shadow-md transition-all text-center group"
+                  className="bg-slate-900 rounded-2xl p-6 border border-slate-800 hover:border-emerald-500/30 hover:shadow-md transition-all text-center group"
                   data-testid={`card-perk-${i}`}
                 >
-                  <div className="w-12 h-12 rounded-xl bg-primary/5 flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/10 transition-colors">
-                    <perk.icon className="w-6 h-6 text-primary" />
+                  <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-emerald-500/15 transition-colors">
+                    <perk.icon className="w-6 h-6 text-emerald-400" />
                   </div>
-                  <h3 className="font-bold text-sm text-foreground mb-1">{perk.title}</h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{perk.desc}</p>
+                  <h3 className="font-bold text-sm text-white mb-1">{perk.title}</h3>
+                  <p className="text-xs text-slate-400 leading-relaxed">{perk.desc}</p>
                 </div>
               ))}
             </div>
@@ -178,18 +178,18 @@ export default function Careers() {
         </section>
 
         {/* Open Roles */}
-        <section className="py-20 bg-background">
+        <section className="py-20 bg-slate-950">
           <div className="container mx-auto px-4 md:px-6">
             <div className="text-center max-w-2xl mx-auto mb-14">
-              <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">Open Positions</h2>
-              <p className="text-muted-foreground text-lg">{OPEN_ROLES.length} roles currently open. Remote-friendly. Africa-first.</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Open Positions</h2>
+              <p className="text-slate-400 text-lg">{OPEN_ROLES.length} roles currently open. Remote-friendly. Africa-first.</p>
             </div>
 
             <div className="space-y-4 max-w-4xl mx-auto">
               {OPEN_ROLES.map((role) => (
                 <div
                   key={role.id}
-                  className="bg-card border border-border rounded-2xl p-6 md:p-8 hover:border-primary/30 hover:shadow-md transition-all group"
+                  className="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 hover:border-emerald-500/30 hover:shadow-md transition-all group"
                   data-testid={`card-role-${role.id}`}
                 >
                   <div className="flex flex-col md:flex-row gap-6 items-start">
@@ -198,9 +198,9 @@ export default function Careers() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-2 mb-2">
-                        <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">{role.title}</h3>
+                        <h3 className="text-xl font-bold text-white group-hover:text-emerald-400 transition-colors">{role.title}</h3>
                         {role.urgency && (
-                          <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400">
+                          <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-red-900/30 text-red-400">
                             {role.urgency}
                           </span>
                         )}
@@ -216,10 +216,10 @@ export default function Careers() {
                           <MapPin className="w-4 h-4" /> {role.location}
                         </span>
                       </div>
-                      <p className="text-muted-foreground leading-relaxed mb-4">{role.description}</p>
+                      <p className="text-slate-400 leading-relaxed mb-4">{role.description}</p>
                       <div className="flex flex-wrap gap-2">
                         {role.skills.map((skill, i) => (
-                          <span key={i} className="text-xs font-medium px-2.5 py-1 rounded-full bg-muted border border-border text-muted-foreground">
+                          <span key={i} className="text-xs font-medium px-2.5 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-300">
                             {skill}
                           </span>
                         ))}
@@ -243,7 +243,7 @@ export default function Careers() {
               <p className="text-muted-foreground mb-4">Don't see your role? We're always looking for exceptional people.</p>
               <a
                 href="mailto:careers@freelanceskills.co.za?subject=Open Application — FreelanceSkills"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-primary text-primary font-semibold hover:bg-primary hover:text-white transition-all"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-emerald-500 text-emerald-400 font-semibold hover:bg-emerald-500 hover:text-white transition-all"
                 data-testid="button-open-application"
               >
                 <Mail className="w-4 h-4" /> Send an Open Application
@@ -276,20 +276,20 @@ export default function Careers() {
         </section>
 
         {/* Founder Message */}
-        <section className="py-20 bg-muted/20">
+        <section className="py-20 bg-slate-900/50">
           <div className="container mx-auto px-4 md:px-6 max-w-3xl">
-            <div className="bg-card border border-border rounded-2xl p-8 md:p-12 shadow-sm">
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 md:p-12 shadow-sm">
               <div className="flex items-center gap-4 mb-8">
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-white font-black text-2xl flex-shrink-0">
                   FS
                 </div>
                 <div>
-                  <div className="font-bold text-foreground text-lg">FreelanceSkills Leadership</div>
-                  <div className="text-muted-foreground text-sm">FreelanceSkills.net</div>
+                  <div className="font-bold text-white text-lg">FreelanceSkills Leadership</div>
+                  <div className="text-slate-400 text-sm">FreelanceSkills.net</div>
                   <div className="text-xs text-muted-foreground">CIPC 2026/070509/09 · South Africa</div>
                 </div>
               </div>
-              <blockquote className="text-foreground text-lg leading-relaxed italic mb-6">
+              <blockquote className="text-slate-200 text-lg leading-relaxed italic mb-6">
                 "Africa has no shortage of talent — it has a shortage of platforms that take that talent seriously. We built FreelanceSkills to change that permanently.
                 <br /><br />
                 FreelanceSkills exists to connect Africa's best people with the work they deserve. If you want to help build Africa's future of work — not just talk about it — come join us."

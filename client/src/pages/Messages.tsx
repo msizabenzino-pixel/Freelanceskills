@@ -284,10 +284,10 @@ export default function Messages() {
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-xl font-bold text-white" data-testid="text-messages-title">Messages</h1>
           <div className="flex gap-1">
-            <Button variant="ghost" size="icon" className="text-muted-foreground h-8 w-8 hover:text-emerald-400">
+            <Button variant="ghost" size="icon" className="text-slate-400 h-8 w-8 hover:text-emerald-400">
               <Plus className="w-4 h-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="text-muted-foreground h-8 w-8 hover:text-emerald-400">
+            <Button variant="ghost" size="icon" className="text-slate-400 h-8 w-8 hover:text-emerald-400">
               <Settings className="w-4 h-4" />
             </Button>
           </div>
@@ -295,7 +295,7 @@ export default function Messages() {
 
         {/* Search */}
         <div className="relative mb-3">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
           <Input
             placeholder="Search conversations..."
             className="pl-9 bg-slate-900 border-slate-800 text-sm h-9 focus-visible:ring-emerald-500/30"
@@ -316,7 +316,7 @@ export default function Messages() {
                 "flex-1 text-[11px] font-medium py-1.5 rounded-md capitalize transition-colors",
                 activeTab === tab
                   ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                  : "text-muted-foreground hover:text-white hover:bg-slate-800"
+                  : "text-slate-400 hover:text-white hover:bg-slate-800"
               )}
             >
               {tab === "all" ? "All" : tab === "clients" ? "Clients" : tab === "freelancers" ? "Freelancers" : "Archived"}
@@ -341,8 +341,8 @@ export default function Messages() {
           </div>
         ) : filteredConversations.length === 0 ? (
           <div className="p-8 text-center" data-testid="empty-conversations">
-            <MessageSquare className="w-10 h-10 text-muted-foreground mx-auto mb-3 opacity-20" />
-            <p className="text-sm text-muted-foreground">
+            <MessageSquare className="w-10 h-10 text-slate-400 mx-auto mb-3 opacity-20" />
+            <p className="text-sm text-slate-400">
               {searchQuery ? "No conversations match your search." : "No messages yet. Start a conversation from a freelancer's profile."}
             </p>
           </div>
@@ -380,7 +380,7 @@ export default function Messages() {
                       <span className={cn("text-sm font-semibold truncate", isActive ? "text-white" : "text-slate-200")}>
                         {chat.otherUser?.name}
                       </span>
-                      <span className="text-[10px] text-muted-foreground ml-2 shrink-0">
+                      <span className="text-[10px] text-slate-400 ml-2 shrink-0">
                         {chat.lastMessageAt ? format(new Date(chat.lastMessageAt), isToday(new Date(chat.lastMessageAt)) ? "p" : "dd MMM") : ""}
                       </span>
                     </div>
@@ -437,7 +437,7 @@ export default function Messages() {
         <div className={cn("flex flex-col max-w-[72%]", isOwn ? "items-end" : "items-start")}>
           {/* Reply preview */}
           {replyingTo?.id === msg.id && (
-            <div className="text-[10px] text-muted-foreground mb-1 flex items-center gap-1">
+            <div className="text-[10px] text-slate-400 mb-1 flex items-center gap-1">
               <Reply className="w-3 h-3" /> Replying
             </div>
           )}
@@ -600,7 +600,7 @@ export default function Messages() {
           </div>
 
           <h3 className="font-bold text-white">{other.name}</h3>
-          <p className="text-xs text-muted-foreground capitalize mt-0.5">{other.role}</p>
+          <p className="text-xs text-slate-400 capitalize mt-0.5">{other.role}</p>
 
           {/* Level badge */}
           <div className="flex items-center justify-center gap-2 mt-2">
@@ -726,7 +726,7 @@ export default function Messages() {
                     {/* Mobile back button */}
                     <Button
                       variant="ghost" size="icon"
-                      className="md:hidden text-muted-foreground h-8 w-8"
+                      className="md:hidden text-slate-400 h-8 w-8"
                       onClick={() => setShowMobileConvList(true)}
                     >
                       <ArrowLeft className="w-4 h-4" />
@@ -746,7 +746,7 @@ export default function Messages() {
                       <h3 className="font-bold text-sm text-white">
                         {selectedConversation.otherUser?.name}
                       </h3>
-                      <p className="text-[11px] text-muted-foreground leading-tight">
+                      <p className="text-[11px] text-slate-400 leading-tight">
                         {isTyping ? (
                           <span className="text-emerald-400 flex items-center gap-1">
                             <span className="inline-flex gap-0.5">
@@ -766,21 +766,21 @@ export default function Messages() {
                   </div>
 
                   <div className="flex items-center gap-0.5">
-                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-emerald-400 h-9 w-9" data-testid="button-phone-call">
+                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-emerald-400 h-9 w-9" data-testid="button-phone-call">
                       <Phone className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-emerald-400 h-9 w-9" onClick={() => setShowVideoCall(true)} data-testid="button-video-call-message">
+                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-emerald-400 h-9 w-9" onClick={() => setShowVideoCall(true)} data-testid="button-video-call-message">
                       <Video className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-emerald-400 h-9 w-9" onClick={() => setShowContract(true)} data-testid="button-create-contract">
+                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-emerald-400 h-9 w-9" onClick={() => setShowContract(true)} data-testid="button-create-contract">
                       <FileText className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" className={cn("h-9 w-9 hover:text-emerald-400", showContext ? "text-emerald-400" : "text-muted-foreground")} onClick={() => setShowContext(v => !v)}>
+                    <Button variant="ghost" size="icon" className={cn("h-9 w-9 hover:text-emerald-400", showContext ? "text-emerald-400" : "text-slate-400")} onClick={() => setShowContext(v => !v)}>
                       <Info className="w-4 h-4" />
                     </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-white h-9 w-9" data-testid="button-more-options">
+                        <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white h-9 w-9" data-testid="button-more-options">
                           <MoreVertical className="w-4 h-4" />
                         </Button>
                       </DropdownMenuTrigger>

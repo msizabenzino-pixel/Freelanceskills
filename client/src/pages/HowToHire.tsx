@@ -25,12 +25,12 @@ import {
 export default function HowToHire() {
   const [, navigate] = useLocation();
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-slate-950">
       <Navbar />
       
       <main id="main-content">
         {/* Hero */}
-        <section className="bg-gradient-to-br from-primary to-primary/80 text-white pt-32 pb-16">
+        <section className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white pt-32 pb-16 border-b border-slate-800">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl">
               <div className="flex items-center gap-2 text-white/80 mb-4">
@@ -50,7 +50,7 @@ export default function HowToHire() {
         </section>
 
         {/* Video Tutorial */}
-        <section className="py-12 bg-muted">
+        <section className="py-12 bg-slate-900">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-2xl font-bold mb-4">Video Guide: Hiring Your First Freelancer</h2>
@@ -76,42 +76,42 @@ export default function HowToHire() {
         </section>
 
         {/* Step by Step */}
-        <section className="py-16">
+        <section className="py-16 bg-slate-950">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto">
               <h2 className="text-3xl font-bold mb-12 text-center">Step-by-Step Guide</h2>
 
               {/* Step 1 */}
-              <div className="mb-12 pb-12 border-b">
+              <div className="mb-12 pb-12 border-b border-slate-800">
                 <div className="flex items-start gap-6">
-                  <div className="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-bold flex-shrink-0">
+                  <div className="w-16 h-16 rounded-full bg-emerald-600 text-white flex items-center justify-center text-2xl font-bold flex-shrink-0">
                     1
                   </div>
                   <div className="flex-1">
                     <h3 className="text-2xl font-bold mb-3 flex items-center gap-2">
-                      <Search className="h-6 w-6 text-primary" />
+                      <Search className="h-6 w-6 text-emerald-400" />
                       Find the Right Professional
                     </h3>
-                    <p className="text-muted-foreground mb-4">
+                    <p className="text-slate-400 mb-4">
                       You have two ways to find talent:
                     </p>
                     <div className="grid md:grid-cols-2 gap-4 mb-4">
-                      <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
-                        <h4 className="font-semibold text-blue-800 mb-2">Post a Job</h4>
-                        <p className="text-sm text-blue-700">
+                      <div className="p-4 bg-blue-900/20 rounded-lg border border-blue-700/30">
+                        <h4 className="font-semibold text-blue-200 mb-2">Post a Job</h4>
+                        <p className="text-sm text-blue-300">
                           Describe what you need and let freelancers come to you with proposals.
                           Best for complex projects.
                         </p>
                       </div>
-                      <div className="p-4 bg-amber-50 rounded-lg border border-amber-100">
-                        <h4 className="font-semibold text-amber-800 mb-2">Book a Tasker</h4>
-                        <p className="text-sm text-amber-700">
+                      <div className="p-4 bg-amber-900/20 rounded-lg border border-amber-700/30">
+                        <h4 className="font-semibold text-amber-200 mb-2">Book a Tasker</h4>
+                        <p className="text-sm text-amber-300">
                           Browse service packages and book instantly.
                           Perfect for urgent or straightforward tasks.
                         </p>
                       </div>
                     </div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-slate-400">
                       <strong>Pro Tip:</strong> Filter by location to find professionals near you for on-site work.
                     </p>
                   </div>
@@ -119,17 +119,17 @@ export default function HowToHire() {
               </div>
 
               {/* Step 2 */}
-              <div className="mb-12 pb-12 border-b">
+              <div className="mb-12 pb-12 border-b border-slate-800">
                 <div className="flex items-start gap-6">
-                  <div className="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-bold flex-shrink-0">
+                  <div className="w-16 h-16 rounded-full bg-emerald-600 text-white flex items-center justify-center text-2xl font-bold flex-shrink-0">
                     2
                   </div>
                   <div className="flex-1">
                     <h3 className="text-2xl font-bold mb-3 flex items-center gap-2">
-                      <Eye className="h-6 w-6 text-primary" />
+                      <Eye className="h-6 w-6 text-emerald-400" />
                       Review Profiles & Verification
                     </h3>
-                    <p className="text-muted-foreground mb-4">
+                    <p className="text-slate-400 mb-4">
                       Check their credentials before hiring:
                     </p>
                     <ul className="space-y-3">
@@ -163,39 +163,39 @@ export default function HowToHire() {
               </div>
 
               {/* Step 3 */}
-              <div className="mb-12 pb-12 border-b">
+              <div className="mb-12 pb-12 border-b border-slate-800">
                 <div className="flex items-start gap-6">
-                  <div className="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-bold flex-shrink-0">
+                  <div className="w-16 h-16 rounded-full bg-emerald-600 text-white flex items-center justify-center text-2xl font-bold flex-shrink-0">
                     3
                   </div>
                   <div className="flex-1">
                     <h3 className="text-2xl font-bold mb-3 flex items-center gap-2">
-                      <MessageSquare className="h-6 w-6 text-primary" />
+                      <MessageSquare className="h-6 w-6 text-emerald-400" />
                       Discuss & Agree on Scope
                     </h3>
-                    <p className="text-muted-foreground mb-4">
+                    <p className="text-slate-400 mb-4">
                       Use our secure in-app messaging to discuss:
                     </p>
                     <ul className="space-y-2 mb-4">
                       <li className="flex items-center gap-2">
-                        <ArrowRight className="h-4 w-4 text-primary" />
+                        <ArrowRight className="h-4 w-4 text-emerald-400" />
                         Exact requirements and deliverables
                       </li>
                       <li className="flex items-center gap-2">
-                        <ArrowRight className="h-4 w-4 text-primary" />
+                        <ArrowRight className="h-4 w-4 text-emerald-400" />
                         Timeline and availability
                       </li>
                       <li className="flex items-center gap-2">
-                        <ArrowRight className="h-4 w-4 text-primary" />
+                        <ArrowRight className="h-4 w-4 text-emerald-400" />
                         Pricing and payment terms
                       </li>
                     </ul>
-                    <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <div className="p-4 bg-red-900/20 border border-red-700/30 rounded-lg">
                       <div className="flex items-start gap-2">
                         <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5" />
                         <div>
-                          <p className="font-semibold text-red-800">Important Safety Note</p>
-                          <p className="text-sm text-red-700">
+                          <p className="font-semibold text-red-200">Important Safety Note</p>
+                          <p className="text-sm text-red-300">
                             Never share your phone number, email, or bank details before booking.
                             Keep all communication on the platform for your protection.
                           </p>
@@ -207,25 +207,25 @@ export default function HowToHire() {
               </div>
 
               {/* Step 4 */}
-              <div className="mb-12 pb-12 border-b">
+              <div className="mb-12 pb-12 border-b border-slate-800">
                 <div className="flex items-start gap-6">
-                  <div className="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-bold flex-shrink-0">
+                  <div className="w-16 h-16 rounded-full bg-emerald-600 text-white flex items-center justify-center text-2xl font-bold flex-shrink-0">
                     4
                   </div>
                   <div className="flex-1">
                     <h3 className="text-2xl font-bold mb-3 flex items-center gap-2">
-                      <CreditCard className="h-6 w-6 text-primary" />
+                      <CreditCard className="h-6 w-6 text-emerald-400" />
                       Book & Pay Securely
                     </h3>
-                    <p className="text-muted-foreground mb-4">
+                    <p className="text-slate-400 mb-4">
                       Your payment is protected by our escrow system:
                     </p>
-                    <div className="p-4 bg-green-50 border border-green-200 rounded-lg mb-4">
+                    <div className="p-4 bg-green-900/20 border border-green-700/30 rounded-lg mb-4">
                       <div className="flex items-start gap-2">
                         <Lock className="h-5 w-5 text-green-600 mt-0.5" />
                         <div>
-                          <p className="font-semibold text-green-800">How Escrow Works</p>
-                          <ol className="text-sm text-green-700 mt-2 space-y-1">
+                          <p className="font-semibold text-green-200">How Escrow Works</p>
+                          <ol className="text-sm text-green-300 mt-2 space-y-1">
                             <li>1. You pay when booking - funds are held securely</li>
                             <li>2. Freelancer completes the work</li>
                             <li>3. You review and approve the work</li>
@@ -234,7 +234,7 @@ export default function HowToHire() {
                         </div>
                       </div>
                     </div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-slate-400">
                       We accept all major payment methods including card payments and EFT.
                     </p>
                   </div>
@@ -244,15 +244,15 @@ export default function HowToHire() {
               {/* Step 5 */}
               <div className="mb-12">
                 <div className="flex items-start gap-6">
-                  <div className="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-bold flex-shrink-0">
+                  <div className="w-16 h-16 rounded-full bg-emerald-600 text-white flex items-center justify-center text-2xl font-bold flex-shrink-0">
                     5
                   </div>
                   <div className="flex-1">
                     <h3 className="text-2xl font-bold mb-3 flex items-center gap-2">
-                      <ThumbsUp className="h-6 w-6 text-primary" />
+                      <ThumbsUp className="h-6 w-6 text-emerald-400" />
                       Approve & Review
                     </h3>
-                    <p className="text-muted-foreground mb-4">
+                    <p className="text-slate-400 mb-4">
                       When the work is complete:
                     </p>
                     <ul className="space-y-2 mb-4">
@@ -282,14 +282,14 @@ export default function HowToHire() {
               </div>
 
               {/* CTA */}
-              <div className="text-center pt-8 border-t">
+              <div className="text-center pt-8 border-t border-slate-800">
                 <h3 className="text-xl font-bold mb-4">Ready to Get Started?</h3>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button size="lg" className="gap-2" onClick={() => navigate("/post-job")}>
                       <FileText className="h-5 w-5" />
                       Post a Job
                     </Button>
-                  <Button size="lg" variant="outline" className="gap-2" onClick={() => navigate("/services")}>
+                  <Button size="lg" variant="outline" className="gap-2 border-slate-700 text-slate-300 hover:border-emerald-500/50 hover:text-emerald-400" onClick={() => navigate("/services")}>
                       <Clock className="h-5 w-5" />
                       Book a Tasker Now
                     </Button>

@@ -130,10 +130,10 @@ export default function FreelancerProfile() {
 
   if (profileQuery.isLoading) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
+      <div className="min-h-screen bg-slate-950 flex flex-col">
         <Navbar />
         <main className="flex-1 flex items-center justify-center">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <Loader2 className="w-8 h-8 animate-spin text-emerald-400" />
         </main>
         <Footer />
       </div>
@@ -142,11 +142,11 @@ export default function FreelancerProfile() {
 
   if (profileQuery.isError || !profile) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
+      <div className="min-h-screen bg-slate-950 flex flex-col">
         <Navbar />
         <main className="flex-1 flex flex-col items-center justify-center gap-4">
-          <h2 className="text-2xl font-bold text-primary">Profile not found</h2>
-          <p className="text-muted-foreground">The freelancer profile you're looking for doesn't exist.</p>
+          <h2 className="text-2xl font-bold text-white">Profile not found</h2>
+          <p className="text-slate-400">The freelancer profile you're looking for doesn't exist.</p>
           <Link href="/find-talent">
             <Button>Browse Freelancers</Button>
           </Link>
@@ -175,11 +175,11 @@ export default function FreelancerProfile() {
   const isLoadingReviews = reviewsQuery.isLoading;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-slate-950 flex flex-col">
       <Navbar />
 
       <main id="main-content">
-        <div className="h-64 bg-primary relative overflow-hidden shrink-0">
+        <div className="h-64 bg-gradient-to-br from-emerald-950/60 via-slate-900 to-slate-950 relative overflow-hidden shrink-0">
           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-20 mix-blend-overlay" />
           <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent" />
         </div>
@@ -187,7 +187,7 @@ export default function FreelancerProfile() {
         <div className="container mx-auto px-4 md:px-6 relative -mt-24 pb-20 flex-1">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="space-y-6">
-              <div className="bg-card rounded-2xl p-6 shadow-lg border border-border text-center relative overflow-hidden">
+              <div className="bg-slate-900 rounded-2xl p-6 shadow-lg border border-slate-800 text-center relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-2 bg-accent" />
                 <div className="relative inline-block mb-4">
                   {/* Online pulse ring */}
@@ -233,7 +233,7 @@ export default function FreelancerProfile() {
 
                 <p className="text-slate-400 font-medium mb-4" data-testid="text-freelancer-role">{profile.title}</p>
 
-                <div className="flex justify-center gap-4 text-sm text-muted-foreground mb-6">
+                <div className="flex justify-center gap-4 text-sm text-slate-400 mb-6">
                   <div className="flex items-center gap-1" data-testid="text-freelancer-location">
                     <MapPin className="w-4 h-4" /> {profile.location || "South Africa"}
                   </div>
@@ -276,7 +276,7 @@ export default function FreelancerProfile() {
                               }}
                             />
                             {uploadPhotoMutation.isPending && (
-                              <p className="text-xs text-muted-foreground">Uploading... {uploadProgress}%</p>
+                              <p className="text-xs text-slate-400">Uploading... {uploadProgress}%</p>
                             )}
                           </div>
                         </div>
@@ -371,29 +371,29 @@ export default function FreelancerProfile() {
                 </Button>
               </div>
 
-              <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
+              <div className="bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-800">
                 <h3 className="font-bold text-lg mb-4">Skills</h3>
                 <div className="flex flex-wrap gap-2">
                   {skills.length > 0 ? (
                     skills.map((skill) => (
-                      <Badge key={skill} variant="secondary" className="px-3 py-1 bg-secondary/50 hover:bg-secondary" data-testid={`badge-skill-${skill.toLowerCase()}`}>
+                      <Badge key={skill} variant="secondary" className="px-3 py-1 bg-slate-800/60 hover:bg-slate-700 text-slate-300" data-testid={`badge-skill-${skill.toLowerCase()}`}>
                         {skill}
                       </Badge>
                     ))
                   ) : (
-                    <p className="text-sm text-muted-foreground">No skills listed</p>
+                    <p className="text-sm text-slate-400">No skills listed</p>
                   )}
                 </div>
               </div>
 
-              <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
+              <div className="bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-800">
                 <h3 className="font-bold text-lg mb-4">Certifications</h3>
                 <ul className="space-y-3">
                   <li className="flex items-start gap-3">
-                    <div className="bg-accent/10 p-2 rounded-lg text-accent mt-1"><ShieldCheck className="w-4 h-4" /></div>
+                    <div className="bg-emerald-500/10 p-2 rounded-lg text-emerald-400 mt-1"><ShieldCheck className="w-4 h-4" /></div>
                     <div>
                       <div className="font-semibold text-sm">Identity Verified</div>
-                      <div className="text-xs text-muted-foreground">FreelanceSkills</div>
+                      <div className="text-xs text-slate-400">FreelanceSkills</div>
                     </div>
                   </li>
                 </ul>
@@ -401,27 +401,27 @@ export default function FreelancerProfile() {
             </div>
 
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-card rounded-2xl p-8 shadow-sm border border-border">
+              <div className="bg-slate-900 rounded-2xl p-8 shadow-sm border border-slate-800">
                 <div className="flex justify-between items-start mb-6">
                   <div>
-                    <h2 className="text-2xl font-bold text-primary">About Me</h2>
-                    <p className="text-xl font-medium text-accent mt-1">{formatAmount(hourlyRate)} <span className="text-sm text-muted-foreground font-normal">/ hour</span></p>
+                    <h2 className="text-2xl font-bold text-white">About Me</h2>
+                    <p className="text-xl font-medium text-accent mt-1">{formatAmount(hourlyRate)} <span className="text-sm text-slate-400 font-normal">/ hour</span></p>
                   </div>
                 </div>
 
-                <div className="prose prose-slate max-w-none text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                <div className="prose prose-slate max-w-none text-slate-400 leading-relaxed whitespace-pre-wrap">
                   {bio}
                 </div>
               </div>
 
-              <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
+              <div className="bg-slate-900 rounded-2xl shadow-sm border border-slate-800 overflow-hidden">
                 <Tabs defaultValue="portfolio" className="w-full">
-                  <div className="px-6 pt-6 border-b border-border">
+                  <div className="px-6 pt-6 border-b border-slate-800">
                     <TabsList className="bg-transparent p-0 h-auto gap-6">
-                      <TabsTrigger value="portfolio" className="bg-transparent border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:shadow-none rounded-none px-0 pb-3 font-bold text-muted-foreground data-[state=active]:text-primary text-base" data-testid="tab-portfolio">
+                      <TabsTrigger value="portfolio" className="bg-transparent border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:shadow-none rounded-none px-0 pb-3 font-bold text-slate-400 data-[state=active]:text-emerald-400 text-base" data-testid="tab-portfolio">
                         Portfolio
                       </TabsTrigger>
-                      <TabsTrigger value="reviews" className="bg-transparent border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:shadow-none rounded-none px-0 pb-3 font-bold text-muted-foreground data-[state=active]:text-primary text-base" data-testid="tab-reviews">
+                      <TabsTrigger value="reviews" className="bg-transparent border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:shadow-none rounded-none px-0 pb-3 font-bold text-slate-400 data-[state=active]:text-emerald-400 text-base" data-testid="tab-reviews">
                         Reviews ({reviews.length})
                       </TabsTrigger>
                     </TabsList>
@@ -431,7 +431,7 @@ export default function FreelancerProfile() {
                     {isOwnProfile && (
                       <div className="mb-8">
                         <div className="flex items-center justify-between mb-4">
-                          <h3 className="text-lg font-bold text-primary">Upload Portfolio Items</h3>
+                          <h3 className="text-lg font-bold text-emerald-400">Upload Portfolio Items</h3>
                           <Dialog>
                             <DialogTrigger asChild>
                               <Button size="sm">
@@ -450,8 +450,8 @@ export default function FreelancerProfile() {
                       </div>
                     )}
                     <div className="grid md:grid-cols-2 gap-6">
-                      <div className="col-span-full py-12 text-center border-2 border-dashed border-border rounded-xl">
-                        <p className="text-muted-foreground">Portfolio items can be managed from your profile editor.</p>
+                      <div className="col-span-full py-12 text-center border-2 border-dashed border-slate-800 rounded-xl">
+                        <p className="text-slate-400">Portfolio items can be managed from your profile editor.</p>
                       </div>
                     </div>
                   </TabsContent>
@@ -459,21 +459,21 @@ export default function FreelancerProfile() {
                   <TabsContent value="reviews" className="p-6 space-y-6">
                     {isLoadingReviews ? (
                       <div className="flex justify-center py-8">
-                        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                        <Loader2 className="w-6 h-6 animate-spin text-emerald-400" />
                       </div>
                     ) : reviews.length > 0 ? (
                       reviews.map((review) => (
-                        <div key={review.id} className="pb-6 border-b border-border last:border-0 last:pb-0">
+                        <div key={review.id} className="pb-6 border-b border-slate-800 last:border-0 last:pb-0">
                           <div className="flex justify-between items-start mb-2">
-                            <h4 className="font-bold text-primary">Project Review</h4>
+                            <h4 className="font-bold text-emerald-400">Project Review</h4>
                             <div className="flex text-accent">
                               {[...Array(5)].map((_, i) => (
                                 <Star key={i} className={`w-4 h-4 ${i < (review.rating || 0) ? "fill-current" : "text-muted"}`} />
                               ))}
                             </div>
                           </div>
-                          <p className="text-muted-foreground italic mb-3">"{review.comment}"</p>
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
+                          <p className="text-slate-400 italic mb-3">"{review.comment}"</p>
+                          <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
                             <span className="bg-secondary px-2 py-1 rounded">
                               {review.createdAt ? new Date(review.createdAt).toLocaleDateString() : "Recently"}
                             </span>
@@ -482,7 +482,7 @@ export default function FreelancerProfile() {
                       ))
                     ) : (
                       <div className="text-center py-12">
-                        <p className="text-muted-foreground">No reviews yet.</p>
+                        <p className="text-slate-400">No reviews yet.</p>
                       </div>
                     )}
                   </TabsContent>

@@ -48,10 +48,10 @@ export default function Checkout() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
+      <div className="min-h-screen bg-slate-950 flex flex-col">
         <Navbar />
         <main id="main-content" className="flex-1 pt-24 pb-12 flex items-center justify-center">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <Loader2 className="w-8 h-8 animate-spin text-emerald-400" />
         </main>
         <Footer />
       </div>
@@ -64,7 +64,7 @@ export default function Checkout() {
 
   if (pfReturn === "success" && pfPaymentId) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
+      <div className="min-h-screen bg-slate-950 flex flex-col">
         <Navbar />
         <main id="main-content" className="flex-1 pt-24 pb-12">
           <div className="container mx-auto px-4 md:px-6 max-w-4xl">
@@ -72,22 +72,22 @@ export default function Checkout() {
               <div className="w-20 h-20 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
                 <CheckCircle2 className="w-10 h-10 text-emerald-600" />
               </div>
-              <h2 className="text-2xl font-bold text-foreground mb-2">Payment Successful!</h2>
-              <p className="text-muted-foreground mb-6">
+              <h2 className="text-2xl font-bold text-white mb-2">Payment Successful!</h2>
+              <p className="text-slate-400 mb-6">
                 Your payment has been securely deposited into escrow.
               </p>
-              <div className="bg-muted rounded-xl p-4 text-left mb-6 max-w-sm mx-auto">
+              <div className="bg-slate-800 rounded-xl p-4 text-left mb-6 max-w-sm mx-auto">
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Payment ID</span>
-                    <span className="font-mono font-bold text-foreground text-xs" data-testid="text-transaction-id">{pfPaymentId}</span>
+                    <span className="text-slate-400">Payment ID</span>
+                    <span className="font-mono font-bold text-white text-xs" data-testid="text-transaction-id">{pfPaymentId}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Method</span>
-                    <span className="font-medium text-foreground">PayFast</span>
+                    <span className="text-slate-400">Method</span>
+                    <span className="font-medium text-white">PayFast</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Status</span>
+                    <span className="text-slate-400">Status</span>
                     <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">In Escrow</Badge>
                   </div>
                 </div>
@@ -185,13 +185,13 @@ export default function Checkout() {
 
   if (service.price === 0) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
+      <div className="min-h-screen bg-slate-950 flex flex-col">
         <Navbar />
         <main id="main-content" className="flex-1 pt-24 pb-12">
           <div className="container mx-auto px-4 md:px-6 max-w-4xl text-center py-20">
-            <AlertCircle className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-foreground mb-2">No service selected</h2>
-            <p className="text-muted-foreground mb-6">Please select a service to proceed with checkout.</p>
+            <AlertCircle className="w-16 h-16 text-slate-400 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-white mb-2">No service selected</h2>
+            <p className="text-slate-400 mb-6">Please select a service to proceed with checkout.</p>
             <Button onClick={() => navigate("/services")} data-testid="button-browse-services">
               Browse Services
             </Button>
@@ -203,7 +203,7 @@ export default function Checkout() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-slate-950 flex flex-col">
       <Navbar />
       <main id="main-content" className="flex-1 pt-24 pb-12">
         <div className="container mx-auto px-4 md:px-6 max-w-4xl">
@@ -214,7 +214,7 @@ export default function Checkout() {
                 else if (step === "payment") setStep("review");
                 else if (step === "error") setStep("payment");
               }}
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors"
+              className="flex items-center gap-2 text-slate-400 hover:text-white mb-6 transition-colors"
               data-testid="button-back"
             >
               <ArrowLeft className="w-4 h-4" /> Back
@@ -228,15 +228,15 @@ export default function Checkout() {
                 <div key={label} className="flex items-center gap-2">
                   <div className={cn(
                     "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors",
-                    i <= (stepIndex ?? 0) ? "bg-primary text-white" : "bg-muted text-muted-foreground"
+                    i <= (stepIndex ?? 0) ? "bg-emerald-600 text-white" : "bg-slate-800 text-slate-400"
                   )}>
                     {i < (stepIndex ?? 0) ? <CheckCircle2 className="w-4 h-4" /> : i + 1}
                   </div>
                   <span className={cn(
                     "text-sm font-medium hidden sm:inline",
-                    i <= (stepIndex ?? 0) ? "text-primary" : "text-muted-foreground"
+                    i <= (stepIndex ?? 0) ? "text-emerald-400" : "text-slate-400"
                   )}>{label}</span>
-                  {i < 2 && <ChevronRight className="w-4 h-4 text-muted-foreground" />}
+                  {i < 2 && <ChevronRight className="w-4 h-4 text-slate-400" />}
                 </div>
               );
             })}
@@ -247,22 +247,22 @@ export default function Checkout() {
 
               {step === "review" && (
                 <Card className="p-6" data-testid="step-review">
-                  <h2 className="text-xl font-bold text-foreground mb-4">Review Your Order</h2>
+                  <h2 className="text-xl font-bold text-white mb-4">Review Your Order</h2>
 
                   <div className="flex gap-4 mb-6">
                     <img src={service.image} alt={service.title} className="w-24 h-24 rounded-xl object-cover" />
                     <div className="flex-1">
-                      <h3 className="font-bold text-foreground text-lg" data-testid="text-service-title">{service.title}</h3>
+                      <h3 className="font-bold text-white text-lg" data-testid="text-service-title">{service.title}</h3>
                       <div className="flex items-center gap-2 mt-1">
                         <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-xs font-bold">
                           {service.freelancer.charAt(0)}
                         </div>
-                        <span className="text-sm text-muted-foreground">{service.freelancer}</span>
+                        <span className="text-sm text-slate-400">{service.freelancer}</span>
                         <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
                         <span className="text-sm font-medium">{service.rating}</span>
-                        <span className="text-xs text-muted-foreground">({service.reviews} reviews)</span>
+                        <span className="text-xs text-slate-400">({service.reviews} reviews)</span>
                       </div>
-                      <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-4 mt-2 text-sm text-slate-400">
                         {service.duration && <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {service.duration}</span>}
                         {service.location && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {service.location}</span>}
                       </div>
@@ -273,22 +273,22 @@ export default function Checkout() {
 
                   <div className="space-y-3">
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">{isSubscription ? "Subscription fee" : "Service fee"}</span>
-                      <span className="font-medium text-foreground">{formatAmount(service.price)}</span>
+                      <span className="text-slate-400">{isSubscription ? "Subscription fee" : "Service fee"}</span>
+                      <span className="font-medium text-white">{formatAmount(service.price)}</span>
                     </div>
                     {!isSubscription && (
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Platform fee (10%)</span>
-                        <span className="font-medium text-foreground">{formatAmount(serviceFee)}</span>
+                        <span className="text-slate-400">Platform fee (10%)</span>
+                        <span className="font-medium text-white">{formatAmount(serviceFee)}</span>
                       </div>
                     )}
                     <Separator />
                     <div className="flex justify-between text-lg font-bold">
-                      <span className="text-foreground">Total</span>
-                      <span className="text-primary" data-testid="text-total">{formatAmount(total)}</span>
+                      <span className="text-white">Total</span>
+                      <span className="text-emerald-400" data-testid="text-total">{formatAmount(total)}</span>
                     </div>
                     {isSubscription && service.duration && (
-                      <p className="text-xs text-muted-foreground text-center">Billed {service.duration.toLowerCase()} · Cancel anytime</p>
+                      <p className="text-xs text-slate-400 text-center">Billed {service.duration.toLowerCase()} · Cancel anytime</p>
                     )}
                   </div>
 
@@ -318,15 +318,15 @@ export default function Checkout() {
                       <CreditCard className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <h2 className="text-xl font-bold text-foreground">Secure Payment</h2>
-                      <p className="text-muted-foreground text-sm">Powered by PayFast — South Africa's trusted gateway</p>
+                      <h2 className="text-xl font-bold text-white">Secure Payment</h2>
+                      <p className="text-slate-400 text-sm">Powered by PayFast — South Africa's trusted gateway</p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 mt-4 mb-6">
                     <img src="https://img.icons8.com/color/32/visa.png" alt="Visa" className="h-6" />
                     <img src="https://img.icons8.com/color/32/mastercard.png" alt="Mastercard" className="h-6" />
-                    <span className="text-xs text-muted-foreground ml-1">EFT, SnapScan & more</span>
+                    <span className="text-xs text-slate-400 ml-1">EFT, SnapScan & more</span>
                   </div>
 
                   <div className="space-y-4">
@@ -335,18 +335,18 @@ export default function Checkout() {
                       <p>You'll be securely redirected to PayFast to complete your payment using your preferred method (card, EFT, SnapScan, or Mobicred). After payment, you'll be returned here automatically.</p>
                     </div>
 
-                    <div className="bg-muted/50 rounded-lg p-4 space-y-2 text-sm">
+                    <div className="bg-slate-800/50 rounded-lg p-4 space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Service</span>
-                        <span className="font-medium text-foreground">{service.title}</span>
+                        <span className="text-slate-400">Service</span>
+                        <span className="font-medium text-white">{service.title}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Freelancer</span>
-                        <span className="font-medium text-foreground">{service.freelancer}</span>
+                        <span className="text-slate-400">Freelancer</span>
+                        <span className="font-medium text-white">{service.freelancer}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Amount</span>
-                        <span className="font-bold text-primary" data-testid="text-payment-amount">{formatAmount(total)}</span>
+                        <span className="text-slate-400">Amount</span>
+                        <span className="font-bold text-emerald-400" data-testid="text-payment-amount">{formatAmount(total)}</span>
                       </div>
                     </div>
                   </div>
@@ -366,15 +366,15 @@ export default function Checkout() {
                   </Button>
 
                   <div className="flex items-center justify-center gap-4 mt-4">
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1 text-xs text-slate-400">
                       <Lock className="w-3 h-3" />
                       <span>256-bit SSL</span>
                     </div>
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1 text-xs text-slate-400">
                       <ShieldCheck className="w-3 h-3" />
                       <span>PCI DSS Compliant</span>
                     </div>
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1 text-xs text-slate-400">
                       <Building2 className="w-3 h-3" />
                       <span>Escrow Protected</span>
                     </div>
@@ -384,20 +384,20 @@ export default function Checkout() {
 
               {step === "processing" && (
                 <Card className="p-12 text-center" data-testid="step-processing">
-                  <Loader2 className="w-16 h-16 text-primary animate-spin mx-auto mb-6" />
-                  <h2 className="text-xl font-bold text-foreground mb-2">Redirecting to PayFast</h2>
-                  <p className="text-muted-foreground">You'll be redirected to PayFast to complete your secure payment...</p>
-                  <p className="text-xs text-muted-foreground mt-4">Please don't close this page.</p>
+                  <Loader2 className="w-16 h-16 text-emerald-400 animate-spin mx-auto mb-6" />
+                  <h2 className="text-xl font-bold text-white mb-2">Redirecting to PayFast</h2>
+                  <p className="text-slate-400">You'll be redirected to PayFast to complete your secure payment...</p>
+                  <p className="text-xs text-slate-400 mt-4">Please don't close this page.</p>
                 </Card>
               )}
 
               {step === "error" && (
                 <Card className="p-8 text-center" data-testid="step-error">
-                  <div className="w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <div className="w-20 h-20 bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
                     <AlertCircle className="w-10 h-10 text-red-600" />
                   </div>
-                  <h2 className="text-2xl font-bold text-foreground mb-2">Payment Failed</h2>
-                  <p className="text-muted-foreground mb-6">{errorMessage || "Something went wrong with your payment."}</p>
+                  <h2 className="text-2xl font-bold text-white mb-2">Payment Failed</h2>
+                  <p className="text-slate-400 mb-6">{errorMessage || "Something went wrong with your payment."}</p>
                   <Button onClick={() => { setStep("payment"); setErrorMessage(null); }} data-testid="button-try-again">
                     Try Again
                   </Button>
@@ -409,37 +409,37 @@ export default function Checkout() {
                   <div className="w-20 h-20 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
                     <CheckCircle2 className="w-10 h-10 text-emerald-600" />
                   </div>
-                  <h2 className="text-2xl font-bold text-foreground mb-2">Payment Successful!</h2>
-                  <p className="text-muted-foreground mb-6">
+                  <h2 className="text-2xl font-bold text-white mb-2">Payment Successful!</h2>
+                  <p className="text-slate-400 mb-6">
                     {isSubscription
                       ? `Your Premium Talent plan is now active. Welcome to the Pro community!`
                       : `${formatAmount(total)} has been securely deposited into escrow.`}
                   </p>
 
-                  <div className="bg-muted rounded-xl p-4 text-left mb-6 max-w-sm mx-auto">
+                  <div className="bg-slate-800 rounded-xl p-4 text-left mb-6 max-w-sm mx-auto">
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Payment ID</span>
-                        <span className="font-mono font-bold text-foreground text-xs" data-testid="text-transaction-id">{transactionId}</span>
+                        <span className="text-slate-400">Payment ID</span>
+                        <span className="font-mono font-bold text-white text-xs" data-testid="text-transaction-id">{transactionId}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Amount</span>
-                        <span className="font-bold text-primary">{formatAmount(total)}</span>
+                        <span className="text-slate-400">Amount</span>
+                        <span className="font-bold text-emerald-400">{formatAmount(total)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Method</span>
-                        <span className="font-medium text-foreground">PayFast</span>
+                        <span className="text-slate-400">Method</span>
+                        <span className="font-medium text-white">PayFast</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Status</span>
+                        <span className="text-slate-400">Status</span>
                         <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
                           {isSubscription ? "Active" : "In Escrow"}
                         </Badge>
                       </div>
                       {isSubscription && service.duration && (
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Billing</span>
-                          <span className="font-medium text-foreground">{service.duration}</span>
+                          <span className="text-slate-400">Billing</span>
+                          <span className="font-medium text-white">{service.duration}</span>
                         </div>
                       )}
                     </div>
@@ -475,13 +475,13 @@ export default function Checkout() {
             {step !== "success" && step !== "processing" && step !== "error" && (
               <div className="md:col-span-1">
                 <Card className="p-5 sticky top-28" data-testid="order-summary">
-                  <h3 className="font-bold text-foreground mb-4">Order Summary</h3>
+                  <h3 className="font-bold text-white mb-4">Order Summary</h3>
 
                   <div className="flex gap-3 mb-4">
                     <img src={service.image} alt={service.title} className="w-16 h-16 rounded-lg object-cover" />
                     <div>
-                      <p className="font-medium text-foreground text-sm leading-tight">{service.title}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{service.freelancer}</p>
+                      <p className="font-medium text-white text-sm leading-tight">{service.title}</p>
+                      <p className="text-xs text-slate-400 mt-1">{service.freelancer}</p>
                     </div>
                   </div>
 
@@ -489,35 +489,35 @@ export default function Checkout() {
 
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">{isSubscription ? "Subscription" : "Service"}</span>
-                      <span className="text-foreground">{formatAmount(service.price)}</span>
+                      <span className="text-slate-400">{isSubscription ? "Subscription" : "Service"}</span>
+                      <span className="text-white">{formatAmount(service.price)}</span>
                     </div>
                     {!isSubscription && (
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Platform fee</span>
-                        <span className="text-foreground">{formatAmount(serviceFee)}</span>
+                        <span className="text-slate-400">Platform fee</span>
+                        <span className="text-white">{formatAmount(serviceFee)}</span>
                       </div>
                     )}
                     <Separator />
                     <div className="flex justify-between font-bold text-base">
-                      <span className="text-foreground">Total</span>
-                      <span className="text-primary">{formatAmount(total)}</span>
+                      <span className="text-white">Total</span>
+                      <span className="text-emerald-400">{formatAmount(total)}</span>
                     </div>
                     {isSubscription && service.duration && (
-                      <p className="text-xs text-muted-foreground text-center pt-1">Billed {service.duration.toLowerCase()} · Cancel anytime</p>
+                      <p className="text-xs text-slate-400 text-center pt-1">Billed {service.duration.toLowerCase()} · Cancel anytime</p>
                     )}
                   </div>
 
                   <div className="mt-4 space-y-2">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-2 text-xs text-slate-400">
                       <ShieldCheck className="w-4 h-4 text-emerald-500" />
                       <span>Escrow protected</span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-2 text-xs text-slate-400">
                       <Lock className="w-4 h-4 text-blue-500" />
                       <span>PayFast secure payments</span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-2 text-xs text-slate-400">
                       <Building2 className="w-4 h-4 text-purple-500" />
                       <span>FreelanceSkills (Pty) Ltd</span>
                     </div>
