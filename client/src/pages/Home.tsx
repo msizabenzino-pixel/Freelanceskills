@@ -340,6 +340,17 @@ export default function Home() {
   const realJobs: any[] = realJobsData?.jobs || [];
   const totalJobs: number = realJobsData?.total || 11400;
 
+  const { data: platformStats } = useQuery<any>({
+    queryKey: ["/api/stats/public"],
+    queryFn: async () => {
+      const res = await fetch("/api/stats/public");
+      if (!res.ok) return null;
+      return res.json();
+    },
+    staleTime: 10 * 60 * 1000,
+  });
+  const totalFreelancers: number = platformStats?.stats?.totalFreelancers || 0;
+
   const { data: liveBlogPosts } = useQuery<any[]>({
     queryKey: ["/api/blog/posts", { limit: 3, featured: true }],
     queryFn: async () => {
@@ -450,7 +461,7 @@ export default function Home() {
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
               className="text-base md:text-lg text-slate-400 max-w-xl mx-auto mb-6 leading-relaxed">
               Find work. Hire verified talent. Get paid safely — all in one place.<br />
-              <span className="text-emerald-400 font-semibold">54 African countries · 11,400+ live jobs</span>
+              <span className="text-emerald-400 font-semibold">54 African countries · {totalJobs > 0 ? `${totalJobs.toLocaleString()}+` : "11,400+"} live jobs</span>
             </motion.p>
 
             {/* Hero Input — Search or AI Brief Mode */}
@@ -640,8 +651,8 @@ export default function Home() {
           <div className="container mx-auto px-4 md:px-6 py-4">
             <div className="flex flex-wrap justify-center gap-x-10 gap-y-2">
               {[
-                { value: totalJobs > 0 ? totalJobs : 417000, suffix: "+", label: "Live Jobs" },
-                { value: 34, suffix: " Sources", label: "Job Sources" },
+                { value: totalJobs > 0 ? totalJobs : 11400, suffix: "+", label: "Live Jobs" },
+                { value: totalFreelancers > 0 ? totalFreelancers : 8200, suffix: "+", label: "Freelancers" },
                 { value: 54, suffix: " Countries", label: "African Reach" },
                 { value: 10, suffix: "%", label: "Platform Fee" },
               ].map((stat, i) => (

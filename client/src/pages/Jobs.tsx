@@ -105,6 +105,12 @@ const EXP_LEVELS = [
   { value: "executive", label: "Executive" },
 ];
 
+const POPULAR_SKILLS = [
+  "React", "Python", "Node.js", "Figma", "Excel",
+  "Java", "SQL", "TypeScript", "AWS", "WordPress",
+  "Accounting", "Copywriting", "Photoshop", "Flutter", "Machine Learning",
+];
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function StatPill({ icon: Icon, label, value, color = "emerald" }: {
@@ -141,6 +147,7 @@ export default function Jobs() {
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [salaryMin, setSalaryMin] = useState("");
   const [salaryMax, setSalaryMax] = useState("");
+  const [skillTagFilter, setSkillTagFilter] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [applyingId, setApplyingId] = useState<string | null>(null);
   const [applyModalJob, setApplyModalJob] = useState<AggregatedJob | null>(null);
@@ -206,7 +213,7 @@ export default function Jobs() {
       { country: selectedCountry, province: selectedProvince, category: categoryFilter,
         jobType: jobTypeFilter, expLevel: expLevelFilter, urgent: urgentOnly, remote: remoteOnly,
         verified: verifiedOnly, salaryMin, salaryMax,
-        search: debouncedQuery },
+        search: debouncedQuery, skillTag: skillTagFilter },
     ],
     queryFn: async () => {
       const params = new URLSearchParams();
@@ -226,7 +233,8 @@ export default function Jobs() {
       if (verifiedOnly) params.set("verifiedOnly", "true");
       if (salaryMin) params.set("salaryMin", String(parseInt(salaryMin) * 100));
       if (salaryMax) params.set("salaryMax", String(parseInt(salaryMax) * 100));
-      if (debouncedQuery) params.set("search", debouncedQuery);
+      const effectiveSearch = [debouncedQuery, skillTagFilter].filter(Boolean).join(" ");
+      if (effectiveSearch) params.set("search", effectiveSearch);
       params.set("limit", "200");
 
       const res = await apiRequest("GET", `/api/aggregated-jobs?${params.toString()}`);
@@ -340,7 +348,7 @@ export default function Jobs() {
 
   const hasActiveFilters = selectedCountry !== "all" || categoryFilter !== "all" ||
     jobTypeFilter !== "all" || expLevelFilter !== "all" ||
-    urgentOnly || remoteOnly || verifiedOnly || !!salaryMin || !!salaryMax || !!debouncedQuery;
+    urgentOnly || remoteOnly || verifiedOnly || !!salaryMin || !!salaryMax || !!debouncedQuery || !!skillTagFilter;
 
   const clearFilters = () => {
     setSelectedCountry("all");
@@ -354,6 +362,7 @@ export default function Jobs() {
     setSalaryMin("");
     setSalaryMax("");
     setQuery("");
+    setSkillTagFilter("");
   };
 
   const isLoading = aggJobsQuery.isLoading || firebaseJobsQuery.isLoading;
@@ -588,6 +597,15 @@ export default function Jobs() {
                   </button>
                 </div>
               )}
+              {/* Active skill tag indicator */}
+              {skillTagFilter && (
+                <div className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full bg-violet-500/15 border border-violet-500/40 text-violet-300" data-testid="badge-active-skill">
+                  # {skillTagFilter}
+                  <button onClick={() => setSkillTagFilter("")} className="hover:text-white ml-1">
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Advanced filters panel */}
@@ -623,6 +641,34 @@ export default function Jobs() {
                       {EXP_LEVELS.map(e => <SelectItem key={e.value} value={e.value}>{e.label}</SelectItem>)}
                     </SelectContent>
                   </Select>
+                </div>
+
+                {/* Popular skill tag chips */}
+                <div className="pt-1 border-t border-white/10">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xs text-white/60 font-medium">Popular skills</span>
+                    {skillTagFilter && (
+                      <button onClick={() => setSkillTagFilter("")} className="text-[10px] text-white/40 hover:text-white/70 flex items-center gap-0.5 transition-colors">
+                        <X className="w-2.5 h-2.5" /> clear
+                      </button>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {POPULAR_SKILLS.map(skill => (
+                      <button
+                        key={skill}
+                        onClick={() => setSkillTagFilter(skillTagFilter === skill ? "" : skill)}
+                        className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all ${
+                          skillTagFilter === skill
+                            ? "bg-emerald-500/25 border-emerald-500/60 text-emerald-300"
+                            : "border-white/15 text-white/50 hover:border-emerald-500/40 hover:text-emerald-300"
+                        }`}
+                        data-testid={`skill-chip-${skill.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+                      >
+                        {skill}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Salary range + verified toggle */}
