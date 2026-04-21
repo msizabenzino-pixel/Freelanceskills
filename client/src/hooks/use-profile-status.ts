@@ -45,8 +45,8 @@ export function useProfileStatus(userId: string | undefined): ProfileStatusResul
       return res.json();
     },
     enabled: !!userId,
-    refetchInterval: 4000,
-    staleTime: 1000,
+    refetchInterval: 60_000,   // 1 minute — stop hammering the server
+    staleTime: 30_000,
     retry: false,
   });
 

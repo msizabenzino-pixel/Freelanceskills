@@ -499,12 +499,14 @@ export async function registerRoutes(
       });
     } catch (err) {
       console.error("[check-readiness] Error:", err);
-      res.status(500).json({
+      // Return a neutral "loading" status on error — never lie with "No Profile"
+      // when we simply couldn't fetch due to a server/DB hiccup.
+      res.status(200).json({
         ready: false,
-        profileStatus: "none",
+        profileStatus: "loading",
         score: 0,
-        nextAction: "create_profile",
-        message: "Unable to check profile status. Please try again.",
+        nextAction: "retry",
+        message: "Checking your profile status…",
         missingItems: [],
         completedItems: [],
       });
@@ -562,6 +564,49 @@ export async function registerRoutes(
     } catch (error) {
       console.error("Error creating/updating profile:", error);
       res.status(500).json({ message: "Failed to save profile" });
+    }
+  });
+
+  // POST /api/onboarding/complete — called by the onboarding carousel after user finishes.
+  // Creates a minimal DRAFT profile so the dashboard never shows false "No Profile".
+  // Safe to call multiple times (upsert semantics — ignores if profile already exists).
+  app.post("/api/onboarding/complete", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const { role, skills, rateMinCents, portfolioUrls } = req.body;
+
+      // Ensure user row exists (prevents FK constraint failure for new OAuth users)
+      try {
+        const { db: _db } = await import("./db");
+        const { users: usersTable } = await import("../shared/models/auth");
+        await _db.insert(usersTable).values({ id: userId }).onConflictDoNothing();
+      } catch (_) {}
+
+      const existing = await storage.getProfile(userId);
+      if (existing) {
+        // Profile already exists — just return it. Don't overwrite real data.
+        return res.json({ created: false, profile: existing });
+      }
+
+      const portfolioJson = Array.isArray(portfolioUrls) && portfolioUrls.filter(Boolean).length > 0
+        ? JSON.stringify(portfolioUrls.filter(Boolean).map((url: string, i: number) => ({ id: String(i), title: "Portfolio", link: url, description: "", technologies: [] })))
+        : null;
+
+      const profile = await storage.createProfile({
+        userId,
+        userType: role === "freelancer" ? "freelancer" : "client",
+        role: role === "freelancer" ? "freelancer" : "client",
+        skills: Array.isArray(skills) ? skills.slice(0, 10) : [],
+        hourlyRate: rateMinCents && rateMinCents > 0 ? Number(rateMinCents) * 100 : null,
+        publishedProfile: false,
+        ...(portfolioJson ? { portfolioProjectsJson: portfolioJson } : {}),
+      } as any);
+
+      res.status(201).json({ created: true, profile });
+    } catch (err) {
+      console.error("[onboarding/complete] Error:", err);
+      // Non-fatal — client should continue even if this fails
+      res.status(500).json({ error: "Could not save onboarding data", created: false });
     }
   });
 

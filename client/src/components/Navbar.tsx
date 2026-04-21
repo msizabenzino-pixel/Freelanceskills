@@ -28,7 +28,7 @@ type NavbarProps = {
 export function Navbar({ topOffset = 0 }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [profileStatus, setProfileStatus] = useState<"none" | "draft" | "published" | null>(null);
+  const [profileStatus, setProfileStatus] = useState<"none" | "draft" | "published" | "loading" | null>(null);
   const [location, navigate] = useLocation();
   const { user, isAuthenticated, logout } = useAuth();
   const { isDark, toggle: toggleDarkMode } = useDarkMode();
@@ -196,8 +196,8 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
                 </Link>
               )}
 
-              {/* Profile status pill */}
-              {profileStatus && profileStatus !== "published" && (
+              {/* Profile status pill — only show when we have a definitive non-published status */}
+              {profileStatus && profileStatus !== "published" && profileStatus !== "loading" && (
                 <button
                   onClick={() => navigate("/cv-upload")}
                   className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/25 hover:bg-amber-500/20 transition-all text-[11px] font-semibold text-amber-500"

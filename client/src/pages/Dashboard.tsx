@@ -168,7 +168,7 @@ export default function Dashboard() {
 
   const statusCfg = {
     loading: { label: "Checking…", dot: "bg-slate-500 animate-pulse", badge: "border-slate-700 text-slate-400" },
-    none: { label: "No Profile", dot: "bg-red-500", badge: "border-red-500/30 text-red-400" },
+    none: { label: "Setup Needed", dot: "bg-amber-500", badge: "border-amber-500/30 text-amber-400" },
     draft: { label: "Draft", dot: "bg-amber-500 animate-pulse", badge: "border-amber-500/30 text-amber-400" },
     published: { label: "Live ✓", dot: "bg-emerald-500", badge: "border-emerald-500/30 text-emerald-400" },
   }[profileStatus.status];

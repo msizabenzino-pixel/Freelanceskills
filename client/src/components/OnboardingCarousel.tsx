@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   ChevronRight, ChevronLeft, Check, Briefcase, Users, Zap, Shield,
   DollarSign, Tag, Star, Building2, Code2, Palette, Megaphone,
-  Database, Wrench, BookOpen, X, Link as LinkIcon, PlusCircle,
+  Database, Wrench, BookOpen, X, Link as LinkIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/use-auth";
 
 type Role = "freelancer" | "client" | null;
 
@@ -79,6 +80,8 @@ export function OnboardingCarousel() {
   const [isVisible, setIsVisible] = useState(false);
   const [step, setStep] = useState<Step>("slides");
   const [selectedRole, setSelectedRole] = useState<Role>(null);
+  const { isAuthenticated } = useAuth();
+  const profileCheckedRef = useRef(false);
 
   // Freelancer state
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
@@ -94,10 +97,33 @@ export function OnboardingCarousel() {
   useEffect(() => {
     const path = window.location.pathname.toLowerCase();
     if (AUTH_PATHS.some((p) => path.startsWith(p))) return;
-    if (!localStorage.getItem("onboarding_completed")) {
+
+    // Fast path: already dismissed/completed
+    if (localStorage.getItem("onboarding_completed")) return;
+
+    // For authenticated users: check the DB before showing.
+    // If they already have a real profile, mark done and skip.
+    if (isAuthenticated && !profileCheckedRef.current) {
+      profileCheckedRef.current = true;
+      fetch("/api/profile", { credentials: "include" })
+        .then(r => r.ok ? r.json() : null)
+        .then(profile => {
+          if (profile && profile.id) {
+            localStorage.setItem("onboarding_completed", "true");
+            // Don't show — profile exists
+          } else {
+            setTimeout(() => setIsVisible(true), 800);
+          }
+        })
+        .catch(() => setTimeout(() => setIsVisible(true), 800));
+      return;
+    }
+
+    // Unauthenticated visitors always see the intro
+    if (!isAuthenticated) {
       setTimeout(() => setIsVisible(true), 800);
     }
-  }, []);
+  }, [isAuthenticated]);
 
   const toggleSkill = (skill: string) => {
     setSelectedSkills(prev =>
@@ -113,13 +139,35 @@ export function OnboardingCarousel() {
     }
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
+    // 1. Persist preferences locally (always works, even offline)
     localStorage.setItem("onboarding_completed", "true");
     if (selectedRole) localStorage.setItem("user_role_preference", selectedRole);
     if (selectedSkills.length) localStorage.setItem("onboarding_skills", JSON.stringify(selectedSkills));
     if (selectedRate) localStorage.setItem("onboarding_rate", selectedRate);
     const filledUrls = portfolioUrls.filter(u => u.trim());
     if (filledUrls.length) localStorage.setItem("onboarding_portfolio", JSON.stringify(filledUrls));
+
+    // 2. If authenticated, persist to the DB so Dashboard never shows false "No Profile"
+    if (isAuthenticated) {
+      try {
+        await fetch("/api/onboarding/complete", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            role: selectedRole || "client",
+            skills: selectedSkills,
+            rateMinCents: selectedRate ? Number(selectedRate) : 0,
+            portfolioUrls: filledUrls,
+          }),
+        });
+      } catch (_) {
+        // Non-fatal — continue even if API call fails
+      }
+    }
+
+    // 3. Navigate
     setIsVisible(false);
     setTimeout(() => {
       if (selectedRole === "freelancer") window.location.href = "/cv-upload";
