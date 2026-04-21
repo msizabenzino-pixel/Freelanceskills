@@ -12,6 +12,7 @@ import { seedFreelancersIfEmpty } from "./seedFreelancers";
 
 const app = express();
 app.disable("x-powered-by");
+app.set("etag", "strong");
 const httpServer = createServer(app);
 const io = setupSocket(httpServer);
 

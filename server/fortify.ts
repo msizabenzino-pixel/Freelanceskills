@@ -701,7 +701,12 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
   res.setHeader("X-Download-Options", "noopen");
   res.setHeader("X-Permitted-Cross-Domain-Policies", "none");
   res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
-  res.setHeader("Permissions-Policy", "camera=(self), microphone=(self), geolocation=(self), payment=(self)");
+  res.setHeader("Permissions-Policy",
+    "camera=(self), microphone=(self), geolocation=(), payment=(self), " +
+    "usb=(), bluetooth=(), serial=(), hid=(), midi=(), " +
+    "accelerometer=(), gyroscope=(), magnetometer=(), " +
+    "fullscreen=(self), autoplay=(self), picture-in-picture=(self)"
+  );
   res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
   res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
   res.setHeader("Origin-Agent-Cluster", "?1");
@@ -733,7 +738,7 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
   ].join(" ");
   res.setHeader("Content-Security-Policy",
     "default-src 'self'; " +
-    `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://www.payfast.co.za https://sandbox.payfast.co.za ${firebaseScriptSrc}; ` +
+    `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://fonts.googleapis.com https://www.payfast.co.za https://sandbox.payfast.co.za ${firebaseScriptSrc}; ` +
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
     "font-src 'self' https://fonts.gstatic.com; " +
     "img-src 'self' data: https: blob:; " +
@@ -741,7 +746,8 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
     `frame-src 'self' https://www.payfast.co.za https://sandbox.payfast.co.za ${firebaseFrameSrc}; ` +
     "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.replit.com; " +
     "base-uri 'self'; " +
-    "form-action 'self' https://www.payfast.co.za https://sandbox.payfast.co.za;"
+    "form-action 'self' https://www.payfast.co.za https://sandbox.payfast.co.za; " +
+    "report-uri /api/csp-report"
   );
 
   if (process.env.NODE_ENV === "production") {

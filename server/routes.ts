@@ -73,6 +73,19 @@ export async function registerRoutes(
     }
   });
 
+  // CSP violation report endpoint
+  app.post("/api/csp-report", (req: any, res) => {
+    const report = req.body?.["csp-report"] || req.body;
+    if (report && process.env.NODE_ENV === "production") {
+      const blocked = report["blocked-uri"] || report.blockedURL || "unknown";
+      const directive = report["violated-directive"] || report.effectiveDirective || "unknown";
+      if (!blocked.startsWith("chrome-extension") && !blocked.startsWith("moz-extension")) {
+        console.warn(`[CSP] violation — directive: ${directive}, blocked: ${blocked}, page: ${report["document-uri"] || report.documentURL || "?"}`);
+      }
+    }
+    res.status(204).end();
+  });
+
   // Metrics endpoint
   app.get("/api/metrics", async (_req, res) => {
     try {
@@ -516,6 +529,8 @@ export async function registerRoutes(
       if (!profile) {
         return res.status(404).json({ message: "Profile not found" });
       }
+      res.setHeader("Cache-Control", "public, max-age=60, s-maxage=120, stale-while-revalidate=300");
+      res.setHeader("Vary", "Accept-Encoding");
       res.json(profile);
     } catch (error) {
       console.error("Error fetching profile by id:", error);
@@ -3234,6 +3249,8 @@ Experience level: ${experienceLevel || 'Any'}`
       const profiles = await storage.searchFreelancers(query as string, location as string);
       fortify.cache.set(cacheKey, profiles, 300);
       res.setHeader("X-Cache", "MISS");
+      res.setHeader("Cache-Control", "public, max-age=60, s-maxage=300, stale-while-revalidate=600");
+      res.setHeader("Vary", "Accept-Encoding");
       res.json(profiles);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch cached freelancers" });
