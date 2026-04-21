@@ -15,14 +15,13 @@ const defaultDevConfig = {
 };
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || (isProd ? "" : defaultDevConfig.apiKey),
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || (isProd ? "" : defaultDevConfig.authDomain),
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || (isProd ? "" : defaultDevConfig.projectId),
-  storageBucket:
-    import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || (isProd ? "" : defaultDevConfig.storageBucket),
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || (isProd ? "" : defaultDevConfig.messagingSenderId),
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || (isProd ? "" : defaultDevConfig.appId),
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || (isProd ? "" : defaultDevConfig.measurementId),
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || defaultDevConfig.apiKey,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || defaultDevConfig.authDomain,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || defaultDevConfig.projectId,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || defaultDevConfig.storageBucket,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || defaultDevConfig.messagingSenderId,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || defaultDevConfig.appId,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || defaultDevConfig.measurementId,
 };
 
 const requiredFirebaseEnvVars = [

@@ -13,6 +13,8 @@ import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Loader2, Shield, Zap, Globe,
 import {
   loginWithEmail,
   loginWithGoogle,
+  loginWithFacebook,
+  loginWithApple,
   registerWithEmail,
   sendFirebaseResetEmail,
 } from "@/lib/firebaseAuth";
@@ -231,29 +233,41 @@ export default function Auth() {
 
   const isLoading = loginMutation.isPending || registerMutation.isPending || forgotPasswordMutation.isPending;
 
+  const handleSocialSuccess = async ({ user, isNewUser }: { user: any; isNewUser: boolean }, method: string) => {
+    trackFirebaseEvent(isNewUser ? "sign_up" : "login", { method }).catch(() => {});
+    queryClient.setQueryData(["/api/auth/user"], user);
+    await syncSessionNow();
+    if (isNewUser) {
+      toast({ title: "Account created! 🎉", description: "Let's build your profile — takes 60 seconds." });
+      setTimeout(() => {
+        navigate(formData.userType !== "client" ? "/onboarding?welcome=1" : "/post-job");
+      }, 50);
+    } else {
+      await completeAuthSuccess(user);
+    }
+  };
+
   const socialAuthMutation = useMutation({
-    mutationFn: async () => {
-      return loginWithGoogle();
-    },
-    onSuccess: async ({ user, isNewUser }) => {
-      trackFirebaseEvent(isNewUser ? "sign_up" : "login", { method: "social" }).catch(() => {});
-      queryClient.setQueryData(["/api/auth/user"], user);
-      await syncSessionNow();
-      if (isNewUser) {
-        toast({ title: "Account created! 🎉", description: "Let's build your profile — takes 60 seconds." });
-        setTimeout(() => {
-          navigate(formData.userType !== "client" ? "/onboarding?welcome=1" : "/post-job");
-        }, 50);
-      } else {
-        await completeAuthSuccess(user);
-      }
-    },
+    mutationFn: loginWithGoogle,
+    onSuccess: (result) => handleSocialSuccess(result, "google"),
     onError: (error: Error) => {
-      toast({
-        title: "Social sign-in failed",
-        description: getSocialAuthErrorMessage(error),
-        variant: "destructive",
-      });
+      toast({ title: "Sign-in failed", description: getSocialAuthErrorMessage(error), variant: "destructive" });
+    },
+  });
+
+  const facebookAuthMutation = useMutation({
+    mutationFn: loginWithFacebook,
+    onSuccess: (result) => handleSocialSuccess(result, "facebook"),
+    onError: (error: Error) => {
+      toast({ title: "Facebook sign-in failed", description: getSocialAuthErrorMessage(error), variant: "destructive" });
+    },
+  });
+
+  const appleAuthMutation = useMutation({
+    mutationFn: loginWithApple,
+    onSuccess: (result) => handleSocialSuccess(result, "apple"),
+    onError: (error: Error) => {
+      toast({ title: "Apple sign-in failed", description: getSocialAuthErrorMessage(error), variant: "destructive" });
     },
   });
 
@@ -453,6 +467,38 @@ export default function Auth() {
                       </svg>
                       <span className="flex-1 text-left text-sm">{isLogin ? "Continue with LinkedIn" : "Start with LinkedIn"}</span>
                     </Button>
+
+                    {/* Facebook + Apple in a row */}
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="h-11 rounded-xl font-semibold flex items-center justify-center gap-2 px-3 border-[#1877F2]/30 bg-[#1877F2]/5 hover:bg-[#1877F2]/15 hover:border-[#1877F2]/60 transition-all text-slate-100"
+                        onClick={() => facebookAuthMutation.mutate()}
+                        disabled={facebookAuthMutation.isPending || socialAuthMutation.isPending}
+                        data-testid="button-auth-facebook"
+                      >
+                        <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="#1877F2" aria-hidden="true">
+                          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
+                        <span className="text-sm">Facebook</span>
+                        {facebookAuthMutation.isPending && <Loader2 className="w-3.5 h-3.5 animate-spin ml-1" />}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="h-11 rounded-xl font-semibold flex items-center justify-center gap-2 px-3 border-slate-600 bg-white/[0.03] hover:bg-white/[0.08] hover:border-slate-400 transition-all text-slate-100"
+                        onClick={() => appleAuthMutation.mutate()}
+                        disabled={appleAuthMutation.isPending || socialAuthMutation.isPending}
+                        data-testid="button-auth-apple"
+                      >
+                        <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                        </svg>
+                        <span className="text-sm">Apple</span>
+                        {appleAuthMutation.isPending && <Loader2 className="w-3.5 h-3.5 animate-spin ml-1" />}
+                      </Button>
+                    </div>
 
                     <div className="relative py-0.5">
                       <div className="absolute inset-0 flex items-center">
