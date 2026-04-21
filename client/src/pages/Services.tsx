@@ -41,14 +41,14 @@ import {
 } from "lucide-react";
 
 const categories = [
-  { id: "trades", name: "Trades & Repairs", icon: Wrench, color: "bg-orange-100 text-orange-600 dark:bg-orange-900/30" },
-  { id: "cleaning", name: "Cleaning", icon: Sparkles, color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30" },
-  { id: "home", name: "Home Services", icon: Home, color: "bg-green-100 text-green-600 dark:bg-green-900/30" },
-  { id: "moving", name: "Moving & Delivery", icon: Truck, color: "bg-purple-100 text-purple-600 dark:bg-purple-900/30" },
-  { id: "safety", name: "Safety & Compliance", icon: Shield, color: "bg-red-100 text-red-600 dark:bg-red-900/30" },
-  { id: "tech", name: "Tech & IT", icon: Laptop, color: "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30" },
-  { id: "creative", name: "Creative & Design", icon: Paintbrush, color: "bg-pink-100 text-pink-600 dark:bg-pink-900/30" },
-  { id: "events", name: "Events & Photography", icon: Camera, color: "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30" },
+  { id: "trades", name: "Trades & Repairs", icon: Wrench, color: "bg-orange-500/15 text-orange-400 border-orange-500/20" },
+  { id: "cleaning", name: "Cleaning", icon: Sparkles, color: "bg-blue-500/15 text-blue-400 border-blue-500/20" },
+  { id: "home", name: "Home Services", icon: Home, color: "bg-emerald-500/15 text-emerald-400 border-emerald-500/20" },
+  { id: "moving", name: "Moving & Delivery", icon: Truck, color: "bg-violet-500/15 text-violet-400 border-violet-500/20" },
+  { id: "safety", name: "Safety & Compliance", icon: Shield, color: "bg-red-500/15 text-red-400 border-red-500/20" },
+  { id: "tech", name: "Tech & IT", icon: Laptop, color: "bg-indigo-500/15 text-indigo-400 border-indigo-500/20" },
+  { id: "creative", name: "Creative & Design", icon: Paintbrush, color: "bg-pink-500/15 text-pink-400 border-pink-500/20" },
+  { id: "events", name: "Events & Photography", icon: Camera, color: "bg-amber-500/15 text-amber-400 border-amber-500/20" },
 ];
 
 function normalize(value: string) {
@@ -142,7 +142,7 @@ export default function Services() {
   const hasError = servicesQuery.isError || taskersQuery.isError;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-slate-950 text-slate-50 flex flex-col">
       <Navbar />
 
       <main id="main-content" className="flex-1">
@@ -203,15 +203,17 @@ export default function Services() {
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(selectedCategory === category.id ? null : category.id)}
-                className={`p-4 rounded-xl border-2 transition-all text-left hover:shadow-md ${
-                  selectedCategory === category.id ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
+                className={`p-4 rounded-xl border-2 transition-all text-left hover:shadow-lg ${
+                  selectedCategory === category.id
+                    ? "border-emerald-500/50 bg-emerald-500/10"
+                    : "border-slate-800 bg-slate-900/60 hover:border-slate-700"
                 }`}
                 data-testid={`button-category-${category.id}`}
               >
-                <div className={`w-12 h-12 rounded-xl ${category.color} flex items-center justify-center mb-3`}>
+                <div className={`w-12 h-12 rounded-xl border ${category.color} flex items-center justify-center mb-3`}>
                   <category.icon className="w-6 h-6" />
                 </div>
-                <h3 className="font-semibold text-foreground">{category.name}</h3>
+                <h3 className="font-semibold text-slate-200">{category.name}</h3>
               </button>
             ))}
           </div>
@@ -314,17 +316,18 @@ export default function Services() {
             </div>
           )}
 
-          <div className="mt-16 bg-gradient-to-r from-primary/5 to-accent/5 rounded-2xl p-8 md:p-12">
-            <div className="max-w-3xl mx-auto text-center">
-              <h2 className="text-3xl font-bold text-primary mb-4">Ready to offer your services?</h2>
-              <p className="text-lg text-muted-foreground mb-6">
+          <div className="mt-16 rounded-2xl border border-slate-800 bg-gradient-to-br from-slate-900 to-slate-900/60 p-8 md:p-12 relative overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(16,185,129,0.08),transparent_60%)]" />
+            <div className="max-w-3xl mx-auto text-center relative z-10">
+              <h2 className="text-3xl font-bold text-white mb-4">Ready to offer your services?</h2>
+              <p className="text-lg text-slate-400 mb-8">
                 Join thousands of professionals earning on FreelanceSkills.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="bg-primary hover:bg-primary/90" data-testid="button-become-tasker" onClick={() => navigate("/onboarding")}>
+                <Button size="lg" className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold" data-testid="button-become-tasker" onClick={() => navigate("/cv-upload")}>
                   <Users className="w-5 h-5 mr-2" /> Become a Tasker
                 </Button>
-                <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/5" data-testid="button-view-pricing" onClick={() => navigate("/pricing")}>
+                <Button size="lg" variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-800" data-testid="button-view-pricing" onClick={() => navigate("/pricing")}>
                   <FileText className="w-5 h-5 mr-2" /> View Pro Benefits
                 </Button>
               </div>

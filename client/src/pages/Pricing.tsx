@@ -197,7 +197,7 @@ export default function Pricing() {
               className={`px-5 py-2 rounded-full text-sm font-semibold transition-all flex items-center gap-2 ${billingPeriod === "yearly" ? "bg-primary text-white shadow" : "text-muted-foreground hover:text-foreground"}`}
             >
               Yearly
-              <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${billingPeriod === "yearly" ? "bg-white/20 text-white" : "bg-green-100 text-green-700"}`}>SAVE 20%</span>
+              <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${billingPeriod === "yearly" ? "bg-white/20 text-white" : "bg-emerald-500/20 text-emerald-400"}`}>SAVE 20%</span>
             </button>
           </div>
         </div>
@@ -210,10 +210,10 @@ export default function Pricing() {
               <div className="text-4xl font-display font-bold mb-4">Free</div>
               <p className="text-muted-foreground mb-6">Perfect for getting started.</p>
               
-              <div className="bg-amber-50 rounded-lg p-3 mb-6">
+              <div className="bg-amber-500/10 rounded-lg p-3 mb-6 border border-amber-500/20">
                 <div className="text-center">
-                  <span className="text-2xl font-bold text-amber-600">10%</span>
-                  <p className="text-xs text-amber-700">commission on completed jobs</p>
+                  <span className="text-2xl font-bold text-amber-400">10%</span>
+                  <p className="text-xs text-amber-300/80">commission on completed jobs</p>
                 </div>
               </div>
               
@@ -247,14 +247,14 @@ export default function Pricing() {
           </div>
 
           {/* Pro Tier */}
-          <div className="bg-white text-foreground rounded-2xl shadow-2xl border-2 border-primary relative overflow-hidden flex flex-col transform md:-translate-y-4 ring-4 ring-primary/10">
-            <div className="absolute top-0 right-0 bg-primary text-white text-xs font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider flex items-center gap-1" data-testid="badge-most-popular">
+          <div className="bg-gradient-to-b from-slate-800 to-slate-900 text-slate-50 rounded-2xl shadow-2xl border-2 border-emerald-500/50 relative overflow-hidden flex flex-col transform md:-translate-y-4 ring-4 ring-emerald-500/10">
+            <div className="absolute top-0 right-0 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider flex items-center gap-1" data-testid="badge-most-popular">
               <Crown className="h-3 w-3" />
               Premium
             </div>
             
             <div className="p-8 flex-1">
-              <h3 className="text-xl font-bold text-primary mb-2">Premium Talent</h3>
+              <h3 className="text-xl font-bold text-emerald-400 mb-2">Premium Talent</h3>
               <div className="flex flex-col mb-4">
                 <div className="flex items-baseline gap-1">
                   <span className="text-5xl font-display font-bold text-primary" data-testid="text-pro-price">{formatPrice(activePrice)}</span>
@@ -268,22 +268,22 @@ export default function Pricing() {
                   </p>
                 )}
                 <div className="mt-2 flex flex-wrap gap-2">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800 border border-green-200 uppercase tracking-wide">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 uppercase tracking-wide">
                     SAVE 50% on commission
                   </span>
                   {billingPeriod === "yearly" && (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200 uppercase tracking-wide" data-testid="badge-yearly-saving">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/15 text-amber-400 border border-amber-500/25 uppercase tracking-wide" data-testid="badge-yearly-saving">
                       SAVE 20% vs monthly
                     </span>
                   )}
                 </div>
               </div>
-              <p className="text-gray-600 mb-6">Unlock exclusive global opportunities and premium tools.</p>
+              <p className="text-slate-300 mb-6">Unlock exclusive global opportunities and premium tools.</p>
               
-              <div className="bg-primary/5 rounded-lg p-3 mb-6 border border-primary/10">
+              <div className="bg-emerald-500/10 rounded-lg p-3 mb-6 border border-emerald-500/20">
                 <div className="text-center">
-                  <span className="text-3xl font-bold text-primary" data-testid="text-pro-commission">5%</span>
-                  <p className="text-xs text-primary/80 font-semibold uppercase tracking-tight">commission - maximize your earnings</p>
+                  <span className="text-3xl font-bold text-emerald-400" data-testid="text-pro-commission">5%</span>
+                  <p className="text-xs text-emerald-300/80 font-semibold uppercase tracking-tight">commission - maximize your earnings</p>
                 </div>
               </div>
               
@@ -298,14 +298,14 @@ export default function Pricing() {
                   "24/7 Dedicated Support"
                 ].map((feature, i) => (
                   <li key={i} className="flex items-start gap-3 text-sm" data-testid={`item-feature-pro-${i}`}>
-                    <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
-                    <span className="font-medium text-gray-800">{feature}</span>
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                    <span className="font-medium text-slate-200">{feature}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="p-8 bg-primary/5 border-t border-primary/10">
-              <Button className="w-full bg-primary text-white hover:bg-primary/90 font-bold h-12 shadow-lg rounded-full animate-pulse" data-testid="button-upgrade-pro" onClick={() => navigate(`/checkout?title=Premium+Talent+Subscription&freelancer=FreelanceSkills&${checkoutParams}&location=Global&rating=5&reviews=0`)}>
+            <div className="p-8 bg-emerald-500/5 border-t border-emerald-500/15">
+              <Button className="w-full bg-emerald-600 text-white hover:bg-emerald-500 font-bold h-12 shadow-lg rounded-full shadow-emerald-900/30" data-testid="button-upgrade-pro" onClick={() => navigate(`/checkout?title=Premium+Talent+Subscription&freelancer=FreelanceSkills&${checkoutParams}&location=Global&rating=5&reviews=0`)}>
                 Start Free Trial
               </Button>
             </div>
@@ -348,15 +348,15 @@ export default function Pricing() {
           </div>
           <p className="text-sm text-muted-foreground mb-4">On a {formatPrice(exampleJob)} job:</p>
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-card rounded-lg p-4">
-              <p className="text-sm text-muted-foreground">Free Plan (10%)</p>
-              <p className="text-2xl font-bold">{formatPrice(freeEarnings)}</p>
-              <p className="text-xs text-muted-foreground">You earn</p>
+            <div className="bg-slate-800/60 rounded-lg p-4 border border-slate-700">
+              <p className="text-sm text-slate-400">Free Plan (10%)</p>
+              <p className="text-2xl font-bold text-white">{formatPrice(freeEarnings)}</p>
+              <p className="text-xs text-slate-400">You earn</p>
             </div>
-            <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-              <p className="text-sm text-green-700">Pro Plan (5%)</p>
-              <p className="text-2xl font-bold text-green-700">{formatPrice(proEarnings)}</p>
-              <p className="text-xs text-green-600">You earn {formatPrice(proSavings)} more!</p>
+            <div className="bg-emerald-500/10 rounded-lg p-4 border border-emerald-500/25">
+              <p className="text-sm text-emerald-400">Pro Plan (5%)</p>
+              <p className="text-2xl font-bold text-emerald-400">{formatPrice(proEarnings)}</p>
+              <p className="text-xs text-emerald-300/70">You earn {formatPrice(proSavings)} more!</p>
             </div>
           </div>
         </div>

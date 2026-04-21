@@ -7,9 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Sparkles, Wand2, Loader2, ChevronDown, ChevronUp, CheckCircle2, AlertCircle, Briefcase } from "lucide-react";
+import { ArrowLeft, Sparkles, Wand2, Loader2, ChevronDown, ChevronUp, CheckCircle2, AlertCircle, Briefcase, MapPin } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -124,40 +123,41 @@ export default function PostJob() {
   if (successJobId) {
     return (
       <AuthGuard message="Sign in to post a job and find talented freelancers.">
-        <div className="min-h-screen bg-background flex flex-col">
+        <div className="min-h-screen bg-slate-950 text-slate-50 flex flex-col">
           <Navbar />
           <main id="main-content" className="container mx-auto px-4 md:px-6 pt-24 md:pt-32 max-w-2xl flex-1 pb-20 flex items-start justify-center">
-            <Card className="p-10 text-center w-full mt-8" data-testid="job-posted-success">
-              <div className="w-20 h-20 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle2 className="w-10 h-10 text-emerald-600" />
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-10 text-center w-full mt-8" data-testid="job-posted-success">
+              <div className="w-20 h-20 bg-emerald-500/15 border border-emerald-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <CheckCircle2 className="w-10 h-10 text-emerald-400" />
               </div>
-              <h2 className="text-2xl font-bold text-foreground mb-2">Job Posted Successfully!</h2>
-              <p className="text-muted-foreground mb-2">
-                Your job is now live and visible to <span className="font-semibold text-foreground">verified freelancers</span> across South Africa and beyond.
+              <h2 className="text-2xl font-bold text-white mb-2">Job Posted Successfully!</h2>
+              <p className="text-slate-400 mb-2">
+                Your job is now live and visible to <span className="font-semibold text-white">verified freelancers</span> across South Africa and beyond.
               </p>
-              <p className="text-sm text-muted-foreground mb-8">Expect your first proposals within minutes.</p>
+              <p className="text-sm text-slate-400 mb-8">Expect your first proposals within minutes.</p>
 
-              <div className="bg-muted rounded-xl p-4 text-left mb-8 space-y-2 text-sm">
+              <div className="bg-slate-800/60 border border-slate-700 rounded-xl p-4 text-left mb-8 space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Job Title</span>
-                  <span className="font-medium text-foreground max-w-[60%] text-right">{title}</span>
+                  <span className="text-slate-400">Job Title</span>
+                  <span className="font-medium text-white max-w-[60%] text-right">{title}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Budget</span>
-                  <span className="font-bold text-primary">R{parseFloat(budget).toLocaleString("en-ZA")}</span>
+                  <span className="text-slate-400">Budget</span>
+                  <span className="font-bold text-emerald-400">R{parseFloat(budget).toLocaleString("en-ZA")}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Status</span>
-                  <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">Open</Badge>
+                  <span className="text-slate-400">Status</span>
+                  <Badge className="bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Open</Badge>
                 </div>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button onClick={() => navigate("/dashboard")} data-testid="button-go-dashboard">
+                <Button className="bg-emerald-600 hover:bg-emerald-500 text-white" onClick={() => navigate("/dashboard")} data-testid="button-go-dashboard">
                   View My Dashboard
                 </Button>
                 <Button
                   variant="outline"
+                  className="border-slate-700 text-slate-300 hover:bg-slate-800"
                   onClick={() => {
                     setSuccessJobId(null);
                     setTitle(""); setDescription(""); setCategory(""); setBudget(""); setSkills([]);
@@ -167,7 +167,7 @@ export default function PostJob() {
                   Post Another Job
                 </Button>
               </div>
-            </Card>
+            </div>
           </main>
           <Footer />
         </div>
@@ -177,7 +177,7 @@ export default function PostJob() {
 
   return (
     <AuthGuard message="Sign in to post a job and find talented freelancers.">
-      <div className="min-h-screen bg-background flex flex-col">
+      <div className="min-h-screen bg-slate-950 text-slate-50 flex flex-col">
         <Navbar />
 
         <main id="main-content" className="container mx-auto px-4 md:px-6 pt-24 md:pt-32 max-w-3xl flex-1 pb-20">
@@ -217,7 +217,7 @@ export default function PostJob() {
             )}
           </div>
 
-          <Card className="p-8 shadow-lg border-border">
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-8 shadow-lg">
             <form className="space-y-8" onSubmit={handleSubmit}>
 
               {error && (
@@ -423,7 +423,7 @@ export default function PostJob() {
               </div>
 
             </form>
-          </Card>
+          </div>
         </main>
 
         <Footer />
