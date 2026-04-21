@@ -22,6 +22,7 @@ import {
   Loader2, Search, AlertCircle, Zap, Wifi, Globe,
   BrainCircuit, TrendingUp, Briefcase, Users, RefreshCw,
   SlidersHorizontal, X, ChevronDown, ChevronUp, Send, Sparkles,
+  ShieldCheck,
 } from "lucide-react";
 import { useCurrency } from "@/lib/currency";
 import { useAuth } from "@/hooks/use-auth";
@@ -137,6 +138,9 @@ export default function Jobs() {
   const [expLevelFilter, setExpLevelFilter] = useState("all");
   const [urgentOnly, setUrgentOnly] = useState(false);
   const [remoteOnly, setRemoteOnly] = useState(false);
+  const [verifiedOnly, setVerifiedOnly] = useState(false);
+  const [salaryMin, setSalaryMin] = useState("");
+  const [salaryMax, setSalaryMax] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [applyingId, setApplyingId] = useState<string | null>(null);
   const [applyModalJob, setApplyModalJob] = useState<AggregatedJob | null>(null);
@@ -201,7 +205,7 @@ export default function Jobs() {
       "aggregated-jobs",
       { country: selectedCountry, province: selectedProvince, category: categoryFilter,
         jobType: jobTypeFilter, expLevel: expLevelFilter, urgent: urgentOnly, remote: remoteOnly,
-        // debouncedQuery — NOT raw `query` — prevents a new request on every keystroke
+        verified: verifiedOnly, salaryMin, salaryMax,
         search: debouncedQuery },
     ],
     queryFn: async () => {
@@ -209,9 +213,9 @@ export default function Jobs() {
       // Country-aware location filtering
       if (selectedCountry !== "all") {
         if (selectedCountry === "South Africa" && selectedProvince !== "all") {
-          params.set("province", selectedProvince); // specific SA province
+          params.set("province", selectedProvince);
         } else {
-          params.set("country", selectedCountry); // backend handles country filter
+          params.set("country", selectedCountry);
         }
       }
       if (categoryFilter && categoryFilter !== "all") params.set("category", categoryFilter);
@@ -219,6 +223,9 @@ export default function Jobs() {
       if (expLevelFilter && expLevelFilter !== "all") params.set("experienceLevel", expLevelFilter);
       if (urgentOnly) params.set("isUrgent", "true");
       if (remoteOnly) params.set("isRemote", "true");
+      if (verifiedOnly) params.set("verifiedOnly", "true");
+      if (salaryMin) params.set("salaryMin", String(parseInt(salaryMin) * 100));
+      if (salaryMax) params.set("salaryMax", String(parseInt(salaryMax) * 100));
       if (debouncedQuery) params.set("search", debouncedQuery);
       params.set("limit", "200");
 
@@ -333,7 +340,7 @@ export default function Jobs() {
 
   const hasActiveFilters = selectedCountry !== "all" || categoryFilter !== "all" ||
     jobTypeFilter !== "all" || expLevelFilter !== "all" ||
-    urgentOnly || remoteOnly || !!debouncedQuery;
+    urgentOnly || remoteOnly || verifiedOnly || !!salaryMin || !!salaryMax || !!debouncedQuery;
 
   const clearFilters = () => {
     setSelectedCountry("all");
@@ -343,6 +350,9 @@ export default function Jobs() {
     setExpLevelFilter("all");
     setUrgentOnly(false);
     setRemoteOnly(false);
+    setVerifiedOnly(false);
+    setSalaryMin("");
+    setSalaryMax("");
     setQuery("");
   };
 
@@ -580,38 +590,82 @@ export default function Jobs() {
               )}
             </div>
 
-            {/* Advanced filters panel (category / type / exp only — location handled by GeoSelector) */}
+            {/* Advanced filters panel */}
             {showFilters && (
-              <div className="mt-3 grid sm:grid-cols-3 gap-3 p-4 bg-white/5 rounded-xl border border-white/10">
-                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger className="bg-white/10 border-white/20 text-white h-9" data-testid="select-category">
-                    <SelectValue placeholder="Category" />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-72">
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {CATEGORIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+              <div className="mt-3 space-y-3 p-4 bg-white/5 rounded-xl border border-white/10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                    <SelectTrigger className="bg-white/10 border-white/20 text-white h-9" data-testid="select-category">
+                      <SelectValue placeholder="Category" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-72">
+                      <SelectItem value="all">All Categories</SelectItem>
+                      {CATEGORIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
 
-                <Select value={jobTypeFilter} onValueChange={setJobTypeFilter}>
-                  <SelectTrigger className="bg-white/10 border-white/20 text-white h-9" data-testid="select-job-type">
-                    <SelectValue placeholder="Job Type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Types</SelectItem>
-                    {JOB_TYPES.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                  <Select value={jobTypeFilter} onValueChange={setJobTypeFilter}>
+                    <SelectTrigger className="bg-white/10 border-white/20 text-white h-9" data-testid="select-job-type">
+                      <SelectValue placeholder="Job Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Types</SelectItem>
+                      {JOB_TYPES.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
 
-                <Select value={expLevelFilter} onValueChange={setExpLevelFilter}>
-                  <SelectTrigger className="bg-white/10 border-white/20 text-white h-9" data-testid="select-exp-level">
-                    <SelectValue placeholder="Experience" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Levels</SelectItem>
-                    {EXP_LEVELS.map(e => <SelectItem key={e.value} value={e.value}>{e.label}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                  <Select value={expLevelFilter} onValueChange={setExpLevelFilter}>
+                    <SelectTrigger className="bg-white/10 border-white/20 text-white h-9" data-testid="select-exp-level">
+                      <SelectValue placeholder="Experience" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Levels</SelectItem>
+                      {EXP_LEVELS.map(e => <SelectItem key={e.value} value={e.value}>{e.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Salary range + verified toggle */}
+                <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center pt-1 border-t border-white/10">
+                  <div className="flex items-center gap-2 flex-1">
+                    <span className="text-xs text-white/60 whitespace-nowrap font-medium">Salary (ZAR/mo)</span>
+                    <div className="flex items-center gap-2">
+                      <div className="relative">
+                        <span className="absolute left-2 top-1/2 -translate-y-1/2 text-white/40 text-xs">R</span>
+                        <Input
+                          type="number"
+                          min={0}
+                          placeholder="Min"
+                          value={salaryMin}
+                          onChange={e => setSalaryMin(e.target.value)}
+                          className="bg-white/10 border-white/20 text-white placeholder:text-white/40 h-8 pl-5 w-28 text-xs"
+                          data-testid="input-salary-min"
+                        />
+                      </div>
+                      <span className="text-white/40 text-xs">–</span>
+                      <div className="relative">
+                        <span className="absolute left-2 top-1/2 -translate-y-1/2 text-white/40 text-xs">R</span>
+                        <Input
+                          type="number"
+                          min={0}
+                          placeholder="Max"
+                          value={salaryMax}
+                          onChange={e => setSalaryMax(e.target.value)}
+                          className="bg-white/10 border-white/20 text-white placeholder:text-white/40 h-8 pl-5 w-28 text-xs"
+                          data-testid="input-salary-max"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setVerifiedOnly(v => !v)}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-semibold transition-colors ${verifiedOnly ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300" : "bg-white/5 border-white/15 text-white/60 hover:border-emerald-500/40 hover:text-emerald-300"}`}
+                    data-testid="toggle-verified-only"
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    Verified sources only
+                  </button>
+                </div>
               </div>
             )}
           </div>

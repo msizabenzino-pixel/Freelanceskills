@@ -3013,6 +3013,22 @@ Experience level: ${experienceLevel || 'Any'}`
     await handleITN(req, res);
   });
 
+  // ── PayPal Orders API ───────────────────────────────────────────────────────
+  app.get("/api/paypal/status", (_req, res) => {
+    const { isPayPalConfigured } = require("./paypal");
+    res.json({ configured: isPayPalConfigured() });
+  });
+
+  app.post("/api/paypal/create-order", async (req, res) => {
+    const { createPayPalOrder } = await import("./paypal");
+    await createPayPalOrder(req, res);
+  });
+
+  app.post("/api/paypal/capture/:orderId", async (req, res) => {
+    const { capturePayPalOrder } = await import("./paypal");
+    await capturePayPalOrder(req, res);
+  });
+
   // Account operations (POPIA compliance)
   app.get("/api/account/export", isAuthenticated, async (req: any, res) => {
     try {

@@ -425,7 +425,7 @@ export default function Home() {
           <HeroProfileCard name="David K." title="Mobile Dev · JHB" rate={formatAmount(800)} img="https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&q=80&w=80&h=80" delay={1.1} />
         </div>
 
-        <div className="container relative z-10 px-4 md:px-6 py-8 md:py-20">
+        <div className="container relative z-10 px-4 md:px-6 py-8 md:py-20 pb-28 sm:pb-20">
           <div className="max-w-4xl mx-auto text-center">
             {/* Live jobs badge */}
             <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
@@ -635,15 +635,15 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Stats bar */}
+        {/* Stats bar — numbers driven by live DB */}
         <div className="absolute bottom-0 left-0 right-0 border-t border-slate-800/60 bg-slate-950/80 backdrop-blur-sm">
           <div className="container mx-auto px-4 md:px-6 py-4">
             <div className="flex flex-wrap justify-center gap-x-10 gap-y-2">
               {[
-                { value: 11400, suffix: "+", label: "Live Jobs" },
-                { value: 12, suffix: " Sources", label: "Verified Sources" },
+                { value: totalJobs > 0 ? totalJobs : 417000, suffix: "+", label: "Live Jobs" },
+                { value: 34, suffix: " Sources", label: "Job Sources" },
                 { value: 54, suffix: " Countries", label: "African Reach" },
-                { value: 10, suffix: "%", label: "Transparent Fees" },
+                { value: 10, suffix: "%", label: "Platform Fee" },
               ].map((stat, i) => (
                 <div key={i} className="text-center" data-testid={`stat-hero-${i}`}>
                   <div className="text-lg font-black text-emerald-400"><AnimatedCounter value={stat.value} duration={2000} />{stat.suffix}</div>

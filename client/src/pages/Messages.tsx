@@ -97,10 +97,12 @@ export default function Messages() {
   const [proposalDays, setProposalDays] = useState("");
   const [proposalNote, setProposalNote] = useState("");
   const [showMobileConvList, setShowMobileConvList] = useState(true);
+  const [attachedFile, setAttachedFile] = useState<File | null>(null);
   const socketRef = useRef<Socket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: conversations = [], isLoading: isLoadingConversations } = useQuery<any[]>({
     queryKey: ["/api/conversations"],
@@ -207,8 +209,11 @@ export default function Messages() {
 
   const handleSendMessage = () => {
     const text = inputText.trim();
-    if (!text || sendMessageMutation.isPending) return;
-    sendMessageMutation.mutate(text);
+    if (!text && !attachedFile || sendMessageMutation.isPending) return;
+    const fileNote = attachedFile ? `\n📎 ${attachedFile.name} (${(attachedFile.size / 1024).toFixed(0)} KB)` : "";
+    const content = text + fileNote || `📎 ${attachedFile!.name} (${(attachedFile!.size / 1024).toFixed(0)} KB)`;
+    sendMessageMutation.mutate(content);
+    setAttachedFile(null);
   };
 
   const handleTyping = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -924,13 +929,55 @@ export default function Messages() {
 
                 {/* Input Area */}
                 <div className="p-3 bg-slate-950 border-t border-slate-800 shrink-0">
+                  {/* Hidden file input */}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    className="hidden"
+                    accept="image/*,.pdf,.doc,.docx,.txt,.zip,.xls,.xlsx,.ppt,.pptx"
+                    onChange={e => {
+                      const file = e.target.files?.[0] || null;
+                      setAttachedFile(file);
+                      e.target.value = "";
+                    }}
+                    data-testid="input-file-upload"
+                  />
+
+                  {/* File preview strip */}
+                  {attachedFile && (
+                    <div className="mb-2 flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-900 border border-emerald-500/30">
+                      <Paperclip className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <span className="text-xs text-slate-300 truncate flex-1">{attachedFile.name}</span>
+                      <span className="text-[10px] text-slate-500">{(attachedFile.size / 1024).toFixed(0)} KB</span>
+                      <button
+                        onClick={() => setAttachedFile(null)}
+                        className="text-slate-500 hover:text-white ml-1"
+                        data-testid="button-remove-attachment"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  )}
+
                   <div className="bg-slate-900 border border-slate-800 rounded-xl flex items-end gap-2 p-2 focus-within:border-emerald-500/50 transition-colors">
                     {/* Attachment */}
                     <div className="flex gap-1 items-end pb-1 shrink-0">
-                      <Button variant="ghost" size="icon" className="text-slate-500 hover:text-emerald-400 h-8 w-8" data-testid="button-attach-file">
+                      <Button
+                        variant="ghost" size="icon"
+                        className="text-slate-500 hover:text-emerald-400 h-8 w-8"
+                        onClick={() => fileInputRef.current?.click()}
+                        title="Attach file"
+                        data-testid="button-attach-file"
+                      >
                         <Paperclip className="w-4 h-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" className="text-slate-500 hover:text-emerald-400 h-8 w-8" data-testid="button-attach-image">
+                      <Button
+                        variant="ghost" size="icon"
+                        className="text-slate-500 hover:text-emerald-400 h-8 w-8"
+                        onClick={() => { if (fileInputRef.current) { fileInputRef.current.accept = "image/*"; fileInputRef.current.click(); fileInputRef.current.accept = "image/*,.pdf,.doc,.docx,.txt,.zip,.xls,.xlsx,.ppt,.pptx"; } }}
+                        title="Attach image"
+                        data-testid="button-attach-image"
+                      >
                         <Image className="w-4 h-4" />
                       </Button>
                     </div>
@@ -975,12 +1022,12 @@ export default function Messages() {
                       <Button
                         className={cn(
                           "h-9 w-9 rounded-lg transition-colors",
-                          inputText.trim()
+                          (inputText.trim() || attachedFile)
                             ? "bg-emerald-500 hover:bg-emerald-600 text-white"
                             : "bg-slate-800 text-slate-600 cursor-not-allowed"
                         )}
                         onClick={handleSendMessage}
-                        disabled={sendMessageMutation.isPending || !inputText.trim()}
+                        disabled={sendMessageMutation.isPending || (!inputText.trim() && !attachedFile)}
                         data-testid="button-send-message"
                       >
                         <Send className="w-4 h-4" />

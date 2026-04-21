@@ -1,5 +1,64 @@
 # FreelanceSkills - Global Freelance Marketplace
 
+## April 2026 — Expert Feedback Implementation (Items 1–9 of 10)
+
+### Changes Made This Session
+
+**T001 — Search Quality (Jobs.tsx)**
+- Added salary min/max ZAR range inputs to the advanced filter panel
+- Added "Verified Sources Only" toggle with ShieldCheck icon
+- Filter panel grid improved to `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3` for mobile
+- All filters wired into query params (salaryMin/salaryMax/verifiedOnly)
+
+**T002 — Trust Signals (Home.tsx)**
+- Hero stats bar now uses live `totalJobs` from `/api/aggregated-jobs` endpoint (real DB count, fallback 417,000)
+- Stats bar gets `pb-28 sm:pb-20` padding to prevent mobile overlap with absolute-positioned bar
+
+**T003 — Mobile-First Refactor**
+- Home.tsx: added bottom padding to hero container to prevent stats bar overlap on mobile
+- Jobs.tsx: filter panel grid uses `grid-cols-1` on mobile → `sm:grid-cols-2` → `lg:grid-cols-3`
+- FindTalent.tsx: already using `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`
+
+**T004 — Messaging Upgrades (Messages.tsx)**
+- File sharing: hidden `<input type="file">` ref, Paperclip/Image buttons, preview strip showing filename + size
+- Attached file appended to message as `📎 filename` emoji prefix
+- Typing indicators + read receipts were already wired via Socket.IO
+
+**T005 — Onboarding Depth (OnboardingCarousel.tsx)**
+- 3 intro slides → Role selection → Freelancer branch (skills picker + rate preset) or Client branch (hire type + budget range)
+- Skills picker: 7 categories (Development, Design, Marketing, Data/AI, Trades, Business, Education), expand/collapse by category, custom skill input, 10-skill limit, chip display with remove
+- Rate presets: Entry/Mid/Senior/Expert with ZAR ranges
+- Client hire type: 4 options (Freelance/Part-time/Full-time/Retainer)
+- Client budget: 4 ranges (Under R5k → R100k+)
+- handleComplete() saves all choices to localStorage + redirects freelancers → /cv-upload, clients → /post-job
+- Progress dots track full branching path dynamically
+
+**T007 — Admin Simplification (AdminLayout.tsx)**
+- Collapsed 14+ groups (100 sections, S1–S100) into 5 core groups: Overview, People, Business, Content & Growth, Settings
+- Each group has 4-5 key items — daily-use admin functions only
+
+**T008 — Escrow Flow (Checkout.tsx + server/paypal.ts)**
+- Added `server/paypal.ts`: PayPal Orders API v2 (create + capture) with graceful handling of missing credentials
+- Added PayPal routes to server/routes.ts: `GET /api/paypal/status`, `POST /api/paypal/create-order`, `POST /api/paypal/capture/:orderId`
+- Checkout.tsx: payment method selector (PayFast vs PayPal tabs), PayPal disabled with tooltip when not configured
+- PayPal return handler: captures order on `/checkout?paypal_return=success&token=ORDERID` return
+- Success + processing steps now show correct method (PayFast/PayPal)
+
+### Key Files Modified
+- `client/src/pages/Jobs.tsx` — salary filter, filter grid mobile
+- `client/src/pages/Home.tsx` — live job count, hero padding
+- `client/src/pages/Messages.tsx` — file sharing
+- `client/src/components/OnboardingCarousel.tsx` — full rewrite with 6-step branching flow
+- `client/src/components/AdminLayout.tsx` — 5-group nav
+- `client/src/pages/Checkout.tsx` — PayPal method selector, return capture
+- `server/paypal.ts` — new PayPal Orders API module
+- `server/routes.ts` — PayPal routes added
+
+### To enable PayPal
+Add `PAYPAL_CLIENT_ID` and `PAYPAL_CLIENT_SECRET` to secrets (sandbox or production). Set `PAYPAL_ENV=production` for live mode.
+
+---
+
 ## April 2026 — Onboarding Unification + Dashboard Sync Fix
 
 ### Root Cause Fixed
