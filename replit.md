@@ -1,5 +1,26 @@
 # FreelanceSkills - Global Freelance Marketplace
 
+## April 2026 — Expert Feedback Completion Pass (10/10 target)
+
+### Latest Session Changes (Closing final gaps)
+
+**Item 1 — Route Bloat Removed (App.tsx)**
+- Removed S1–S100 legacy admin duplicate routes from AdminRouter (100+ routes → 28 clean routes)
+- Removed aspirational/placeholder public routes: vetting system (7 routes), nuclear challenge, roadmap, ai-match, job-board, opportunity-finder, claim-business, invite-businesses, enterprise-dashboard, accessibility, analytics, community pages (community, ambassador, elite-club, wellbeing), PWA install pages, blockchain-verification, background-checks, skill-assessment, vuma-admin
+- Removed all corresponding orphaned lazy imports
+- App.tsx: 569 lines → 295 lines (48% reduction). Routes: 150+ → ~45 core routes
+
+**Item 4 — Portfolio Step (OnboardingCarousel.tsx)**
+- Added `"portfolio"` step to the freelancer onboarding flow (after rate, before redirect)
+- Collects up to 3 portfolio URLs (GitHub, Behance, custom)
+- Saved to localStorage as `onboarding_portfolio` on completion
+- FREELANCER_STEPS updated: slides → role → skills → rate → portfolio → complete
+
+**Item 5 — Mobile Fixes (FreelancerProfile.tsx)**
+- Location/timezone row: `flex-wrap` added so it wraps on tiny screens
+- About section: padding changed from `p-8` to `p-5 sm:p-8`
+- Tabs container: added `overflow-x-auto` + `flex-nowrap min-w-max` so tabs scroll horizontally if needed on mobile
+
 ## April 2026 — Expert Feedback Implementation (Items 1–9 of 10)
 
 ### Changes Made This Session

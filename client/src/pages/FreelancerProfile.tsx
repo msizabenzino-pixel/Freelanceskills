@@ -335,12 +335,12 @@ export default function FreelancerProfile() {
 
                 <p className="text-slate-400 font-medium mb-4" data-testid="text-freelancer-role">{profile.title}</p>
 
-                <div className="flex justify-center gap-4 text-sm text-slate-400 mb-6">
+                <div className="flex flex-wrap justify-center gap-3 text-sm text-slate-400 mb-6">
                   <div className="flex items-center gap-1" data-testid="text-freelancer-location">
-                    <MapPin className="w-4 h-4" /> {profile.location || "South Africa"}
+                    <MapPin className="w-4 h-4 shrink-0" /> {profile.location || "South Africa"}
                   </div>
                   <div className="flex items-center gap-1" data-testid="text-freelancer-timezone">
-                    <Clock className="w-4 h-4" /> 2:00 PM Local
+                    <Clock className="w-4 h-4 shrink-0" /> 2:00 PM Local
                   </div>
                 </div>
 
@@ -541,7 +541,7 @@ export default function FreelancerProfile() {
             </div>
 
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-slate-900 rounded-2xl p-8 shadow-sm border border-slate-800">
+              <div className="bg-slate-900 rounded-2xl p-5 sm:p-8 shadow-sm border border-slate-800">
                 <div className="flex justify-between items-start mb-6">
                   <div>
                     <h2 className="text-2xl font-bold text-white">About Me</h2>
@@ -556,12 +556,12 @@ export default function FreelancerProfile() {
 
               <div className="bg-slate-900 rounded-2xl shadow-sm border border-slate-800 overflow-hidden">
                 <Tabs defaultValue="portfolio" className="w-full">
-                  <div className="px-6 pt-6 border-b border-slate-800">
-                    <TabsList className="bg-transparent p-0 h-auto gap-6">
-                      <TabsTrigger value="portfolio" className="bg-transparent border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:shadow-none rounded-none px-0 pb-3 font-bold text-slate-400 data-[state=active]:text-emerald-400 text-base" data-testid="tab-portfolio">
+                  <div className="px-4 sm:px-6 pt-6 border-b border-slate-800 overflow-x-auto">
+                    <TabsList className="bg-transparent p-0 h-auto gap-4 sm:gap-6 flex flex-nowrap min-w-max">
+                      <TabsTrigger value="portfolio" className="bg-transparent border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:shadow-none rounded-none px-0 pb-3 font-bold text-slate-400 data-[state=active]:text-emerald-400 text-sm sm:text-base whitespace-nowrap" data-testid="tab-portfolio">
                         Portfolio
                       </TabsTrigger>
-                      <TabsTrigger value="reviews" className="bg-transparent border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:shadow-none rounded-none px-0 pb-3 font-bold text-slate-400 data-[state=active]:text-emerald-400 text-base" data-testid="tab-reviews">
+                      <TabsTrigger value="reviews" className="bg-transparent border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:shadow-none rounded-none px-0 pb-3 font-bold text-slate-400 data-[state=active]:text-emerald-400 text-sm sm:text-base whitespace-nowrap" data-testid="tab-reviews">
                         Reviews ({reviews.length})
                       </TabsTrigger>
                     </TabsList>

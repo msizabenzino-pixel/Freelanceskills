@@ -54,20 +54,10 @@ const Enterprise = lazy(() => import("@/pages/Enterprise"));
 const Referral = lazy(() => import("@/pages/Referral"));
 const RewardsHub = lazy(() => import("@/pages/RewardsHub"));
 const Checkout = lazy(() => import("@/pages/Checkout"));
-const ProfileBuilder = lazy(() => import("@/pages/ProfileBuilder"));
 const CVUpload = lazy(() => import("@/pages/CVUpload"));
 const Credentials = lazy(() => import("@/pages/Credentials"));
 const PaymentsHub = lazy(() => import("@/pages/PaymentsHub"));
 const Sustainability = lazy(() => import("@/pages/Sustainability"));
-const Accessibility = lazy(() => import("@/pages/Accessibility"));
-const Analytics = lazy(() => import("@/pages/Analytics"));
-const EnterpriseDashboard = lazy(() => import("@/pages/EnterpriseDashboard"));
-const AISmartMatch = lazy(() => import("@/pages/AISmartMatch"));
-const Roadmap2031 = lazy(() => import("@/pages/roadmap-2031"));
-const JobBoard = lazy(() => import("@/pages/JobBoard"));
-const OpportunityFinder = lazy(() => import("@/pages/OpportunityFinder"));
-const ClaimBusiness = lazy(() => import("@/pages/ClaimBusiness"));
-const InviteBusinesses = lazy(() => import("@/pages/InviteBusinesses"));
 const Auth = lazy(() => import("@/pages/Auth"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 const Vuma = lazy(() => import("@/pages/Vuma"));
@@ -75,127 +65,6 @@ const VumaLive = lazy(() => import("@/pages/VumaLive"));
 const About = lazy(() => import("@/pages/About"));
 const Login = lazy(() => import("@/pages/Login"));
 const Careers = lazy(() => import("@/pages/Careers"));
-
-// ── Nuclear Vetting System ───────────────────────────────────────────────────
-const VettingHub = lazy(() => import("@/pages/VettingHub"));
-const VettingIdentity = lazy(() => import("@/pages/VettingIdentity"));
-const VettingSkills = lazy(() => import("@/pages/VettingSkills"));
-const VettingEducation = lazy(() => import("@/pages/VettingEducation"));
-const VettingBackground = lazy(() => import("@/pages/VettingBackground"));
-const NuclearChallenge = lazy(() => import("@/pages/NuclearChallenge"));
-const TalentRevolutionChallenge = lazy(() => import("@/pages/TalentRevolutionChallenge"));
-
-// ── Admin S1–S50 ──────────────────────────────────────────────────────────────
-const FraudDashboard = lazy(() => import("@/pages/FraudDashboard"));
-const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
-const AnalyticsDeepDive = lazy(() => import("@/pages/AnalyticsDeepDive"));
-const AnalyticsReporting = lazy(() => import("@/pages/AnalyticsReporting"));
-const MobileAdmin = lazy(() => import("@/pages/MobileAdmin"));
-const MarketplaceHealth = lazy(() => import("@/pages/MarketplaceHealth"));
-const ReferralAffiliate = lazy(() => import("@/pages/ReferralAffiliate"));
-const TalentAcquisition = lazy(() => import("@/pages/TalentAcquisition"));
-const InvoiceTax = lazy(() => import("@/pages/InvoiceTax"));
-const Territories = lazy(() => import("@/pages/Territories"));
-const AgencyPortal = lazy(() => import("@/pages/AgencyPortal"));
-const Automation = lazy(() => import("@/pages/Automation"));
-const CustomerSuccess = lazy(() => import("@/pages/CustomerSuccess"));
-const ContractSLA = lazy(() => import("@/pages/ContractSLA"));
-const ResourcePlanner = lazy(() => import("@/pages/ResourcePlanner"));
-const EscrowIntel = lazy(() => import("@/pages/EscrowIntel"));
-const Monetization = lazy(() => import("@/pages/Monetization"));
-const VendorManagement = lazy(() => import("@/pages/VendorManagement"));
-const Gamification = lazy(() => import("@/pages/Gamification"));
-const DeveloperPortal = lazy(() => import("@/pages/DeveloperPortal"));
-const GlobalExpansion = lazy(() => import("@/pages/GlobalExpansion"));
-const FreelancerManagement = lazy(() => import("@/pages/FreelancerManagement"));
-const ClientManagement = lazy(() => import("@/pages/ClientManagement"));
-const PaymentsControl = lazy(() => import("@/pages/PaymentsControl"));
-const AcademyAdmin = lazy(() => import("@/pages/AcademyAdmin"));
-const SystemSettings = lazy(() => import("@/pages/SystemSettings"));
-const GigMarketplace = lazy(() => import("@/pages/GigMarketplace"));
-const ProposalManagement = lazy(() => import("@/pages/ProposalManagement"));
-const OrderManagement = lazy(() => import("@/pages/OrderManagement"));
-const FinanceDepartment = lazy(() => import("@/pages/FinanceDepartment"));
-const DisputeManagement = lazy(() => import("@/pages/DisputeManagement"));
-const SupportTicketSystem = lazy(() => import("@/pages/SupportTicketSystem"));
-const ReportAbuseManagement = lazy(() => import("@/pages/ReportAbuseManagement"));
-const NotificationsManagement = lazy(() => import("@/pages/NotificationsManagement"));
-const CategorySkillManagement = lazy(() => import("@/pages/CategorySkillManagement"));
-const ContentModeration = lazy(() => import("@/pages/ContentModeration"));
-const PromotionManagement = lazy(() => import("@/pages/PromotionManagement"));
-const MarketingSystem = lazy(() => import("@/pages/MarketingSystem"));
-const SubscriptionManagement = lazy(() => import("@/pages/SubscriptionManagement"));
-const SecurityTrustManagement = lazy(() => import("@/pages/SecurityTrustManagement"));
-const AuditLogs = lazy(() => import("@/pages/AuditLogs"));
-const CmsManagement = lazy(() => import("@/pages/CmsManagement"));
-const FeatureFlagsManagement = lazy(() => import("@/pages/FeatureFlagsManagement"));
-const RolePermissionSystem = lazy(() => import("@/pages/RolePermissionSystem"));
-const SupportTeamDashboard = lazy(() => import("@/pages/SupportTeamDashboard"));
-const RealTimeMonitoring = lazy(() => import("@/pages/RealTimeMonitoring"));
-const AiBrainDepartment = lazy(() => import("@/pages/AiBrainDepartment"));
-const SystemPerformance = lazy(() => import("@/pages/SystemPerformance"));
-const DataCompliance = lazy(() => import("@/pages/DataCompliance"));
-const MissionControl = lazy(() => import("@/pages/MissionControl"));
-
-// ── Public pages (community / PWA / wellbeing) ────────────────────────────────
-const InstallApp = lazy(() => import("@/pages/InstallApp"));
-const CommunityPage = lazy(() => import("@/pages/CommunityPage"));
-const AmbassadorPage = lazy(() => import("@/pages/AmbassadorPage"));
-const EliteClubPage = lazy(() => import("@/pages/EliteClubPage"));
-const WellbeingPage = lazy(() => import("@/pages/WellbeingPage"));
-
-// ── Admin S51–S100 ────────────────────────────────────────────────────────────
-const SearchDiscovery = lazy(() => import("@/pages/SearchDiscovery"));
-const PaymentIntelligence = lazy(() => import("@/pages/PaymentIntelligence"));
-const EmailCampaigns = lazy(() => import("@/pages/EmailCampaigns"));
-const ReviewsSocialProof = lazy(() => import("@/pages/ReviewsSocialProof"));
-const BackgroundChecks = lazy(() => import("@/pages/BackgroundChecks"));
-const SkillAssessments = lazy(() => import("@/pages/SkillAssessments"));
-const ProjectHub = lazy(() => import("@/pages/ProjectHub"));
-const TimeTracking = lazy(() => import("@/pages/TimeTracking"));
-const MarketInsights = lazy(() => import("@/pages/MarketInsights"));
-const PartnerHub = lazy(() => import("@/pages/PartnerHub"));
-const DataExport = lazy(() => import("@/pages/DataExport"));
-const TrustSafety = lazy(() => import("@/pages/TrustSafety"));
-const FreelancerWellness = lazy(() => import("@/pages/FreelancerWellness"));
-const DEIDashboard = lazy(() => import("@/pages/DEIDashboard"));
-const LearningPathways = lazy(() => import("@/pages/LearningPathways"));
-const EnterprisePortal = lazy(() => import("@/pages/EnterprisePortal"));
-const B2BProcurement = lazy(() => import("@/pages/B2BProcurement"));
-const RiskInsurance = lazy(() => import("@/pages/RiskInsurance"));
-const PayrollBenefits = lazy(() => import("@/pages/PayrollBenefits"));
-const CarbonESG = lazy(() => import("@/pages/CarbonESG"));
-const PredictiveAnalytics = lazy(() => import("@/pages/PredictiveAnalytics"));
-const KnowledgeBase = lazy(() => import("@/pages/KnowledgeBase"));
-const CommunityForums = lazy(() => import("@/pages/CommunityForums"));
-const EventManagement = lazy(() => import("@/pages/EventManagement"));
-const PressMedia = lazy(() => import("@/pages/PressMedia"));
-const InvestorRelations = lazy(() => import("@/pages/InvestorRelations"));
-const LegalCompliance = lazy(() => import("@/pages/LegalCompliance"));
-const CrisisManagement = lazy(() => import("@/pages/CrisisManagement"));
-const PlatformHealthScore = lazy(() => import("@/pages/PlatformHealthScore"));
-const RevenueShare = lazy(() => import("@/pages/RevenueShare"));
-const BlockchainVerification = lazy(() => import("@/pages/BlockchainVerification"));
-const ExecCommandCenter = lazy(() => import("@/pages/ExecCommandCenter"));
-const AdvancedReporting = lazy(() => import("@/pages/AdvancedReporting"));
-const MarketSimulation = lazy(() => import("@/pages/MarketSimulation"));
-const PlatformRoadmap = lazy(() => import("@/pages/PlatformRoadmap"));
-const CompetitiveIntel = lazy(() => import("@/pages/CompetitiveIntel"));
-const MicroJobExchange = lazy(() => import("@/pages/MicroJobExchange"));
-const WhiteGloveConcierge = lazy(() => import("@/pages/WhiteGloveConcierge"));
-const MultiCurrency = lazy(() => import("@/pages/MultiCurrency"));
-const FraudPrediction = lazy(() => import("@/pages/FraudPrediction"));
-const PerformanceBenchmarking = lazy(() => import("@/pages/PerformanceBenchmarking"));
-const AccessibilityWCAG = lazy(() => import("@/pages/AccessibilityWCAG"));
-const TalentAlerts = lazy(() => import("@/pages/TalentAlerts"));
-const SmartNotifications = lazy(() => import("@/pages/SmartNotifications"));
-const PlatformMigration = lazy(() => import("@/pages/PlatformMigration"));
-const RevenueOptimisationAI = lazy(() => import("@/pages/RevenueOptimisationAI"));
-const OpsIntelligence = lazy(() => import("@/pages/OpsIntelligence"));
-const GeoHotSpots = lazy(() => import("@/pages/GeoHotSpots"));
-const AmbassadorProgram = lazy(() => import("@/pages/AmbassadorProgram"));
-const EliteClub = lazy(() => import("@/pages/EliteClub"));
-const VumaAdmin = lazy(() => import("@/pages/VumaAdmin"));
 const AdminOverview = lazy(() => import("@/pages/admin/Overview"));
 const AdminUsers = lazy(() => import("@/pages/admin/Users"));
 const AdminFreelancers = lazy(() => import("@/pages/admin/Freelancers"));
@@ -287,115 +156,6 @@ function AdminRouter() {
             <Route path="/admin/ai-tools" component={AdminAiTools} />
             <Route path="/admin/mission-control" component={AdminMissionControl} />
 
-          {/* S1–S50 */}
-          <Route path="/admin/legacy/mission-control" component={MissionControl} />
-          <Route path="/admin/fraud"><AuthGuard><FraudDashboard /></AuthGuard></Route>
-          <Route path="/admin/freelancers"><AuthGuard><FreelancerManagement /></AuthGuard></Route>
-          <Route path="/admin/clients"><AuthGuard><ClientManagement /></AuthGuard></Route>
-          <Route path="/admin/payments"><AuthGuard><PaymentsControl /></AuthGuard></Route>
-          <Route path="/admin/academy"><AuthGuard><AcademyAdmin /></AuthGuard></Route>
-          <Route path="/admin/settings"><AuthGuard><SystemSettings /></AuthGuard></Route>
-          <Route path="/admin/gigs"><AuthGuard><GigMarketplace /></AuthGuard></Route>
-          <Route path="/admin/proposals"><AuthGuard><ProposalManagement /></AuthGuard></Route>
-          <Route path="/admin/orders"><AuthGuard><OrderManagement /></AuthGuard></Route>
-          <Route path="/admin/finance"><AuthGuard><FinanceDepartment /></AuthGuard></Route>
-          <Route path="/admin/disputes"><AuthGuard><DisputeManagement /></AuthGuard></Route>
-          <Route path="/admin/support"><AuthGuard><SupportTicketSystem /></AuthGuard></Route>
-          <Route path="/admin/reports"><AuthGuard><ReportAbuseManagement /></AuthGuard></Route>
-          <Route path="/admin/notifications"><AuthGuard><NotificationsManagement /></AuthGuard></Route>
-          <Route path="/admin/categories"><AuthGuard><CategorySkillManagement /></AuthGuard></Route>
-          <Route path="/admin/moderation"><AuthGuard><ContentModeration /></AuthGuard></Route>
-          <Route path="/admin/promotions"><AuthGuard><PromotionManagement /></AuthGuard></Route>
-          <Route path="/admin/marketing"><AuthGuard><MarketingSystem /></AuthGuard></Route>
-          <Route path="/admin/subscriptions"><AuthGuard><SubscriptionManagement /></AuthGuard></Route>
-          <Route path="/admin/security"><AuthGuard><SecurityTrustManagement /></AuthGuard></Route>
-          <Route path="/admin/audit-logs"><AuthGuard><AuditLogs /></AuthGuard></Route>
-          <Route path="/admin/cms"><AuthGuard><CmsManagement /></AuthGuard></Route>
-          <Route path="/admin/roles"><RolePermissionSystem /></Route>
-          <Route path="/admin/support-team"><SupportTeamDashboard /></Route>
-          <Route path="/admin/monitoring"><RealTimeMonitoring /></Route>
-          <Route path="/admin/ai-brain"><AiBrainDepartment /></Route>
-          <Route path="/admin/performance"><SystemPerformance /></Route>
-          <Route path="/admin/compliance"><DataCompliance /></Route>
-          <Route path="/admin/feature-flags"><AuthGuard><FeatureFlagsManagement /></AuthGuard></Route>
-          <Route path="/admin/mobile"><AuthGuard><MobileAdmin /></AuthGuard></Route>
-          <Route path="/admin/marketplace-health"><AuthGuard><MarketplaceHealth /></AuthGuard></Route>
-          <Route path="/admin/referrals"><AuthGuard><ReferralAffiliate /></AuthGuard></Route>
-          <Route path="/admin/talent"><AuthGuard><TalentAcquisition /></AuthGuard></Route>
-          <Route path="/admin/invoices"><AuthGuard><InvoiceTax /></AuthGuard></Route>
-          <Route path="/admin/territories"><AuthGuard><Territories /></AuthGuard></Route>
-          <Route path="/admin/agency"><AuthGuard><AgencyPortal /></AuthGuard></Route>
-          <Route path="/admin/automation"><AuthGuard><Automation /></AuthGuard></Route>
-          <Route path="/admin/customer-success"><AuthGuard><CustomerSuccess /></AuthGuard></Route>
-          <Route path="/admin/contracts"><AuthGuard><ContractSLA /></AuthGuard></Route>
-          <Route path="/admin/resources"><AuthGuard><ResourcePlanner /></AuthGuard></Route>
-          <Route path="/admin/escrow-intel"><AuthGuard><EscrowIntel /></AuthGuard></Route>
-          <Route path="/admin/monetization"><AuthGuard><Monetization /></AuthGuard></Route>
-          <Route path="/admin/vendors"><AuthGuard><VendorManagement /></AuthGuard></Route>
-          <Route path="/admin/gamification"><AuthGuard><Gamification /></AuthGuard></Route>
-          <Route path="/admin/developer"><AuthGuard><DeveloperPortal /></AuthGuard></Route>
-          <Route path="/admin/expansion"><AuthGuard><GlobalExpansion /></AuthGuard></Route>
-          <Route path="/admin/analytics/deep-dive"><AuthGuard><AnalyticsDeepDive /></AuthGuard></Route>
-          <Route path="/admin/analytics"><AuthGuard><AnalyticsReporting /></AuthGuard></Route>
-
-          {/* S51–S62: AI & Discovery */}
-          <Route path="/admin/search-ai"><AuthGuard><SearchDiscovery /></AuthGuard></Route>
-          <Route path="/admin/payment-intel"><AuthGuard><PaymentIntelligence /></AuthGuard></Route>
-          <Route path="/admin/email-campaigns"><AuthGuard><EmailCampaigns /></AuthGuard></Route>
-          <Route path="/admin/reviews"><AuthGuard><ReviewsSocialProof /></AuthGuard></Route>
-          <Route path="/admin/background-checks"><AuthGuard><BackgroundChecks /></AuthGuard></Route>
-          <Route path="/admin/assessments"><AuthGuard><SkillAssessments /></AuthGuard></Route>
-          <Route path="/admin/project-hub"><AuthGuard><ProjectHub /></AuthGuard></Route>
-          <Route path="/admin/timesheets"><AuthGuard><TimeTracking /></AuthGuard></Route>
-          <Route path="/admin/market-insights"><AuthGuard><MarketInsights /></AuthGuard></Route>
-          <Route path="/admin/partner-hub"><AuthGuard><PartnerHub /></AuthGuard></Route>
-          <Route path="/admin/data-export"><AuthGuard><DataExport /></AuthGuard></Route>
-          <Route path="/admin/trust-safety"><AuthGuard><TrustSafety /></AuthGuard></Route>
-
-          {/* S63–S80: People & Strategy */}
-          <Route path="/admin/wellness"><AuthGuard><FreelancerWellness /></AuthGuard></Route>
-          <Route path="/admin/dei"><AuthGuard><DEIDashboard /></AuthGuard></Route>
-          <Route path="/admin/learning"><AuthGuard><LearningPathways /></AuthGuard></Route>
-          <Route path="/admin/enterprise-portal"><AuthGuard><EnterprisePortal /></AuthGuard></Route>
-          <Route path="/admin/procurement"><AuthGuard><B2BProcurement /></AuthGuard></Route>
-          <Route path="/admin/risk-insurance"><AuthGuard><RiskInsurance /></AuthGuard></Route>
-          <Route path="/admin/payroll"><AuthGuard><PayrollBenefits /></AuthGuard></Route>
-          <Route path="/admin/esg"><AuthGuard><CarbonESG /></AuthGuard></Route>
-          <Route path="/admin/predictive"><AuthGuard><PredictiveAnalytics /></AuthGuard></Route>
-          <Route path="/admin/knowledge-base"><AuthGuard><KnowledgeBase /></AuthGuard></Route>
-          <Route path="/admin/community"><AuthGuard><CommunityForums /></AuthGuard></Route>
-          <Route path="/admin/events"><AuthGuard><EventManagement /></AuthGuard></Route>
-          <Route path="/admin/press"><AuthGuard><PressMedia /></AuthGuard></Route>
-          <Route path="/admin/investor-relations"><AuthGuard><InvestorRelations /></AuthGuard></Route>
-          <Route path="/admin/legal-compliance"><AuthGuard><LegalCompliance /></AuthGuard></Route>
-          <Route path="/admin/crisis"><AuthGuard><CrisisManagement /></AuthGuard></Route>
-          <Route path="/admin/platform-health"><AuthGuard><PlatformHealthScore /></AuthGuard></Route>
-          <Route path="/admin/revenue-share"><AuthGuard><RevenueShare /></AuthGuard></Route>
-
-          {/* S81–S100: Elite & Innovation */}
-          <Route path="/admin/blockchain"><AuthGuard><BlockchainVerification /></AuthGuard></Route>
-          <Route path="/admin/exec-command"><AuthGuard><ExecCommandCenter /></AuthGuard></Route>
-          <Route path="/admin/reporting"><AuthGuard><AdvancedReporting /></AuthGuard></Route>
-          <Route path="/admin/simulation"><AuthGuard><MarketSimulation /></AuthGuard></Route>
-          <Route path="/admin/roadmap"><AuthGuard><PlatformRoadmap /></AuthGuard></Route>
-          <Route path="/admin/competitive-intel"><AuthGuard><CompetitiveIntel /></AuthGuard></Route>
-          <Route path="/admin/micro-jobs"><AuthGuard><MicroJobExchange /></AuthGuard></Route>
-          <Route path="/admin/concierge"><AuthGuard><WhiteGloveConcierge /></AuthGuard></Route>
-          <Route path="/admin/currency"><AuthGuard><MultiCurrency /></AuthGuard></Route>
-          <Route path="/admin/fraud-prediction"><AuthGuard><FraudPrediction /></AuthGuard></Route>
-          <Route path="/admin/benchmarking"><AuthGuard><PerformanceBenchmarking /></AuthGuard></Route>
-          <Route path="/admin/accessibility-wcag"><AuthGuard><AccessibilityWCAG /></AuthGuard></Route>
-          <Route path="/admin/talent-alerts"><AuthGuard><TalentAlerts /></AuthGuard></Route>
-          <Route path="/admin/smart-notifications"><AuthGuard><SmartNotifications /></AuthGuard></Route>
-          <Route path="/admin/migration"><AuthGuard><PlatformMigration /></AuthGuard></Route>
-          <Route path="/admin/revenue-ai"><AuthGuard><RevenueOptimisationAI /></AuthGuard></Route>
-          <Route path="/admin/ops-intel"><AuthGuard><OpsIntelligence /></AuthGuard></Route>
-          <Route path="/admin/hotspots"><AuthGuard><GeoHotSpots /></AuthGuard></Route>
-          <Route path="/admin/ambassadors"><AuthGuard><AmbassadorProgram /></AuthGuard></Route>
-          <Route path="/admin/elite-club"><AuthGuard><EliteClub /></AuthGuard></Route>
-
-          {/* Legacy fallback */}
-          <Route path="/admin/legacy"><AuthGuard><AdminDashboard /></AuthGuard></Route>
           <Route component={AdminOverview} />
           </Switch>
         </Suspense>
@@ -454,14 +214,6 @@ function Router() {
         <Route path="/about" component={About} />
         <Route path="/login" component={Login} />
         <Route path="/careers" component={Careers} />
-        {/* Nuclear Vetting System */}
-        <Route path="/vetting" component={VettingHub} />
-        <Route path="/vetting/identity" component={VettingIdentity} />
-        <Route path="/vetting/skills" component={VettingSkills} />
-        <Route path="/vetting/education" component={VettingEducation} />
-        <Route path="/vetting/background" component={VettingBackground} />
-        <Route path="/nuclear-challenge" component={NuclearChallenge} />
-        <Route path="/challenge" component={TalentRevolutionChallenge} />
         <Route path="/academy" component={Academy} />
         <Route path="/academy/catalog" component={AcademyCatalog} />
         <Route path="/academy/ai-hub" component={AcademyAIHub} />
@@ -481,38 +233,13 @@ function Router() {
         <Route path="/payments-hub" component={PaymentsHub} />
         <Route path="/credentials" component={Credentials} />
         <Route path="/sustainability" component={Sustainability} />
-        <Route path="/analytics" component={Analytics} />
-        <Route path="/enterprise-dashboard">
-          <AuthGuard>
-            <EnterpriseDashboard />
-          </AuthGuard>
-        </Route>
-        <Route path="/accessibility" component={Accessibility} />
-        <Route path="/ai-match" component={AISmartMatch} />
-        <Route path="/roadmap" component={Roadmap2031} />
-        <Route path="/job-board" component={JobBoard} />
-        <Route path="/opportunity-finder" component={OpportunityFinder} />
-        <Route path="/claim-business" component={ClaimBusiness} />
-        <Route path="/invite-businesses" component={InviteBusinesses} />
         <Route path="/vuma" component={Vuma} />
-        <Route path="/vuma-admin" component={VumaAdmin} />
         <Route path="/vuma-live" component={VumaLive} />
-        {/* PWA install page */}
-        <Route path="/install-app" component={InstallApp} />
-        <Route path="/download-app" component={InstallApp} />
-        {/* Public community & programme pages */}
-        <Route path="/community" component={CommunityPage} />
-        <Route path="/ambassador" component={AmbassadorPage} />
-        <Route path="/elite-club" component={EliteClubPage} />
-        <Route path="/wellbeing" component={WellbeingPage} />
         {/* Alias routes for SEO / nav */}
         <Route path="/help" component={Support} />
         <Route path="/contact" component={Support} />
         <Route path="/find-talent" component={FindTalent} />
         <Route path="/freelancer-profile/:id" component={FreelancerProfile} />
-        <Route path="/background-checks" component={VettingBackground} />
-        <Route path="/blockchain-verification" component={BlockchainVerification} />
-        <Route path="/skill-assessment" component={SkillAssessments} />
         <Route path="/gig-marketplace" component={Explore} />
         <Route path="/admin" component={AdminRouter} />
         <Route path="/admin/:rest*" component={AdminRouter} />

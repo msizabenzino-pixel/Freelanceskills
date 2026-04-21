@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import {
   ChevronRight, ChevronLeft, Check, Briefcase, Users, Zap, Shield,
   DollarSign, Tag, Star, Building2, Code2, Palette, Megaphone,
-  Database, Wrench, BookOpen, X,
+  Database, Wrench, BookOpen, X, Link as LinkIcon, PlusCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -72,7 +72,7 @@ const HIRE_TYPES = [
 
 const AUTH_PATHS = ["/login", "/auth", "/onboarding", "/profile-builder", "/signup"];
 
-type Step = "slides" | "role" | "skills" | "rate" | "hire_type" | "budget";
+type Step = "slides" | "role" | "skills" | "rate" | "portfolio" | "hire_type" | "budget";
 
 export function OnboardingCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -85,6 +85,7 @@ export function OnboardingCarousel() {
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [customSkill, setCustomSkill] = useState("");
   const [selectedRate, setSelectedRate] = useState<string | null>(null);
+  const [portfolioUrls, setPortfolioUrls] = useState<string[]>(["", "", ""]);
 
   // Client state
   const [selectedHireType, setSelectedHireType] = useState<string | null>(null);
@@ -117,6 +118,8 @@ export function OnboardingCarousel() {
     if (selectedRole) localStorage.setItem("user_role_preference", selectedRole);
     if (selectedSkills.length) localStorage.setItem("onboarding_skills", JSON.stringify(selectedSkills));
     if (selectedRate) localStorage.setItem("onboarding_rate", selectedRate);
+    const filledUrls = portfolioUrls.filter(u => u.trim());
+    if (filledUrls.length) localStorage.setItem("onboarding_portfolio", JSON.stringify(filledUrls));
     setIsVisible(false);
     setTimeout(() => {
       if (selectedRole === "freelancer") window.location.href = "/cv-upload";
@@ -134,6 +137,8 @@ export function OnboardingCarousel() {
     } else if (step === "skills") {
       setStep("rate");
     } else if (step === "rate") {
+      setStep("portfolio");
+    } else if (step === "portfolio") {
       handleComplete();
     } else if (step === "hire_type") {
       setStep("budget");
@@ -146,6 +151,7 @@ export function OnboardingCarousel() {
     if (step === "role") { setStep("slides"); setCurrentSlide(slides.length - 1); }
     else if (step === "skills") setStep("role");
     else if (step === "rate") setStep("skills");
+    else if (step === "portfolio") setStep("rate");
     else if (step === "hire_type") setStep("role");
     else if (step === "budget") setStep("hire_type");
     else if (step === "slides" && currentSlide > 0) setCurrentSlide(p => p - 1);
@@ -156,13 +162,14 @@ export function OnboardingCarousel() {
     if (step === "role") return !!selectedRole;
     if (step === "skills") return selectedSkills.length >= 1;
     if (step === "rate") return !!selectedRate;
+    if (step === "portfolio") return true;
     if (step === "hire_type") return !!selectedHireType;
     if (step === "budget") return !!selectedBudget;
     return false;
   };
 
   // Calculate progress dot count + active index
-  const FREELANCER_STEPS: Step[] = ["slides", "role", "skills", "rate"];
+  const FREELANCER_STEPS: Step[] = ["slides", "role", "skills", "rate", "portfolio"];
   const CLIENT_STEPS: Step[] = ["slides", "role", "hire_type", "budget"];
   const allSteps = selectedRole === "client" ? CLIENT_STEPS : FREELANCER_STEPS;
   const totalDots = slides.length + (allSteps.length - 1);
@@ -366,6 +373,45 @@ export function OnboardingCarousel() {
                 </motion.div>
               )}
 
+              {/* ── Freelancer: portfolio ────────────────── */}
+              {step === "portfolio" && (
+                <motion.div
+                  key="portfolio-step"
+                  initial={{ opacity: 0, x: 24 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -24 }}
+                  transition={{ duration: 0.25 }}
+                  data-testid="onboarding-portfolio-step"
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <LinkIcon className="w-5 h-5 text-emerald-500" />
+                    <h2 className="text-xl font-bold">Add your portfolio</h2>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-5">Optional — paste links to your GitHub, Behance, Dribbble, or any project URL. You can always add more later.</p>
+                  <div className="space-y-3">
+                    {portfolioUrls.map((url, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0">{i + 1}</div>
+                        <Input
+                          placeholder={i === 0 ? "https://github.com/yourname" : i === 1 ? "https://behance.net/yourname" : "https://yourproject.com"}
+                          value={url}
+                          onChange={e => {
+                            const updated = [...portfolioUrls];
+                            updated[i] = e.target.value;
+                            setPortfolioUrls(updated);
+                          }}
+                          className="h-9 text-sm"
+                          data-testid={`portfolio-url-${i}`}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-4 text-center">
+                    Freelancers with portfolio links get <span className="text-emerald-500 font-semibold">4× more</span> client views.
+                  </p>
+                </motion.div>
+              )}
+
               {/* ── Client: hire type ────────────────────── */}
               {step === "hire_type" && (
                 <motion.div
@@ -464,7 +510,7 @@ export function OnboardingCarousel() {
                       <ChevronLeft className="h-4 w-4" />
                     </Button>
                   )}
-                  {(step === "rate" || step === "budget") ? (
+                  {(step === "portfolio" || step === "budget") ? (
                     <Button
                       onClick={handleComplete}
                       disabled={!canGoNext()}
