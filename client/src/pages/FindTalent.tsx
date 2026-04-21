@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Search, MapPin, List, Map as MapIcon, Star, ShieldCheck, Loader2,
   Users, Briefcase, MessageSquare, ExternalLink, X,
+  Palette, Code2, Megaphone, Database, TrendingUp, Award, Zap,
 } from "lucide-react";
 import { useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -44,10 +45,18 @@ const MAP_COORDS: Array<{ top: string; left: string }> = [
 ];
 
 const QUICK_FILTERS = [
-  { label: "Verified Only", key: "verified", value: "true" },
-  { label: "Under R500/hr", key: "maxRate", value: "500" },
-  { label: "Top Rated (4.5+)", key: "minRating", value: "4.5" },
-  { label: "10+ Jobs Done", key: "minJobs", value: "10" },
+  { label: "Verified Only", key: "verified", value: "true", icon: ShieldCheck },
+  { label: "Under R500/hr", key: "maxRate", value: "500", icon: Zap },
+  { label: "Top Rated (4.5+)", key: "minRating", value: "4.5", icon: Star },
+  { label: "10+ Jobs Done", key: "minJobs", value: "10", icon: Award },
+];
+
+const CATEGORY_PILLS = [
+  { label: "Design & Creative", icon: Palette, q: "design" },
+  { label: "Development & Tech", icon: Code2, q: "developer" },
+  { label: "Marketing & Growth", icon: Megaphone, q: "marketing" },
+  { label: "Data & AI", icon: Database, q: "data" },
+  { label: "Business & Finance", icon: TrendingUp, q: "finance" },
 ];
 
 function FreelancerCard({ f, onSelect, selected }: { f: FreelancerResult; onSelect: (id: string) => void; selected: boolean }) {
@@ -84,7 +93,7 @@ function FreelancerCard({ f, onSelect, selected }: { f: FreelancerResult; onSele
           <div className="flex justify-center mt-1 mb-0.5">
             <LevelBadge
               level={f.isPro ? "pro" : getLevelFromStats(f.completedJobs ?? 0, f.rating ?? 0, 0)}
-              size="xs"
+              size="sm"
             />
           </div>
           <p className="text-slate-400 text-sm mt-0.5 line-clamp-2">{f.title}</p>
@@ -205,7 +214,59 @@ export default function FindTalent() {
       <Navbar />
 
       <main id="main-content">
-        <div className="pt-24 pb-4 bg-card border-b border-border sticky top-0 z-10 shadow-sm">
+
+        {/* ── Hero ──────────────────────────────────────────────────────────────── */}
+        <div className="pt-20 pb-10 bg-gradient-to-b from-slate-950 via-slate-950 to-background relative overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute top-10 left-1/4 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl" />
+            <div className="absolute top-0 right-1/4 w-64 h-64 bg-teal-500/5 rounded-full blur-3xl" />
+          </div>
+          <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-5">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              ID-Verified · Skills-Tested · Pan-African
+            </div>
+            <h1 className="text-4xl md:text-5xl font-black text-white mb-3 leading-tight">
+              Find Africa's Best<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-300">
+                Freelancers
+              </span>
+            </h1>
+            <p className="text-slate-400 text-base md:text-lg mb-8 max-w-lg mx-auto">
+              Developers, designers, engineers, and creatives — all verified and ready to work across 54 African countries.
+            </p>
+
+            <div className="flex flex-wrap items-center justify-center gap-2 mb-8">
+              {CATEGORY_PILLS.map(({ label, icon: Icon, q }) => (
+                <button
+                  key={q}
+                  onClick={() => setSearchInput(q)}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-slate-900 hover:bg-slate-800 border border-slate-700/60 hover:border-emerald-500/40 text-slate-300 hover:text-emerald-400 text-sm font-medium transition-all"
+                  data-testid={`pill-category-${q}`}
+                >
+                  <Icon className="w-3.5 h-3.5" /> {label}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center justify-center gap-8 flex-wrap">
+              {[
+                { val: "50K+", label: "Verified Freelancers" },
+                { val: "4.9★", label: "Avg Rating" },
+                { val: "54", label: "African Countries" },
+                { val: "R100M+", label: "Total Paid Out" },
+              ].map(({ val, label }) => (
+                <div key={label} className="text-center">
+                  <div className="text-lg font-black text-white">{val}</div>
+                  <div className="text-xs text-slate-500 mt-0.5">{label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Sticky Search + Filter Bar ────────────────────────────────────────── */}
+        <div className="pb-3 pt-3 bg-slate-950/95 backdrop-blur-sm border-b border-slate-800 sticky top-16 z-10 shadow-md">
           <div className="container mx-auto px-4 md:px-6">
             <div className="flex flex-col md:flex-row gap-3 items-center">
               <div className="relative flex-1 w-full">
@@ -263,24 +324,26 @@ export default function FindTalent() {
             <div className="flex gap-2 mt-3 overflow-x-auto pb-1 items-center">
               {QUICK_FILTERS.map((f) => {
                 const isActive = activeFilters[f.key] === f.value;
+                const Icon = f.icon;
                 return (
-                  <Badge
+                  <button
                     key={f.label}
-                    variant={isActive ? "default" : "outline"}
-                    className={cn(
-                      "cursor-pointer whitespace-nowrap transition-colors select-none",
-                      isActive ? "bg-primary text-white hover:bg-primary/90" : "hover:bg-secondary"
-                    )}
                     onClick={() => toggleFilter(f.key, f.value)}
                     data-testid={`badge-filter-${f.key}`}
+                    className={cn(
+                      "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all border select-none",
+                      isActive
+                        ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-400"
+                        : "bg-slate-900 border-slate-700/60 text-slate-400 hover:border-emerald-500/30 hover:text-slate-200"
+                    )}
                   >
-                    {isActive && <X className="w-3 h-3 mr-1" />}
+                    {isActive ? <X className="w-3 h-3" /> : <Icon className="w-3 h-3" />}
                     {f.label}
-                  </Badge>
+                  </button>
                 );
               })}
               {data && (
-                <span className="text-xs text-muted-foreground ml-auto whitespace-nowrap">
+                <span className="text-xs text-slate-500 ml-auto whitespace-nowrap font-medium">
                   {data.total} freelancer{data.total !== 1 ? "s" : ""}
                 </span>
               )}
