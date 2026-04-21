@@ -401,10 +401,10 @@ export default function Jobs() {
               </span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-2">
-              Find Your Perfect Job
+              Find Work That Fits
             </h1>
             <p className="text-white/70 text-lg mb-6">
-              The most powerful job intelligence platform on the African continent — AI-matched opportunities across 17 countries, 80+ cities.
+              AI-matched opportunities across Africa — all in one place, with faster search and clearer fit.
             </p>
 
             {/* Keyword search bar — full width */}

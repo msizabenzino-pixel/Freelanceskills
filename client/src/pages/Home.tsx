@@ -925,7 +925,7 @@ export default function Home() {
             <div className="flex flex-col lg:flex-row gap-12 items-center">
               <div className="flex-1">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-wider mb-5">
-                  <Rocket className="w-3.5 h-3.5" /> Perfect for Beginners
+                  <Rocket className="w-3.5 h-3.5" /> Start Strong
                 </div>
                 <h2 id="beginners-heading" className="text-3xl md:text-4xl font-black text-white mb-5 leading-tight">
                   Land Your First Paid Gig — <span className="text-amber-400">No Experience Required</span>
@@ -962,7 +962,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex-1 w-full max-w-md">
-                <div className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-4">Quick-Start Projects — Zero Experience Needed</div>
+                <div className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-4">Quick-Start Projects — Entry-Level Work</div>
                 <div className="space-y-3">
                   {[
                     { title: "Data Entry & Admin Support", pay: "R250–R800/hr", badge: "Beginner Friendly", color: "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" },
@@ -1321,7 +1321,7 @@ export default function Home() {
             <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
               <div>
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-wider mb-4">
-                  <TrendingUp className="w-3.5 h-3.5" /> Knowledge Hub
+                  <TrendingUp className="w-3.5 h-3.5" /> Guides That Help You Earn
                 </div>
                 <h2 className="text-3xl md:text-4xl font-black text-white mb-2">Learn what helps you earn faster.</h2>
                 <p className="text-slate-400 text-base max-w-xl">South Africa's most practical freelancing guides — from winning tenders to filing for SARS.</p>

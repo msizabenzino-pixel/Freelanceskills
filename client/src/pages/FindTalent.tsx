@@ -272,7 +272,7 @@ export default function FindTalent() {
               <div className="relative flex-1 w-full">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 w-4 h-4" />
                 <Input
-                  placeholder="Search electricians, developers, designers..."
+                  placeholder="Search verified talent by skill or role..."
                   className="pl-10 h-10"
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
