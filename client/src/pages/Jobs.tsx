@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -347,6 +347,40 @@ export default function Jobs() {
   };
 
   const isLoading = aggJobsQuery.isLoading || firebaseJobsQuery.isLoading;
+
+  useEffect(() => {
+    if (aggJobs.length === 0) return;
+    const itemList = {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Freelance Jobs in Africa — FreelanceSkills.net",
+      "url": "https://freelanceskills.net/jobs",
+      "numberOfItems": aggJobs.length,
+      "itemListElement": aggJobs.slice(0, 10).map((job, i) => ({
+        "@type": "ListItem",
+        "position": i + 1,
+        "item": {
+          "@type": "JobPosting",
+          "title": job.title,
+          "description": job.description?.slice(0, 500) || "",
+          "datePosted": job.postedDate || undefined,
+          "employmentType": job.isRemote ? "TELECOMMUTE" : "OTHER",
+          "hiringOrganization": { "@type": "Organization", "name": job.company || "FreelanceSkills.net", "sameAs": "https://freelanceskills.net" },
+          "jobLocation": job.isRemote ? { "@type": "Place", "name": "Anywhere" } : { "@type": "Place", "address": { "@type": "PostalAddress", "addressRegion": job.province || "", "addressCountry": job.country || "ZA" } },
+          ...(job.salaryMin ? { "baseSalary": { "@type": "MonetaryAmount", "currency": "ZAR", "value": { "@type": "QuantitativeValue", "minValue": job.salaryMin, "maxValue": job.salaryMax || job.salaryMin, "unitText": job.salaryPeriod || "MONTH" } } } : {}),
+        },
+      })),
+    };
+    const existing = document.getElementById("jsonld-jobs");
+    if (existing) existing.remove();
+    const script = document.createElement("script");
+    script.id = "jsonld-jobs";
+    script.type = "application/ld+json";
+    script.textContent = JSON.stringify(itemList);
+    document.head.appendChild(script);
+    document.title = `${totalJobs.toLocaleString()}+ Freelance Jobs in Africa — FreelanceSkills.net`;
+    return () => { document.getElementById("jsonld-jobs")?.remove(); document.title = "FreelanceSkills.net"; };
+  }, [aggJobs, totalJobs]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">

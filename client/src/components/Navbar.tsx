@@ -34,6 +34,19 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
   const { isDark, toggle: toggleDarkMode } = useDarkMode();
   const searchRef = useRef<HTMLInputElement>(null);
 
+  const { data: unreadMsgData } = useQuery<{ count: number }>({
+    queryKey: ["/api/conversations/unread-count"],
+    queryFn: async () => {
+      const res = await fetch("/api/conversations/unread-count", { credentials: "include" });
+      if (!res.ok) return { count: 0 };
+      return res.json();
+    },
+    enabled: isAuthenticated,
+    staleTime: 30_000,
+    refetchInterval: 60_000,
+  });
+  const unreadMessages = unreadMsgData?.count ?? 0;
+
   const { data: rewardsData } = useQuery<{ balance: number }>({
     queryKey: ["/api/rewards", user?.id],
     queryFn: async () => {
@@ -138,11 +151,19 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
               {/* Messages */}
               <Link href="/messages">
                 <button
-                  className="hidden md:flex p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/70 transition-colors"
-                  aria-label="Messages"
+                  className="hidden md:flex p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/70 transition-colors relative"
+                  aria-label={unreadMessages > 0 ? `Messages (${unreadMessages} unread)` : "Messages"}
                   data-testid="link-messages-nav"
                 >
                   <MessageSquare className="h-4 w-4" />
+                  {unreadMessages > 0 && (
+                    <span
+                      className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-0.5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center leading-none"
+                      data-testid="badge-messages-unread"
+                    >
+                      {unreadMessages > 9 ? "9+" : unreadMessages}
+                    </span>
+                  )}
                 </button>
               </Link>
 
@@ -348,10 +369,15 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
                   <Link key={href} href={href}>
                     <button
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted transition-colors"
+                      className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted transition-colors flex items-center justify-between"
                       data-testid={`link-mobile-${label.toLowerCase()}`}
                     >
-                      {label}
+                      <span>{label}</span>
+                      {label === "Messages" && unreadMessages > 0 && (
+                        <span className="ml-2 min-w-[20px] h-5 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center" data-testid="badge-mobile-messages-unread">
+                          {unreadMessages > 9 ? "9+" : unreadMessages}
+                        </span>
+                      )}
                     </button>
                   </Link>
                 ))}

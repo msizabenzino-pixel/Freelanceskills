@@ -31,6 +31,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { format, isToday, isYesterday, formatDistanceToNow } from "date-fns";
 import { io, Socket } from "socket.io-client";
+import { useLocation } from "wouter";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type Reaction = { emoji: string; count: number; reacted: boolean };
@@ -68,6 +69,8 @@ function ReadReceipt({ isOwn, isRead }: { isOwn: boolean; isRead: boolean }) {
 // ── Main Component ─────────────────────────────────────────────────────────────
 export default function Messages() {
   const { user } = useAuth();
+  const [, navigate] = useLocation();
+  const targetUserId = new URLSearchParams(window.location.search).get("new");
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [inputText, setInputText] = useState("");
   const [showVideoCall, setShowVideoCall] = useState(false);
@@ -164,10 +167,28 @@ export default function Messages() {
   }, [selectedConversationId]);
 
   useEffect(() => {
-    if (conversations.length > 0 && !selectedConversationId) {
+    if (!conversations) return;
+    if (targetUserId && !selectedConversationId) {
+      const existing = conversations.find(
+        (c: any) => c.otherUser?.id === targetUserId
+      );
+      if (existing) {
+        setSelectedConversationId(existing.id);
+        navigate("/messages", { replace: true });
+      } else if (user) {
+        apiRequest("POST", "/api/conversations", { recipientId: targetUserId })
+          .then(r => r.json())
+          .then((conv: any) => {
+            queryClient.invalidateQueries({ queryKey: ["/api/conversations"] });
+            setSelectedConversationId(conv.id);
+            navigate("/messages", { replace: true });
+          })
+          .catch(() => {});
+      }
+    } else if (conversations.length > 0 && !selectedConversationId) {
       setSelectedConversationId(conversations[0].id);
     }
-  }, [conversations, selectedConversationId]);
+  }, [conversations, selectedConversationId, targetUserId, user]);
 
   // ── Send Message ──────────────────────────────────────────────────────────
   const sendMessageMutation = useMutation({

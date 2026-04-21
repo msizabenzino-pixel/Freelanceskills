@@ -29,6 +29,16 @@ async function awardPoints(userId: string, action: string): Promise<void> {
   }
 }
 
+function sanitizeText(input: unknown, maxLength = 5000): string {
+  if (typeof input !== "string") return "";
+  return input
+    .replace(/<[^>]*>/g, "")
+    .replace(/javascript:/gi, "")
+    .replace(/on\w+\s*=/gi, "")
+    .trim()
+    .slice(0, maxLength);
+}
+
 export async function registerRoutes(
   httpServer: Server,
   app: Express
@@ -357,7 +367,12 @@ export async function registerRoutes(
   app.post("/api/jobs", isAuthenticated, async (req: any, res) => {
     try {
       const userId = (req.session as any).userId;
-      const validatedData = insertJobSchema.parse(req.body);
+      const body = {
+        ...req.body,
+        title: sanitizeText(req.body.title, 200),
+        description: sanitizeText(req.body.description, 10000),
+      };
+      const validatedData = insertJobSchema.parse(body);
       
       const job = await storage.createJob({
         ...validatedData,
@@ -538,7 +553,13 @@ export async function registerRoutes(
   app.patch("/api/profile", isAuthenticated, async (req: any, res) => {
     try {
       const userId = (req.session as any).userId;
-      const { userId: _u, id: _i, isPro: _p, ...safeData } = req.body;
+      const { userId: _u, id: _i, isPro: _p, ...rawData } = req.body;
+      const safeData = {
+        ...rawData,
+        ...(rawData.bio !== undefined && { bio: sanitizeText(rawData.bio, 2000) }),
+        ...(rawData.title !== undefined && { title: sanitizeText(rawData.title, 150) }),
+        ...(rawData.tagline !== undefined && { tagline: sanitizeText(rawData.tagline, 300) }),
+      };
       const profile = await storage.updateProfile(userId, safeData);
       
       if (!profile) {
@@ -1326,6 +1347,21 @@ Guidelines:
     } catch (error) {
       console.error("Error fetching conversations:", error);
       res.status(500).json({ message: "Failed to fetch conversations" });
+    }
+  });
+
+  app.get("/api/conversations/unread-count", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const conversations = await storage.getUserConversations(userId);
+      let totalUnread = 0;
+      for (const conv of conversations) {
+        const messages = await storage.getConversationMessages(conv.id);
+        totalUnread += messages.filter((m: any) => m.senderId !== userId && !m.isRead).length;
+      }
+      res.json({ count: totalUnread });
+    } catch (error) {
+      res.status(500).json({ count: 0 });
     }
   });
 

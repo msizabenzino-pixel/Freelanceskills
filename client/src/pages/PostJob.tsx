@@ -10,10 +10,12 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Sparkles, Wand2, Loader2, ChevronDown, ChevronUp, CheckCircle2, AlertCircle, Briefcase, MapPin } from "lucide-react";
 import { Link, useLocation } from "wouter";
-import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { AIJobPostHelper } from "@/components/AIJobPostHelper";
 import { SERVICE_CATEGORIES } from "@shared/categories";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserCheck } from "lucide-react";
 
 interface JobPostSuggestion {
   title: string;
@@ -27,6 +29,17 @@ interface JobPostSuggestion {
 export default function PostJob() {
   const [, navigate] = useLocation();
   const { user } = useAuth();
+  const targetFreelancerId = new URLSearchParams(window.location.search).get("hire");
+
+  const { data: targetFreelancer } = useQuery<any>({
+    queryKey: ["/api/freelancers", targetFreelancerId],
+    queryFn: async () => {
+      const res = await fetch(`/api/freelancers/${targetFreelancerId}`, { credentials: "include" });
+      if (!res.ok) return null;
+      return res.json();
+    },
+    enabled: !!targetFreelancerId,
+  });
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -117,6 +130,7 @@ export default function PostJob() {
       location: locationType === "onsite" && location.trim() ? location.trim() : undefined,
       budget: Math.round(budgetRands * 100),
       skills,
+      ...(targetFreelancerId ? { targetFreelancerId } : {}),
     });
   };
 
@@ -184,6 +198,26 @@ export default function PostJob() {
           <Link href="/" className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-6 transition-colors">
             <ArrowLeft className="w-4 h-4 mr-1" /> Back to Home
           </Link>
+
+          {targetFreelancer && (
+            <div className="mb-6 flex items-center gap-3 p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/5" data-testid="banner-targeted-hire">
+              <div className="w-9 h-9 rounded-full bg-emerald-500/15 flex items-center justify-center flex-shrink-0">
+                <UserCheck className="w-5 h-5 text-emerald-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground">
+                  Hiring <span className="text-emerald-400">{targetFreelancer.name || targetFreelancer.title || "this freelancer"}</span> directly
+                </p>
+                <p className="text-xs text-muted-foreground">Your job will be sent directly to this freelancer once posted.</p>
+              </div>
+              <Avatar className="h-8 w-8 flex-shrink-0">
+                <AvatarImage src={targetFreelancer.avatarUrl || ""} />
+                <AvatarFallback className="text-xs bg-emerald-500/20 text-emerald-300">
+                  {(targetFreelancer.name || targetFreelancer.title || "?")[0]?.toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            </div>
+          )}
 
           <div className="mb-8 flex justify-between items-end">
             <div>

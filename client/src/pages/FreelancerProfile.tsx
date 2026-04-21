@@ -205,7 +205,29 @@ export default function FreelancerProfile() {
     script.textContent = JSON.stringify(jsonLd);
     document.head.appendChild(script);
     document.title = `${name} — FreelanceSkills.net`;
-    return () => { document.getElementById("jsonld-profile")?.remove(); };
+
+    const setMeta = (property: string, content: string, isName = false) => {
+      const attr = isName ? "name" : "property";
+      let el = document.querySelector(`meta[${attr}="${property}"]`) as HTMLMetaElement | null;
+      if (!el) { el = document.createElement("meta"); el.setAttribute(attr, property); document.head.appendChild(el); }
+      el.setAttribute("content", content);
+    };
+    const desc = `${profile.category || "Freelancer"} in ${profile.location || "South Africa"} — R${profile.hourlyRate ?? "?"}/hr · ${profile.rating ?? "5.0"} stars`;
+    const avatar = (profile as any).avatarUrl || "";
+    setMeta("og:title", `${name} — FreelanceSkills.net`);
+    setMeta("og:description", desc);
+    setMeta("og:type", "profile");
+    setMeta("og:url", window.location.href);
+    if (avatar) setMeta("og:image", avatar);
+    setMeta("twitter:title", `${name} — FreelanceSkills.net`, true);
+    setMeta("twitter:description", desc, true);
+    setMeta("twitter:card", "summary", true);
+    if (avatar) setMeta("twitter:image", avatar, true);
+
+    return () => {
+      document.getElementById("jsonld-profile")?.remove();
+      document.title = "FreelanceSkills.net";
+    };
   }, [profile, id]);
 
   if (profileQuery.isLoading) {
