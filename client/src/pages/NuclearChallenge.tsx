@@ -23,10 +23,10 @@ export default function NuclearChallenge() {
             FreelanceSkills 2026
           </p>
           <h1 className="text-4xl sm:text-6xl font-black leading-tight" data-testid="text-challenge-title">
-            Freight-free growth, verified trust, and public pages that convert.
+            Clear growth, verified trust, and public pages that convert.
           </h1>
           <p className="text-slate-300 max-w-3xl" data-testid="text-challenge-description">
-            A public launch surface for FreelanceSkills.net that showcases the platform vision, the vetting system, and the guardrails needed to scale safely.
+            A public launch surface for FreelanceSkills.net that keeps the platform vision, vetting path, and guardrails easy to understand.
           </p>
           <div className="flex flex-wrap gap-3">
             <Link href="/vetting" className="px-5 py-3 rounded-xl bg-emerald-500 text-slate-950 font-semibold" data-testid="link-start-vetting">

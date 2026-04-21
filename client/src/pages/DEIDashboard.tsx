@@ -9,7 +9,7 @@ export default function DEIDashboard() {
   return (
     <div className="min-h-screen p-6" style={{background:"#080d1a"}}>
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold text-white mb-1">Diversity & Inclusion Dashboard</h1>
+        <h1 className="text-3xl font-bold text-white mb-1">Diversity & Inclusion Overview</h1>
         <p className="text-sm text-gray-500 mb-5">B-BBEE Compliance · Gender Pay Gap · Race Representation · Youth Employment · SDG Tracking</p>
         <div className="grid grid-cols-4 gap-3 mb-5">
           {[{l:"BEE Level",v:d.beeLevel||0,c:"#1DBF73"},{l:"BEE Score",v:`${d.beeScore||0}%`,c:"#1DBF73"},{l:"Women Freelancers",v:`${(d.representation||{}).female||0}%`,c:"#f97316"},{l:"Initiatives",v:d.initiatives||0,c:"#6366f1"}].map((s,i)=>(

@@ -364,21 +364,21 @@ export default function FindTalent() {
               </div>
             ) : freelancers.length === 0 ? (
               <div data-testid="empty-state">
-                {/* Show demo/sample cards when there's no real data */}
+                {/* Show sample cards when there's no real data */}
                 {!debouncedSearch && !debouncedLocation && Object.keys(activeFilters).length === 0 ? (
                   <div>
                     <div className="text-center mb-8 py-8 rounded-2xl border border-dashed border-emerald-500/30 bg-emerald-500/5">
                       <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-3">
                         <Users className="w-6 h-6 text-emerald-400" />
                       </div>
-                      <h3 className="text-lg font-bold text-white mb-1">Be among the first verified freelancers</h3>
+                      <h3 className="text-lg font-bold text-white mb-1">Create a verified freelancer profile</h3>
                       <p className="text-muted-foreground text-sm mb-4 max-w-md mx-auto">
-                        FreelanceSkills.net is growing fast across Africa. Create your profile today and get discovered by top clients.
+                        Build your profile, add your skills, and get ready for client discovery across Africa.
                       </p>
                       <div className="flex items-center justify-center gap-3 flex-wrap">
                         <Link href="/cv-upload">
                           <Button className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold" data-testid="button-create-profile-empty">
-                            Create Your Profile — It's Free
+                            Create Profile
                           </Button>
                         </Link>
                         <Button variant="outline" onClick={() => { setSearchInput(""); setLocationInput(""); setActiveFilters({}); }}>
@@ -386,7 +386,7 @@ export default function FindTalent() {
                         </Button>
                       </div>
                     </div>
-                    <p className="text-xs text-center text-muted-foreground mb-4 uppercase tracking-wider font-semibold">Sample profiles — join to get listed</p>
+                    <p className="text-xs text-center text-muted-foreground mb-4 uppercase tracking-wider font-semibold">Sample profiles</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 opacity-50 pointer-events-none select-none">
                       {[
                         { name: "Amara Osei", title: "Full-Stack Developer", location: "Accra, Ghana", skills: ["React", "Node.js", "PostgreSQL"], rate: "R 520/hr", rating: 4.9, jobs: 43 },

@@ -10,7 +10,7 @@ export default function ExecCommandCenter() {
     <div className="min-h-screen p-6" style={{background:"#080d1a"}}>
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-5">
-          <div><h1 className="text-3xl font-bold text-white mb-0.5">Executive Command Center</h1><p className="text-sm text-gray-500">100 Sections · Real-time Platform Snapshot · Board Pack · DTIC Report</p></div>
+          <div><h1 className="text-3xl font-bold text-white mb-0.5">Executive Overview</h1><p className="text-sm text-gray-500">Platform snapshot · KPI reports · operational status</p></div>
           <div className="px-4 py-2 rounded-xl text-xs font-bold text-emerald-400 border border-emerald-500/30 bg-emerald-500/10">🟢 ALL SYSTEMS OPERATIONAL</div>
         </div>
         <div className="grid grid-cols-4 gap-3 mb-5">
