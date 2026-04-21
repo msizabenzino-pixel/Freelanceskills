@@ -152,14 +152,20 @@ export async function handleITN(req: Request, res: Response) {
     if (!config.sandbox) {
       const clientIp = (req.headers["x-forwarded-for"] as string || req.socket.remoteAddress || "").split(",")[0].trim();
       if (!VALID_PAYFAST_IPS.includes(clientIp)) {
-        console.warn(`PayFast ITN: Non-whitelisted IP in production: ${clientIp}, accepting anyway for sandbox testing`);
+        console.error(`PayFast ITN REJECTED: Non-whitelisted IP in production: ${clientIp}`);
+        return res.status(403).send("Forbidden");
       }
     }
 
-    if (data.signature && config.passphrase) {
+    if (config.passphrase) {
+      if (!data.signature) {
+        console.error("PayFast ITN REJECTED: Missing signature in payload");
+        return res.status(400).send("Missing signature");
+      }
       const isValid = validateSignature(data, data.signature);
       if (!isValid) {
-        console.warn("PayFast ITN: Signature validation failed, accepting anyway for sandbox");
+        console.error("PayFast ITN REJECTED: Signature validation failed");
+        return res.status(400).send("Invalid signature");
       }
     }
 

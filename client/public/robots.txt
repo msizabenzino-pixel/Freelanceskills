@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api/
+Disallow: /checkout
+Disallow: /profile-builder
+Disallow: /vetting/
+Disallow: /reset-password
+
+Sitemap: https://freelanceskills.net/sitemap.xml

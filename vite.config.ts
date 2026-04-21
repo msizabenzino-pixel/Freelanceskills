@@ -42,13 +42,33 @@ export default defineConfig({
     chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
-        manualChunks: {
-          "vendor-react": ["react", "react-dom"],
-          "vendor-query": ["@tanstack/react-query"],
-          "vendor-ui": ["lucide-react", "framer-motion"],
-          "vendor-charts": ["recharts"],
-          "academy-ai": ["./client/src/lib/aiAcademyCurriculum.ts"],
-          "academy-core": ["./client/src/lib/academyCurriculum.ts"],
+        manualChunks(id) {
+          if (id.includes("node_modules/react/") || id.includes("node_modules/react-dom/") || id.includes("node_modules/scheduler/")) {
+            return "vendor-react";
+          }
+          if (id.includes("node_modules/@tanstack/")) {
+            return "vendor-query";
+          }
+          if (id.includes("node_modules/recharts") || id.includes("node_modules/d3-") || id.includes("node_modules/victory-")) {
+            return "vendor-charts";
+          }
+          if (id.includes("node_modules/firebase/") || id.includes("node_modules/@firebase/")) {
+            return "vendor-firebase";
+          }
+          if (id.includes("node_modules/@radix-ui/")) {
+            return "vendor-radix";
+          }
+          if (id.includes("node_modules/lucide-react") || id.includes("node_modules/framer-motion")) {
+            return "vendor-ui";
+          }
+          if (id.includes("node_modules/date-fns") || id.includes("node_modules/zod") || id.includes("node_modules/drizzle-zod")) {
+            return "vendor-utils";
+          }
+          if (id.includes("node_modules/wouter")) {
+            return "vendor-router";
+          }
+          if (id.includes("/client/src/lib/aiAcademyCurriculum")) return "academy-ai";
+          if (id.includes("/client/src/lib/academyCurriculum")) return "academy-core";
         },
       },
     },

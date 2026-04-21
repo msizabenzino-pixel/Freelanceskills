@@ -1235,6 +1235,48 @@ Guidelines:
     }
   });
 
+  app.post("/api/freelancers/:id/reviews", isAuthenticated, async (req: any, res) => {
+    try {
+      const reviewerId = (req.session as any).userId;
+      const freelancerId = req.params.id;
+      const { rating, comment } = req.body;
+
+      if (!rating || rating < 1 || rating > 5) {
+        return res.status(400).json({ message: "Rating must be between 1 and 5" });
+      }
+      if (!comment || String(comment).trim().length < 10) {
+        return res.status(400).json({ message: "Review comment must be at least 10 characters" });
+      }
+      if (reviewerId === freelancerId) {
+        return res.status(400).json({ message: "You cannot review yourself" });
+      }
+
+      const { db: rdb, pool: rpool } = await import("./db");
+      const existing = await rpool.query(
+        `SELECT id FROM bookings WHERE (client_id = $1 AND freelancer_id = $2) OR (client_id = $2 AND freelancer_id = $1) AND status IN ('completed','delivered') ORDER BY created_at DESC LIMIT 1`,
+        [reviewerId, freelancerId]
+      );
+
+      if (!existing.rows[0]) {
+        return res.status(403).json({ message: "You can only review freelancers you have worked with on a completed project." });
+      }
+
+      const review = await storage.createReview({
+        revieweeId: freelancerId,
+        reviewerId,
+        bookingId: existing.rows[0].id,
+        rating: Number(rating),
+        comment: String(comment).trim(),
+      });
+
+      if (Number(rating) === 5) awardPoints(freelancerId, "five_star_review");
+      res.status(201).json(review);
+    } catch (error) {
+      console.error("Error creating freelancer review:", error);
+      res.status(500).json({ message: "Failed to submit review" });
+    }
+  });
+
   app.post("/api/reviews", isAuthenticated, async (req: any, res) => {
     try {
       const userId = (req.session as any).userId;
@@ -8019,6 +8061,47 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
       console.error("Rewards redeem error:", error);
       res.status(500).json({ error: "Failed to redeem reward" });
     }
+  });
+
+  // ── Root sitemap.xml ──────────────────────────────────────────────────────
+  app.get("/sitemap.xml", async (_req, res) => {
+    const base = "https://freelanceskills.net";
+    const today = new Date().toISOString().split("T")[0];
+    const staticUrls = [
+      { loc: "/", priority: "1.0", changefreq: "daily" },
+      { loc: "/find-talent", priority: "0.9", changefreq: "daily" },
+      { loc: "/jobs", priority: "0.9", changefreq: "daily" },
+      { loc: "/how-to-hire", priority: "0.7", changefreq: "weekly" },
+      { loc: "/how-to-get-hired", priority: "0.7", changefreq: "weekly" },
+      { loc: "/how-it-works", priority: "0.7", changefreq: "weekly" },
+      { loc: "/pricing", priority: "0.8", changefreq: "weekly" },
+      { loc: "/blog", priority: "0.8", changefreq: "daily" },
+      { loc: "/academy", priority: "0.7", changefreq: "weekly" },
+      { loc: "/about", priority: "0.6", changefreq: "monthly" },
+      { loc: "/careers", priority: "0.6", changefreq: "weekly" },
+      { loc: "/support", priority: "0.5", changefreq: "monthly" },
+      { loc: "/terms", priority: "0.4", changefreq: "monthly" },
+      { loc: "/privacy", priority: "0.4", changefreq: "monthly" },
+    ].map(u => `  <url>\n    <loc>${base}${u.loc}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${u.changefreq}</changefreq>\n    <priority>${u.priority}</priority>\n  </url>`).join("\n");
+
+    let freelancerUrls = "";
+    try {
+      const { db: sitemapDb } = await import("./db");
+      const { profiles: sitemapProfiles } = await import("../shared/schema");
+      const { eq: sitemapEq } = await import("drizzle-orm");
+      const freelancers = await sitemapDb.select({ userId: sitemapProfiles.userId })
+        .from(sitemapProfiles)
+        .where(sitemapEq(sitemapProfiles.role, "freelancer"))
+        .limit(500);
+      freelancerUrls = freelancers.map((f: any) =>
+        `  <url>\n    <loc>${base}/freelancer/${f.userId}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.6</priority>\n  </url>`
+      ).join("\n");
+    } catch { /* non-fatal */ }
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${staticUrls}\n${freelancerUrls}\n</urlset>`;
+    res.setHeader("Content-Type", "application/xml; charset=utf-8");
+    res.setHeader("Cache-Control", "public, max-age=3600");
+    res.send(xml);
   });
 
   return httpServer;

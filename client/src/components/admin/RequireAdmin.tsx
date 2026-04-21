@@ -14,16 +14,11 @@ interface RequireAdminProps {
 
 export function RequireAdmin({ children, requiredPermission }: RequireAdminProps) {
   const [, navigate] = useLocation();
-  const freeMode = true;
   const { isLoading, isAuthenticated, isAdmin, permissions } = useAdminAuth();
   const currentPath =
     typeof window !== "undefined"
       ? `${window.location.pathname}${window.location.search}`
       : "/admin";
-
-  if (freeMode) {
-    return <>{children}</>;
-  }
 
   if (isLoading) {
     return (

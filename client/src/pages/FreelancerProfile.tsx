@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Star, MapPin, ShieldCheck, Clock, MessageSquare, Loader2, Edit, Camera, X } from "lucide-react";
-import { Link, useParams } from "wouter";
+import { Star, MapPin, ShieldCheck, Clock, MessageSquare, Loader2, Edit, Camera, X, ExternalLink, Award, Briefcase, Zap, PlusCircle } from "lucide-react";
+import { Link, useLocation, useParams } from "wouter";
 import { useCurrency } from "@/lib/currency";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+
 import {
   fetchFreelancerProfile,
   saveFreelancerProfile,
@@ -24,8 +25,27 @@ import {
   type FreelancerProfile as FirebaseFreelancerProfile,
 } from "@/lib/firebaseAppData";
 
+function getDomainLabel(url: string): string {
+  try {
+    const u = new URL(url.startsWith("http") ? url : `https://${url}`);
+    return u.hostname.replace(/^www\./, "");
+  } catch {
+    return url.slice(0, 40);
+  }
+}
+
+function getFaviconUrl(url: string): string {
+  try {
+    const u = new URL(url.startsWith("http") ? url : `https://${url}`);
+    return `https://www.google.com/s2/favicons?domain=${u.hostname}&sz=32`;
+  } catch {
+    return "";
+  }
+}
+
 export default function FreelancerProfile() {
   const { id } = useParams<{ id: string }>();
+  const [, navigate] = useLocation();
   const { formatAmount } = useCurrency();
   const { user } = useAuth();
   const { toast } = useToast();
@@ -33,6 +53,9 @@ export default function FreelancerProfile() {
 
   const [editOpen, setEditOpen] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState("");
   const [draft, setDraft] = useState({
     fullName: "",
     title: "",
@@ -127,6 +150,63 @@ export default function FreelancerProfile() {
       toast({ title: "Save failed", description: error.message, variant: "destructive" });
     },
   });
+
+  const submitReviewMutation = useMutation({
+    mutationFn: async () => {
+      if (!id) throw new Error("Missing profile id");
+      const res = await fetch(`/api/freelancers/${id}/reviews`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rating: reviewRating, comment: reviewComment }),
+      });
+      if (!res.ok) throw new Error("Failed to submit review");
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["freelancer-reviews", id] });
+      setReviewOpen(false);
+      setReviewComment("");
+      setReviewRating(5);
+      toast({ title: "Review submitted", description: "Thank you for your feedback!" });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Review failed", description: error.message, variant: "destructive" });
+    },
+  });
+
+  useEffect(() => {
+    if (!profile) return;
+    const name = profile.fullName || profile.title || "Freelancer";
+    const jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": name,
+      "jobTitle": profile.title || "Freelancer",
+      "description": profile.bio || "",
+      "image": profile.profilePhotoUrl || "",
+      "address": { "@type": "PostalAddress", "addressCountry": "ZA", "addressLocality": profile.location || "South Africa" },
+      "knowsAbout": profile.skills || [],
+      "url": `https://freelanceskills.net/freelancer/${id}`,
+      "offers": {
+        "@type": "Offer",
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "price": profile.hourlyRate || 0,
+          "priceCurrency": "ZAR",
+          "unitCode": "HUR",
+        },
+      },
+    };
+    const existing = document.getElementById("jsonld-profile");
+    if (existing) existing.remove();
+    const script = document.createElement("script");
+    script.id = "jsonld-profile";
+    script.type = "application/ld+json";
+    script.textContent = JSON.stringify(jsonLd);
+    document.head.appendChild(script);
+    document.title = `${name} — FreelanceSkills.net`;
+    return () => { document.getElementById("jsonld-profile")?.remove(); };
+  }, [profile, id]);
 
   if (profileQuery.isLoading) {
     return (
@@ -363,10 +443,19 @@ export default function FreelancerProfile() {
                   ))}
                 </div>
 
-                <Button className="w-full bg-primary text-white hover:bg-primary/90 font-bold shadow-lg mb-3" data-testid="button-hire-freelancer">
+                <Button
+                  className="w-full bg-primary text-white hover:bg-primary/90 font-bold shadow-lg mb-3"
+                  data-testid="button-hire-freelancer"
+                  onClick={() => navigate(`/post-job?hire=${id}`)}
+                >
                   Hire {displayName.split(" ")[0]}
                 </Button>
-                <Button variant="outline" className="w-full" data-testid="button-message-freelancer">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  data-testid="button-message-freelancer"
+                  onClick={() => navigate(`/messages?new=${id}`)}
+                >
                   <MessageSquare className="w-4 h-4 mr-2" /> Message
                 </Button>
               </div>
@@ -387,15 +476,44 @@ export default function FreelancerProfile() {
               </div>
 
               <div className="bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-800">
-                <h3 className="font-bold text-lg mb-4">Certifications</h3>
+                <h3 className="font-bold text-lg mb-4">Verifications</h3>
                 <ul className="space-y-3">
-                  <li className="flex items-start gap-3">
-                    <div className="bg-emerald-500/10 p-2 rounded-lg text-emerald-400 mt-1"><ShieldCheck className="w-4 h-4" /></div>
-                    <div>
-                      <div className="font-semibold text-sm">Identity Verified</div>
-                      <div className="text-xs text-slate-400">FreelanceSkills</div>
-                    </div>
-                  </li>
+                  {profile.role === "freelancer" && (
+                    <li className="flex items-start gap-3">
+                      <div className="bg-emerald-500/10 p-2 rounded-lg text-emerald-400 mt-1"><ShieldCheck className="w-4 h-4" /></div>
+                      <div>
+                        <div className="font-semibold text-sm text-white">Identity Verified</div>
+                        <div className="text-xs text-slate-400">FreelanceSkills KYC</div>
+                      </div>
+                    </li>
+                  )}
+                  {(profile as any).vettingStatus === "nuclear" && (
+                    <li className="flex items-start gap-3">
+                      <div className="bg-violet-500/10 p-2 rounded-lg text-violet-400 mt-1"><Zap className="w-4 h-4" /></div>
+                      <div>
+                        <div className="font-semibold text-sm text-white">Nuclear Vetted</div>
+                        <div className="text-xs text-slate-400">Top 1% of platform</div>
+                      </div>
+                    </li>
+                  )}
+                  {profile.experienceLevel && (
+                    <li className="flex items-start gap-3">
+                      <div className="bg-sky-500/10 p-2 rounded-lg text-sky-400 mt-1"><Briefcase className="w-4 h-4" /></div>
+                      <div>
+                        <div className="font-semibold text-sm text-white capitalize">{profile.experienceLevel} Level</div>
+                        <div className="text-xs text-slate-400">Self-declared & verified</div>
+                      </div>
+                    </li>
+                  )}
+                  {(profile as any).isPro && (
+                    <li className="flex items-start gap-3">
+                      <div className="bg-amber-500/10 p-2 rounded-lg text-amber-400 mt-1"><Award className="w-4 h-4" /></div>
+                      <div>
+                        <div className="font-semibold text-sm text-white">Pro Member</div>
+                        <div className="text-xs text-slate-400">Premium plan subscriber</div>
+                      </div>
+                    </li>
+                  )}
                 </ul>
               </div>
             </div>
@@ -428,35 +546,138 @@ export default function FreelancerProfile() {
                   </div>
 
                   <TabsContent value="portfolio" className="p-6">
-                    {isOwnProfile && (
-                      <div className="mb-8">
-                        <div className="flex items-center justify-between mb-4">
-                          <h3 className="text-lg font-bold text-emerald-400">Upload Portfolio Items</h3>
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button size="sm">
-                                <Edit className="w-4 h-4 mr-2" />
-                                Manage Portfolio
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-2xl">
-                              <DialogHeader>
-                                <DialogTitle>Update Your Portfolio</DialogTitle>
-                              </DialogHeader>
-                              <PortfolioUploader />
-                            </DialogContent>
-                          </Dialog>
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-base font-semibold text-slate-300">Work Samples &amp; Projects</h3>
+                      {isOwnProfile && (
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button size="sm" variant="outline" data-testid="button-manage-portfolio">
+                              <Edit className="w-4 h-4 mr-2" /> Manage Portfolio
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-2xl bg-slate-900 border-slate-700">
+                            <DialogHeader>
+                              <DialogTitle className="text-white">Update Your Portfolio</DialogTitle>
+                            </DialogHeader>
+                            <PortfolioUploader />
+                          </DialogContent>
+                        </Dialog>
+                      )}
+                    </div>
+
+                    {(profile.portfolioLinks || []).length > 0 ? (
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        {(profile.portfolioLinks || []).map((link, i) => {
+                          const domain = getDomainLabel(link);
+                          const favicon = getFaviconUrl(link);
+                          const href = link.startsWith("http") ? link : `https://${link}`;
+                          return (
+                            <a
+                              key={i}
+                              href={href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              data-testid={`portfolio-link-${i}`}
+                              className="group flex items-center gap-4 p-4 bg-slate-800/60 border border-slate-700 hover:border-emerald-500/50 hover:bg-slate-800 rounded-xl transition-all duration-200"
+                            >
+                              <div className="w-10 h-10 rounded-lg bg-slate-700 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                {favicon ? (
+                                  <img src={favicon} alt={domain} className="w-5 h-5" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                                ) : (
+                                  <ExternalLink className="w-4 h-4 text-slate-400" />
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="font-semibold text-sm text-white truncate">{domain}</div>
+                                <div className="text-xs text-slate-400 truncate">{href}</div>
+                              </div>
+                              <ExternalLink className="w-4 h-4 text-slate-500 group-hover:text-emerald-400 transition-colors flex-shrink-0" />
+                            </a>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="py-16 text-center border-2 border-dashed border-slate-800 rounded-xl">
+                        <div className="w-14 h-14 rounded-full bg-slate-800 flex items-center justify-center mx-auto mb-4">
+                          <Briefcase className="w-7 h-7 text-slate-600" />
                         </div>
+                        <h4 className="font-semibold text-slate-300 mb-1">No portfolio items yet</h4>
+                        {isOwnProfile ? (
+                          <p className="text-sm text-slate-500 mb-4">Add links to your GitHub, Behance, Dribbble, or any project URL.</p>
+                        ) : (
+                          <p className="text-sm text-slate-500">This freelancer hasn't added portfolio links yet.</p>
+                        )}
+                        {isOwnProfile && (
+                          <Button size="sm" variant="outline" onClick={() => setEditOpen(true)} data-testid="button-add-portfolio">
+                            <PlusCircle className="w-4 h-4 mr-2" /> Add Portfolio Links
+                          </Button>
+                        )}
                       </div>
                     )}
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div className="col-span-full py-12 text-center border-2 border-dashed border-slate-800 rounded-xl">
-                        <p className="text-slate-400">Portfolio items can be managed from your profile editor.</p>
-                      </div>
-                    </div>
                   </TabsContent>
 
                   <TabsContent value="reviews" className="p-6 space-y-6">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-base font-semibold text-slate-300">
+                        {reviews.length > 0
+                          ? `${reviews.length} review${reviews.length !== 1 ? "s" : ""}`
+                          : "Client Reviews"}
+                      </h3>
+                      {!isOwnProfile && user && (
+                        <Dialog open={reviewOpen} onOpenChange={setReviewOpen}>
+                          <DialogTrigger asChild>
+                            <Button size="sm" variant="outline" data-testid="button-write-review">
+                              <PlusCircle className="w-4 h-4 mr-2" /> Write a Review
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-md bg-slate-900 border-slate-700">
+                            <DialogHeader>
+                              <DialogTitle className="text-white">Leave a Review</DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-4 pt-2">
+                              <div>
+                                <Label className="text-slate-300 mb-2 block">Rating</Label>
+                                <div className="flex gap-1">
+                                  {[1, 2, 3, 4, 5].map((star) => (
+                                    <button
+                                      key={star}
+                                      type="button"
+                                      onClick={() => setReviewRating(star)}
+                                      className="focus:outline-none"
+                                      data-testid={`star-rating-${star}`}
+                                    >
+                                      <Star className={`w-7 h-7 transition-colors ${star <= reviewRating ? "text-amber-400 fill-amber-400" : "text-slate-600 hover:text-amber-300"}`} />
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                              <div>
+                                <Label className="text-slate-300 mb-2 block">Your Review</Label>
+                                <Textarea
+                                  placeholder="Describe your experience working with this freelancer…"
+                                  value={reviewComment}
+                                  onChange={(e) => setReviewComment(e.target.value)}
+                                  className="min-h-[100px] bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
+                                  data-testid="input-review-comment"
+                                />
+                              </div>
+                              <div className="flex justify-end gap-3">
+                                <Button variant="outline" onClick={() => setReviewOpen(false)}>Cancel</Button>
+                                <Button
+                                  onClick={() => submitReviewMutation.mutate()}
+                                  disabled={submitReviewMutation.isPending || reviewComment.trim().length < 10}
+                                  data-testid="button-submit-review"
+                                >
+                                  {submitReviewMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                                  Submit Review
+                                </Button>
+                              </div>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                      )}
+                    </div>
+
                     {isLoadingReviews ? (
                       <div className="flex justify-center py-8">
                         <Loader2 className="w-6 h-6 animate-spin text-emerald-400" />
@@ -465,24 +686,36 @@ export default function FreelancerProfile() {
                       reviews.map((review) => (
                         <div key={review.id} className="pb-6 border-b border-slate-800 last:border-0 last:pb-0">
                           <div className="flex justify-between items-start mb-2">
-                            <h4 className="font-bold text-emerald-400">Project Review</h4>
-                            <div className="flex text-accent">
-                              {[...Array(5)].map((_, i) => (
-                                <Star key={i} className={`w-4 h-4 ${i < (review.rating || 0) ? "fill-current" : "text-muted"}`} />
-                              ))}
+                            <h4 className="font-semibold text-white">Verified Client</h4>
+                            <div className="flex items-center gap-1.5">
+                              <div className="flex">
+                                {[...Array(5)].map((_, i) => (
+                                  <Star key={i} className={`w-3.5 h-3.5 ${i < (review.rating || 0) ? "text-amber-400 fill-amber-400" : "text-slate-600"}`} />
+                                ))}
+                              </div>
+                              <span className="text-xs text-slate-400 font-semibold">{review.rating?.toFixed(1)}</span>
                             </div>
                           </div>
-                          <p className="text-slate-400 italic mb-3">"{review.comment}"</p>
-                          <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
-                            <span className="bg-secondary px-2 py-1 rounded">
-                              {review.createdAt ? new Date(review.createdAt).toLocaleDateString() : "Recently"}
-                            </span>
-                          </div>
+                          <p className="text-slate-300 leading-relaxed mb-3">"{review.comment}"</p>
+                          <span className="text-xs text-slate-500">
+                            {review.createdAt ? new Date(review.createdAt).toLocaleDateString("en-ZA", { year: "numeric", month: "long", day: "numeric" }) : "Recently"}
+                          </span>
                         </div>
                       ))
                     ) : (
-                      <div className="text-center py-12">
-                        <p className="text-slate-400">No reviews yet.</p>
+                      <div className="text-center py-16 border-2 border-dashed border-slate-800 rounded-xl">
+                        <div className="w-14 h-14 rounded-full bg-slate-800 flex items-center justify-center mx-auto mb-4">
+                          <Star className="w-7 h-7 text-slate-600" />
+                        </div>
+                        <h4 className="font-semibold text-slate-300 mb-1">No reviews yet</h4>
+                        <p className="text-sm text-slate-500 mb-4">
+                          {isOwnProfile ? "Reviews from clients will appear here after completed projects." : "Be the first to review this freelancer."}
+                        </p>
+                        {!isOwnProfile && user && (
+                          <Button size="sm" variant="outline" onClick={() => setReviewOpen(true)} data-testid="button-first-review">
+                            <PlusCircle className="w-4 h-4 mr-2" /> Write First Review
+                          </Button>
+                        )}
                       </div>
                     )}
                   </TabsContent>

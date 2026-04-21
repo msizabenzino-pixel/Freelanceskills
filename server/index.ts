@@ -165,6 +165,40 @@ app.use(["/api/cv/parse", "/api/opportunities/search"], (req, res, next) => {
   next();
 });
 
+// ── Auth endpoint rate limiter (brute-force protection) ───────────────────────
+// Max 10 login/register attempts per IP per 15-minute window.
+const authRateLimitMap = new Map<string, { count: number; resetTime: number }>();
+app.use(["/api/auth/login", "/api/auth/register", "/api/login", "/api/register", "/api/auth"], (req, res, next) => {
+  if (req.method !== "POST") return next();
+  const ip = req.ip || req.socket.remoteAddress || "unknown";
+  const now = Date.now();
+  const windowMs = 900000; // 15 minutes
+  const maxRequests = 10;
+
+  const entry = authRateLimitMap.get(ip);
+  if (!entry || now > entry.resetTime) {
+    authRateLimitMap.set(ip, { count: 1, resetTime: now + windowMs });
+    return next();
+  }
+  entry.count++;
+  if (entry.count > maxRequests) {
+    const retryAfter = Math.ceil((entry.resetTime - now) / 1000);
+    res.setHeader("Retry-After", retryAfter.toString());
+    return res.status(429).json({
+      message: "Too many authentication attempts. Please wait 15 minutes before trying again.",
+      retryAfter,
+    });
+  }
+  next();
+});
+
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, entry] of authRateLimitMap) {
+    if (now > entry.resetTime) authRateLimitMap.delete(key);
+  }
+}, 60000);
+
 app.use("/api/", (req: Request, res: Response, next: NextFunction) => {
   const exemptPaths = [
     "/api/health", "/api/metrics", "/api/metrics/prometheus",
