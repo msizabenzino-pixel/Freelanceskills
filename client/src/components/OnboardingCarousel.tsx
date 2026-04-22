@@ -72,6 +72,7 @@ const HIRE_TYPES = [
 ];
 
 const AUTH_PATHS = ["/login", "/auth", "/onboarding", "/profile-builder", "/signup"];
+const HOME_ONLY = true; // Only show carousel on the home page ("/"), never block content pages
 
 type Step = "slides" | "role" | "skills" | "rate" | "portfolio" | "hire_type" | "budget";
 
@@ -96,7 +97,10 @@ export function OnboardingCarousel() {
 
   useEffect(() => {
     const path = window.location.pathname.toLowerCase();
+    // Never block auth pages or CV upload flow
     if (AUTH_PATHS.some((p) => path.startsWith(p))) return;
+    // Only show carousel on the home page — never block /jobs, /find-talent, etc.
+    if (HOME_ONLY && path !== "/") return;
 
     // Fast path: already dismissed/completed
     if (localStorage.getItem("onboarding_completed")) return;

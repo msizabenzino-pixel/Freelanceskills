@@ -110,9 +110,9 @@ export function Footer() {
             <h4 className="font-bold text-primary mb-4">For Talent</h4>
             <ul className="space-y-1 text-sm text-muted-foreground">
               <li><Link href="/how-to-get-hired" className="hover:text-primary transition-colors py-2 block" data-testid="link-how-to-get-hired">How to Get Hired</Link></li>
-              <li><Link href="/job-board" className="hover:text-primary transition-colors py-2 block" data-testid="link-job-board">Global Job Board</Link></li>
+              <li><Link href="/jobs" className="hover:text-primary transition-colors py-2 block" data-testid="link-job-board">Global Job Board</Link></li>
               <li><Link href="/cv-upload" className="hover:text-primary transition-colors py-2 block" data-testid="link-cv-upload">Upload CV & Create Profile</Link></li>
-              <li><Link href="/opportunity-finder" className="hover:text-primary transition-colors py-2 block" data-testid="link-opportunity-finder">AI Opportunity Finder</Link></li>
+              <li><Link href="/explore" className="hover:text-primary transition-colors py-2 block" data-testid="link-opportunity-finder">AI Opportunity Finder</Link></li>
               <li><Link href="/jobs" className="hover:text-primary transition-colors py-2 block" data-testid="link-browse-jobs">Browse Jobs</Link></li>
               <li><Link href="/pricing" className="hover:text-primary transition-colors py-2 block" data-testid="link-fees-earnings">Fees & Earnings</Link></li>
             </ul>
@@ -136,12 +136,12 @@ export function Footer() {
           <div>
             <h4 className="font-bold text-primary mb-4">Innovation</h4>
             <ul className="space-y-1 text-sm text-muted-foreground">
-              <li><Link href="/ai-match" className="hover:text-primary transition-colors py-2 block" data-testid="link-ai-match">AI Smart Matching</Link></li>
+              <li><Link href="/explore" className="hover:text-primary transition-colors py-2 block" data-testid="link-ai-match">AI Smart Matching</Link></li>
               <li><Link href="/credentials" className="hover:text-primary transition-colors py-2 block" data-testid="link-credentials">Blockchain Credentials</Link></li>
               <li><Link href="/payments-hub" className="hover:text-primary transition-colors py-2 block" data-testid="link-payments-hub">Payments Hub</Link></li>
-              <li><Link href="/analytics" className="hover:text-primary transition-colors py-2 block" data-testid="link-analytics">Freelancer Analytics</Link></li>
+              <li><Link href="/dashboard" className="hover:text-primary transition-colors py-2 block" data-testid="link-analytics">Freelancer Analytics</Link></li>
               <li><Link href="/sustainability" className="hover:text-primary transition-colors py-2 block" data-testid="link-sustainability">Green Impact</Link></li>
-              <li><Link href="/accessibility" className="hover:text-primary transition-colors py-2 block" data-testid="link-accessibility">Accessibility</Link></li>
+              <li><Link href="/support" className="hover:text-primary transition-colors py-2 block" data-testid="link-accessibility">Accessibility</Link></li>
             </ul>
           </div>
         </div>
@@ -154,7 +154,7 @@ export function Footer() {
           <div className="flex flex-col md:flex-row gap-6 items-center">
             <Link href="/terms" className="hover:text-primary" data-testid="link-terms">Terms of Service</Link>
             <Link href="/privacy" className="hover:text-primary" data-testid="link-privacy">Privacy Policy</Link>
-            <Link href="/accessibility" className="hover:text-primary" data-testid="link-footer-accessibility">Accessibility</Link>
+            <Link href="/support" className="hover:text-primary" data-testid="link-footer-accessibility">Accessibility</Link>
             <a href="mailto:feedback@freelanceskills.co.za" className="hover:text-primary" data-testid="link-feedback">Suggest a Feature / Report Issue</a>
             <div className="flex items-center gap-1">
               <span>🇿🇦</span>
