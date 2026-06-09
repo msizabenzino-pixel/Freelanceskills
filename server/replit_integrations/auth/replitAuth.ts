@@ -7,10 +7,15 @@ export function getSession() {
   const pgStore = connectPg(session);
   const sessionStore = new pgStore({
     conString: process.env.DATABASE_URL,
-    createTableIfMissing: false,
+    createTableIfMissing: true,
     ttl: sessionTtl,
     tableName: "sessions",
   });
+  // auto-detect HTTPS so cookies work on both Replit dev (HTTP) and production (HTTPS)
+  // replit.dev = HTTP (insecure), replit.app = HTTPS (secure)
+  const isSecure = (process.env.REPLIT_DOMAINS || "").includes("replit.app") ||
+    (!(process.env.REPLIT_DOMAINS || "").includes("replit.dev") &&
+     process.env.NODE_ENV === "production");
   return session({
     secret: process.env.SESSION_SECRET || "freelanceskills-secret-key-change-in-production",
     store: sessionStore,
@@ -18,7 +23,7 @@ export function getSession() {
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: true,
+      secure: isSecure,
       sameSite: "lax",
       maxAge: sessionTtl,
     },

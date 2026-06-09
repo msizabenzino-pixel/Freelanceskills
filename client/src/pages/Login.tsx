@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import { loginWithEmail, loginWithGoogle } from "@/lib/firebaseAuth";
+import { syncSessionNow } from "@/hooks/use-auth";
 import { consumePendingAuthRedirect } from "@/lib/authRedirect";
 
 interface BeforeInstallPromptEvent extends Event {
@@ -97,6 +98,8 @@ export default function Login() {
     setIsLoading(true);
     try {
       await loginWithEmail({ email, password });
+      // Sync Express session before any navigation — closes the Firebase → server gap
+      await syncSessionNow();
       toast({ title: "Welcome back!", description: "You are now logged in." });
       handlePostAuthRedirect();
     } catch (err: any) {
@@ -130,6 +133,8 @@ export default function Login() {
     setIsGoogleLoading(true);
     try {
       const result = await loginWithGoogle();
+      // Sync Express session before navigating — the session is NOT synced automatically
+      await syncSessionNow();
       handleSocialAuthSuccess(result);
     } catch (err: any) {
       const message =

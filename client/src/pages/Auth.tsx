@@ -14,7 +14,6 @@ import {
   loginWithEmail,
   loginWithGoogle,
   registerWithEmail,
-  sendFirebaseResetEmail,
 } from "@/lib/firebaseAuth";
 import { syncSessionNow } from "@/hooks/use-auth";
 import { isFirebaseConfigured, trackFirebaseEvent } from "@/lib/firebase";
@@ -188,10 +187,21 @@ export default function Auth() {
   });
 
   const forgotPasswordMutation = useMutation({
-    mutationFn: sendFirebaseResetEmail,
-    onSuccess: () => {
-      setResetLink("Check your email inbox for the reset link.");
-      toast({ 
+    mutationFn: async (email: string) => {
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "Failed to request reset link");
+      }
+      return res.json();
+    },
+    onSuccess: (data) => {
+      setResetLink(data.resetLink || "Check your email inbox for the reset link.");
+      toast({
         title: "Reset email sent",
         description: "If an account exists with this email, a reset link has been sent to your inbox."
       });
