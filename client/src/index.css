@@ -161,6 +161,40 @@
   * {
     @apply border-border;
   }
+
+  /* ── Global input visibility fix ───────────────────────────────────────────
+     Ensures every <input>, <textarea>, and <select> is readable regardless of
+     whether it uses shadcn/ui wrappers or raw Tailwind classes.
+  ──────────────────────────────────────────────────────────────────────────── */
+  /* ── Global input visibility ─────────────────────────────────────────────
+     Ensures inputs that use theme-based colour tokens (bg-secondary,
+     border-input) without an explicit text colour get readable text.
+     This catches shadcn/ui components and anything else that leans on
+     the design-token variables. Tailwind utility classes (text-white,
+     bg-slate-800, etc.) always override because they are more specific.
+  ──────────────────────────────────────────────────────────────────────────── */
+  input, textarea, select {
+    color: hsl(var(--foreground));
+  }
+  input::placeholder, textarea::placeholder {
+    color: hsl(var(--muted-foreground));
+  }
+  /* Chrome / Safari autofill fix — dark backgrounds need forced text colour */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus {
+    -webkit-text-fill-color: hsl(var(--foreground)) !important;
+    -webkit-box-shadow: 0 0 0px 1000px hsl(var(--input)) inset !important;
+    box-shadow: 0 0 0px 1000px hsl(var(--input)) inset !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
   body {
     @apply font-sans antialiased bg-background text-foreground selection:bg-primary/20 selection:text-foreground;
     background-image:
