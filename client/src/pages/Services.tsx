@@ -4,26 +4,16 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useLocation, useSearch } from "wouter";
 import { useMemo, useState } from "react";
 import { useCurrency } from "@/lib/currency";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/use-auth";
-import {
-  createBooking,
-  createServiceRequest,
-  fetchServicesFromFirestore,
-  fetchTaskersFromFirestore,
-  type ServiceItem,
-  type Tasker,
-} from "@/lib/firebaseAppData";
+import { useQuery } from "@tanstack/react-query";
+import { apiJson } from "@/lib/api";
 import {
   Search,
   MapPin,
   Clock,
   Star,
-  CheckCircle2,
   Zap,
   Wrench,
   Sparkles,
@@ -38,6 +28,9 @@ import {
   ArrowRight,
   Loader2,
   AlertCircle,
+  Verified,
+  CircleDollarSign,
+  CheckCircle2,
 } from "lucide-react";
 
 const categories = [
@@ -55,6 +48,29 @@ function normalize(value: string) {
   return value.trim().toLowerCase();
 }
 
+export interface ServiceResult {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  priceFrom: number;
+  duration: string;
+  bookingCount: number;
+  taskerId: string;
+  taskerName: string;
+  location: string;
+  rating: number;
+  completedJobs: number;
+  isPro: boolean;
+  verified: boolean;
+  photoUrl: string | null;
+  skills: string[];
+  hourlyRate: number;
+  availability: string;
+  availableNow: boolean;
+  bio?: string;
+}
+
 export default function Services() {
   const searchParams = useSearch();
   const urlParams = new URLSearchParams(searchParams);
@@ -64,45 +80,40 @@ export default function Services() {
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [locationQuery, setLocationQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory || null);
-  const [activeService, setActiveService] = useState<ServiceItem | null>(null);
   const [statusText, setStatusText] = useState<string | null>(null);
   const { formatAmount } = useCurrency();
   const [, navigate] = useLocation();
-  const { user } = useAuth();
 
-  const servicesQuery = useQuery({
-    queryKey: ["firebase", "services"],
-    queryFn: fetchServicesFromFirestore,
+  const servicesQuery = useQuery<{ services: ServiceResult[]; total: number }>({
+    queryKey: ["services", selectedCategory, searchQuery, locationQuery],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (selectedCategory) params.set("category", selectedCategory);
+      if (searchQuery) params.set("q", searchQuery);
+      if (locationQuery) params.set("location", locationQuery);
+      const res = await apiJson<any>(`/api/services/search?${params.toString()}`, { method: "GET" });
+      return res;
+    },
+    staleTime: 30000,
   });
 
-  const taskersQuery = useQuery({
-    queryKey: ["firebase", "taskers"],
-    queryFn: fetchTaskersFromFirestore,
-  });
-
-  const taskersById = useMemo(() => {
-    const map = new Map<string, Tasker>();
-    for (const tasker of taskersQuery.data || []) {
-      map.set(tasker.id, tasker);
-    }
-    return map;
-  }, [taskersQuery.data]);
+  const allServices = servicesQuery.data?.services ?? [];
 
   const filteredServices = useMemo(() => {
     const q = normalize(searchQuery);
     const loc = normalize(locationQuery);
 
-    return (servicesQuery.data || []).filter((service) => {
+    if (!q && !loc) return allServices;
+
+    return allServices.filter((service: ServiceResult) => {
       const title = normalize(service.title || "");
       const description = normalize(service.description || "");
       const category = normalize(service.category || "");
       const location = normalize(service.location || "");
       const taskerName = normalize(service.taskerName || "");
+      const skills = (service.skills || []).join(" ").toLowerCase();
 
-      if (selectedCategory && category !== normalize(selectedCategory)) {
-        return false;
-      }
-      if (q && !`${title} ${description} ${taskerName} ${category}`.includes(q)) {
+      if (q && !`${title} ${description} ${taskerName} ${category} ${skills}`.includes(q)) {
         return false;
       }
       if (loc && !location.includes(loc)) {
@@ -110,36 +121,10 @@ export default function Services() {
       }
       return true;
     });
-  }, [locationQuery, searchQuery, selectedCategory, servicesQuery.data]);
+  }, [allServices, locationQuery, searchQuery]);
 
-  const createBookingMutation = useMutation({
-    mutationFn: async (service: ServiceItem) => {
-      if (!user?.id) throw new Error("Please sign in to book a tasker.");
-      await createBooking({
-        serviceId: service.id,
-        userId: user.id,
-        taskerId: service.taskerId,
-        note: `Booking request for ${service.title}`,
-      });
-      await createServiceRequest({
-        userId: user.id,
-        serviceId: service.id,
-        category: service.category,
-        request: service.title,
-        location: locationQuery.trim() || service.location,
-      });
-    },
-    onSuccess: () => {
-      setStatusText("Tasker booked successfully. Your request has been saved.");
-      setActiveService(null);
-    },
-    onError: (error: Error) => {
-      setStatusText(error.message);
-    },
-  });
-
-  const isLoading = servicesQuery.isLoading || taskersQuery.isLoading;
-  const hasError = servicesQuery.isError || taskersQuery.isError;
+  const isLoading = servicesQuery.isLoading;
+  const hasError = servicesQuery.isError;
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50 flex flex-col">
@@ -182,7 +167,10 @@ export default function Services() {
                   className="h-14 px-8 bg-accent hover:bg-accent/90 text-white shadow-lg"
                   type="button"
                   data-testid="button-search-services"
-                  onClick={() => setStatusText(`Showing ${filteredServices.length} matching services.`)}
+                  onClick={() => {
+                    servicesQuery.refetch();
+                    setStatusText(`Showing ${filteredServices.length} matching services.`);
+                  }}
                 >
                   <Search className="w-5 h-5 mr-2" />
                   Search
@@ -194,15 +182,22 @@ export default function Services() {
 
         <div className="container mx-auto px-4 md:px-6 py-12">
           {statusText && (
-            <div className="mb-6 rounded-lg border border-border bg-card p-3 text-sm text-foreground">{statusText}</div>
+            <div className="mb-6 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-300 flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4" />
+              {statusText}
+            </div>
           )}
 
-          <h2 className="text-2xl font-bold text-primary mb-6">Search by Category</h2>
+          <h2 className="text-2xl font-bold text-white mb-6">Search by Category</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
             {categories.map((category) => (
               <button
                 key={category.id}
-                onClick={() => setSelectedCategory(selectedCategory === category.id ? null : category.id)}
+                onClick={() => {
+                  const next = selectedCategory === category.id ? null : category.id;
+                  setSelectedCategory(next);
+                  servicesQuery.refetch();
+                }}
                 className={`p-4 rounded-xl border-2 transition-all text-left hover:shadow-lg ${
                   selectedCategory === category.id
                     ? "border-emerald-500/50 bg-emerald-500/10"
@@ -219,13 +214,13 @@ export default function Services() {
           </div>
 
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-primary">
+            <h2 className="text-2xl font-bold text-white">
               {searchQuery ? `Results for "${searchQuery}"` : "Available Services"}
-              <span className="text-sm font-normal text-muted-foreground ml-2">({filteredServices.length})</span>
+              <span className="text-sm font-normal text-slate-400 ml-2">({filteredServices.length})</span>
             </h2>
             <button
               onClick={() => navigate("/jobs")}
-              className="text-primary hover:text-accent flex items-center gap-1 font-medium transition-colors"
+              className="text-emerald-400 hover:text-emerald-300 flex items-center gap-1 font-medium transition-colors"
               data-testid="button-view-all-services"
             >
               Browse All Jobs <ArrowRight className="w-4 h-4" />
@@ -234,23 +229,23 @@ export default function Services() {
 
           {isLoading && (
             <div className="flex items-center justify-center py-12" data-testid="loading-services">
-              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              <Loader2 className="w-8 h-8 animate-spin text-emerald-400" />
             </div>
           )}
 
           {hasError && !isLoading && (
             <div className="text-center py-16" data-testid="services-error">
-              <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-foreground mb-2">Could not load services</h3>
-              <p className="text-muted-foreground">Please refresh and try again.</p>
+              <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-white mb-2">Could not load services</h3>
+              <p className="text-slate-400">Please refresh and try again.</p>
             </div>
           )}
 
           {!isLoading && !hasError && filteredServices.length === 0 && (
             <div className="text-center py-16" data-testid="empty-services">
-              <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-foreground mb-2">No services found</h3>
-              <p className="text-muted-foreground mb-4">Try different search terms, location, or category.</p>
+              <Search className="w-12 h-12 text-slate-600 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-white mb-2">No services found</h3>
+              <p className="text-slate-400 mb-4">Try different search terms, location, or category.</p>
               <Button
                 variant="outline"
                 onClick={() => {
@@ -267,52 +262,80 @@ export default function Services() {
 
           {!isLoading && !hasError && filteredServices.length > 0 && (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredServices.map((service) => {
-                const tasker = taskersById.get(service.taskerId);
-                return (
-                  <Card
-                    key={service.id}
-                    className="overflow-hidden hover:shadow-xl transition-all group cursor-pointer"
-                    data-testid={`service-${service.id}`}
-                    onClick={() => setActiveService(service)}
-                  >
-                    <div className="p-5">
-                      <div className="flex items-center justify-between mb-3">
-                        <Badge className="bg-accent text-white">{service.category}</Badge>
-                        <div className="flex items-center gap-1 text-amber-500">
-                          <Star className="w-4 h-4 fill-current" />
-                          <span className="text-sm font-semibold">{service.rating || tasker?.rating || 0}</span>
-                        </div>
+              {filteredServices.map((service) => (
+                <Card
+                  key={service.id}
+                  className="overflow-hidden hover:shadow-xl transition-all group cursor-pointer border-slate-800 bg-slate-900/60"
+                  data-testid={`service-${service.id}`}
+                  onClick={() => navigate(`/services/${service.id}`)}
+                >
+                  <div className="p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30">
+                        {service.category}
+                      </Badge>
+                      <div className="flex items-center gap-1 text-amber-400">
+                        <Star className="w-4 h-4 fill-current" />
+                        <span className="text-sm font-semibold">{service.rating ? service.rating.toFixed(1) : "0.0"}</span>
                       </div>
+                    </div>
 
-                      <h3 className="font-bold text-lg text-foreground mb-2 group-hover:text-primary transition-colors">
-                        {service.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground line-clamp-2">{service.description}</p>
+                    <h3 className="font-bold text-lg text-white mb-2 group-hover:text-emerald-400 transition-colors">
+                      {service.title}
+                    </h3>
+                    <p className="text-sm text-slate-400 line-clamp-2">{service.description}</p>
 
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground my-4">
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-4 h-4" /> {service.availability}
+                    <div className="flex items-center gap-4 text-sm text-slate-400 my-4">
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-4 h-4" /> {service.duration}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <MapPin className="w-4 h-4" /> {service.location}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 mb-3 flex-wrap">
+                      {(service.skills || []).slice(0, 3).map((skill) => (
+                        <span key={skill} className="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded">
+                          {skill}
                         </span>
-                        <span className="flex items-center gap-1">
-                          <MapPin className="w-4 h-4" /> {service.location}
-                        </span>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center justify-between pt-3 border-t border-slate-800">
+                      <div>
+                        <span className="text-2xl font-bold text-emerald-400">{formatAmount(service.priceFrom)}</span>
+                        <p className="text-xs text-slate-500">from</p>
                       </div>
-
-                      <div className="flex items-center justify-between pt-3 border-t border-border">
-                        <div>
-                          <span className="text-2xl font-bold text-primary">{formatAmount(service.priceFrom || 0)}</span>
-                          <p className="text-xs text-muted-foreground">from</p>
-                        </div>
-                        <Button className="bg-primary hover:bg-primary/90" data-testid={`button-book-${service.id}`}>
-                          <Zap className="w-4 h-4 mr-1" /> Book Tasker
+                      <div className="flex items-center gap-2">
+                        {service.verified && (
+                          <Verified className="w-4 h-4 text-emerald-400" />
+                        )}
+                        {service.isPro && (
+                          <span className="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-medium">
+                            Pro
+                          </span>
+                        )}
+                        <Button className="bg-emerald-600 hover:bg-emerald-500 text-white" data-testid={`button-book-${service.id}`}>
+                          <Zap className="w-4 h-4 mr-1" /> Book
                         </Button>
                       </div>
-                      <p className="mt-2 text-xs text-muted-foreground">Tasker: {service.taskerName}</p>
                     </div>
-                  </Card>
-                );
-              })}
+                    <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
+                      <CircleDollarSign className="w-3.5 h-3.5" />
+                      <span>{service.taskerName}</span>
+                      <span>· {service.completedJobs} jobs done
+                      </span>
+                      {service.availableNow && (
+                        <span className="text-emerald-400 flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                          Available now
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </Card>
+              ))}
             </div>
           )}
 
@@ -335,61 +358,6 @@ export default function Services() {
           </div>
         </div>
       </main>
-
-      <Dialog open={Boolean(activeService)} onOpenChange={(open) => !open && setActiveService(null)}>
-        <DialogContent className="max-w-xl">
-          {activeService && (
-            <>
-              <DialogHeader>
-                <DialogTitle>{activeService.title}</DialogTitle>
-                <DialogDescription>{activeService.description}</DialogDescription>
-              </DialogHeader>
-
-              <div className="space-y-3 text-sm">
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary">{activeService.category}</Badge>
-                  <Badge>{activeService.availability}</Badge>
-                </div>
-                <p className="text-muted-foreground">Tasker: {activeService.taskerName}</p>
-                <p className="text-muted-foreground">Location: {activeService.location}</p>
-                <p className="text-muted-foreground">Rating: {activeService.rating || 0}</p>
-                <p className="text-xl font-bold text-primary">{formatAmount(activeService.priceFrom || 0)}+</p>
-                <div className="flex gap-3 pt-2">
-                  <Button
-                    onClick={() => {
-                      if (!user?.id) {
-                        navigate(`/auth?redirect=${encodeURIComponent("/services")}`);
-                        return;
-                      }
-                      createBookingMutation.mutate(activeService);
-                    }}
-                    disabled={createBookingMutation.isPending}
-                  >
-                    {createBookingMutation.isPending ? (
-                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Sending...</>
-                    ) : (
-                      <><CheckCircle2 className="w-4 h-4 mr-2" />Book Tasker</>
-                    )}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      if (!user?.id) {
-                        navigate(`/auth?redirect=${encodeURIComponent("/services")}`);
-                        return;
-                      }
-                      createBookingMutation.mutate(activeService);
-                    }}
-                    disabled={createBookingMutation.isPending}
-                  >
-                    Request Service
-                  </Button>
-                </div>
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
 
       <Footer />
     </div>

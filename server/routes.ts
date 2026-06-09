@@ -770,6 +770,258 @@ export async function registerRoutes(
     }
   });
 
+  // ── SERVICES MARKETPLACE (TaskRabbit-style) ──────────────────────────────
+  // GET /api/services/search — enriched service packages with freelancer info
+  app.get("/api/services/search", async (req, res) => {
+    try {
+      const { q, category, location, limit = "50", offset = "0" } = req.query;
+      const { db: _db } = await import("./db");
+      const { servicePackages: sp } = await import("../shared/models/services");
+      const { profiles: prof } = await import("../shared/models/profiles");
+      const { users: u } = await import("../shared/models/auth");
+      const { eq, and, sql, desc } = await import("drizzle-orm");
+
+      const conditions: any[] = [eq(sp.isActive, true)];
+
+      if (category) {
+        conditions.push(sql`${sp.category} ILIKE ${category as string}`);
+      }
+      if (q) {
+        const query = `%${q}%`;
+        conditions.push(
+          sql`(${sp.title} ILIKE ${query} OR ${sp.description} ILIKE ${query} OR ${sp.category} ILIKE ${query})`
+        );
+      }
+      if (location) {
+        const loc = `%${location}%`;
+        conditions.push(sql`${prof.location} ILIKE ${loc}`);
+      }
+
+      const rows = await _db
+        .select({
+          id: sp.id,
+          title: sp.title,
+          description: sp.description,
+          category: sp.category,
+          price: sp.price,
+          duration: sp.duration,
+          bookingCount: sp.bookingCount,
+          createdAt: sp.createdAt,
+          freelancerId: sp.freelancerId,
+          taskerName: sql<string>`COALESCE(${u.firstName} || ' ' || ${u.lastName}, ${u.firstName}, ${prof.title}, 'Freelancer')`,
+          location: prof.location,
+          bio: prof.bio,
+          rating: prof.rating,
+          completedJobs: prof.completedJobs,
+          isPro: prof.isPro,
+          kycStatus: prof.kycStatus,
+          photoUrl: prof.photoUrl,
+          skills: prof.skills,
+          hourlyRate: prof.hourlyRate,
+          availability: prof.availability,
+          availableNow: prof.availableNow,
+        })
+        .from(sp)
+        .innerJoin(prof, eq(sp.freelancerId, prof.userId))
+        .leftJoin(u, eq(sp.freelancerId, u.id))
+        .where(and(...conditions))
+        .orderBy(desc(sp.bookingCount), desc(prof.rating))
+        .limit(parseInt(limit as string))
+        .offset(parseInt(offset as string));
+
+      const results = rows.map((r) => ({
+        id: r.id,
+        title: r.title,
+        description: r.description,
+        category: r.category,
+        priceFrom: r.price,
+        duration: r.duration,
+        bookingCount: r.bookingCount,
+        createdAt: r.createdAt,
+        taskerId: r.freelancerId,
+        taskerName: r.taskerName,
+        location: r.location || "South Africa",
+        rating: r.rating ? r.rating / 100 : 0,
+        completedJobs: r.completedJobs || 0,
+        isPro: r.isPro,
+        verified: r.kycStatus === "verified",
+        photoUrl: r.photoUrl,
+        skills: r.skills || [],
+        hourlyRate: r.hourlyRate,
+        availability: r.availability || "Available",
+        availableNow: r.availableNow,
+        bio: r.bio,
+      }));
+
+      res.json({ services: results, total: results.length });
+    } catch (error) {
+      console.error("[services/search] error:", error);
+      res.status(500).json({ message: "Failed to search services" });
+    }
+  });
+
+  // GET /api/services/:id — single service with full freelancer profile
+  app.get("/api/services/:id", async (req, res) => {
+    try {
+      const { db: _db } = await import("./db");
+      const { servicePackages: sp } = await import("../shared/models/services");
+      const { profiles: prof } = await import("../shared/models/profiles");
+      const { users: u } = await import("../shared/models/auth");
+      const { eq, sql } = await import("drizzle-orm");
+
+      const [row] = await _db
+        .select({
+          id: sp.id,
+          title: sp.title,
+          description: sp.description,
+          category: sp.category,
+          price: sp.price,
+          duration: sp.duration,
+          bookingCount: sp.bookingCount,
+          createdAt: sp.createdAt,
+          freelancerId: sp.freelancerId,
+          taskerName: sql<string>`COALESCE(${u.firstName} || ' ' || ${u.lastName}, ${u.firstName}, ${prof.title}, 'Freelancer')`,
+          location: prof.location,
+          bio: prof.bio,
+          rating: prof.rating,
+          completedJobs: prof.completedJobs,
+          isPro: prof.isPro,
+          kycStatus: prof.kycStatus,
+          photoUrl: prof.photoUrl,
+          skills: prof.skills,
+          hourlyRate: prof.hourlyRate,
+          availability: prof.availability,
+          availableNow: prof.availableNow,
+          experienceLevel: prof.experienceLevel,
+          certifications: prof.certifications,
+          languages: prof.languages,
+          portfolioUrl: prof.portfolioUrl,
+          linkedinUrl: prof.linkedinUrl,
+          githubUrl: prof.githubUrl,
+        })
+        .from(sp)
+        .innerJoin(prof, eq(sp.freelancerId, prof.userId))
+        .leftJoin(u, eq(sp.freelancerId, u.id))
+        .where(eq(sp.id, req.params.id))
+        .limit(1);
+
+      if (!row) {
+        return res.status(404).json({ message: "Service not found" });
+      }
+
+      // Fetch reviews
+      const reviews = await storage.getFreelancerReviews(row.freelancerId);
+      const avgRating = reviews.length
+        ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+        : 0;
+
+      res.json({
+        id: row.id,
+        title: row.title,
+        description: row.description,
+        category: row.category,
+        priceFrom: row.price,
+        duration: row.duration,
+        bookingCount: row.bookingCount,
+        createdAt: row.createdAt,
+        taskerId: row.freelancerId,
+        taskerName: row.taskerName,
+        location: row.location || "South Africa",
+        rating: row.rating ? row.rating / 100 : avgRating,
+        completedJobs: row.completedJobs || 0,
+        isPro: row.isPro,
+        verified: row.kycStatus === "verified",
+        photoUrl: row.photoUrl,
+        skills: row.skills || [],
+        hourlyRate: row.hourlyRate,
+        availability: row.availability || "Available",
+        availableNow: row.availableNow,
+        bio: row.bio,
+        experienceLevel: row.experienceLevel,
+        certifications: row.certifications,
+        languages: row.languages || [],
+        portfolioUrl: row.portfolioUrl,
+        linkedinUrl: row.linkedinUrl,
+        githubUrl: row.githubUrl,
+        reviews: reviews.map((r) => ({
+          id: r.id,
+          rating: r.rating,
+          comment: r.comment,
+          createdAt: r.createdAt,
+        })),
+      });
+    } catch (error) {
+      console.error("[services/:id] error:", error);
+      res.status(500).json({ message: "Failed to fetch service" });
+    }
+  });
+
+  // POST /api/services/seed — seed demo service packages (admin only, no auth for now)
+  app.post("/api/services/seed", async (_req, res) => {
+    try {
+      const { db: _db } = await import("./db");
+      const { servicePackages: sp } = await import("../shared/models/services");
+      const { profiles: prof } = await import("../shared/models/profiles");
+      const { eq, sql } = await import("drizzle-orm");
+
+      // Get active freelancer profiles
+      const freelancerProfiles = await _db
+        .select({ userId: prof.userId, title: prof.title, location: prof.location, skills: prof.skills })
+        .from(prof)
+        .where(eq(prof.userType, "freelancer"))
+        .limit(20);
+
+      if (freelancerProfiles.length === 0) {
+        return res.json({ message: "No freelancers found to seed services" });
+      }
+
+      const demoServices = [
+        { title: "Emergency Plumbing Repair", description: "Fast plumbing repairs for leaks, blocked drains, and geysers. Available 24/7 for urgent calls.", category: "trades", price: 850, duration: "2 hours" },
+        { title: "House Cleaning Service", description: "Deep cleaning for apartments and family homes. Includes kitchen, bathrooms, floors, and dusting.", category: "cleaning", price: 650, duration: "4 hours" },
+        { title: "React Web Development", description: "Landing pages, dashboards, and web app development. Modern React + TypeScript stack.", category: "tech", price: 750, duration: "Per project" },
+        { title: "Garden & Landscaping", description: "Lawn mowing, hedge trimming, garden design, and planting. Seasonal maintenance plans available.", category: "home", price: 550, duration: "3 hours" },
+        { title: "Office Security Assessment", description: "Comprehensive security audit for businesses. Risk assessment, CCTV planning, and access control.", category: "safety", price: 1200, duration: "1 day" },
+        { title: "Furniture Moving & Delivery", description: "Safe transport of furniture, appliances, and fragile items. Insurance included.", category: "moving", price: 900, duration: "Half day" },
+        { title: "Logo & Brand Identity Design", description: "Professional logo design, brand guidelines, and visual identity packages.", category: "creative", price: 2500, duration: "1 week" },
+        { title: "Event Photography", description: "Corporate events, weddings, and product shoots. High-res delivery with editing.", category: "events", price: 1800, duration: "Half day" },
+        { title: "Electrical Repairs & Installation", description: "Licensed electrician for home and commercial wiring, repairs, and installations.", category: "trades", price: 950, duration: "2 hours" },
+        { title: "Carpet & Upholstery Cleaning", description: "Steam cleaning for carpets, sofas, and mattresses. Pet stain removal specialists.", category: "cleaning", price: 480, duration: "3 hours" },
+        { title: "Mobile App Development (Flutter)", description: "Cross-platform iOS and Android apps. From MVP to production-ready.", category: "tech", price: 2500, duration: "Per project" },
+        { title: "Pool Cleaning & Maintenance", description: "Weekly pool cleaning, chemical balancing, equipment repairs, and seasonal opening/closing.", category: "home", price: 400, duration: "1 hour" },
+        { title: "Fire Safety Compliance Audit", description: "Fire extinguisher inspection, evacuation planning, and compliance certification.", category: "safety", price: 1500, duration: "Half day" },
+        { title: "Packing & Unpacking Service", description: "Professional packing for home moves. Supplies included. Fragile items handled with care.", category: "moving", price: 600, duration: "4 hours" },
+        { title: "Social Media Content Creation", description: "Instagram, TikTok, and LinkedIn content. Strategy, design, and posting schedule.", category: "creative", price: 1200, duration: "Per month" },
+        { title: "DJ & Sound Equipment Hire", description: "Professional DJ for events. Sound system, lighting, and MC services included.", category: "events", price: 2000, duration: "Full day" },
+      ];
+
+      const existing = await _db.select({ id: sp.id }).from(sp);
+      if (existing.length > 0) {
+        return res.json({ message: "Services already seeded", count: existing.length });
+      }
+
+      const seeded: any[] = [];
+      for (let i = 0; i < Math.min(demoServices.length, freelancerProfiles.length); i++) {
+        const svc = demoServices[i];
+        const freelancer = freelancerProfiles[i % freelancerProfiles.length];
+        const [pkg] = await _db.insert(sp).values({
+          freelancerId: freelancer.userId,
+          title: svc.title,
+          description: svc.description,
+          category: svc.category,
+          price: svc.price,
+          duration: svc.duration,
+          isActive: true,
+        }).returning();
+        seeded.push(pkg);
+      }
+
+      res.json({ message: `Seeded ${seeded.length} services`, count: seeded.length });
+    } catch (error) {
+      console.error("[services/seed] error:", error);
+      res.status(500).json({ message: "Failed to seed services" });
+    }
+  });
+
   // Booking routes
   app.get("/api/bookings", isAuthenticated, async (req: any, res) => {
     try {

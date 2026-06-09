@@ -31,6 +31,7 @@ const FreelancerProfile = lazy(() => import("@/pages/FreelancerProfile"));
 const PostJob = lazy(() => import("@/pages/PostJob"));
 const ClientDashboard = lazy(() => import("@/pages/ClientDashboard"));
 const Services = lazy(() => import("@/pages/Services"));
+const ServiceDetail = lazy(() => import("@/pages/ServiceDetail"));
 const HowItWorks = lazy(() => import("@/pages/HowItWorks"));
 const HowToHire = lazy(() => import("@/pages/HowToHire"));
 const HowToGetHired = lazy(() => import("@/pages/HowToGetHired"));
@@ -201,6 +202,7 @@ function Router() {
         <Route path="/post-job" component={PostJob} />
         <Route path="/client-dashboard" component={ClientDashboard} />
         <Route path="/services" component={Services} />
+        <Route path="/services/:id" component={ServiceDetail} />
         <Route path="/how-it-works" component={HowItWorks} />
         <Route path="/how-to-hire" component={HowToHire} />
         <Route path="/how-to-get-hired" component={HowToGetHired} />
