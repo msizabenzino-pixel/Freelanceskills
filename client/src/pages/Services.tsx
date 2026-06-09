@@ -358,7 +358,7 @@ export default function Services() {
                   <Button
                     onClick={() => {
                       if (!user?.id) {
-                        navigate(`/login?redirect=${encodeURIComponent("/services")}`);
+                        navigate(`/auth?redirect=${encodeURIComponent("/services")}`);
                         return;
                       }
                       createBookingMutation.mutate(activeService);
@@ -375,7 +375,7 @@ export default function Services() {
                     variant="outline"
                     onClick={() => {
                       if (!user?.id) {
-                        navigate(`/login?redirect=${encodeURIComponent("/services")}`);
+                        navigate(`/auth?redirect=${encodeURIComponent("/services")}`);
                         return;
                       }
                       createBookingMutation.mutate(activeService);

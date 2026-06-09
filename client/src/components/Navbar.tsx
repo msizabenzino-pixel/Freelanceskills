@@ -272,7 +272,7 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
                   Post a Job
                 </button>
               </Link>
-              <Link href="/login">
+              <Link href="/auth">
                 <Button
                   variant="ghost"
                   size="sm"
@@ -402,7 +402,7 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
               </>
             ) : (
               <div className="flex flex-col gap-2">
-                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/auth" onClick={() => setIsMobileMenuOpen(false)}>
                   <Button variant="outline" className="w-full" data-testid="button-mobile-login">Log In</Button>
                 </Link>
                 <Link href="/auth?mode=register" onClick={() => setIsMobileMenuOpen(false)}>

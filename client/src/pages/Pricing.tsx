@@ -145,13 +145,15 @@ export default function Pricing() {
   const handleFreePlanStart = () => {
     if (authLoading) return;
     if (!user?.id) {
+      // Save the free plan selection so it auto-activates after login
       savePendingPlanSelection({
         planType: "free",
         selectedAt: new Date().toISOString(),
       });
-      const redirectTo = "/pricing?activate=free";
+      // Redirect to the unified auth page with dashboard as the post-login destination
+      const redirectTo = "/dashboard";
       savePendingAuthRedirect(redirectTo);
-      navigate(`/login?redirect=${encodeURIComponent(redirectTo)}&plan=free`);
+      navigate(`/auth?redirect=${encodeURIComponent(redirectTo)}&plan=free`);
       return;
     }
     activateFreeMutation.mutate();

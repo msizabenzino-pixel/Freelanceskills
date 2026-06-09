@@ -79,7 +79,7 @@ export default function CommunityPage() {
               <Link href="/signup" className="inline-flex items-center gap-2 px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-2xl shadow-xl shadow-emerald-500/20 transition-all hover:scale-[1.02]" data-testid="button-community-join">
                 <Users className="w-5 h-5" /> Join the Community Free
               </Link>
-              <Link href="/login" className="inline-flex items-center gap-2 px-8 py-4 bg-slate-800 border border-slate-700 hover:bg-slate-700 text-white font-semibold rounded-2xl transition-all" data-testid="button-community-login">
+              <Link href="/auth" className="inline-flex items-center gap-2 px-8 py-4 bg-slate-800 border border-slate-700 hover:bg-slate-700 text-white font-semibold rounded-2xl transition-all" data-testid="button-community-login">
                 Already a member? Sign In
               </Link>
             </div>

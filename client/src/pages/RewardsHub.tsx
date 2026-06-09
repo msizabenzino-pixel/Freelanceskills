@@ -57,7 +57,7 @@ export default function RewardsHub() {
   }
 
   async function handleRedeem(rewardId: string) {
-    if (!user?.id) { navigate("/login"); return; }
+    if (!user?.id) { navigate("/auth"); return; }
     setRedeeming(rewardId);
     try {
       const r = await fetch("/api/rewards/redeem", {
@@ -123,7 +123,7 @@ export default function RewardsHub() {
                     <Zap className="w-4 h-4" /> Join Free — Start Earning
                   </button>
                 </Link>
-                <Link href="/login">
+                <Link href="/auth">
                   <button className="inline-flex items-center gap-2 px-8 py-3.5 border border-slate-700 hover:border-emerald-500/40 text-slate-300 hover:text-emerald-400 font-semibold rounded-xl transition-all">
                     Log In to Your Account
                   </button>

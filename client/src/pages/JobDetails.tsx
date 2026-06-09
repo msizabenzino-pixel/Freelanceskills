@@ -77,7 +77,7 @@ export default function JobDetails() {
                   disabled={alreadyApplied || applyMutation.isPending}
                   onClick={() => {
                     if (!user?.id) {
-                      navigate(`/login?redirect=${encodeURIComponent(`/jobs/${jobQuery.data!.id}`)}`);
+                      navigate(`/auth?redirect=${encodeURIComponent(`/jobs/${jobQuery.data!.id}`)}`);
                       return;
                     }
                     applyMutation.mutate();

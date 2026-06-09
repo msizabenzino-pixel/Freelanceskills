@@ -300,7 +300,7 @@ export default function MyApplications() {
             <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
             <h2 className="text-xl font-bold mb-2">Sign in required</h2>
             <p className="text-muted-foreground mb-4">You need to be signed in to view your applications.</p>
-            <Button onClick={() => navigate("/login")} className="bg-emerald-500 hover:bg-emerald-400 text-white">Sign In</Button>
+            <Button onClick={() => navigate("/auth")} className="bg-emerald-500 hover:bg-emerald-400 text-white">Sign In</Button>
           </div>
         </main>
         <Footer />

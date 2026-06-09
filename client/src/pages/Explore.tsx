@@ -324,7 +324,7 @@ export default function Explore() {
                         return;
                       }
                       if (!user?.id) {
-                        navigate(`/login?redirect=${encodeURIComponent(`/jobs/${job.id}`)}`);
+                        navigate(`/auth?redirect=${encodeURIComponent(`/jobs/${job.id}`)}`);
                         return;
                       }
                       applyMutation.mutate(job);

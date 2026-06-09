@@ -37,7 +37,7 @@ export function RequireAdmin({ children, requiredPermission }: RequireAdminProps
             <CardContent className="py-10 text-center space-y-4">
               <h2 className="text-2xl font-bold text-primary">Sign In Required</h2>
               <p className="text-muted-foreground">You need to sign in with an admin account to access this area.</p>
-              <Button onClick={() => navigate(`/login?redirect=${encodeURIComponent(currentPath)}`)}>
+              <Button onClick={() => navigate(`/auth?redirect=${encodeURIComponent(currentPath)}`)}>
                 <LogIn className="w-4 h-4 mr-2" />
                 Sign In
               </Button>

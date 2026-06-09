@@ -85,7 +85,7 @@ export function AuthRequiredModal({
             className="w-full h-11 border-slate-700 text-slate-300 hover:text-white hover:border-slate-500 rounded-xl gap-2"
             onClick={() => {
               onClose();
-              navigate(`/login?redirect=${encoded}`);
+              navigate(`/auth?redirect=${encoded}`);
             }}
             data-testid="button-auth-modal-login"
           >

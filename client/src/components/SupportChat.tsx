@@ -215,7 +215,7 @@ export function SupportChat() {
             {!user?.id ? (
               <div className="space-y-2">
                 <p className="text-xs text-muted-foreground">Please sign in to send messages.</p>
-                <Button className="w-full" onClick={() => (window.location.href = "/login?redirect=/dashboard")}>Sign in</Button>
+                <Button className="w-full" onClick={() => (window.location.href = "/auth?redirect=/dashboard")}>Sign in</Button>
               </div>
             ) : (
               <>
