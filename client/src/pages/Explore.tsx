@@ -11,12 +11,6 @@ import { JobCard } from "@/components/JobCard";
 import { SERVICE_CATEGORIES } from "@shared/categories";
 import { useAuth } from "@/hooks/use-auth";
 import { useCurrency } from "@/lib/currency";
-import {
-  applyForJobInFirestore,
-  fetchApplicationsForFreelancer,
-  fetchJobsFromFirestore,
-  type Job,
-} from "@/lib/firebaseAppData";
 import { AlertCircle, Briefcase, MapPin, Search, Sparkles, Zap } from "lucide-react";
 
 const STATE_KEY = "freelanceskills_explore_filters";
@@ -30,8 +24,21 @@ interface ExploreFilterState {
   under5kOnly: boolean;
 }
 
-function normalize(value: string) {
-  return value.trim().toLowerCase();
+interface ApiJob {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  locationType: string;
+  location: string | null;
+  budget: number;
+  urgency: string;
+  status: string;
+  clientId: string;
+  clientName?: string;
+  budgetFormatted?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export default function Explore() {
@@ -75,35 +82,70 @@ export default function Explore() {
     return () => clearTimeout(t);
   }, [filters.query]);
 
-  const jobsQuery = useQuery({
-    queryKey: ["firebase", "explore-jobs"],
-    queryFn: fetchJobsFromFirestore,
+  // Build query params from filters
+  const searchParams = useMemo(() => {
+    const params = new URLSearchParams();
+    if (debouncedQuery) params.set("q", debouncedQuery);
+    if (filters.location) params.set("location", filters.location);
+    if (filters.category) params.set("category", filters.category);
+    if (filters.urgentOnly) params.set("urgency", "urgent");
+    if (filters.remoteOnly) params.set("locationType", "remote");
+    if (filters.under5kOnly) {
+      params.set("minBudget", "0");
+      params.set("maxBudget", "5000");
+    }
+    return params;
+  }, [debouncedQuery, filters]);
+
+  const jobsQuery = useQuery<{ jobs: ApiJob[]; total: number }>({
+    queryKey: ["api", "jobs", searchParams.toString()],
+    queryFn: async () => {
+      const res = await fetch(`/api/jobs?${searchParams.toString()}`, { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch jobs");
+      return res.json();
+    },
   });
 
   const myApplicationsQuery = useQuery({
-    queryKey: ["firebase", "explore-my-applications", user?.id],
-    queryFn: () => fetchApplicationsForFreelancer(user!.id),
+    queryKey: ["api", "applications", user?.id],
+    queryFn: async () => {
+      const res = await fetch("/api/applications", { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch applications");
+      return res.json();
+    },
     enabled: Boolean(user?.id),
   });
 
   const appliedJobIds = useMemo(
-    () => new Set((myApplicationsQuery.data || []).map((app) => app.jobId)),
+    () => new Set((myApplicationsQuery.data || []).map((app: any) => app.jobId || app.aggregatedJobId)),
     [myApplicationsQuery.data]
   );
 
   const applyMutation = useMutation({
-    mutationFn: async (job: Job) => {
+    mutationFn: async (job: ApiJob) => {
       if (!user?.id) {
         throw new Error("Please sign in to apply.");
       }
-      return applyForJobInFirestore({
-        jobId: job.id,
-        freelancerId: user.id,
-        freelancerName: user.firstName || user.email || "Freelancer",
+      const res = await fetch("/api/applications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          jobId: job.id,
+          jobTitle: job.title,
+          company: job.clientName || "Client",
+          coverLetter: "",
+          source: "explore",
+        }),
       });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || "Failed to apply");
+      }
+      return res.json();
     },
-    onSuccess: (result) => {
-      setStatusText(result.applied ? "Application submitted." : "You already applied to this job.");
+    onSuccess: () => {
+      setStatusText("Application submitted successfully.");
       myApplicationsQuery.refetch();
     },
     onError: (error: Error) => {
@@ -111,46 +153,14 @@ export default function Explore() {
     },
   });
 
-  const filteredJobs = useMemo(() => {
-    const jobs = jobsQuery.data || [];
-    const q = normalize(debouncedQuery);
-    const location = normalize(filters.location);
-
-    return jobs.filter((job) => {
-      const title = normalize(job.title || "");
-      const description = normalize(job.description || "");
-      const category = normalize(job.category || "");
-      const client = normalize(job.clientName || "");
-      const jobLocation = normalize(job.location || "");
-
-      if (q && !`${title} ${description} ${category} ${client}`.includes(q)) {
-        return false;
-      }
-      if (location && !jobLocation.includes(location)) {
-        return false;
-      }
-      if (filters.category && category !== normalize(filters.category)) {
-        return false;
-      }
-      if (filters.urgentOnly && job.urgency !== "urgent") {
-        return false;
-      }
-      if (filters.remoteOnly && job.locationType !== "remote") {
-        return false;
-      }
-      if (filters.under5kOnly && Number(job.budget || 0) > 5000) {
-        return false;
-      }
-      return true;
-    });
-  }, [jobsQuery.data, debouncedQuery, filters]);
+  const allJobs = jobsQuery.data?.jobs || [];
 
   const recommendedJobs = useMemo(() => {
     if (filters.query.trim() || filters.location.trim() || filters.category || filters.urgentOnly || filters.remoteOnly || filters.under5kOnly) {
-      return filteredJobs;
+      return allJobs;
     }
-    return (jobsQuery.data || []).slice(0, 12);
-  }, [filteredJobs, filters, jobsQuery.data]);
+    return allJobs.slice(0, 12);
+  }, [allJobs, filters]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -190,7 +200,7 @@ export default function Explore() {
                   type="button"
                   onClick={() => {
                     setDebouncedQuery(filters.query);
-                    setStatusText(`Showing ${filteredJobs.length} matching jobs.`);
+                    setStatusText(`Searching...`);
                   }}
                   data-testid="explore-button-search"
                 >
@@ -314,7 +324,7 @@ export default function Explore() {
                     type={job.urgency === "urgent" ? "Urgent" : job.locationType === "remote" ? "Remote" : "On-site"}
                     budget={formatAmount(job.budget || 0)}
                     location={job.location || "Unknown"}
-                    postedAt={job.createdAt ? job.createdAt.toLocaleDateString() : "Recently"}
+                    postedAt={job.createdAt ? new Date(job.createdAt).toLocaleDateString() : "Recently"}
                     tags={[job.category || "General", job.locationType === "remote" ? "Remote" : "On-site"]}
                     description={job.description || "No description provided."}
                     onClick={() => navigate(`/jobs/${job.id}`)}

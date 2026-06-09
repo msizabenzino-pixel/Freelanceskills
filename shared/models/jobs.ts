@@ -14,6 +14,7 @@ export const jobs = pgTable("jobs", {
   latitude: decimal("latitude", { precision: 10, scale: 7 }),
   longitude: decimal("longitude", { precision: 10, scale: 7 }),
   budget: integer("budget").notNull(), // in ZAR cents
+  urgency: text("urgency").notNull().default("normal"), // normal | urgent
   status: text("status").notNull().default("open"), // open | hired | in_progress | delivered | completed | cancelled
   clientId: varchar("client_id").notNull().references(() => users.id),
   freelancerId: varchar("freelancer_id").references(() => users.id),
@@ -25,6 +26,7 @@ export const insertJobSchema = createInsertSchema(jobs, {
   budget: z.number().int().min(100, "Budget must be at least R1.00 (100 cents)"),
   title: z.string().min(3, "Title must be at least 3 characters").max(200),
   description: z.string().min(10, "Description must be at least 10 characters").max(5000),
+  urgency: z.enum(["normal", "urgent"]).optional(),
 }).omit({
   id: true,
   createdAt: true,

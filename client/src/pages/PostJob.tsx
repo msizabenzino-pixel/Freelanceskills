@@ -48,6 +48,7 @@ export default function PostJob() {
   const [location, setLocation] = useState("");
   const [budget, setBudget] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
+  const [urgency, setUrgency] = useState<"normal" | "urgent">("normal");
   const [showAIHelper, setShowAIHelper] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successJobId, setSuccessJobId] = useState<string | null>(null);
@@ -130,6 +131,7 @@ export default function PostJob() {
       location: locationType === "onsite" && location.trim() ? location.trim() : undefined,
       budget: Math.round(budgetRands * 100),
       skills,
+      urgency,
       ...(targetFreelancerId ? { targetFreelancerId } : {}),
     });
   };

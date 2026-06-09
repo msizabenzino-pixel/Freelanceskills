@@ -299,7 +299,7 @@ export async function registerRoutes(
   // Job routes
   app.get("/api/jobs", async (req: any, res) => {
     try {
-      const { q, category, locationType, minBudget, maxBudget, status, clientId } = req.query;
+      const { q, category, locationType, location, minBudget, maxBudget, status, clientId, urgency } = req.query;
       let allJobs = await storage.getAllJobs();
 
       // Filter by clientId — "me" resolves to the authenticated user's ID
@@ -315,7 +315,8 @@ export async function registerRoutes(
         allJobs = allJobs.filter(
           (j) =>
             j.title.toLowerCase().includes(qLower) ||
-            j.description.toLowerCase().includes(qLower)
+            j.description.toLowerCase().includes(qLower) ||
+            (j.category && j.category.toLowerCase().includes(qLower))
         );
       }
       if (category) {
@@ -324,6 +325,12 @@ export async function registerRoutes(
       if (locationType) {
         allJobs = allJobs.filter((j) => j.locationType === locationType);
       }
+      if (location) {
+        const locLower = (location as string).toLowerCase();
+        allJobs = allJobs.filter((j) =>
+          j.location ? j.location.toLowerCase().includes(locLower) : false
+        );
+      }
       if (minBudget) {
         const min = parseInt(minBudget as string) * 100;
         allJobs = allJobs.filter((j) => j.budget >= min);
@@ -331,6 +338,9 @@ export async function registerRoutes(
       if (maxBudget) {
         const max = parseInt(maxBudget as string) * 100;
         allJobs = allJobs.filter((j) => j.budget <= max);
+      }
+      if (urgency) {
+        allJobs = allJobs.filter((j) => j.urgency === urgency);
       }
       if (status) {
         allJobs = allJobs.filter((j) => j.status === status);
@@ -390,6 +400,7 @@ export async function registerRoutes(
       const job = await storage.createJob({
         ...validatedData,
         clientId: userId,
+        urgency: validatedData.urgency || "normal",
       });
 
       awardPoints(userId, "first_job_posted");
