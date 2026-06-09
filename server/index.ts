@@ -9,6 +9,8 @@ import { pool, db } from "./db";
 import { runDbOptimizations } from "./dbOptimize";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { seedFreelancersIfEmpty } from "./seedFreelancers";
+import path from "path";
+import fs from "fs";
 
 const app = express();
 app.disable("x-powered-by");
@@ -300,6 +302,12 @@ app.use((req, res, next) => {
   await seedFreelancersIfEmpty();
 
   await registerRoutes(httpServer, app);
+
+  // ── Static uploads directory ────────────────────────────────────────────────
+  const uploadsDir = path.join(process.cwd(), "uploads");
+  if (fs.existsSync(uploadsDir)) {
+    app.use("/uploads", express.static(uploadsDir, { maxAge: "1d" }));
+  }
 
   // ── Centralised error handler ─────────────────────────────────────────────
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {

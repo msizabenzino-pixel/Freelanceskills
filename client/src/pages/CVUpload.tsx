@@ -280,6 +280,8 @@ export default function CVUpload() {
   const [projectModalOpen, setProjectModalOpen] = useState(false);
   const [projectDraft, setProjectDraft] = useState({ title: "", description: "", link: "", technologies: "" });
   const [projectSaving, setProjectSaving] = useState(false);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoUploading, setPhotoUploading] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
@@ -377,7 +379,26 @@ export default function CVUpload() {
       await syncSessionNow();
       return apiJson<any>("/api/profile/go-live", {
         method: "POST",
-        json: { bio: data.bio, title: data.title, skills: data.skills, hourlyRate: data.hourlyRate ? Math.round(parseFloat(data.hourlyRate) * 100) : 0, location: data.location, isPro: false },
+        json: {
+          bio: data.bio,
+          title: data.title,
+          skills: data.skills,
+          hourlyRate: data.hourlyRate ? Math.round(parseFloat(data.hourlyRate) * 100) : 0,
+          location: data.location,
+          isPro: false,
+          photoUrl: data.photo,
+          certifications: data.certifications,
+          languages: data.languages,
+          linkedinUrl: data.linkedinUrl,
+          githubUrl: data.githubUrl,
+          portfolioUrl: data.portfolioUrl,
+          availability: data.availability,
+          availableNow: data.availableNow,
+          tagline: data.tagline,
+          experienceLevel: data.experienceLevel,
+          category: data.category,
+          portfolioProjects: portfolioProjects.length > 0 ? portfolioProjects : null,
+        },
       });
     },
     onSuccess: async (res) => {
@@ -431,17 +452,18 @@ export default function CVUpload() {
   const saveProject = async () => {
     if (!projectDraft.title.trim() || projectSaving) return;
     setProjectSaving(true);
-    try {
-      await syncSessionNow();
-      const result = await apiJson<any>("/api/profile/projects", { method: "POST", json: { title: projectDraft.title.trim(), description: projectDraft.description.trim(), link: projectDraft.link.trim(), technologies: projectDraft.technologies.split(",").map((s) => s.trim()).filter(Boolean) } });
-      const item: PortfolioProject = { id: String(result?.profile?.portfolioProjectsJson?.[0]?.id ?? Date.now()), title: projectDraft.title.trim(), description: projectDraft.description.trim(), link: projectDraft.link.trim(), technologies: projectDraft.technologies.split(",").map((s) => s.trim()).filter(Boolean) };
-      setPortfolioProjects((prev) => [item, ...prev]);
-      setProjectModalOpen(false);
-      setProjectDraft({ title: "", description: "", link: "", technologies: "" });
-      toast({ title: "Project added!" });
-    } catch (error: any) {
-      toast({ variant: "destructive", title: "Could not save project", description: error?.message || "Please try again." });
-    } finally { setProjectSaving(false); }
+    const item: PortfolioProject = {
+      id: String(Date.now()),
+      title: projectDraft.title.trim(),
+      description: projectDraft.description.trim(),
+      link: projectDraft.link.trim(),
+      technologies: projectDraft.technologies.split(",").map((s) => s.trim()).filter(Boolean),
+    };
+    setPortfolioProjects((prev) => [item, ...prev]);
+    setProjectModalOpen(false);
+    setProjectDraft({ title: "", description: "", link: "", technologies: "" });
+    toast({ title: "Project added!" });
+    setProjectSaving(false);
   };
 
   if (isAuthLoading) return <div className="flex items-center justify-center min-h-screen bg-slate-950"><Loader2 className="w-8 h-8 animate-spin text-emerald-500" /></div>;
@@ -725,7 +747,7 @@ export default function CVUpload() {
                       >
                         {formData.photo ? <img src={formData.photo} alt="Profile" className="w-full h-full object-cover" /> : <Camera className="w-8 h-8 text-slate-600" />}
                       </div>
-                      <input ref={photoInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const file = e.target.files?.[0]; if (file) { const url = URL.createObjectURL(file); updateField("photo", url); } }} data-testid="input-photo" />
+                      <input ref={photoInputRef} type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) { setPhotoFile(file); setPhotoUploading(true); try { const fd = new FormData(); fd.append("photo", file); await syncSessionNow(); const res = await fetch("/api/profile/upload-photo", { method: "POST", body: fd, credentials: "include" }); const json = await res.json(); if (json.success && json.photoUrl) { updateField("photo", json.photoUrl); toast({ title: "Photo uploaded!", description: "Your profile photo is ready." }); } else { throw new Error(json.message || "Upload failed"); } } catch (err: any) { toast({ variant: "destructive", title: "Photo upload failed", description: err?.message || "Please try again." }); } finally { setPhotoUploading(false); } } }} data-testid="input-photo" />
                       <div>
                         <Button size="sm" variant="outline" onClick={() => photoInputRef.current?.click()} className="border-slate-700 text-slate-300 hover:border-emerald-500/40 hover:text-emerald-400" data-testid="btn-upload-photo">
                           <Camera className="w-3.5 h-3.5 mr-1" /> Upload Photo

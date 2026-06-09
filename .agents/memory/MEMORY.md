@@ -1,0 +1,2 @@
+- [Profile photo upload](profile-photo-upload.md) — Uses multer diskStorage to `/uploads/avatars/`, served via `/uploads` static route. No Cloudinary needed.
+- [Profile schema extensions](profile-schema-extensions.md) — 11 new columns added via ALTER TABLE, no migrations needed for additive changes.

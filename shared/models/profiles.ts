@@ -36,6 +36,18 @@ export const profiles = pgTable("profiles", {
   deletedBy: varchar("deleted_by", { length: 50 }),
   deleteReason: text("delete_reason"),
   portfolioProjectsJson: text("portfolio_projects_json"),
+  // Extended profile fields
+  photoUrl: text("photo_url"),
+  certifications: text("certifications"),
+  languages: text("languages").array(),
+  linkedinUrl: text("linkedin_url"),
+  githubUrl: text("github_url"),
+  portfolioUrl: text("portfolio_url"),
+  availability: text("availability"),
+  availableNow: boolean("available_now").notNull().default(false),
+  tagline: text("tagline"),
+  experienceLevel: text("experience_level"),
+  category: text("category"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

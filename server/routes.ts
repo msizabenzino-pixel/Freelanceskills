@@ -2152,16 +2152,18 @@ User: ${message}`;
       if (!userId) return res.status(401).json({ success: false, message: "Session expired — please sign in again." });
 
       // CRITICAL: Ensure user row exists BEFORE any profile operation.
-      // profiles.user_id has a FK → users.id. Without this the first profile
-      // save crashes with a FK constraint error for newly-created Firebase users.
-      // onConflictDoNothing preserves any existing email/name — safe to call always.
       try {
         const { db: _db } = await import("./db");
         const { users: usersTable } = await import("../shared/models/auth");
         await _db.insert(usersTable).values({ id: userId }).onConflictDoNothing();
       } catch (_) {}
 
-      const { bio, title, skills, hourlyRate, location, isPro } = req.body;
+      const {
+        bio, title, skills, hourlyRate, location, isPro,
+        photoUrl, certifications, languages, linkedinUrl, githubUrl, portfolioUrl,
+        availability, availableNow, tagline, experienceLevel, category,
+        portfolioProjects,
+      } = req.body;
 
       const saveData: any = {
         bio: bio || null,
@@ -2173,6 +2175,21 @@ User: ${message}`;
         publishedProfile: true,
         publishedAt: new Date(),
         userType: "freelancer",
+        // Extended fields
+        photoUrl: photoUrl || null,
+        certifications: certifications || null,
+        languages: Array.isArray(languages) ? languages : [],
+        linkedinUrl: linkedinUrl || null,
+        githubUrl: githubUrl || null,
+        portfolioUrl: portfolioUrl || null,
+        availability: availability || null,
+        availableNow: Boolean(availableNow),
+        tagline: tagline || null,
+        experienceLevel: experienceLevel || null,
+        category: category || null,
+        portfolioProjectsJson: (Array.isArray(portfolioProjects) && portfolioProjects.length > 0)
+          ? JSON.stringify(portfolioProjects)
+          : null,
       };
 
       const existing = await storage.getProfile(userId);
@@ -2216,7 +2233,11 @@ User: ${message}`;
   });
 
   function saveDataFromRequest(body: any) {
-    const { bio, title, skills, hourlyRate, location, isPro } = body || {};
+    const {
+      bio, title, skills, hourlyRate, location, isPro,
+      photoUrl, certifications, languages, linkedinUrl, githubUrl, portfolioUrl,
+      availability, availableNow, tagline, experienceLevel, category,
+    } = body || {};
     return {
       bio: bio || null,
       title: title || null,
@@ -2227,8 +2248,66 @@ User: ${message}`;
       publishedProfile: true,
       publishedAt: new Date(),
       userType: "freelancer",
+      photoUrl: photoUrl || null,
+      certifications: certifications || null,
+      languages: Array.isArray(languages) ? languages : [],
+      linkedinUrl: linkedinUrl || null,
+      githubUrl: githubUrl || null,
+      portfolioUrl: portfolioUrl || null,
+      availability: availability || null,
+      availableNow: Boolean(availableNow),
+      tagline: tagline || null,
+      experienceLevel: experienceLevel || null,
+      category: category || null,
     };
   }
+
+  // POST /api/profile/upload-photo — multipart file upload for avatar image
+  app.post("/api/profile/upload-photo", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      if (!userId) return res.status(401).json({ success: false, message: "Session expired — please sign in again." });
+
+      const multer = (await import("multer")).default;
+      const fs = await import("fs");
+      const path = await import("path");
+      const uploadsDir = path.join(process.cwd(), "uploads", "avatars");
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
+
+      const upload = multer({
+        storage: multer.diskStorage({
+          destination: (_req, _file, cb) => cb(null, uploadsDir),
+          filename: (_req, file, cb) => {
+            const ext = path.extname(file.originalname) || ".jpg";
+            cb(null, `${userId}_${Date.now()}${ext}`);
+          },
+        }),
+        limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB max
+        fileFilter: (_req, file, cb) => {
+          const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+          if (allowed.includes(file.mimetype) || file.originalname.match(/\.(jpg|jpeg|png|webp|gif)$/i)) {
+            cb(null, true);
+          } else {
+            cb(new Error("Only JPG, PNG, WebP and GIF images are accepted."));
+          }
+        },
+      }).single("photo");
+
+      await new Promise<void>((resolve, reject) => upload(req, res as any, (err) => (err ? reject(err) : resolve())));
+
+      if (!req.file) {
+        return res.status(400).json({ success: false, message: "No photo uploaded." });
+      }
+
+      const photoUrl = `/uploads/avatars/${req.file.filename}`;
+      res.json({ success: true, photoUrl, message: "Photo uploaded successfully!" });
+    } catch (err: any) {
+      console.error("[profile/upload-photo] Error:", err);
+      res.status(500).json({ success: false, message: err?.message || "Could not upload photo." });
+    }
+  });
 
   app.post("/api/profile/projects", isAuthenticated, async (req: any, res) => {
     try {
