@@ -399,7 +399,13 @@ function PipelineView({
   function handlePointerUp(e: React.PointerEvent) {
     if (!dragState) return;
     if (dragState.started && dragOverCol) {
-      const current = getStatus(applicants.find((a) => a.id === dragState.id)!);
+      const applicant = applicants.find((a) => a.id === dragState.id);
+      if (!applicant) {
+        setDragState(null);
+        setDragOverCol(null);
+        return;
+      }
+      const current = getStatus(applicant);
       if (current !== dragOverCol) {
         setLocalStatuses((prev) => ({ ...prev, [dragState.id]: dragOverCol }));
         onStatusChange(dragState.id, dragOverCol);
@@ -421,7 +427,8 @@ function PipelineView({
   return (
     <div
       ref={boardRef}
-      className="overflow-x-auto pb-2 touch-none"
+      className="overflow-x-auto pb-2"
+      style={{ touchAction: dragState ? "none" : "pan-x" }}
       data-testid="pipeline-view"
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
