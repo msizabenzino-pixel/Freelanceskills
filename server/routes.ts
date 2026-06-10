@@ -2873,10 +2873,19 @@ Respond with ONLY the JSON object, no markdown.`
     }
   });
 
-  // PATCH /api/my-applications/:id — update status, notes, etc.
+  // PATCH /api/my-applications/:id — update status, notes, etc. (ownership-enforced)
   app.patch("/api/my-applications/:id", isAuthenticated, async (req: any, res) => {
     try {
+      const userId = (req.session as any).userId;
       const { status, notes, aiCoverLetter, employabilityScore, interviewDate } = req.body;
+
+      // Ownership check: fetch the application first and verify it belongs to this user
+      const existing = await storage.getUserApplications(userId);
+      const owns = existing.some((a) => String(a.id) === String(req.params.id));
+      if (!owns) {
+        return res.status(404).json({ message: "Application not found" });
+      }
+
       const updated = await storage.updateJobApplication(req.params.id, {
         ...(status !== undefined && { status }),
         ...(notes !== undefined && { notes }),
@@ -3602,52 +3611,9 @@ Experience level: ${experienceLevel || 'Any'}`
     }
   });
 
-  // Notification routes
-  app.get("/api/notifications", isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = (req.session as any).userId;
-      const notifications = await storage.getNotifications(userId);
-      res.json(notifications);
-    } catch (error) {
-      console.error("Error fetching notifications:", error);
-      res.status(500).json({ message: "Failed to fetch notifications" });
-    }
-  });
-
-  app.patch("/api/notifications/:id/read", isAuthenticated, async (req: any, res) => {
-    try {
-      const notification = await storage.markAsRead(parseInt(req.params.id));
-      if (!notification) {
-        return res.status(404).json({ message: "Notification not found" });
-      }
-      res.json(notification);
-    } catch (error) {
-      console.error("Error marking notification as read:", error);
-      res.status(500).json({ message: "Failed to update notification" });
-    }
-  });
-
-  app.patch("/api/notifications/read-all", isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = (req.session as any).userId;
-      await storage.markAllAsRead(userId);
-      res.json({ message: "All notifications marked as read" });
-    } catch (error) {
-      console.error("Error marking all notifications as read:", error);
-      res.status(500).json({ message: "Failed to update notifications" });
-    }
-  });
-
-  app.get("/api/notifications/unread-count", isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = (req.session as any).userId;
-      const count = await storage.getUnreadCount(userId);
-      res.json({ count });
-    } catch (error) {
-      console.error("Error fetching unread count:", error);
-      res.status(500).json({ message: "Failed to fetch unread count" });
-    }
-  });
+  // NOTE: User notification routes (GET /api/notifications, unread-count, read, read-all)
+  // are registered earlier in this file (before the academy routes section) to ensure
+  // they are available to all authenticated users, not just admins.
 
   if (isPayFastConfigured()) {
     console.log("PayFast payment routes registered (including ITN webhook)");
