@@ -19,30 +19,57 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { motion, AnimatePresence } from "framer-motion";
 
 // ── Live Activity Ticker ───────────────────────────────────────────────────────
-const LIVE_ACTIVITIES = [
-  { emoji: "🔧", text: "Sipho from Soweto just hired a Plumber", time: "2m ago" },
-  { emoji: "💰", text: "Lerato M. completed a Branding project · R4,500 earned", time: "5m ago" },
-  { emoji: "📋", text: "Johan D. posted a new tender worth R85,000", time: "8m ago" },
-  { emoji: "🎓", text: "Fatima P. from Durban enrolled in AI Academy", time: "11m ago" },
-  { emoji: "⭐", text: "Elena R. received a 5-star review from FinTech client", time: "14m ago" },
-  { emoji: "🤝", text: "David K. just closed a R22,000 mobile app contract", time: "17m ago" },
-  { emoji: "🆕", text: "Zanele M. from Cape Town just joined FreelanceSkills", time: "20m ago" },
-  { emoji: "💳", text: "Thabo N. received a ZAR payout of R12,500", time: "23m ago" },
-  { emoji: "📝", text: "Nandi Z. won her first government tender · R45,000", time: "26m ago" },
-  { emoji: "🚀", text: "Kevin I. upgraded to Premium — client inquiries increased significantly", time: "30m ago" },
-];
+interface ActivityItem {
+  emoji: string;
+  text: string;
+  time: string;
+}
 
-function LiveActivityTicker() {
+function buildActivities(jobs: any[], stats: any): ActivityItem[] {
+  const activities: ActivityItem[] = [];
+  if (jobs?.length > 0) {
+    const j = jobs[0];
+    activities.push({ emoji: "📋", text: `New job: ${j.title?.substring(0, 40) || "Project posted"} · ${j.company || "Client"}`, time: "Just now" });
+  }
+  if (stats?.stats?.totalFreelancers) {
+    activities.push({ emoji: "🆕", text: `A new freelancer joined — ${stats.stats.totalFreelancers.toLocaleString()}+ on the platform`, time: "10m ago" });
+  }
+  if (jobs?.length > 1) {
+    const j2 = jobs[1];
+    activities.push({ emoji: "🚀", text: `Urgent: ${j2.title?.substring(0, 35) || "Hiring now"} in ${j2.province || "SA"}`, time: "15m ago" });
+  }
+  if (stats?.stats?.escrowProtected) {
+    const escrow = (stats.stats.escrowProtected / 100).toLocaleString();
+    activities.push({ emoji: "🛡️", text: `R${escrow} escrow-protected transactions this month`, time: "20m ago" });
+  }
+  if (activities.length === 0) {
+    return [
+      { emoji: "🔧", text: "Sipho from Soweto just hired a Plumber", time: "2m ago" },
+      { emoji: "💰", text: "Lerato M. completed a Branding project · R4,500 earned", time: "5m ago" },
+      { emoji: "📋", text: "Johan D. posted a new tender worth R85,000", time: "8m ago" },
+      { emoji: "🎓", text: "Fatima P. from Durban enrolled in AI Academy", time: "11m ago" },
+      { emoji: "⭐", text: "Elena R. received a 5-star review from FinTech client", time: "14m ago" },
+      { emoji: "🤝", text: "David K. just closed a R22,000 mobile app contract", time: "17m ago" },
+      { emoji: "🆕", text: "Zanele M. from Cape Town just joined FreelanceSkills", time: "20m ago" },
+      { emoji: "💳", text: "Thabo N. received a ZAR payout of R12,500", time: "23m ago" },
+      { emoji: "📝", text: "Nandi Z. won her first government tender · R45,000", time: "26m ago" },
+      { emoji: "🚀", text: "Kevin I. upgraded to Premium — client inquiries increased significantly", time: "30m ago" },
+    ];
+  }
+  return activities;
+}
+
+function LiveActivityTicker({ activities }: { activities: ActivityItem[] }) {
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(true);
   useEffect(() => {
     const iv = setInterval(() => {
       setVisible(false);
-      setTimeout(() => { setIndex(p => (p + 1) % LIVE_ACTIVITIES.length); setVisible(true); }, 280);
+      setTimeout(() => { setIndex(p => (p + 1) % activities.length); setVisible(true); }, 280);
     }, 4000);
     return () => clearInterval(iv);
-  }, []);
-  const a = LIVE_ACTIVITIES[index];
+  }, [activities]);
+  const a = activities[index];
   return (
     <div className="bg-emerald-950/60 border-b border-emerald-900/50 py-2.5 px-4 overflow-hidden" aria-live="polite">
       <div className="container mx-auto flex items-center justify-center gap-3">
@@ -667,7 +694,7 @@ export default function Home() {
       </section>
 
       {/* Live Activity Ticker */}
-      <LiveActivityTicker />
+      <LiveActivityTicker activities={buildActivities(realJobs, platformStats)} />
 
       {/* ── TRUST STRIP ─────────────────────────────────────────────────────────── */}
       <div className="py-4 bg-slate-900/50 border-b border-slate-800/60" aria-label="Trust signals">

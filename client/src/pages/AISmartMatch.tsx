@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import {
   Brain, Sparkles, Search, Users, Zap, Clock, DollarSign,
   Star, CheckCircle2, ArrowRight, Bot, Activity, Target,
@@ -39,9 +40,53 @@ const POPULAR_SKILLS = [
 const TIMELINES = ["ASAP", "Within 1 week", "2–4 weeks", "1–3 months", "Flexible"];
 const LOCATIONS = ["Anywhere in SA", "Cape Town", "Johannesburg", "Durban", "Pretoria", "Remote only"];
 
-const MOCK_FREELANCERS = [
+// Backend shape from GET /api/talent/search
+interface TalentProfile {
+  id: string;
+  userId: string;
+  name: string;
+  title: string;
+  bio?: string;
+  skills: string[];
+  location: string;
+  hourlyRateCents: number | null;
+  hourlyRateFormatted: string | null;
+  rating: number | null;
+  completedJobs: number;
+  isPro: boolean;
+  verified: boolean;
+  kycStatus: string;
+  country: string;
+  avatarInitials: string;
+}
+
+// Frontend AI-match shape (computed from real profiles)
+interface AIMatchFreelancer {
+  id: string;
+  name: string;
+  title: string;
+  location: string;
+  avatar: string;
+  matchScore: number;
+  skillOverlap: number;
+  availability: number;
+  priceFit: number;
+  cultureFit: number;
+  hourlyRate: number;
+  completedJobs: number;
+  rating: number;
+  skills: string[];
+  responseTime: string;
+  verified: boolean;
+  topRated: boolean;
+  bio: string;
+  successRate: number;
+}
+
+// Fallback demo data if no real freelancers exist yet
+const DEMO_FREELANCERS: AIMatchFreelancer[] = [
   {
-    id: 1,
+    id: "demo-1",
     name: "Sipho M.",
     title: "Full-Stack Developer",
     location: "Johannesburg, Gauteng",
@@ -62,7 +107,7 @@ const MOCK_FREELANCERS = [
     successRate: 99,
   },
   {
-    id: 2,
+    id: "demo-2",
     name: "Amara O.",
     title: "UI/UX Designer & Developer",
     location: "Cape Town, Western Cape",
@@ -83,7 +128,7 @@ const MOCK_FREELANCERS = [
     successRate: 97,
   },
   {
-    id: 3,
+    id: "demo-3",
     name: "Thando K.",
     title: "Backend Engineer",
     location: "Durban, KwaZulu-Natal",
@@ -104,7 +149,7 @@ const MOCK_FREELANCERS = [
     successRate: 98,
   },
   {
-    id: 4,
+    id: "demo-4",
     name: "Lerato P.",
     title: "React Developer",
     location: "Pretoria, Gauteng",
@@ -125,6 +170,54 @@ const MOCK_FREELANCERS = [
     successRate: 94,
   },
 ];
+
+function computeMatchScores(
+  freelancers: TalentProfile[],
+  selectedSkills: string[],
+  budgetMin: number,
+  budgetMax: number,
+  locationPref: string
+): AIMatchFreelancer[] {
+  return freelancers.map((f) => {
+    const rate = f.hourlyRateCents ? Math.round(f.hourlyRateCents / 100) : 300;
+    const skillOverlap = selectedSkills.length > 0
+      ? Math.round(
+          (f.skills.filter((s) => selectedSkills.some((sel) => s.toLowerCase().includes(sel.toLowerCase()) || sel.toLowerCase().includes(s.toLowerCase()))).length /
+            Math.max(selectedSkills.length, 1)) * 100
+        )
+      : 70;
+    const priceFit = rate >= budgetMin && rate <= budgetMax
+      ? 95
+      : Math.max(50, 100 - Math.round(Math.abs(rate - (budgetMin + budgetMax) / 2) / Math.max(1, (budgetMax - budgetMin) / 2) * 50));
+    const locationMatch = locationPref === "" || locationPref === "Anywhere in SA"
+      ? 98
+      : f.location?.toLowerCase().includes(locationPref.toLowerCase()) ? 95 : 72;
+    const matchScore = Math.round(
+      skillOverlap * 0.35 + priceFit * 0.25 + locationMatch * 0.2 + Math.min(100, (f.completedJobs || 0) * 0.5) * 0.1 + (f.rating || 0) * 5
+    );
+    return {
+      id: f.id,
+      name: f.name,
+      title: f.title || "Verified Freelancer",
+      location: f.location || "South Africa",
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(f.name)}&background=10b981&color=fff&size=200`,
+      matchScore: Math.min(99, Math.max(60, matchScore)),
+      skillOverlap: Math.min(100, skillOverlap),
+      availability: Math.min(100, Math.max(50, 70 + (f.completedJobs || 0) * 0.2)),
+      priceFit,
+      cultureFit: Math.min(100, Math.max(60, 80 + (f.rating || 0) * 5)),
+      hourlyRate: rate,
+      completedJobs: f.completedJobs || 0,
+      rating: f.rating || 0,
+      skills: f.skills || [],
+      responseTime: f.verified ? "< 1 hour" : "< 4 hours",
+      verified: f.verified,
+      topRated: (f.rating || 0) >= 4.8 && (f.completedJobs || 0) >= 50,
+      bio: f.bio?.substring(0, 160) || "Experienced freelancer on FreelanceSkills.",
+      successRate: Math.min(100, Math.max(70, 90 + (f.rating || 0) * 2)),
+    };
+  });
+}
 
 const AI_SCAN_STEPS = [
   { label: "Parsing natural language requirements", duration: 600 },
@@ -216,18 +309,18 @@ export default function AISmartMatch() {
   const [scanDone, setScanDone] = useState(false);
 
   // Step 3 state
-  const [expandedCard, setExpandedCard] = useState<number | null>(null);
+  const [expandedCard, setExpandedCard] = useState<string | null>(null);
   const [compareMode, setCompareMode] = useState(false);
-  const [compareList, setCompareList] = useState<number[]>([]);
+  const [compareList, setCompareList] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<"match" | "rating" | "price">("match");
-  const [savedFreelancers, setSavedFreelancers] = useState<Set<number>>(new Set());
+  const [savedFreelancers, setSavedFreelancers] = useState<Set<string>>(new Set());
 
   // Step 4 state
   const [autoHireToggles, setAutoHireToggles] = useState<Record<string, boolean>>(
     Object.fromEntries(AUTO_HIRE_OPTIONS.map((o) => [o.id, o.enabled]))
   );
-  const [hiredId, setHiredId] = useState<number | null>(null);
-  const [showHireModal, setShowHireModal] = useState<number | null>(null);
+  const [hiredId, setHiredId] = useState<string | null>(null);
+  const [showHireModal, setShowHireModal] = useState<string | null>(null);
   const [hireType, setHireType] = useState<"instant" | "interview" | "message" | null>(null);
 
   const step2Ref = useRef<HTMLDivElement>(null);
@@ -251,7 +344,29 @@ export default function AISmartMatch() {
     setSkillInput("");
   };
 
-  const sortedFreelancers = [...MOCK_FREELANCERS].sort((a, b) => {
+  // Fetch real freelancers from backend
+  const { data: talentData, isLoading: talentLoading } = useQuery<{ freelancers: TalentProfile[] }>({
+    queryKey: ["ai-match-freelancers"],
+    queryFn: async () => {
+      const res = await fetch("/api/talent/search?limit=20");
+      if (!res.ok) throw new Error("Failed to load freelancers");
+      return res.json();
+    },
+    staleTime: 60 * 1000,
+  });
+
+  const realFreelancers = computeMatchScores(
+    talentData?.freelancers || [],
+    selectedSkills,
+    budget[0],
+    budget[1],
+    locationPref
+  );
+
+  const useReal = realFreelancers.length > 0;
+  const freelancerPool = useReal ? realFreelancers : DEMO_FREELANCERS;
+
+  const sortedFreelancers = [...freelancerPool].sort((a, b) => {
     if (sortBy === "match") return b.matchScore - a.matchScore;
     if (sortBy === "rating") return b.rating - a.rating;
     return a.hourlyRate - b.hourlyRate;
@@ -301,21 +416,21 @@ export default function AISmartMatch() {
   };
 
   // ── Step 3 → 4
-  const proceedToHire = (id?: number) => {
+  const proceedToHire = (id?: string) => {
     completeStep(3);
     goToStep(4);
     if (id) setShowHireModal(id);
   };
 
   // ── Hire action
-  const executeHire = (freelancerId: number, type: "instant" | "interview" | "message") => {
+  const executeHire = (freelancerId: string, type: "instant" | "interview" | "message") => {
     setHireType(type);
     setHiredId(freelancerId);
     setShowHireModal(null);
     completeStep(4);
   };
 
-  const toggleSave = (id: number) => {
+  const toggleSave = (id: string) => {
     setSavedFreelancers((prev) => {
       const next = new Set(prev);
       next.has(id) ? next.delete(id) : next.add(id);
@@ -323,7 +438,7 @@ export default function AISmartMatch() {
     });
   };
 
-  const toggleCompare = (id: number) => {
+  const toggleCompare = (id: string) => {
     setCompareList((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : prev.length < 2 ? [...prev, id] : prev
     );
@@ -666,7 +781,9 @@ export default function AISmartMatch() {
                             {scanDone ? "Analysis Complete" : "AI Engine Working..."}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {scanDone ? "Found 4 premium matches from 47,382 profiles" : "Scanning South Africa's freelancer network"}
+                            {scanDone
+                              ? `Found ${freelancerPool.length} premium matches from ${talentData?.total ?? 0} freelancer profiles`
+                              : "Scanning South Africa's freelancer network"}
                           </p>
                         </div>
                         {!scanDone && <Loader2 className="w-5 h-5 text-purple-500 animate-spin ml-auto" />}
@@ -706,9 +823,9 @@ export default function AISmartMatch() {
                   {scanDone && (
                     <div className="grid grid-cols-3 gap-4" data-testid="scan-stats">
                       {[
-                        { label: "Profiles Scanned", value: 47382, icon: Users },
-                        { label: "Skills Extracted", value: 14, icon: Target },
-                        { label: "Matches Found", value: 4, icon: Award },
+                        { label: "Profiles Scanned", value: talentData?.total ?? 0, icon: Users },
+                        { label: "Skills Extracted", value: selectedSkills.length || 14, icon: Target },
+                        { label: "Matches Found", value: freelancerPool.length, icon: Award },
                       ].map((stat) => (
                         <Card key={stat.label} className="border-purple-500/20 bg-purple-500/5">
                           <CardContent className="p-4 text-center">
@@ -820,7 +937,7 @@ export default function AISmartMatch() {
                         <p className="text-sm font-bold text-foreground mb-3">Comparing {compareList.length}/2 freelancers</p>
                         <div className={`grid gap-4 ${compareList.length === 2 ? "grid-cols-2" : "grid-cols-1 max-w-sm"}`}>
                           {compareList.map((id) => {
-                            const f = MOCK_FREELANCERS.find((x) => x.id === id)!;
+                            const f = freelancerPool.find((x) => x.id === id)!;
                             return (
                               <div key={id} className="p-3 rounded-xl bg-background border border-border">
                                 <div className="flex items-center gap-3 mb-3">
@@ -1049,10 +1166,10 @@ export default function AISmartMatch() {
                             </p>
                             <p className="text-muted-foreground text-sm">
                               {hireType === "instant"
-                                ? `You've hired ${MOCK_FREELANCERS.find((f) => f.id === hiredId)?.name}. Escrow activated via PayFast. Work begins immediately.`
+                                ? `You've hired ${freelancerPool.find((f) => f.id === hiredId)?.name || "freelancer"}. Escrow activated via PayFast. Work begins immediately.`
                                 : hireType === "interview"
-                                ? `Interview with ${MOCK_FREELANCERS.find((f) => f.id === hiredId)?.name} booked for tomorrow. You'll receive a calendar invite.`
-                                : `Your message has been sent to ${MOCK_FREELANCERS.find((f) => f.id === hiredId)?.name}. Typical reply time: ${MOCK_FREELANCERS.find((f) => f.id === hiredId)?.responseTime}.`}
+                                ? `Interview with ${freelancerPool.find((f) => f.id === hiredId)?.name || "freelancer"} booked for tomorrow. You'll receive a calendar invite.`
+                                : `Your message has been sent to ${freelancerPool.find((f) => f.id === hiredId)?.name || "freelancer"}. Typical reply time: ${freelancerPool.find((f) => f.id === hiredId)?.responseTime || "< 4 hours"}.`}
                             </p>
                           </div>
                           <Button size="sm" variant="outline" onClick={() => navigate("/dashboard")} data-testid="btn-go-dashboard">
@@ -1072,17 +1189,17 @@ export default function AISmartMatch() {
                       <Card className="border-emerald-500/20 mb-4">
                         <CardContent className="p-5">
                           <div className="flex items-center gap-3 mb-4">
-                            <img src={MOCK_FREELANCERS[0].avatar} alt={MOCK_FREELANCERS[0].name} className="w-12 h-12 rounded-xl object-cover" />
+                            <img src={freelancerPool[0]?.avatar || "https://ui-avatars.com/api/?name=FS&background=10b981&color=fff&size=200"} alt={freelancerPool[0]?.name || "Freelancer"} className="w-12 h-12 rounded-xl object-cover" />
                             <div>
-                              <p className="font-bold text-foreground">{MOCK_FREELANCERS[0].name}</p>
-                              <p className="text-xs text-muted-foreground">{MOCK_FREELANCERS[0].title}</p>
-                              <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-xs mt-1">97% Match</Badge>
+                              <p className="font-bold text-foreground">{freelancerPool[0]?.name || "Freelancer"}</p>
+                              <p className="text-xs text-muted-foreground">{freelancerPool[0]?.title || "Verified Talent"}</p>
+                              <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-xs mt-1">{freelancerPool[0]?.matchScore || 97}% Match</Badge>
                             </div>
                           </div>
                           <div className="grid grid-cols-3 gap-2">
                             <Button
                               className="flex-col gap-1 h-auto py-4 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold"
-                              onClick={() => executeHire(1, "instant")}
+                              onClick={() => executeHire(freelancerPool[0]?.id || "demo-1", "instant")}
                               data-testid="btn-instant-hire"
                             >
                               <Zap className="w-5 h-5" />
@@ -1091,7 +1208,7 @@ export default function AISmartMatch() {
                             <Button
                               variant="outline"
                               className="flex-col gap-1 h-auto py-4 text-xs font-semibold hover:border-blue-400"
-                              onClick={() => executeHire(1, "interview")}
+                              onClick={() => executeHire(freelancerPool[0]?.id || "demo-1", "interview")}
                               data-testid="btn-schedule-interview"
                             >
                               <Phone className="w-5 h-5" />
@@ -1100,7 +1217,7 @@ export default function AISmartMatch() {
                             <Button
                               variant="outline"
                               className="flex-col gap-1 h-auto py-4 text-xs font-semibold hover:border-purple-400"
-                              onClick={() => executeHire(1, "message")}
+                              onClick={() => executeHire(freelancerPool[0]?.id || "demo-1", "message")}
                               data-testid="btn-message-first"
                             >
                               <Send className="w-5 h-5" />
@@ -1117,7 +1234,7 @@ export default function AISmartMatch() {
                       {/* All matches quick hire */}
                       <p className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">All Matches</p>
                       <div className="space-y-2">
-                        {MOCK_FREELANCERS.slice(1).map((f) => (
+                        {freelancerPool.slice(1).map((f) => (
                           <Card key={f.id} className="border-border">
                             <CardContent className="p-3">
                               <div className="flex items-center gap-3">

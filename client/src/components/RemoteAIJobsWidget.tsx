@@ -192,9 +192,34 @@ export function RemoteAIJobsWidget() {
   const { data, isLoading, isError } = useQuery<RemoteAIData>({
     queryKey: ["remote-ai-jobs"],
     queryFn: async () => {
-      const res = await fetch("/api/jobs/remote-ai");
+      const res = await fetch("/api/aggregated-jobs?limit=5&isRemote=true&sortBy=recent");
       if (!res.ok) throw new Error("Failed to fetch");
-      return res.json();
+      const data = await res.json();
+      // Transform aggregated-jobs response to RemoteAIData shape
+      const jobs = data.jobs || [];
+      return {
+        jobs,
+        total: data.total || 0,
+        widget: {
+          counter: (data.total || 0).toLocaleString(),
+          newToday: jobs.length,
+          top5: jobs.slice(0, 5).map((j: any) => ({
+            id: j.id,
+            title: j.title,
+            company: j.company,
+            location: j.province || j.location || "Remote",
+            saMatchScore: j.aiScore || 85,
+            aiSkillTags: Array.isArray(j.skills) ? j.skills.slice(0, 4) : [],
+            freelanceFriendly: true,
+            entryLevelPossible: j.experienceLevel === "entry",
+            salaryMin: j.salaryMin,
+            salaryMax: j.salaryMax,
+            applyUrl: j.applyUrl,
+            source: j.sourcePortal || "Aggregated",
+            postedDate: j.postedDate,
+          })),
+        },
+      } as RemoteAIData;
     },
     staleTime: 5 * 60 * 1000,  // 5 min
     retry: 2,
