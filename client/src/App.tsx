@@ -66,6 +66,7 @@ const VumaLive = lazy(() => import("@/pages/VumaLive"));
 const AISmartMatch = lazy(() => import("@/pages/AISmartMatch"));
 const About = lazy(() => import("@/pages/About"));
 const Login = lazy(() => import("@/pages/Login"));
+const EditProfile = lazy(() => import("@/pages/EditProfile"));
 const Careers = lazy(() => import("@/pages/Careers"));
 const AdminOverview = lazy(() => import("@/pages/admin/Overview"));
 const AdminUsers = lazy(() => import("@/pages/admin/Users"));
@@ -232,6 +233,11 @@ function Router() {
         <Route path="/checkout" component={Checkout} />
         <Route path="/onboarding" component={CVUpload} />
         <Route path="/profile-builder" component={CVUpload} />
+        <Route path="/edit-profile">
+          <AuthGuard>
+            <EditProfile />
+          </AuthGuard>
+        </Route>
         <Route path="/cv-upload" component={CVUpload} />
         <Route path="/payments-hub" component={PaymentsHub} />
         <Route path="/credentials" component={Credentials} />

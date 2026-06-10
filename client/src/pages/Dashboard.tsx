@@ -250,7 +250,7 @@ export default function Dashboard() {
             )}
             <div className="flex gap-2 mt-auto">
               {profileStatus.status === "published" ? (
-                <Button size="sm" variant="outline" className="gap-1.5 text-xs border-slate-700 text-slate-300 hover:bg-slate-800" onClick={() => navigate("/cv-upload")} data-testid="btn-edit-profile">
+                <Button size="sm" variant="outline" className="gap-1.5 text-xs border-slate-700 text-slate-300 hover:bg-slate-800" onClick={() => navigate("/edit-profile")} data-testid="btn-edit-profile">
                   <Edit3 className="w-3 h-3" /> Edit Profile
                 </Button>
               ) : (
@@ -608,10 +608,10 @@ export default function Dashboard() {
         <Button
           variant="outline"
           className="border-slate-700 text-slate-300 hover:bg-slate-800"
-          onClick={() => navigate("/cv-upload")}
+          onClick={() => navigate("/edit-profile")}
           data-testid="btn-advanced-builder"
         >
-          Advanced Profile Builder
+          Edit Profile
         </Button>
         <Button
           className="bg-emerald-600 hover:bg-emerald-500 text-white gap-2"

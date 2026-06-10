@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Star, MapPin, ShieldCheck, Clock, MessageSquare, Loader2, Edit, Camera, X, ExternalLink, Award, Briefcase, Zap, PlusCircle } from "lucide-react";
+import { Star, MapPin, ShieldCheck, Clock, MessageSquare, Loader2, Edit, ExternalLink, Award, Briefcase, Zap, PlusCircle } from "lucide-react";
 import { Link, useLocation, useParams } from "wouter";
 import { useCurrency } from "@/lib/currency";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -13,15 +13,12 @@ import { useAuth } from "@/hooks/use-auth";
 import { PortfolioUploader } from "@/components/PortfolioUploader";
 import { LevelBadge, getLevelFromStats } from "@/components/LevelBadge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 
 import {
   fetchFreelancerProfile,
-  saveFreelancerProfile,
-  uploadProfilePhoto,
   type FreelancerProfile as FirebaseFreelancerProfile,
 } from "@/lib/firebaseAppData";
 
@@ -51,25 +48,9 @@ export default function FreelancerProfile() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const [editOpen, setEditOpen] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState("");
-  const [draft, setDraft] = useState({
-    fullName: "",
-    title: "",
-    bio: "",
-    location: "",
-    hourlyRate: "",
-    skills: "",
-    expertise: "",
-    categories: "",
-    availability: "",
-    experienceLevel: "",
-    portfolioLinks: "",
-    profilePhotoUrl: "",
-  });
 
   const profileQuery = useQuery({
     queryKey: ["firebase", "freelancer-profile", id],
@@ -78,78 +59,6 @@ export default function FreelancerProfile() {
   });
 
   const profile = profileQuery.data;
-
-  useEffect(() => {
-    if (!profile) return;
-    setDraft({
-      fullName: profile.fullName || "",
-      title: profile.title || "",
-      bio: profile.bio || "",
-      location: profile.location || "",
-      hourlyRate: String(profile.hourlyRate || ""),
-      skills: (profile.skills || []).join(", "),
-      expertise: (profile.expertise || []).join(", "),
-      categories: (profile.categories || []).join(", "),
-      availability: profile.availability || "",
-      experienceLevel: profile.experienceLevel || "",
-      portfolioLinks: (profile.portfolioLinks || []).join(", "),
-      profilePhotoUrl: profile.profilePhotoUrl || "",
-    });
-  }, [profile]);
-
-  const uploadPhotoMutation = useMutation({
-    mutationFn: async (file: File) => {
-      if (!id) throw new Error("Missing profile id");
-      return uploadProfilePhoto(id, file, setUploadProgress);
-    },
-    onSuccess: (url) => {
-      setDraft((prev) => ({ ...prev, profilePhotoUrl: url }));
-      toast({ title: "Photo updated", description: "Profile photo uploaded successfully." });
-    },
-    onError: (error: Error) => {
-      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
-    },
-  });
-
-  const saveMutation = useMutation({
-    mutationFn: async () => {
-      if (!id) throw new Error("Missing profile id");
-
-      const toList = (value: string) =>
-        value
-          .split(",")
-          .map((item) => item.trim())
-          .filter(Boolean);
-
-      const payload: FirebaseFreelancerProfile = {
-        userId: id,
-        fullName: draft.fullName.trim() || "Freelancer",
-        profilePhotoUrl: draft.profilePhotoUrl.trim(),
-        bio: draft.bio.trim(),
-        title: draft.title.trim(),
-        skills: toList(draft.skills),
-        expertise: toList(draft.expertise),
-        categories: toList(draft.categories),
-        hourlyRate: Number(draft.hourlyRate || 0),
-        location: draft.location.trim(),
-        portfolioLinks: toList(draft.portfolioLinks),
-        experienceLevel: draft.experienceLevel.trim(),
-        availability: draft.availability.trim(),
-        role: "freelancer",
-        onboardingCompleted: true,
-      };
-
-      await saveFreelancerProfile(payload);
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["firebase", "freelancer-profile", id] });
-      setEditOpen(false);
-      toast({ title: "Profile saved", description: "Your profile has been updated." });
-    },
-    onError: (error: Error) => {
-      toast({ title: "Save failed", description: error.message, variant: "destructive" });
-    },
-  });
 
   const submitReviewMutation = useMutation({
     mutationFn: async () => {
@@ -345,110 +254,9 @@ export default function FreelancerProfile() {
                 </div>
 
                 {isOwnProfile && (
-                  <Dialog open={editOpen} onOpenChange={setEditOpen}>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" className="w-full mb-3" data-testid="button-edit-profile-main">
-                        <Edit className="w-4 h-4 mr-2" /> Edit Profile
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
-                      <DialogHeader>
-                        <DialogTitle>Edit Freelancer Profile</DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-4">
-                        <div className="flex items-center gap-4">
-                          <Avatar className="w-16 h-16">
-                            <AvatarImage src={draft.profilePhotoUrl || profile.profilePhotoUrl} />
-                            <AvatarFallback>{(draft.fullName || displayName).slice(0, 2).toUpperCase()}</AvatarFallback>
-                          </Avatar>
-                          <div className="space-y-2">
-                            <Label htmlFor="profile-photo-upload" className="cursor-pointer">
-                              <Button type="button" variant="outline" asChild>
-                                <span><Camera className="w-4 h-4 mr-2" /> Upload Photo</span>
-                              </Button>
-                            </Label>
-                            <input
-                              id="profile-photo-upload"
-                              className="hidden"
-                              type="file"
-                              accept="image/*"
-                              onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) uploadPhotoMutation.mutate(file);
-                              }}
-                            />
-                            {uploadPhotoMutation.isPending && (
-                              <p className="text-xs text-slate-400">Uploading... {uploadProgress}%</p>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label>Full Name</Label>
-                            <Input value={draft.fullName} onChange={(e) => setDraft((prev) => ({ ...prev, fullName: e.target.value }))} />
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Professional Title</Label>
-                            <Input value={draft.title} onChange={(e) => setDraft((prev) => ({ ...prev, title: e.target.value }))} />
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Location</Label>
-                            <Input value={draft.location} onChange={(e) => setDraft((prev) => ({ ...prev, location: e.target.value }))} />
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Hourly Rate (ZAR)</Label>
-                            <Input type="number" value={draft.hourlyRate} onChange={(e) => setDraft((prev) => ({ ...prev, hourlyRate: e.target.value }))} />
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label>Bio</Label>
-                          <Textarea className="min-h-[110px]" value={draft.bio} onChange={(e) => setDraft((prev) => ({ ...prev, bio: e.target.value }))} />
-                        </div>
-
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label>Skills (comma separated)</Label>
-                            <Input value={draft.skills} onChange={(e) => setDraft((prev) => ({ ...prev, skills: e.target.value }))} />
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Expertise (comma separated)</Label>
-                            <Input value={draft.expertise} onChange={(e) => setDraft((prev) => ({ ...prev, expertise: e.target.value }))} />
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Categories (comma separated)</Label>
-                            <Input value={draft.categories} onChange={(e) => setDraft((prev) => ({ ...prev, categories: e.target.value }))} />
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Availability</Label>
-                            <Input value={draft.availability} onChange={(e) => setDraft((prev) => ({ ...prev, availability: e.target.value }))} />
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Experience Level</Label>
-                            <Input value={draft.experienceLevel} onChange={(e) => setDraft((prev) => ({ ...prev, experienceLevel: e.target.value }))} />
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Portfolio Links (comma separated)</Label>
-                            <Input value={draft.portfolioLinks} onChange={(e) => setDraft((prev) => ({ ...prev, portfolioLinks: e.target.value }))} />
-                          </div>
-                        </div>
-
-                        <div className="flex justify-end gap-3 pt-2">
-                          <Button variant="outline" onClick={() => setEditOpen(false)}>
-                            <X className="w-4 h-4 mr-2" /> Cancel
-                          </Button>
-                          <Button
-                            onClick={() => saveMutation.mutate()}
-                            disabled={saveMutation.isPending || !draft.fullName.trim() || !draft.title.trim() || draft.bio.trim().length < 40}
-                          >
-                            {saveMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Edit className="w-4 h-4 mr-2" />}
-                            Save Profile
-                          </Button>
-                        </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
+                  <Button variant="outline" className="w-full mb-3" onClick={() => navigate("/edit-profile")} data-testid="button-edit-profile-main">
+                    <Edit className="w-4 h-4 mr-2" /> Edit Profile
+                  </Button>
                 )}
 
                 <div className="grid grid-cols-2 gap-2 mb-6">
@@ -630,7 +438,7 @@ export default function FreelancerProfile() {
                           <p className="text-sm text-slate-500">This freelancer hasn't added portfolio links yet.</p>
                         )}
                         {isOwnProfile && (
-                          <Button size="sm" variant="outline" onClick={() => setEditOpen(true)} data-testid="button-add-portfolio">
+                          <Button size="sm" variant="outline" onClick={() => navigate("/edit-profile")} data-testid="button-add-portfolio">
                             <PlusCircle className="w-4 h-4 mr-2" /> Add Portfolio Links
                           </Button>
                         )}
