@@ -7,7 +7,7 @@ import { AuthGuard } from "@/components/AuthGuard";
 import {
   Briefcase, DollarSign, CheckCircle, Clock, MessageSquare, Star,
   Zap, Users, ChevronDown, ChevronUp, UserCheck, XCircle, CalendarClock,
-  FileText, Eye, LayoutList, Columns,
+  FileText, Eye, LayoutList, Columns, RotateCcw,
 } from "lucide-react";
 
 interface ClientJob {
@@ -375,11 +375,13 @@ function PipelineView({
   onStatusChange,
   isPending,
   scrollKey,
+  hintsVersion,
 }: {
   applicants: Applicant[];
   onStatusChange: (id: string, status: string) => void;
   isPending: boolean;
   scrollKey: string;
+  hintsVersion: number;
 }) {
   const [dragState, setDragState] = useState<DragState>(null);
   const [dragOverCol, setDragOverCol] = useState<string | null>(null);
@@ -546,6 +548,13 @@ function PipelineView({
   const [showSwipeHint, setShowSwipeHint] = useState(
     () => !localStorage.getItem(SWIPE_HINT_KEY)
   );
+
+  // Re-show the hint whenever the parent bumps hintsVersion (reset hints button)
+  useEffect(() => {
+    if (hintsVersion > 0) {
+      setShowSwipeHint(true);
+    }
+  }, [hintsVersion]);
 
   function dismissSwipeHint() {
     setShowSwipeHint(false);
@@ -826,10 +835,16 @@ export default function ClientDashboard() {
     const saved = localStorage.getItem("client_dashboard_view_mode");
     return saved === "pipeline" ? "pipeline" : "list";
   });
+  const [hintsVersion, setHintsVersion] = useState(0);
 
   function handleSetViewMode(mode: "list" | "pipeline") {
     setViewMode(mode);
     localStorage.setItem("client_dashboard_view_mode", mode);
+  }
+
+  function handleResetHints() {
+    localStorage.removeItem("pipeline_swipe_hint_seen");
+    setHintsVersion((v) => v + 1);
   }
 
   function handleSelectJob(id: string | null) {
@@ -1043,6 +1058,18 @@ export default function ClientDashboard() {
                               </button>
                             </div>
                           )}
+                          {/* Reset hints (pipeline mode only) */}
+                          {applicants.length > 0 && viewMode === "pipeline" && (
+                            <button
+                              data-testid="reset-hints"
+                              onClick={handleResetHints}
+                              title="Re-show the swipe hint"
+                              className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-700 transition-all border border-transparent hover:border-slate-600"
+                            >
+                              <RotateCcw className="w-3 h-3" />
+                              <span className="hidden sm:inline">Reset hints</span>
+                            </button>
+                          )}
                           <button
                             onClick={() => setSelectedJobId(null)}
                             data-testid="close-applicants"
@@ -1083,6 +1110,7 @@ export default function ClientDashboard() {
                             onStatusChange={handleStatusChange}
                             isPending={statusMutation.isPending}
                             scrollKey={`pipeline_scroll_${selectedJobId}`}
+                            hintsVersion={hintsVersion}
                           />
                         ) : (
                           <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
