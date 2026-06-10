@@ -17,6 +17,8 @@ import {
   Loader2,
   ExternalLink,
   AlertCircle,
+  User,
+  Shield,
 } from "lucide-react";
 
 const BOT_FALLBACKS: Array<{ when: RegExp; reply: string }> = [
@@ -46,6 +48,32 @@ function getBotReply(text: string) {
 function formatTime(date?: Date | null) {
   if (!date) return "";
   return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+function getSenderLabel(type: string) {
+  switch (type) {
+    case "user":
+      return "You";
+    case "support":
+      return "Support";
+    case "system":
+      return "System";
+    default:
+      return "Support";
+  }
+}
+
+function getSenderIcon(type: string) {
+  switch (type) {
+    case "user":
+      return User;
+    case "support":
+      return Bot;
+    case "system":
+      return Shield;
+    default:
+      return Bot;
+  }
 }
 
 export function SupportChat() {
@@ -129,69 +157,156 @@ export function SupportChat() {
 
   return (
     <>
+      {/* Floating toggle button */}
       <button
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-24 right-6 w-14 h-14 bg-gradient-to-br from-primary to-primary/80 text-white rounded-full shadow-xl hover:scale-110 hover:shadow-2xl transition-all duration-300 flex items-center justify-center z-50 border border-white/10"
+        onClick={() => setIsOpen((s) => !s)}
+        className="fixed bottom-24 right-6 w-14 h-14 rounded-full shadow-xl hover:scale-110 hover:shadow-2xl transition-all duration-300 flex items-center justify-center z-50 border border-white/15"
+        style={{
+          background: "linear-gradient(135deg, #19B8FF 0%, #15A3E0 100%)",
+          color: "#ffffff",
+        }}
         data-testid="button-support-chat"
       >
         <MessageCircle className="h-6 w-6" />
       </button>
 
       {isOpen && (
-        <div className="fixed bottom-24 right-6 w-[calc(100vw-3rem)] max-w-96 h-[32rem] bg-card rounded-2xl shadow-[var(--shadow-lg)] flex flex-col z-[55] overflow-hidden border border-border md:w-96">
-          <div className="bg-brand-gradient text-[#0F1115] p-4 flex items-center justify-between">
+        <div
+          className="fixed bottom-24 right-6 w-[calc(100vw-3rem)] max-w-96 h-[32rem] rounded-2xl shadow-[0_14px_42px_rgba(0,0,0,0.35)] flex flex-col z-[55] overflow-hidden border md:w-96"
+          style={{
+            backgroundColor: "#0F1115",
+            borderColor: "rgba(255,255,255,0.08)",
+          }}
+        >
+          {/* Header */}
+          <div
+            className="p-4 flex items-center justify-between"
+            style={{
+              background: "linear-gradient(135deg, #7CFF4F 0%, #19B8FF 100%)",
+              color: "#0F1115",
+            }}
+          >
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-black/20 rounded-full flex items-center justify-center">
                 <Bot className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-semibold">FreelanceSkills Support</h3>
-                <p className="text-xs text-black/70">Realtime chat</p>
+                <h3 className="font-semibold text-sm">FreelanceSkills Support</h3>
+                <p className="text-xs opacity-70">Realtime chat</p>
               </div>
             </div>
-            <button onClick={() => setIsOpen(false)} className="hover:bg-black/10 p-1 rounded">
+            <button
+              onClick={() => setIsOpen(false)}
+              className="hover:bg-black/10 p-1 rounded transition-colors"
+            >
               <X className="h-5 w-5" />
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-surface">
-            <div className="bg-card border border-border rounded-xl p-3 text-sm text-muted-foreground">
+          {/* Messages area */}
+          <div
+            className="flex-1 overflow-y-auto p-4 space-y-4"
+            style={{ backgroundColor: "#0F1115" }}
+          >
+            {/* Welcome banner */}
+            <div
+              className="rounded-xl p-3 text-sm border"
+              style={{
+                backgroundColor: "#1B2130",
+                borderColor: "rgba(255,255,255,0.08)",
+                color: "#A7B0C0",
+              }}
+            >
               {welcomeText}
             </div>
 
+            {/* Loading state */}
             {isBootstrapping && (
-              <div className="py-8 flex items-center justify-center text-muted-foreground">
+              <div className="py-8 flex items-center justify-center" style={{ color: "#A7B0C0" }}>
                 <Loader2 className="h-5 w-5 animate-spin mr-2" />
                 Loading conversation...
               </div>
             )}
 
+            {/* Error state */}
             {!isBootstrapping && chatError && (
-              <div className="rounded-lg border border-red-400/40 bg-destructive/15 p-3 text-sm text-red-200 flex gap-2">
+              <div
+                className="rounded-lg border p-3 text-sm flex gap-2"
+                style={{
+                  borderColor: "rgba(239,68,68,0.4)",
+                  backgroundColor: "rgba(239,68,68,0.15)",
+                  color: "#FCA5A5",
+                }}
+              >
                 <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
                 {chatError}
               </div>
             )}
 
+            {/* Empty state */}
             {!isBootstrapping && !chatError && messages.length === 0 && user?.id && (
-              <div className="py-8 text-center text-sm text-muted-foreground">No messages yet. Start the conversation below.</div>
+              <div className="py-8 text-center text-sm" style={{ color: "#A7B0C0" }}>
+                No messages yet. Start the conversation below.
+              </div>
             )}
 
+            {/* Messages */}
             {!isBootstrapping &&
               !chatError &&
               messages.map((msg) => {
                 const isUser = msg.senderType === "user";
+                const isSystem = msg.senderType === "system";
+                const Icon = getSenderIcon(msg.senderType);
+
                 return (
                   <div key={msg.id} className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
                     <div
                       className={`max-w-[85%] rounded-2xl p-3 ${
                         isUser
-                          ? "bg-primary text-primary-foreground rounded-br-sm"
-                          : "bg-card text-foreground border border-border rounded-bl-sm"
+                          ? "rounded-br-sm"
+                          : isSystem
+                            ? "rounded-bl-sm"
+                            : "rounded-bl-sm"
                       }`}
+                      style={
+                        isUser
+                          ? {
+                              backgroundColor: "#19B8FF",
+                              color: "#0F1115",
+                            }
+                          : isSystem
+                            ? {
+                                backgroundColor: "#1B2130",
+                                color: "#7CFF4F",
+                                border: "1px solid rgba(124,255,79,0.25)",
+                              }
+                            : {
+                                backgroundColor: "#1B2130",
+                                color: "#F5F7FA",
+                                border: "1px solid rgba(255,255,255,0.08)",
+                              }
+                      }
                     >
+                      {/* Sender label for non-user messages */}
+                      {!isUser && (
+                        <div className="flex items-center gap-1 mb-1 opacity-60">
+                          <Icon className="w-3 h-3" />
+                          <span className="text-[10px] font-semibold uppercase tracking-wide">
+                            {getSenderLabel(msg.senderType)}
+                          </span>
+                        </div>
+                      )}
                       <p className="text-sm whitespace-pre-line leading-relaxed">{msg.content}</p>
-                      <p className={`mt-1 text-[10px] ${isUser ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+                      <p
+                        className="mt-1 text-[10px]"
+                        style={{
+                          color: isUser
+                            ? "rgba(15,17,21,0.7)"
+                            : isSystem
+                              ? "rgba(124,255,79,0.6)"
+                              : "#A7B0C0",
+                        }}
+                      >
                         {formatTime(msg.createdAt)}
                       </p>
                     </div>
@@ -199,9 +314,17 @@ export function SupportChat() {
                 );
               })}
 
+            {/* Sending indicator */}
             {isSending && (
               <div className="flex justify-start">
-                <div className="bg-card border border-border rounded-2xl rounded-bl-sm p-3 flex items-center gap-2 text-muted-foreground">
+                <div
+                  className="rounded-2xl rounded-bl-sm p-3 flex items-center gap-2"
+                  style={{
+                    backgroundColor: "#1B2130",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    color: "#A7B0C0",
+                  }}
+                >
                   <Loader2 className="h-4 w-4 animate-spin" />
                   <span className="text-sm">Sending...</span>
                 </div>
@@ -211,11 +334,25 @@ export function SupportChat() {
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="p-3 border-t border-border bg-card">
+          {/* Input area */}
+          <div
+            className="p-3 border-t"
+            style={{
+              backgroundColor: "#1B2130",
+              borderColor: "rgba(255,255,255,0.08)",
+            }}
+          >
             {!user?.id ? (
               <div className="space-y-2">
-                <p className="text-xs text-muted-foreground">Please sign in to send messages.</p>
-                <Button className="w-full" onClick={() => (window.location.href = "/auth?redirect=/dashboard")}>Sign in</Button>
+                <p className="text-xs" style={{ color: "#A7B0C0" }}>
+                  Please sign in to send messages.
+                </p>
+                <Button
+                  className="w-full"
+                  onClick={() => (window.location.href = "/auth?redirect=/dashboard")}
+                >
+                  Sign in
+                </Button>
               </div>
             ) : (
               <>
@@ -230,10 +367,23 @@ export function SupportChat() {
                       }
                     }}
                     placeholder="Type your message..."
-                    className="flex-1 text-foreground"
+                    className="flex-1"
                     disabled={!chatId || isSending}
+                    style={{
+                      backgroundColor: "#0F1115",
+                      borderColor: "rgba(255,255,255,0.08)",
+                      color: "#F5F7FA",
+                    }}
                   />
-                  <Button size="icon" onClick={handleSend} disabled={!inputValue.trim() || !chatId || isSending}>
+                  <Button
+                    size="icon"
+                    onClick={handleSend}
+                    disabled={!inputValue.trim() || !chatId || isSending}
+                    style={{
+                      backgroundColor: "#19B8FF",
+                      color: "#0F1115",
+                    }}
+                  >
                     <Send className="h-4 w-4" />
                   </Button>
                 </div>
@@ -242,7 +392,8 @@ export function SupportChat() {
                     href="https://wa.me/27722324636"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-primary inline-flex items-center gap-1 hover:underline"
+                    className="text-xs inline-flex items-center gap-1 hover:underline"
+                    style={{ color: "#19B8FF" }}
                   >
                     <Phone className="h-3 w-3" />
                     WhatsApp Support
