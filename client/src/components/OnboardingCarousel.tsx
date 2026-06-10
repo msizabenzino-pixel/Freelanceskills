@@ -110,8 +110,19 @@ export function OnboardingCarousel() {
     if (isAuthenticated && !profileCheckedRef.current) {
       profileCheckedRef.current = true;
       fetch("/api/profile", { credentials: "include" })
-        .then(r => r.ok ? r.json() : null)
+        .then(r => {
+          if (r.status === 401) {
+            // Session expired/unauthenticated — don't show carousel
+            return { __skip: true };
+          }
+          if (!r.ok) {
+            // Other API errors — don't annoy user with carousel
+            return { __skip: true };
+          }
+          return r.json();
+        })
         .then(profile => {
+          if (profile && (profile as any).__skip) return;
           if (profile && profile.id) {
             localStorage.setItem("onboarding_completed", "true");
             // Don't show — profile exists
@@ -119,7 +130,9 @@ export function OnboardingCarousel() {
             setTimeout(() => setIsVisible(true), 800);
           }
         })
-        .catch(() => setTimeout(() => setIsVisible(true), 800));
+        .catch(() => {
+          // Network error — don't show carousel
+        });
       return;
     }
 
