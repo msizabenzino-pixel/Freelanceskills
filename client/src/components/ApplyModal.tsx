@@ -1,11 +1,12 @@
 /**
- * FreelanceSkills — AI-Powered Apply Modal
- * The most advanced job application assistant in Africa.
+ * FreelanceSkills — AI-Powered Apply Modal (Legally Compliant)
+ * Internal application flow for aggregated jobs with source attribution.
  *
  * Flow:
- *  Step 1 → Job overview + profile summary input
+ *  Step 1 → Job overview + legal disclaimer + profile summary input
  *  Step 2 → AI generates cover letter + employability score
- *  Step 3 → Review, copy, then apply directly on the real job listing
+ *  Step 3 → Review, then SUBMIT INTERNALLY (primary CTA)
+ *         → "View on [Source]" available as secondary link only
  */
 
 import { useState } from "react";
@@ -19,13 +20,13 @@ import {
 import {
   BrainCircuit, CheckCircle, Copy, ExternalLink, Loader2,
   Star, MapPin, Building2, Briefcase, Zap, TrendingUp,
-  ChevronRight, AlertCircle, Wifi,
+  ChevronRight, AlertCircle, Wifi, Send,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import type { AggregatedJob } from "@/components/AggregatedJobCard";
 
-// ── Score Ring ────────────────────────────────────────────────────────────────
+// ── Score Ring ──────────────────────────────────────────────────────────────────────────────
 
 function ScoreRing({ score }: { score: number }) {
   const color =
@@ -66,7 +67,7 @@ function ScoreRing({ score }: { score: number }) {
   );
 }
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// ── Types ───────────────────────────────────────────────────────────────────────────────────────────
 
 interface AIApplyResponse {
   success: boolean;
@@ -80,17 +81,17 @@ interface AIApplyResponse {
 
 interface Props {
   job: AggregatedJob | null;
-  open: boolean;
   onClose: () => void;
 }
 
-// ── Main Component ────────────────────────────────────────────────────────────
+// ── Main Component ──────────────────────────────────────────────────────────────────────────────────────────────
 
-export function ApplyModal({ job, open, onClose }: Props) {
+export function ApplyModal({ job, onClose }: Props) {
   const [step, setStep] = useState<"input" | "generating" | "result">("input");
   const [resumeSummary, setResumeSummary] = useState("");
   const [aiResult, setAiResult] = useState<AIApplyResponse | null>(null);
   const [copied, setCopied] = useState(false);
+  const [internalSubmitted, setInternalSubmitted] = useState(false);
   const { toast } = useToast();
 
   const applyMutation = useMutation({
@@ -114,6 +115,28 @@ export function ApplyModal({ job, open, onClose }: Props) {
     },
   });
 
+  const internalApplyMutation = useMutation({
+    mutationFn: async () => {
+      if (!job) throw new Error("No job selected");
+      const res = await apiRequest("POST", `/api/aggregated-jobs/${job.id}/apply`, {
+        coverLetter: aiResult?.aiCoverLetter || null,
+        resumeSummary: resumeSummary || null,
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || "Failed to submit application");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      setInternalSubmitted(true);
+      toast({ title: "Application submitted!", description: "Your application has been saved to My Applications." });
+    },
+    onError: (err: any) => {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    },
+  });
+
   function handleCopy() {
     if (!aiResult?.aiCoverLetter) return;
     navigator.clipboard.writeText(aiResult.aiCoverLetter);
@@ -122,12 +145,12 @@ export function ApplyModal({ job, open, onClose }: Props) {
     toast({ title: "Cover letter copied!", description: "Paste it into the application form." });
   }
 
-  function handleDirectApply() {
+  function handleExternalView() {
     const url = aiResult?.applyUrl || job?.sourceUrl || job?.applyUrl;
     if (url) {
       window.open(url, "_blank", "noopener,noreferrer");
     } else {
-      toast({ title: "No direct apply link", description: "Use the cover letter to apply via email or the company website." });
+      toast({ title: "No external link", description: "Use the cover letter to apply via email or the company website." });
     }
   }
 
@@ -135,6 +158,8 @@ export function ApplyModal({ job, open, onClose }: Props) {
     setStep("input");
     setAiResult(null);
     setResumeSummary("");
+    setCopied(false);
+    setInternalSubmitted(false);
     onClose();
   }
 
@@ -143,7 +168,7 @@ export function ApplyModal({ job, open, onClose }: Props) {
   const score = aiResult?.employabilityScore ?? 0;
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
+    <Dialog open={true} onOpenChange={handleClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-slate-950 border-white/10 text-white">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-white">
@@ -181,14 +206,16 @@ export function ApplyModal({ job, open, onClose }: Props) {
               )}
             </div>
           </div>
-          {(job.applyUrl || job.sourceUrl) && (
-            <div className="mt-2 text-xs text-emerald-400 flex items-center gap-1">
-              <CheckCircle className="w-3 h-3" /> Real job listing with direct apply link
-            </div>
-          )}
+          {/* Legal disclaimer — always visible at top of job strip */}
+          <div className="mt-3 text-xs text-amber-300/80 bg-amber-500/10 rounded-lg p-2.5 border border-amber-500/20 flex items-start gap-2">
+            <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+            <span>
+              <strong>External listing</strong> — Sourced from {job.source}. FreelanceSkills handles your application internally. You may also view the original listing.
+            </span>
+          </div>
         </div>
 
-        {/* ── Step 1: Input ─────────────────────────────────────────────────── */}
+        {/* ── Step 1: Input ─────────────────────────────────────────────────────────────────────────────────────────────────────────────── */}
         {step === "input" && (
           <div className="space-y-4">
             <div>
@@ -220,24 +247,29 @@ export function ApplyModal({ job, open, onClose }: Props) {
               <Button
                 className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-white font-bold h-12 text-base gap-2"
                 onClick={() => applyMutation.mutate()}
+                disabled={applyMutation.isPending}
                 data-testid="btn-generate-ai-apply"
               >
-                <BrainCircuit className="w-5 h-5" /> Generate AI Application
+                {applyMutation.isPending ? (
+                  <><Loader2 className="w-5 h-5 animate-spin" /> Generating…</>
+                ) : (
+                  <><BrainCircuit className="w-5 h-5" /> Generate AI Application</>
+                )}
               </Button>
               {(job.applyUrl || job.sourceUrl) && (
                 <Button
                   variant="outline"
-                  className="border-white/20 text-white/70 hover:text-white gap-2"
+                  className="border-white/20 text-white/70 hover:text-white gap-2 text-xs"
                   onClick={() => window.open((job.applyUrl || job.sourceUrl)!, "_blank", "noopener")}
                 >
-                  <ExternalLink className="w-4 h-4" /> Quick Apply
+                  <ExternalLink className="w-4 h-4" /> View on {job.source}
                 </Button>
               )}
             </div>
           </div>
         )}
 
-        {/* ── Step 2: Generating ────────────────────────────────────────────── */}
+        {/* ── Step 2: Generating ─────────────────────────────────────────────────────────────────────────────────────────────────────────────── */}
         {step === "generating" && (
           <div className="py-12 flex flex-col items-center gap-5">
             <div className="relative">
@@ -261,7 +293,7 @@ export function ApplyModal({ job, open, onClose }: Props) {
           </div>
         )}
 
-        {/* ── Step 3: Result ────────────────────────────────────────────────── */}
+        {/* ── Step 3: Result ─────────────────────────────────────────────────────────────────────────────────────────────────────────────── */}
         {step === "result" && aiResult && (
           <div className="space-y-5">
             {/* Employability score + summary */}
@@ -271,7 +303,7 @@ export function ApplyModal({ job, open, onClose }: Props) {
                 <p className="text-white font-bold text-lg mb-1">{aiResult.message}</p>
                 <p className="text-white/60 text-sm">
                   {score >= 80
-                    ? "You are a highly competitive candidate for this role. Apply now!"
+                    ? "You are a highly competitive candidate for this role. Submit your application now!"
                     : score >= 70
                     ? "Strong match! Your cover letter has been tailored to maximise your chances."
                     : "Good potential — our AI has crafted your best possible application."}
@@ -320,47 +352,65 @@ export function ApplyModal({ job, open, onClose }: Props) {
               </div>
             )}
 
-            {/* Application tracked notice */}
-            {aiResult.applicationId && (
+            {/* Internal application status */}
+            {internalSubmitted ? (
               <div className="flex items-center gap-2 text-sm text-emerald-400 bg-emerald-500/10 rounded-lg p-3 border border-emerald-500/20">
                 <CheckCircle className="w-4 h-4 shrink-0" />
-                Application tracked in your dashboard. You can monitor its status under "My Applications".
+                <div>
+                  <strong>Application submitted successfully!</strong>
+                  <div className="text-white/60 text-xs mt-0.5">Track it in My Applications. We’ll notify you of updates.</div>
+                </div>
               </div>
-            )}
-
-            {!aiResult.applyUrl && (
-              <div className="flex items-center gap-2 text-xs text-amber-400/80 bg-amber-500/10 rounded-lg p-3 border border-amber-500/20">
-                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                No direct apply URL for this listing. Copy the cover letter and apply via the company's website or email.
+            ) : aiResult.applicationId ? (
+              <div className="flex items-center gap-2 text-sm text-emerald-400 bg-emerald-500/10 rounded-lg p-3 border border-emerald-500/20">
+                <CheckCircle className="w-4 h-4 shrink-0" />
+                Application tracked in your dashboard. Submit below to finalise.
               </div>
-            )}
+            ) : null}
 
-            {/* CTA buttons */}
-            <div className="flex gap-3">
-              {aiResult.applyUrl ? (
+            {/* CTA buttons — PRIMARY = internal submit, SECONDARY = external view */}
+            <div className="flex flex-col gap-3">
+              <div className="flex gap-3">
                 <Button
                   className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-white font-bold h-12 text-base gap-2"
-                  onClick={handleDirectApply}
-                  data-testid="btn-direct-apply"
+                  onClick={() => internalApplyMutation.mutate()}
+                  disabled={internalApplyMutation.isPending || internalSubmitted}
+                  data-testid="btn-submit-internal"
                 >
-                  <ExternalLink className="w-5 h-5" /> Apply Directly Now
+                  {internalApplyMutation.isPending ? (
+                    <><Loader2 className="w-5 h-5 animate-spin" /> Submitting…</>
+                  ) : internalSubmitted ? (
+                    <><CheckCircle className="w-5 h-5" /> Submitted</>
+                  ) : (
+                    <><Send className="w-5 h-5" /> Submit Application</>
+                  )}
                 </Button>
-              ) : (
                 <Button
-                  className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-white font-bold h-12 text-base gap-2"
-                  onClick={handleCopy}
-                  data-testid="btn-copy-apply"
+                  variant="outline"
+                  className="border-white/20 text-white/70 hover:text-white"
+                  onClick={() => setStep("input")}
                 >
-                  <Copy className="w-5 h-5" /> {copied ? "Copied!" : "Copy Cover Letter"}
+                  Regenerate
                 </Button>
+              </div>
+
+              {/* External link — small, secondary, with disclaimer */}
+              {(aiResult.applyUrl || job.sourceUrl || job.applyUrl) && (
+                <div className="flex items-center justify-between gap-3 bg-white/5 rounded-lg p-3 border border-white/10">
+                  <span className="text-xs text-white/50">
+                    Prefer to apply directly on {job.source}?
+                  </span>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="text-xs text-sky-400 hover:text-sky-300 hover:bg-sky-500/10 gap-1.5 h-7"
+                    onClick={handleExternalView}
+                    data-testid="btn-external-view"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" /> View on {job.source}
+                  </Button>
+                </div>
               )}
-              <Button
-                variant="outline"
-                className="border-white/20 text-white/70 hover:text-white"
-                onClick={() => setStep("input")}
-              >
-                Regenerate
-              </Button>
             </div>
           </div>
         )}

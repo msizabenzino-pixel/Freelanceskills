@@ -430,39 +430,65 @@ Generate a personalised cover letter and honest employability assessment.`,
   });
 
   // ── POST /api/aggregated-jobs/:id/apply ───────────────────────────────────
+  // INTERNAL application flow — saves application record, does NOT redirect.
+  // External link is secondary UI only (with legal disclaimer).
   app.post("/api/aggregated-jobs/:id/apply", async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
       const job = await storage.getAggregatedJobById(id);
       if (!job) return res.status(404).json({ error: "Job not found" });
 
+      const user = (req as any).user;
+      if (!user) return res.status(401).json({ error: "Authentication required" });
+
+      let applicationId: string | null = null;
+      try {
+        const application = await storage.createJobApplication({
+          userId: user.id || user.uid,
+          jobId: null,
+          aggregatedJobId: id,
+          jobTitle: job.title,
+          company: job.company,
+          location: `${job.location}, ${job.country || job.province}`,
+          coverLetter: req.body.coverLetter || null,
+          resumeSummary: req.body.resumeSummary || null,
+          source: job.source,
+          applyUrl: job.applyUrl || job.sourceUrl || null,
+        });
+        applicationId = application.id;
+      } catch (e: any) {
+        log(`Could not record application: ${e.message}`, "warn");
+        return res.status(500).json({ error: "Failed to save application" });
+      }
+
       await storage.incrementAggregatedJobApplication(id);
       cache.invalidate(`job:${id}`);
 
-      const user = (req as any).user;
-      if (user) {
-        try {
-          await storage.createJobApplication({
-            userId: user.id || user.uid,
-            jobId: null,
-            aggregatedJobId: id,
+      // Audit log — external job application for compliance
+      try {
+        await storage.createAuditLog({
+          userId: user.id || user.uid,
+          action: "external_job_apply",
+          resource: "aggregated_jobs",
+          resourceId: id,
+          metadata: {
             jobTitle: job.title,
             company: job.company,
-            location: `${job.location}, ${job.country || job.province}`,
-            coverLetter: req.body.coverLetter || null,
-            resumeSummary: req.body.resumeSummary || null,
             source: job.source,
-            applyUrl: job.applyUrl || job.sourceUrl || null,
-          });
-        } catch (_e) {
-          log(`Could not record application: ${_e}`, "warn");
-        }
+            applicationId,
+            hasCoverLetter: !!req.body.coverLetter,
+            ip: req.ip || req.socket.remoteAddress,
+          },
+        });
+      } catch (auditErr: any) {
+        log(`Audit log failed: ${auditErr.message}`, "warn");
       }
 
       return res.json({
         success: true,
-        redirectUrl: job.applyUrl || job.sourceUrl || null,
-        message: "Application tracked. Redirecting to job listing…",
+        applicationId,
+        message: "Application submitted successfully!",
+        externalUrl: job.applyUrl || job.sourceUrl || null,
       });
     } catch (err: any) {
       log(`POST /api/aggregated-jobs/:id/apply error: ${err.message}`, "error");
