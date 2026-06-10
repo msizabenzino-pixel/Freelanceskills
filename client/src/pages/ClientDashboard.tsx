@@ -864,6 +864,11 @@ export default function ClientDashboard() {
     const saved = localStorage.getItem("client_dashboard_view_mode");
     return saved === "pipeline" ? "pipeline" : "list";
   });
+  const [activeStatusTab, setActiveStatusTab] = useState<string>(() => {
+    const jobId = localStorage.getItem("client_dashboard_selected_job");
+    if (!jobId) return "all";
+    return localStorage.getItem(`client_dashboard_tab_${jobId}`) ?? "all";
+  });
   const [hintsVersion, setHintsVersion] = useState(0);
 
   function handleSetViewMode(mode: "list" | "pipeline") {
@@ -876,12 +881,22 @@ export default function ClientDashboard() {
     setHintsVersion((v) => v + 1);
   }
 
+  function handleSelectTab(tab: string) {
+    setActiveStatusTab(tab);
+    if (selectedJobId) {
+      localStorage.setItem(`client_dashboard_tab_${selectedJobId}`, tab);
+    }
+  }
+
   function handleSelectJob(id: string | null) {
     setSelectedJobId(id);
     if (id === null) {
       localStorage.removeItem("client_dashboard_selected_job");
+      setActiveStatusTab("all");
     } else {
       localStorage.setItem("client_dashboard_selected_job", id);
+      const savedTab = localStorage.getItem(`client_dashboard_tab_${id}`) ?? "all";
+      setActiveStatusTab(savedTab);
     }
   }
 
@@ -1120,19 +1135,33 @@ export default function ClientDashboard() {
                         </div>
                       </div>
 
-                      {/* Summary bar (list view only) */}
+                      {/* Status filter tabs (list view only) */}
                       {applicants.length > 0 && viewMode === "list" && (
-                        <div className="grid grid-cols-4 gap-2 mb-5">
+                        <div className="flex items-center gap-1.5 mb-5 flex-wrap">
                           {[
-                            { label: "New",        value: applicantsByStatus.new,         color: "text-slate-400" },
-                            { label: "Shortlisted", value: applicantsByStatus.shortlisted, color: "text-amber-400" },
-                            { label: "Interview",  value: applicantsByStatus.interview,   color: "text-purple-400" },
-                            { label: "Rejected",   value: applicantsByStatus.rejected,    color: "text-red-400" },
-                          ].map((s) => (
-                            <div key={s.label} className="bg-slate-800/60 rounded-lg p-2 text-center">
-                              <p className={`text-lg font-bold ${s.color}`}>{s.value}</p>
-                              <p className="text-xs text-slate-500">{s.label}</p>
-                            </div>
+                            { key: "all",         label: "All",         count: applicants.length,                    active: "bg-slate-600 text-white",   inactive: "text-slate-400 hover:text-slate-300 hover:bg-slate-800" },
+                            { key: "applied",     label: "New",         count: applicantsByStatus.new,               active: "bg-slate-600 text-white",   inactive: "text-slate-400 hover:text-slate-300 hover:bg-slate-800" },
+                            { key: "shortlisted", label: "Shortlisted", count: applicantsByStatus.shortlisted,       active: "bg-amber-600 text-white",   inactive: "text-amber-400 hover:text-amber-300 hover:bg-amber-900/20" },
+                            { key: "interview",   label: "Interview",   count: applicantsByStatus.interview,         active: "bg-purple-600 text-white",  inactive: "text-purple-400 hover:text-purple-300 hover:bg-purple-900/20" },
+                            { key: "rejected",    label: "Rejected",    count: applicantsByStatus.rejected,          active: "bg-red-700 text-white",     inactive: "text-red-400 hover:text-red-300 hover:bg-red-900/20" },
+                          ].map((tab) => (
+                            <button
+                              key={tab.key}
+                              data-testid={`applicant-tab-${tab.key}`}
+                              onClick={() => handleSelectTab(tab.key)}
+                              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${
+                                activeStatusTab === tab.key
+                                  ? `${tab.active} border-transparent`
+                                  : `${tab.inactive} border-slate-700/60`
+                              }`}
+                            >
+                              {tab.label}
+                              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${
+                                activeStatusTab === tab.key ? "bg-white/20" : "bg-slate-700"
+                              }`}>
+                                {tab.count}
+                              </span>
+                            </button>
                           ))}
                         </div>
                       )}
@@ -1154,14 +1183,21 @@ export default function ClientDashboard() {
                           />
                         ) : (
                           <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
-                            {applicants.map((a) => (
-                              <ApplicantCard
-                                key={a.id}
-                                applicant={a}
-                                onStatusChange={handleStatusChange}
-                                isPending={statusMutation.isPending}
-                              />
-                            ))}
+                            {applicants
+                              .filter((a) => activeStatusTab === "all" || a.status === activeStatusTab)
+                              .map((a) => (
+                                <ApplicantCard
+                                  key={a.id}
+                                  applicant={a}
+                                  onStatusChange={handleStatusChange}
+                                  isPending={statusMutation.isPending}
+                                />
+                              ))}
+                            {applicants.filter((a) => activeStatusTab === "all" || a.status === activeStatusTab).length === 0 && (
+                              <div className="text-center py-8">
+                                <p className="text-slate-400 text-sm">No applicants in this stage</p>
+                              </div>
+                            )}
                           </div>
                         )
                       ) : (
