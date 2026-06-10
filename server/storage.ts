@@ -7,7 +7,7 @@ import {
   type BusinessInvitation, type InsertBusinessInvitation,
   type Referral, type InsertReferral,
   type Course, type InsertCourse, type Lesson, type InsertLesson, type CourseProgress, type InsertCourseProgress, type Certificate, type InsertCertificate,
-  type Notification, type InsertNotification,
+  type Notification, type InsertNotification, HIGH_PRIORITY_NOTIFICATION_TYPES,
   type FraudFlag, type InsertFraudFlag,
   type AuditLog, type InsertAuditLog,
   type EscrowTransaction, type InsertEscrowTransaction,
@@ -1175,21 +1175,28 @@ class DatabaseStorage implements IStorage {
 
   // Notification operations
   async createNotification(notification: InsertNotification): Promise<Notification> {
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0);
-    const [countResult] = await db.select({ count: count() })
-      .from(notifications)
-      .where(and(
-        eq(notifications.userId, notification.userId),
-        sql`${notifications.createdAt} >= ${todayStart}`
-      ));
-    if (countResult && countResult.count >= 10) {
-      const [existing] = await db.select().from(notifications)
-        .where(eq(notifications.userId, notification.userId))
-        .orderBy(desc(notifications.createdAt))
-        .limit(1);
-      return existing;
+    // High-priority types (application_status, payment) always bypass the daily
+    // cap — silently dropping an interview invite or payout confirmation is unacceptable.
+    const isHighPriority = HIGH_PRIORITY_NOTIFICATION_TYPES.has(notification.type);
+
+    if (!isHighPriority) {
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      const [countResult] = await db.select({ count: count() })
+        .from(notifications)
+        .where(and(
+          eq(notifications.userId, notification.userId),
+          sql`${notifications.createdAt} >= ${todayStart}`
+        ));
+      if (countResult && countResult.count >= 10) {
+        const [existing] = await db.select().from(notifications)
+          .where(eq(notifications.userId, notification.userId))
+          .orderBy(desc(notifications.createdAt))
+          .limit(1);
+        return existing;
+      }
     }
+
     const [newNotification] = await db.insert(notifications).values(notification).returning();
     return newNotification;
   }
