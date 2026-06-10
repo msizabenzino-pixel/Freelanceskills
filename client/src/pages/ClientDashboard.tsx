@@ -545,6 +545,7 @@ function PipelineView({
 
   // ── First-visit swipe hint ────────────────────────────────────────────────────
   const SWIPE_HINT_KEY = "pipeline_swipe_hint_seen";
+  const [hasOverflow, setHasOverflow] = useState(false);
   const [showSwipeHint, setShowSwipeHint] = useState(
     () => !localStorage.getItem(SWIPE_HINT_KEY)
   );
@@ -581,6 +582,7 @@ function PipelineView({
       if (!el) return;
       setCanScrollLeft(el.scrollLeft > 4);
       setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+      setHasOverflow(el.scrollWidth > el.clientWidth);
     }
 
     checkScroll();
@@ -786,8 +788,8 @@ function PipelineView({
       )}
     </div>
 
-      {/* First-visit swipe hint pill */}
-      {showSwipeHint && (
+      {/* First-visit swipe hint pill — only show when board overflows horizontally */}
+      {showSwipeHint && hasOverflow && (
         <div
           aria-live="polite"
           data-testid="swipe-hint-pill"
