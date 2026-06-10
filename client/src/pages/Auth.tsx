@@ -38,9 +38,20 @@ export default function Auth() {
     const path = window.location.pathname.toLowerCase();
     if (path === "/signup") return false;
     if (path === "/login") return true;
+    if (path === "/forgot-password") return true; // login mode, but forgot overlay
     if (mode === "register" || mode === "signup") return false;
     if (mode === "login") return true;
     return true;
+  };
+
+  const detectForgotMode = (): boolean => {
+    if (typeof window === "undefined") return false;
+    const params = new URLSearchParams(window.location.search);
+    const mode = (params.get("mode") || "").toLowerCase();
+    const path = window.location.pathname.toLowerCase();
+    if (path === "/forgot-password") return true;
+    if (mode === "forgot" || mode === "forgot-password") return true;
+    return false;
   };
 
   const [isLogin, setIsLogin] = useState(detectAuthMode);
@@ -266,7 +277,7 @@ export default function Auth() {
 
   useEffect(() => {
     setIsLogin(detectAuthMode());
-    setIsForgotPassword(false);
+    setIsForgotPassword(detectForgotMode());
   }, [location]);
 
   useEffect(() => {

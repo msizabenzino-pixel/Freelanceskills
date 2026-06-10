@@ -180,6 +180,9 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/auth" component={Auth} />
         <Route path="/signup" component={Auth} />
+        <Route path="/register" component={Auth} />
+        <Route path="/login" component={Auth} />
+        <Route path="/forgot-password" component={Auth} />
         <Route path="/reset-password/:token" component={ResetPassword} />
         <Route path="/jobs" component={Jobs} />
         <Route path="/jobs/:id" component={JobDetails} />
@@ -216,7 +219,6 @@ function Router() {
         <Route path="/privacy" component={Privacy} />
         <Route path="/impact" component={Impact} />
         <Route path="/about" component={About} />
-        <Route path="/login" component={Login} />
         <Route path="/careers" component={Careers} />
         <Route path="/academy" component={Academy} />
         <Route path="/academy/catalog" component={AcademyCatalog} />
@@ -230,7 +232,11 @@ function Router() {
         <Route path="/enterprise" component={Enterprise} />
         <Route path="/referral" component={Referral} />
         <Route path="/rewards" component={RewardsHub} />
-        <Route path="/checkout" component={Checkout} />
+        <Route path="/checkout">
+          <AuthGuard>
+            <Checkout />
+          </AuthGuard>
+        </Route>
         <Route path="/onboarding" component={CVUpload} />
         <Route path="/profile-builder" component={CVUpload} />
         <Route path="/edit-profile">
