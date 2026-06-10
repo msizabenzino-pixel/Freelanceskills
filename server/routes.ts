@@ -3416,6 +3416,80 @@ Experience level: ${experienceLevel || 'Any'}`
     await capturePayPalOrder(req, res);
   });
 
+  // ── Stripe Checkout ─────────────────────────────────────────────────────────
+  app.get("/api/stripe/status", (_req, res) => {
+    const { isStripeConfigured } = require("./stripe");
+    res.json({ configured: isStripeConfigured() });
+  });
+  app.post("/api/stripe/create-session", async (req, res) => {
+    const { createStripeSession } = await import("./stripe");
+    await createStripeSession(req, res);
+  });
+  app.post("/api/stripe/webhook", async (req, res) => {
+    const { handleStripeWebhook } = await import("./stripe");
+    await handleStripeWebhook(req, res);
+  });
+
+  // ── Cloudinary Upload ───────────────────────────────────────────────────────
+  const { registerCloudinaryRoutes } = await import("./cloudinary");
+  registerCloudinaryRoutes(app);
+
+  // ── Escrow Public API (client + freelancer) ─────────────────────────────────
+  app.post("/api/escrow/request-release", async (req: any, res) => {
+    const { storage } = await import("./storage");
+    const userId = (req.session as any).userId;
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+    const { bookingId } = req.body;
+    if (!bookingId) return res.status(400).json({ error: "bookingId required" });
+    const tx = await storage.getEscrowByBooking(bookingId);
+    if (!tx) return res.status(404).json({ error: "Escrow not found" });
+    if (tx.freelancerId !== userId) return res.status(403).json({ error: "Only freelancer can request release" });
+    if (tx.status !== "held") return res.status(400).json({ error: "Escrow not in held state" });
+    const updated = await storage.updateEscrowStatus(tx.id, "release_requested");
+    res.json({ ok: true, status: updated?.status });
+  });
+  app.post("/api/escrow/release", async (req: any, res) => {
+    const { storage } = await import("./storage");
+    const userId = (req.session as any).userId;
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+    const { bookingId } = req.body;
+    if (!bookingId) return res.status(400).json({ error: "bookingId required" });
+    const tx = await storage.getEscrowByBooking(bookingId);
+    if (!tx) return res.status(404).json({ error: "Escrow not found" });
+    if (tx.clientId !== userId) return res.status(403).json({ error: "Only client can approve release" });
+    if (tx.status !== "held") return res.status(400).json({ error: "Escrow not in held state" });
+    const updated = await storage.updateEscrowStatus(tx.id, "released");
+    // Credit freelancer
+    const { db } = await import("./db");
+    const { profiles, walletTransactions } = await import("@shared/schema");
+    const { eq, sql } = await import("drizzle-orm");
+    const [fp] = await db.select({ walletBalance: profiles.walletBalance }).from(profiles).where(eq(profiles.userId, tx.freelancerId));
+    const newBalance = (fp?.walletBalance || 0) + tx.amount;
+    await db.update(profiles).set({ walletBalance: newBalance, updatedAt: new Date() }).where(eq(profiles.userId, tx.freelancerId));
+    await db.insert(walletTransactions).values({
+      userId: tx.freelancerId, type: "credit", amountCents: tx.amount, balanceAfterCents: newBalance,
+      description: `Escrow released for booking ${bookingId}`,
+      referenceId: String(tx.id), referenceType: "escrow", performedBy: userId,
+    });
+    res.json({ ok: true, status: updated?.status });
+  });
+  app.get("/api/escrow/:bookingId", async (req: any, res) => {
+    const { storage } = await import("./storage");
+    const tx = await storage.getEscrowByBooking(req.params.bookingId);
+    if (!tx) return res.status(404).json({ error: "Escrow not found" });
+    res.json({
+      id: tx.id, bookingId: tx.bookingId, clientId: tx.clientId, freelancerId: tx.freelancerId,
+      amount: tx.amount, status: tx.status, payfastPaymentId: tx.payfastPaymentId,
+      createdAt: tx.createdAt, releasedAt: tx.releasedAt, refundedAt: tx.refundedAt,
+    });
+  });
+  app.get("/api/escrow/status/:bookingId", async (req: any, res) => {
+    const { storage } = await import("./storage");
+    const tx = await storage.getEscrowByBooking(req.params.bookingId);
+    if (!tx) return res.status(404).json({ error: "Escrow not found" });
+    res.json({ status: tx.status, amount: tx.amount, releasedAt: tx.releasedAt, refundedAt: tx.refundedAt });
+  });
+
   // Account operations (POPIA compliance)
   app.get("/api/account/export", isAuthenticated, async (req: any, res) => {
     try {

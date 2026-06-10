@@ -98,7 +98,6 @@ export async function createPayment(req: Request, res: Response) {
 
   const paymentData: Record<string, string> = {
     merchant_id: config.merchantId,
-    merchant_key: config.merchantKey,
     return_url: `${baseUrl}/checkout?pf_return=success&pf_payment_id=${paymentId}`,
     cancel_url: `${baseUrl}/checkout?pf_return=cancelled`,
     notify_url: `${baseUrl}/api/payfast/itn`,
@@ -140,7 +139,20 @@ export async function handleITN(req: Request, res: Response) {
   const config = getConfig();
 
   try {
-    const data = req.body as Record<string, string>;
+    // Parse raw body buffer (set by express.raw middleware) for exact signature verification
+    const rawBody = req.body as Buffer;
+    const bodyString = rawBody ? rawBody.toString("utf-8") : "";
+    const data: Record<string, string> = {};
+    if (bodyString) {
+      const params = new URLSearchParams(bodyString);
+      params.forEach((v, k) => { data[k] = v; });
+    }
+    // Fallback to parsed body if no raw buffer
+    if (!bodyString && req.body && typeof req.body === "object") {
+      for (const [k, v] of Object.entries(req.body)) {
+        if (typeof v === "string") data[k] = v;
+      }
+    }
 
     console.log(JSON.stringify({
       event: "payfast_itn_received",

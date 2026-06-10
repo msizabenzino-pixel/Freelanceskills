@@ -65,6 +65,10 @@ app.use(
   })),
 );
 
+// Raw body parser for PayFast ITN signature verification (must use exact bytes before urlencoded)
+app.use("/api/payfast/itn", express.raw({ type: "application/x-www-form-urlencoded", limit: "2mb" }));
+app.use("/api/stripe/webhook", express.raw({ type: "application/json", limit: "2mb" }));
+
 app.use(skipBodyParseForSubmit(express.urlencoded({ extended: false, limit: "2mb" })));
 
 // ── Request timeout guard ─────────────────────────────────────────────────────

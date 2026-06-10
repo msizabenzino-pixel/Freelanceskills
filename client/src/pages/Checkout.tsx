@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 
 type Step = "review" | "payment" | "processing" | "success" | "error";
-type PaymentMethod = "payfast" | "paypal";
+type PaymentMethod = "payfast" | "paypal" | "stripe";
 
 export default function Checkout() {
   const [, navigate] = useLocation();
@@ -37,6 +37,8 @@ export default function Checkout() {
   const [transactionId, setTransactionId] = useState<string>("");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("payfast");
   const [paypalConfigured, setPaypalConfigured] = useState<boolean | null>(null);
+  const [stripeConfigured, setStripeConfigured] = useState<boolean | null>(null);
+  const [bookingId, setBookingId] = useState<string | null>(null);
   const urlParams = new URLSearchParams(window.location.search);
 
   const pfReturn = urlParams.get("pf_return");
@@ -55,22 +57,33 @@ export default function Checkout() {
       .then(r => r.json())
       .then(d => setPaypalConfigured(d.configured))
       .catch(() => setPaypalConfigured(false));
+    fetch("/api/stripe/status")
+      .then(r => r.json())
+      .then(d => setStripeConfigured(d.configured))
+      .catch(() => setStripeConfigured(false));
   }, []);
 
-  // Handle PayPal return — capture the payment
+  // Handle payment returns — PayPal, Stripe
   useEffect(() => {
     const ppReturn = urlParams.get("paypal_return");
-    const ppToken = urlParams.get("token");
-    if (ppReturn === "success" && ppToken) {
+    const ppOrderId = urlParams.get("order_id");
+    if (ppReturn === "success" && ppOrderId) {
       setPaymentMethod("paypal");
       setStep("processing");
-      fetch(`/api/paypal/capture/${ppToken}`, { method: "POST", headers: { "Content-Type": "application/json" } })
+      fetch(`/api/paypal/capture/${ppOrderId}`, { method: "POST", headers: { "Content-Type": "application/json" } })
         .then(r => r.json())
         .then(d => {
-          if (d.success) { setTransactionId(d.captureId || ppToken); setStep("success"); }
+          if (d.success) { setTransactionId(d.captureId || ppOrderId); setStep("success"); }
           else { setErrorMessage(d.error || "PayPal capture failed"); setStep("error"); }
         })
         .catch(() => { setErrorMessage("PayPal capture failed. Please contact support."); setStep("error"); });
+    }
+    const stripeReturn = urlParams.get("stripe_return");
+    const stripeSessionId = urlParams.get("session_id");
+    if (stripeReturn === "success" && stripeSessionId) {
+      setPaymentMethod("stripe");
+      setTransactionId(stripeSessionId);
+      setStep("success");
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -162,6 +175,25 @@ export default function Checkout() {
     setStep("processing");
 
     try {
+      // Create booking first
+      const bkgRes = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          servicePackageId: params.get("serviceId") || "",
+          bookingDate: new Date().toISOString().split("T")[0],
+          startTime: "09:00",
+          totalAmount: Math.round(total * 100),
+          notes: service.title,
+        }),
+      });
+      let currentBookingId = bookingId;
+      if (bkgRes.ok) {
+        const bkg = await bkgRes.json();
+        currentBookingId = bkg.id;
+        setBookingId(bkg.id);
+      }
+
       const response = await fetch("/api/payfast/create-payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -169,6 +201,7 @@ export default function Checkout() {
           amount: Math.round(total * 100),
           itemName: `FreelanceSkills: ${service.title} by ${service.freelancer}`,
           itemDescription: service.title,
+          bookingId: currentBookingId,
           metadata: {
             serviceTitle: service.title,
             freelancer: service.freelancer,
@@ -217,6 +250,24 @@ export default function Checkout() {
     setErrorMessage(null);
     setStep("processing");
     try {
+      const bkgRes = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          servicePackageId: params.get("serviceId") || "",
+          bookingDate: new Date().toISOString().split("T")[0],
+          startTime: "09:00",
+          totalAmount: Math.round(total * 100),
+          notes: service.title,
+        }),
+      });
+      let currentBookingId = bookingId;
+      if (bkgRes.ok) {
+        const bkg = await bkgRes.json();
+        currentBookingId = bkg.id;
+        setBookingId(bkg.id);
+      }
+
       const response = await fetch("/api/paypal/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -224,6 +275,7 @@ export default function Checkout() {
           amountCents: Math.round(total * 100),
           currency: "USD",
           description: `FreelanceSkills: ${service.title} by ${service.freelancer}`,
+          bookingId: currentBookingId,
         }),
       });
       const data = await response.json();
@@ -242,8 +294,58 @@ export default function Checkout() {
     }
   };
 
+  const handleStripePayment = async () => {
+    setIsProcessing(true);
+    setErrorMessage(null);
+    setStep("processing");
+    try {
+      const bkgRes = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          servicePackageId: params.get("serviceId") || "",
+          bookingDate: new Date().toISOString().split("T")[0],
+          startTime: "09:00",
+          totalAmount: Math.round(total * 100),
+          notes: service.title,
+        }),
+      });
+      let currentBookingId = bookingId;
+      if (bkgRes.ok) {
+        const bkg = await bkgRes.json();
+        currentBookingId = bkg.id;
+        setBookingId(bkg.id);
+      }
+
+      const response = await fetch("/api/stripe/create-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amountCents: Math.round(total * 100),
+          currency: "zar",
+          description: `FreelanceSkills: ${service.title} by ${service.freelancer}`,
+          bookingId: currentBookingId,
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Stripe session creation failed");
+      if (data.url) {
+        window.location.href = data.url;
+        return;
+      }
+      throw new Error("No Stripe checkout URL received");
+    } catch (err: any) {
+      console.error("Stripe error:", err);
+      setErrorMessage(err.message || "Stripe payment failed");
+      setStep("error");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   const handlePay = () => {
     if (paymentMethod === "paypal") handlePayPalPayment();
+    else if (paymentMethod === "stripe") handleStripePayment();
     else handlePayment();
   };
 
@@ -380,7 +482,7 @@ export default function Checkout() {
                   <h2 className="text-xl font-bold text-white mb-4">Choose Payment Method</h2>
 
                   {/* Method selector */}
-                  <div className="grid grid-cols-2 gap-3 mb-6">
+                  <div className="grid grid-cols-3 gap-3 mb-6">
                     <button
                       onClick={() => setPaymentMethod("payfast")}
                       className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all text-left ${paymentMethod === "payfast" ? "border-emerald-500 bg-emerald-500/8" : "border-slate-700 hover:border-slate-600"}`}
@@ -411,15 +513,36 @@ export default function Checkout() {
                       </div>
                       {paymentMethod === "paypal" && <CheckCircle2 className="w-4 h-4 text-blue-400 ml-auto" />}
                     </button>
+
+                    <button
+                      onClick={() => stripeConfigured && setPaymentMethod("stripe")}
+                      className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all text-left relative ${paymentMethod === "stripe" ? "border-violet-500 bg-violet-500/8" : stripeConfigured ? "border-slate-700 hover:border-slate-600" : "border-slate-800 opacity-60 cursor-not-allowed"}`}
+                      data-testid="method-stripe"
+                      title={stripeConfigured === false ? "Stripe not configured — add STRIPE_SECRET_KEY & STRIPE_PUBLISHABLE_KEY" : undefined}
+                    >
+                      <div className="w-10 h-10 bg-gradient-to-br from-[#635BFF] to-[#443DB3] rounded-lg flex items-center justify-center">
+                        <span className="text-white font-black text-sm">S</span>
+                      </div>
+                      <div>
+                        <p className="font-bold text-white text-sm">Stripe</p>
+                        <p className="text-[11px] text-slate-400">{stripeConfigured ? "Card · ZAR" : "Not configured"}</p>
+                      </div>
+                      {paymentMethod === "stripe" && <CheckCircle2 className="w-4 h-4 text-violet-400 ml-auto" />}
+                    </button>
                   </div>
 
                   {/* Payment info */}
                   <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4 text-sm text-blue-800 dark:text-blue-300 mb-4">
                     <p className="font-bold mb-1">How it works</p>
-                    {paymentMethod === "payfast"
-                      ? <p>You'll be redirected to PayFast to pay by card, EFT, SnapScan, or Mobicred. Funds go straight into escrow — released only when you approve the work.</p>
-                      : <p>You'll be redirected to PayPal to complete payment securely. Funds are held in escrow and released when you confirm the work is done.</p>
-                    }
+                    {paymentMethod === "payfast" && (
+                      <p>You'll be redirected to PayFast to pay by card, EFT, SnapScan, or Mobicred. Funds go straight into escrow — released only when you approve the work.</p>
+                    )}
+                    {paymentMethod === "paypal" && (
+                      <p>You'll be redirected to PayPal to complete payment securely. Funds are held in escrow and released when you confirm the work is done.</p>
+                    )}
+                    {paymentMethod === "stripe" && (
+                      <p>You'll be redirected to Stripe Checkout to pay securely by card. Funds go straight into escrow — released only when you approve the work.</p>
+                    )}
                   </div>
 
                   <div className="bg-slate-800/50 rounded-lg p-4 space-y-2 text-sm mb-6">
@@ -447,7 +570,7 @@ export default function Checkout() {
                     {isProcessing ? (
                       <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Redirecting…</>
                     ) : (
-                      <><Lock className="w-4 h-4 mr-2" /> Pay {formatAmount(total)} via {paymentMethod === "paypal" ? "PayPal" : "PayFast"}</>
+                      <><Lock className="w-4 h-4 mr-2" /> Pay {formatAmount(total)} via {paymentMethod === "paypal" ? "PayPal" : paymentMethod === "stripe" ? "Stripe" : "PayFast"}</>
                     )}
                   </Button>
 
@@ -472,10 +595,10 @@ export default function Checkout() {
                 <Card className="p-12 text-center" data-testid="step-processing">
                   <Loader2 className="w-16 h-16 text-emerald-400 animate-spin mx-auto mb-6" />
                   <h2 className="text-xl font-bold text-white mb-2">
-                    Redirecting to {paymentMethod === "paypal" ? "PayPal" : "PayFast"}
+                    Redirecting to {paymentMethod === "paypal" ? "PayPal" : paymentMethod === "stripe" ? "Stripe" : "PayFast"}
                   </h2>
                   <p className="text-slate-400">
-                    You'll be redirected to {paymentMethod === "paypal" ? "PayPal" : "PayFast"} to complete your secure payment…
+                    You'll be redirected to {paymentMethod === "paypal" ? "PayPal" : paymentMethod === "stripe" ? "Stripe" : "PayFast"} to complete your secure payment…
                   </p>
                   <p className="text-xs text-slate-400 mt-4">Please don't close this page.</p>
                 </Card>
@@ -518,7 +641,7 @@ export default function Checkout() {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-slate-400">Method</span>
-                        <span className="font-medium text-white">{paymentMethod === "paypal" ? "PayPal" : "PayFast"}</span>
+                        <span className="font-medium text-white">{paymentMethod === "paypal" ? "PayPal" : paymentMethod === "stripe" ? "Stripe" : "PayFast"}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-slate-400">Status</span>

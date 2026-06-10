@@ -40,10 +40,11 @@ export async function createPayPalOrder(req: Request, res: Response) {
     if (!isPayPalConfigured()) {
       return res.status(503).json({ error: "PayPal not configured. Add PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET." });
     }
-    const { amountCents, currency = "ZAR", description } = req.body;
+    const { amountCents, currency = "ZAR", description, bookingId } = req.body;
     if (!amountCents || amountCents <= 0) return res.status(400).json({ error: "Invalid amount" });
     const token = await getAccessToken();
     const amount = (amountCents / 100).toFixed(2);
+    const baseUrl = process.env.APP_URL || "https://freelanceskills.net";
     const orderRes = await fetch(`${PAYPAL_BASE}/v2/checkout/orders`, {
       method: "POST",
       headers: {
@@ -53,12 +54,16 @@ export async function createPayPalOrder(req: Request, res: Response) {
       },
       body: JSON.stringify({
         intent: "CAPTURE",
-        purchase_units: [{ amount: { currency_code: currency, value: amount }, description }],
+        purchase_units: [{
+          amount: { currency_code: currency, value: amount },
+          description,
+          custom_id: bookingId || undefined,
+        }],
         application_context: {
           brand_name: "FreelanceSkills",
           user_action: "PAY_NOW",
-          return_url: `${process.env.APP_URL || "https://freelanceskills.net"}/checkout?paypal_return=success`,
-          cancel_url: `${process.env.APP_URL || "https://freelanceskills.net"}/checkout?paypal_return=cancel`,
+          return_url: `${baseUrl}/checkout?paypal_return=success&order_id={ORDER_ID}`,
+          cancel_url: `${baseUrl}/checkout?paypal_return=cancel`,
         },
       }),
     });
@@ -96,6 +101,22 @@ export async function capturePayPalOrder(req: Request, res: Response) {
     }
     const capture = await captureRes.json();
     const captureId = capture.purchase_units?.[0]?.payments?.captures?.[0]?.id;
+    const customId = capture.purchase_units?.[0]?.custom_id;
+    if (customId) {
+      const { storage } = await import("./storage");
+      await storage.updateBookingStatus(customId, "confirmed");
+      const booking = await storage.getBooking(customId);
+      if (booking && booking.freelancerId) {
+        await storage.createEscrowTransaction({
+          bookingId: customId,
+          clientId: booking.clientId,
+          freelancerId: booking.freelancerId,
+          amount: Math.round(parseFloat(capture.purchase_units?.[0]?.payments?.captures?.[0]?.amount?.value || "0") * 100),
+          payfastPaymentId: captureId || orderId,
+          status: "held",
+        });
+      }
+    }
     return res.json({ success: true, captureId, orderId, status: capture.status });
   } catch (err: any) {
     console.error("[PayPal] captureOrder error:", err);
