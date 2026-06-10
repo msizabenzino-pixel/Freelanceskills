@@ -406,7 +406,14 @@ function PipelineView({
       colHeaderRefs.current[targetKey]?.focus();
     } else if (kbState === null && prevKbState.current !== null) {
       // Exiting kb-move mode (cancel or confirmed drop): return focus to the card.
-      cardRefs.current[prevKbState.current.cardId]?.focus();
+      const cardEl = cardRefs.current[prevKbState.current.cardId];
+      if (cardEl && document.contains(cardEl)) {
+        cardEl.focus();
+      } else {
+        // Card was removed from the board (e.g. status changed to hired/rejected)
+        // Fall back to the board container so focus isn't lost to document.body.
+        boardRef.current?.focus();
+      }
     }
     prevKbState.current = kbState;
   }, [kbState]);
@@ -681,7 +688,7 @@ function PipelineView({
         >→</span>
       </div>
 
-    <div ref={boardRef} className="overflow-x-auto pb-2"
+    <div ref={boardRef} className="overflow-x-auto pb-2" tabIndex={-1}
       style={{ touchAction: dragState ? "none" : "pan-x" }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
