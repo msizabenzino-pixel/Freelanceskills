@@ -4,11 +4,10 @@ import { useLocation } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AuthGuard } from "@/components/AuthGuard";
-import { useToast } from "@/hooks/use-toast";
 import {
   Briefcase, DollarSign, CheckCircle, Clock, MessageSquare, Star,
   Zap, Users, ChevronDown, ChevronUp, UserCheck, XCircle, CalendarClock,
-  FileText, Eye, Loader2,
+  FileText, Eye,
 } from "lucide-react";
 
 interface ClientJob {
@@ -62,27 +61,7 @@ function ApplicantCard({
 }) {
   const [expanded, setExpanded] = useState(false);
   const [, setLocation] = useLocation();
-  const { toast } = useToast();
   const statusCfg = STATUS_CONFIG[applicant.status] || STATUS_CONFIG.applied;
-
-  const messageMutation = useMutation({
-    mutationFn: async () => {
-      const res = await fetch("/api/conversations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ recipientId: applicant.userId, jobId: applicant.jobId }),
-      });
-      if (!res.ok) throw new Error("Failed to open conversation");
-      return res.json();
-    },
-    onSuccess: () => {
-      setLocation("/messages");
-    },
-    onError: () => {
-      toast({ title: "Could not open conversation", description: "Please try again.", variant: "destructive" });
-    },
-  });
   const initials = applicant.freelancerName
     .split(" ")
     .map((p) => p[0])
@@ -207,13 +186,10 @@ function ApplicantCard({
         {/* Message button — always visible for all statuses */}
         <button
           data-testid={`message-${applicant.id}`}
-          disabled={messageMutation.isPending}
-          onClick={() => messageMutation.mutate()}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-slate-700/50 hover:bg-slate-700 text-slate-300 border border-slate-600/40 rounded-lg transition disabled:opacity-50"
+          onClick={() => setLocation(`/messages?new=${applicant.userId}`)}
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-slate-700/50 hover:bg-slate-700 text-slate-300 border border-slate-600/40 rounded-lg transition"
         >
-          {messageMutation.isPending
-            ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
-            : <MessageSquare className="w-3.5 h-3.5" />}
+          <MessageSquare className="w-3.5 h-3.5" />
           Message
         </button>
       </div>
