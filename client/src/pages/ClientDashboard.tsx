@@ -223,6 +223,7 @@ function PipelineCard({
   onKeyMove,
   onKeyDrop,
   onKeyCancel,
+  cardRef,
 }: {
   applicant: Applicant;
   onStatusChange: (id: string, status: string) => void;
@@ -233,6 +234,7 @@ function PipelineCard({
   onKeyMove: (cardId: string, dir: -1 | 1) => void;
   onKeyDrop: (cardId: string) => void;
   onKeyCancel: () => void;
+  cardRef?: (el: HTMLDivElement | null) => void;
 }) {
   const [, setLocation] = useLocation();
   const initials = getInitials(applicant.freelancerName);
@@ -251,6 +253,7 @@ function PipelineCard({
 
   return (
     <div
+      ref={cardRef}
       data-pipeline-card-id={applicant.id}
       data-testid={`pipeline-card-${applicant.id}`}
       tabIndex={cardTabIndex}
@@ -390,6 +393,7 @@ function PipelineView({
   const [kbAnnounce, setKbAnnounce] = useState("");
   const colRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const colHeaderRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const boardRef = useRef<HTMLDivElement>(null);
 
   // When keyboard-move mode activates, focus the column header matching the
@@ -397,8 +401,12 @@ function PipelineView({
   const prevKbState = useRef<KbState>(null);
   useEffect(() => {
     if (kbState !== null && prevKbState.current === null) {
+      // Entering kb-move mode: focus the column header for the target column.
       const targetKey = PIPELINE_COLUMNS[kbState.colIndex].key;
       colHeaderRefs.current[targetKey]?.focus();
+    } else if (kbState === null && prevKbState.current !== null) {
+      // Exiting kb-move mode (cancel or confirmed drop): return focus to the card.
+      cardRefs.current[prevKbState.current.cardId]?.focus();
     }
     prevKbState.current = kbState;
   }, [kbState]);
@@ -750,6 +758,7 @@ function PipelineView({
                       onKeyMove={handleKeyMove}
                       onKeyDrop={handleKeyDrop}
                       onKeyCancel={handleKeyCancel}
+                      cardRef={(el) => { cardRefs.current[a.id] = el; }}
                     />
                   ))
                 )}
