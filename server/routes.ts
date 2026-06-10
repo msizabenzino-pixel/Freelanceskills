@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, registerAuthRoutes } from "./replit_integrations/auth";
+import { setupAuth, registerAuthRoutes, getUser, getUserId, requireAuth, requireAdmin, requireClient, requireFreelancer, requireKyc, requireOwnership, clearProfileCache } from "./replit_integrations/auth";
 import { ACADEMY_COURSES, getAcademyStats } from "./academyData";
 
 async function awardPoints(userId: string, action: string): Promise<void> {
