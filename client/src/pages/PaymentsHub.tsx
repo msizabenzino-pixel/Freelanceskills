@@ -52,56 +52,23 @@ const fiatCurrencies = [
   { code: "MZN", name: "Mozambican Metical", symbol: "MT", flag: "🇲🇿", rate: 3.52 },
 ];
 
-const cryptoCurrencies = [
-  {
-    code: "BTC",
-    name: "Bitcoin",
-    icon: "₿",
-    color: "text-orange-500",
-    bgColor: "bg-orange-500/10",
-    price: "$67,432.50",
-    priceZar: "R1,226,046",
-    change: "+2.4%",
-    walletPrefix: "bc1q",
-    network: "Bitcoin",
-  },
-  {
-    code: "ETH",
-    name: "Ethereum",
-    icon: "Ξ",
-    color: "text-blue-500",
-    bgColor: "bg-blue-500/10",
-    price: "$3,521.80",
-    priceZar: "R64,033",
-    change: "+1.8%",
-    walletPrefix: "0x",
-    network: "Ethereum (ERC-20)",
-  },
-  {
-    code: "USDC",
-    name: "USD Coin",
-    icon: "$",
-    color: "text-green-500",
-    bgColor: "bg-green-500/10",
-    price: "$1.00",
-    priceZar: "R18.18",
-    change: "0.0%",
-    walletPrefix: "0x",
-    network: "Ethereum / Polygon",
-  },
-  {
-    code: "cUSD",
-    name: "Celo Dollar",
-    icon: "c$",
-    color: "text-emerald-500",
-    bgColor: "bg-emerald-500/10",
-    price: "$1.00",
-    priceZar: "R18.18",
-    change: "0.0%",
-    walletPrefix: "0x",
-    network: "Celo",
-  },
+const cryptoCoins = [
+  { code: "bitcoin", symbol: "BTC", name: "Bitcoin", icon: "₿", color: "text-orange-500", bgColor: "bg-orange-500/10", network: "Bitcoin" },
+  { code: "ethereum", symbol: "ETH", name: "Ethereum", icon: "Ξ", color: "text-blue-500", bgColor: "bg-blue-500/10", network: "Ethereum (ERC-20)" },
+  { code: "usd-coin", symbol: "USDC", name: "USD Coin", icon: "$", color: "text-green-500", bgColor: "bg-green-500/10", network: "Ethereum / Polygon" },
+  { code: "celo-dollar", symbol: "cUSD", name: "Celo Dollar", icon: "c$", color: "text-emerald-500", bgColor: "bg-emerald-500/10", network: "Celo" },
 ];
+
+const ZAR_RATE = 18.18;
+
+type CoinGeckoPrice = {
+  usd: number;
+  usd_market_cap?: number;
+  usd_24h_change?: number;
+  last_updated_at?: number;
+};
+
+type CoinGeckoResponse = Record<string, CoinGeckoPrice>;
 
 const mobilePayments = [
   { name: "M-Pesa", description: "East Africa's leading mobile money", region: "Kenya, Tanzania", icon: Smartphone, color: "text-green-600", instant: true },
@@ -152,21 +119,44 @@ function CryptoChangeBadge({ change }: { change: string }) {
   );
 }
 
-function CryptoWalletCard({ crypto }: { crypto: typeof cryptoCurrencies[0] }) {
+type CryptoCardProps = {
+  coin: typeof cryptoCoins[0];
+  price?: CoinGeckoPrice;
+  isLoading?: boolean;
+};
+
+function formatCryptoPrice(usd: number) {
+  return `$${usd.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+function formatZarPrice(usd: number) {
+  return `R${(usd * ZAR_RATE).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+}
+
+function CryptoWalletCard({ coin, price, isLoading }: CryptoCardProps) {
   return (
-    <Card className="hover:shadow-xl transition-shadow border-border" data-testid={`card-crypto-${crypto.code}`}>
+    <Card className="hover:shadow-xl transition-shadow border-border" data-testid={`card-crypto-${coin.symbol}`}>
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-4">
-          <div className={`w-12 h-12 rounded-xl ${crypto.bgColor} flex items-center justify-center`}>
-            <span className={`text-xl font-bold ${crypto.color}`}>{crypto.icon}</span>
+          <div className={`w-12 h-12 rounded-xl ${coin.bgColor} flex items-center justify-center`}>
+            <span className={`text-xl font-bold ${coin.color}`}>{coin.icon}</span>
           </div>
-          <CryptoChangeBadge change={crypto.change} />
+          {isLoading ? (
+            <Skeleton className="h-6 w-16" />
+          ) : price ? (
+            <CryptoChangeBadge change={`${price.usd_24h_change ?? 0 > 0 ? "+" : ""}${(price.usd_24h_change ?? 0).toFixed(2)}%`} />
+          ) : (
+            <Badge variant="outline" className="text-muted-foreground border-muted-foreground/20">Unavailable</Badge>
+          )}
         </div>
-        <h3 className="font-bold text-foreground text-lg">{crypto.name}</h3>
-        <p className="text-sm text-muted-foreground mb-1">{crypto.code} · {crypto.network}</p>
-        <div className="text-xl font-bold text-foreground" data-testid={`text-crypto-price-${crypto.code}`}>{crypto.price}</div>
-        <div className="text-xs text-muted-foreground mb-4">{crypto.priceZar}</div>
-        <div className="rounded-lg border border-dashed border-border p-3 text-center" data-testid={`wallet-coming-soon-${crypto.code}`}>
+        <h3 className="font-bold text-foreground text-lg">{coin.name}</h3>
+        <p className="text-sm text-muted-foreground mb-1">{coin.symbol} · {coin.network}</p>
+        <div className="text-xl font-bold text-foreground" data-testid={`text-crypto-price-${coin.symbol}`}>
+          {isLoading ? <Skeleton className="h-7 w-28" /> : price ? formatCryptoPrice(price.usd) : "N/A"}
+        </div>
+        <div className="text-xs text-muted-foreground mb-4">
+          {isLoading ? <Skeleton className="h-4 w-24" /> : price ? formatZarPrice(price.usd) : ""}
+        </div>
+        <div className="rounded-lg border border-dashed border-border p-3 text-center" data-testid={`wallet-coming-soon-${coin.symbol}`}>
           <Clock className="w-4 h-4 text-muted-foreground mx-auto mb-1" />
           <p className="text-xs text-muted-foreground font-medium">Crypto payouts coming Q3 2025</p>
           <p className="text-[10px] text-muted-foreground/60 mt-0.5">Use PayFast or bank transfer for now</p>
@@ -184,6 +174,18 @@ export default function PaymentsHub() {
 
   const { data: bookings, isLoading, error } = useQuery<Booking[]>({
     queryKey: ["/api/bookings"],
+  });
+
+  const { data: cryptoPrices, isLoading: cryptoLoading } = useQuery<CoinGeckoResponse>({
+    queryKey: ["crypto-prices"],
+    queryFn: async () => {
+      const ids = cryptoCoins.map(c => c.code).join(",");
+      const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true&include_last_updated_at=true`);
+      if (!res.ok) throw new Error("Failed to fetch crypto prices");
+      return res.json() as Promise<CoinGeckoResponse>;
+    },
+    staleTime: 60_000,
+    retry: 2,
   });
 
   const totals = useMemo(() => {
@@ -480,8 +482,8 @@ export default function PaymentsHub() {
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-              {cryptoCurrencies.map((crypto) => (
-                <CryptoWalletCard key={crypto.code} crypto={crypto} />
+              {cryptoCoins.map((coin) => (
+                <CryptoWalletCard key={coin.symbol} coin={coin} price={cryptoPrices?.[coin.code]} isLoading={cryptoLoading} />
               ))}
             </div>
 

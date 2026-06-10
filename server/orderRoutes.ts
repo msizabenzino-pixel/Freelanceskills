@@ -28,8 +28,11 @@
  */
 import { Express, Response } from "express";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
-import { profiles, userActivityLogs } from "@shared/schema";
+import { eq, desc, sql } from "drizzle-orm";
+import { profiles, userActivityLogs, jobs } from "@shared/schema";
+import { bookings, servicePackages } from "../shared/models/services";
+import { users } from "../shared/models/auth";
+import { users as freelancerUsers } from "../shared/models/auth";
 import { getIO } from "./socket";
 
 const ADMIN_USER_ID = "user_2Pz69BfA5yS3R8M";
@@ -369,56 +372,6 @@ function scanEvidenceVault(evidence: any[]): {
   return { riskLevel, flags, authenticityScore, sentimentSummary, aiSummary };
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// MOCK DATA — Rich, realistic, human
-// ═══════════════════════════════════════════════════════════════════════════
-function generateMockOrders(): any[] {
-  const statuses = ["pending", "accepted", "in_progress", "delivered", "completed", "cancelled", "disputed", "in_progress", "completed", "in_progress", "delivered", "completed"];
-  const categories = ["Web Dev", "UI/UX", "Data Science", "Mobile", "Copywriting"];
-  const freelancers = [
-    { name: "Jane Developer", academyLevel: "Top Rated", earningsLift: 35 },
-    { name: "Bob Designer", academyLevel: "Pro", earningsLift: 20 },
-    { name: "Maria Engineer", academyLevel: "Top Rated", earningsLift: 42 },
-    { name: "Sipho Coder", academyLevel: "Intermediate", earningsLift: 10 },
-    { name: "Amira Analyst", academyLevel: "Pro", earningsLift: 25 },
-  ];
-  const clients = [
-    { name: "TechCorp SA", ltv: 85000 },
-    { name: "Startup Joburg", ltv: 32000 },
-    { name: "FinServ Group", ltv: 142000 },
-    { name: "Retail Africa", ltv: 67000 },
-  ];
-  const gigs = [
-    "Build React Dashboard", "Design Brand Identity", "ML Prediction Model",
-    "Mobile App iOS/Android", "E-commerce Website", "Data Analytics Report",
-  ];
-
-  return Array.from({ length: 12 }, (_, i) => {
-    const status = statuses[i];
-    const freelancer = freelancers[i % freelancers.length];
-    const client = clients[i % clients.length];
-    const category = categories[i % categories.length];
-    const amount = 8000 + i * 5400;
-    return {
-      id: `ORD-${String(i + 1).padStart(4, "0")}`,
-      buyer: client,
-      seller: freelancer,
-      gigTitle: gigs[i % gigs.length],
-      category,
-      amountZAR: amount,
-      commissionZAR: Math.round(amount * 0.1),
-      status,
-      deliveryDate: new Date(Date.now() + ((i - 3) * 24 * 60 * 60 * 1000)).toISOString(),
-      completionDate: status === "completed" ? new Date(Date.now() - (i * 12 * 60 * 60 * 1000)).toISOString() : null,
-      createdAt: new Date(Date.now() - (i * 2 * 24 * 60 * 60 * 1000)).toISOString(),
-      latestPulseScore: ["in_progress", "delivered"].includes(status) ? 40 + (i * 7) % 60 : null,
-      evidenceCount: i % 4,
-      timelineEventCount: 2 + i % 7,
-      lastMessage: i % 3 === 0 ? "I'm feeling a bit stuck on the design direction" : "Making great progress!",
-    };
-  });
-}
-
 function generateMockTimeline(orderId: string): any[] {
   return [
     {
@@ -436,14 +389,14 @@ function generateMockTimeline(orderId: string): any[] {
     },
     {
       id: "evt_3", type: "message", timestamp: new Date(Date.now() - 86400000 * 4).toISOString(),
-      actor: "Jane Developer", actorRole: "seller",
+      actor: "Freelancer", actorRole: "seller",
       content: "Thank you! I've reviewed everything carefully and I'm ready to deliver something amazing. Starting today!",
       icon: "💬", sentimentScore: 0.85,
       aiSummary: "Confident, motivated freelancer with strong intent",
     },
     {
       id: "evt_4", type: "photo", timestamp: new Date(Date.now() - 86400000 * 2.5).toISOString(),
-      actor: "Jane Developer", actorRole: "seller",
+      actor: "Freelancer", actorRole: "seller",
       content: "Progress update: Initial wireframes and architecture complete ✅",
       mediaUrl: "https://placehold.co/700x350/3b82f6/white?text=Progress+Update+%231",
       icon: "📸", sentimentScore: 0.7,
@@ -458,7 +411,7 @@ function generateMockTimeline(orderId: string): any[] {
     },
     {
       id: "evt_6", type: "voice_note", timestamp: new Date(Date.now() - 86400000 * 1.5).toISOString(),
-      actor: "Jane Developer", actorRole: "seller",
+      actor: "Freelancer", actorRole: "seller",
       content: "Voice update: Explaining the technical choices and next steps (1m 47s)",
       icon: "🎙️", duration: 107, sentimentScore: 0.65,
       aiSummary: "Transparent technical communication — freelancer keeping client informed",
@@ -466,13 +419,13 @@ function generateMockTimeline(orderId: string): any[] {
     {
       id: "evt_7", type: "admin_note", timestamp: new Date(Date.now() - 86400000).toISOString(),
       actor: "Admin", actorRole: "admin",
-      content: "Quality review passed. Both parties communicating beautifully. This project is a great example of how FreelanceSkills.net should feel. 💙 Keep it up, Jane!",
+      content: "Quality review passed. Both parties communicating beautifully. 💙",
       icon: "🛡️", sentimentScore: 0.9,
       aiSummary: "Encouraging admin note — human touch at the right moment",
     },
     {
       id: "evt_8", type: "pulse", timestamp: new Date(Date.now() - 3600000 * 3).toISOString(),
-      actor: "Jane Developer", actorRole: "seller",
+      actor: "Freelancer", actorRole: "seller",
       content: "Almost done! Adding the final touches. So proud of how this turned out 🔥",
       emoji: "🔥", score: 97, icon: "💓", sentimentScore: 0.97,
       aiSummary: "Peak freelancer motivation and pride in work",
@@ -490,41 +443,75 @@ export function registerOrderRoutes(app: Express) {
     try {
       const { status, filter, search, sort } = req.query;
 
-      let orders = generateMockOrders();
+      const rows = await db
+        .select({
+          id: bookings.id,
+          clientId: bookings.clientId,
+          freelancerId: bookings.freelancerId,
+          servicePackageId: bookings.servicePackageId,
+          jobId: bookings.jobId,
+          status: bookings.status,
+          totalAmount: bookings.totalAmount,
+          bookingDate: bookings.bookingDate,
+          startTime: bookings.startTime,
+          endTime: bookings.endTime,
+          location: bookings.location,
+          notes: bookings.notes,
+          createdAt: bookings.createdAt,
+          updatedAt: bookings.updatedAt,
+          clientName: sql<string>`COALESCE(${users.firstName} || ' ' || ${users.lastName}, ${users.firstName}, 'Client')`,
+          freelancerName: sql<string>`COALESCE(${freelancerUsers.firstName} || ' ' || ${freelancerUsers.lastName}, ${freelancerUsers.firstName}, 'Freelancer')`,
+          freelancerLevel: profiles.experienceLevel,
+          freelancerRating: profiles.rating,
+          gigTitle: servicePackages.title,
+        })
+        .from(bookings)
+        .leftJoin(users, eq(bookings.clientId, users.id))
+        .leftJoin(freelancerUsers, eq(bookings.freelancerId, freelancerUsers.id))
+        .leftJoin(profiles, eq(bookings.freelancerId, profiles.userId))
+        .leftJoin(servicePackages, eq(bookings.servicePackageId, servicePackages.id))
+        .orderBy(desc(bookings.createdAt));
 
-      if (status) orders = orders.filter(o => o.status === status);
+      const orders = rows.map((r) => ({
+        id: r.id,
+        buyer: { name: r.clientName, ltv: 0 },
+        seller: { name: r.freelancerName, academyLevel: r.freelancerLevel || "Unknown", earningsLift: r.freelancerRating || 0 },
+        gigTitle: r.gigTitle || "Untitled Gig",
+        category: "Service",
+        amountZAR: r.totalAmount,
+        commissionZAR: Math.round(r.totalAmount * 0.1),
+        status: r.status,
+        deliveryDate: r.bookingDate ? new Date(r.bookingDate).toISOString() : new Date().toISOString(),
+        completionDate: r.status === "completed" && r.updatedAt ? new Date(r.updatedAt).toISOString() : null,
+        createdAt: r.createdAt ? new Date(r.createdAt).toISOString() : new Date().toISOString(),
+        latestPulseScore: null,
+        evidenceCount: 0,
+        timelineEventCount: 0,
+        lastMessage: null,
+      }));
 
-      // Saved views — human-curated filters
-      if (filter === "struggling") {
-        orders = orders.filter(o => runEmpathyEngine(o).level !== "calm");
-      }
-      if (filter === "high_satisfaction") {
-        orders = orders.filter(o => o.latestPulseScore && o.latestPulseScore > 80);
-      }
-      if (filter === "critical_health") {
-        orders = orders.filter(o => calculateProjectHealthScore(o).score < 40);
-      }
-
+      let filtered = orders;
+      if (status) filtered = filtered.filter(o => o.status === status);
       if (search) {
         const s = search.toLowerCase();
-        orders = orders.filter(o =>
-          o.buyer.name.toLowerCase().includes(s) ||
-          o.seller.name.toLowerCase().includes(s) ||
-          o.gigTitle.toLowerCase().includes(s)
-        );
+        filtered = filtered.filter(o => o.buyer.name.toLowerCase().includes(s) || o.seller.name.toLowerCase().includes(s) || o.gigTitle.toLowerCase().includes(s));
+      }
+      if (filter === "struggling") {
+        filtered = filtered.filter(o => runEmpathyEngine(o).level !== "calm");
+      }
+      if (filter === "critical_health") {
+        filtered = filtered.filter(o => calculateProjectHealthScore(o).score < 40);
       }
 
-      // Feature 9: Sort including emotional scores
-      if (sort === "amount") orders.sort((a, b) => b.amountZAR - a.amountZAR);
-      else if (sort === "pulse") orders.sort((a, b) => (b.latestPulseScore || 0) - (a.latestPulseScore || 0));
-      else if (sort === "health") orders.sort((a, b) => calculateProjectHealthScore(a).score - calculateProjectHealthScore(b).score);
-      else if (sort === "empathy") orders.sort((a, b) => {
+      if (sort === "amount") filtered.sort((a, b) => b.amountZAR - a.amountZAR);
+      else if (sort === "health") filtered.sort((a, b) => calculateProjectHealthScore(a).score - calculateProjectHealthScore(b).score);
+      else if (sort === "empathy") filtered.sort((a, b) => {
         const levels = { critical: 0, watch: 1, calm: 2 };
         return levels[runEmpathyEngine(a).level] - levels[runEmpathyEngine(b).level];
       });
-      else orders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      else filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
-      const enriched = orders.map(o => ({
+      const enriched = filtered.map(o => ({
         ...o,
         empathy: runEmpathyEngine(o),
         healthScore: calculateProjectHealthScore(o),
@@ -540,7 +527,7 @@ export function registerOrderRoutes(app: Express) {
         cancelled: enriched.filter(o => o.status === "cancelled").length,
         totalRevenueZAR: enriched.reduce((a, o) => a + o.amountZAR, 0),
         totalCommissionZAR: enriched.reduce((a, o) => a + o.commissionZAR, 0),
-        avgHealthScore: Math.round(enriched.reduce((a, o) => a + o.healthScore.score, 0) / enriched.length),
+        avgHealthScore: enriched.length ? Math.round(enriched.reduce((a, o) => a + o.healthScore.score, 0) / enriched.length) : 0,
       };
 
       res.json({ orders: enriched, stats });
@@ -554,15 +541,63 @@ export function registerOrderRoutes(app: Express) {
   app.get("/api/orders/:id", isAuthenticated, requireAdmin, async (req: any, res: Response) => {
     try {
       const { id } = req.params;
-      const orders = generateMockOrders();
-      const order = orders.find(o => o.id === id) || orders[0];
-      const timeline = generateMockTimeline(id);
+      const [row] = await db
+        .select({
+          id: bookings.id,
+          clientId: bookings.clientId,
+          freelancerId: bookings.freelancerId,
+          servicePackageId: bookings.servicePackageId,
+          jobId: bookings.jobId,
+          status: bookings.status,
+          totalAmount: bookings.totalAmount,
+          bookingDate: bookings.bookingDate,
+          startTime: bookings.startTime,
+          endTime: bookings.endTime,
+          location: bookings.location,
+          notes: bookings.notes,
+          createdAt: bookings.createdAt,
+          updatedAt: bookings.updatedAt,
+          clientName: sql<string>`COALESCE(${users.firstName} || ' ' || ${users.lastName}, ${users.firstName}, 'Client')`,
+          freelancerName: sql<string>`COALESCE(${freelancerUsers.firstName} || ' ' || ${freelancerUsers.lastName}, ${freelancerUsers.firstName}, 'Freelancer')`,
+          freelancerLevel: profiles.experienceLevel,
+          freelancerRating: profiles.rating,
+          gigTitle: servicePackages.title,
+        })
+        .from(bookings)
+        .leftJoin(users, eq(bookings.clientId, users.id))
+        .leftJoin(freelancerUsers, eq(bookings.freelancerId, freelancerUsers.id))
+        .leftJoin(profiles, eq(bookings.freelancerId, profiles.userId))
+        .leftJoin(servicePackages, eq(bookings.servicePackageId, servicePackages.id))
+        .where(eq(bookings.id, id))
+        .limit(1);
 
+      if (!row) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+
+      const order = {
+        id: row.id,
+        buyer: { name: row.clientName, ltv: 0 },
+        seller: { name: row.freelancerName, academyLevel: row.freelancerLevel || "Unknown", earningsLift: row.freelancerRating || 0 },
+        gigTitle: row.gigTitle || "Untitled Gig",
+        category: "Service",
+        amountZAR: row.totalAmount,
+        commissionZAR: Math.round(row.totalAmount * 0.1),
+        status: row.status,
+        deliveryDate: row.bookingDate ? new Date(row.bookingDate).toISOString() : new Date().toISOString(),
+        completionDate: row.status === "completed" && row.updatedAt ? new Date(row.updatedAt).toISOString() : null,
+        createdAt: row.createdAt ? new Date(row.createdAt).toISOString() : new Date().toISOString(),
+        latestPulseScore: null,
+        evidenceCount: 0,
+        timelineEventCount: 0,
+        lastMessage: null,
+      };
+
+      const timeline = generateMockTimeline(id);
       const pulses = timeline.filter(e => e.type === "pulse");
       const evidence = timeline.filter(e => e.type === "photo" || e.type === "voice_note");
       const messages = timeline.filter(e => e.type === "message");
 
-      // Run all intelligence engines
       const empathy = runEmpathyEngine({ ...order, timelineEventCount: timeline.length });
       const pulseAnalysis = analyseProjectPulse(pulses);
       const healthScore = calculateProjectHealthScore({ ...order, timelineEventCount: timeline.length });
@@ -713,17 +748,35 @@ export function registerOrderRoutes(app: Express) {
   // GET /api/orders/export/csv — Full export with all AI scores
   app.get("/api/orders/export/csv", isAuthenticated, requireAdmin, async (req: any, res: Response) => {
     try {
-      const orders = generateMockOrders();
-      const header = "Order ID,Buyer,Seller,Gig,Amount ZAR,Commission ZAR,Status,Pulse Score,Health Score,Empathy Level,Academy Level,Earnings Lift";
-      const rows = orders.map(o => {
-        const health = calculateProjectHealthScore(o);
-        const empathy = runEmpathyEngine(o);
-        return `"${o.id}","${o.buyer.name}","${o.seller.name}","${o.gigTitle}",${o.amountZAR},${o.commissionZAR},"${o.status}","${o.latestPulseScore || 'N/A'}",${health.score},"${empathy.level}","${o.seller.academyLevel}","${o.seller.earningsLift}%"`;
+      const rows = await db
+        .select({
+          id: bookings.id,
+          status: bookings.status,
+          totalAmount: bookings.totalAmount,
+          createdAt: bookings.createdAt,
+          clientName: sql<string>`COALESCE(${users.firstName} || ' ' || ${users.lastName}, ${users.firstName}, 'Client')`,
+          freelancerName: sql<string>`COALESCE(${freelancerUsers.firstName} || ' ' || ${freelancerUsers.lastName}, ${freelancerUsers.firstName}, 'Freelancer')`,
+          freelancerLevel: profiles.experienceLevel,
+          freelancerRating: profiles.rating,
+          gigTitle: servicePackages.title,
+        })
+        .from(bookings)
+        .leftJoin(users, eq(bookings.clientId, users.id))
+        .leftJoin(freelancerUsers, eq(bookings.freelancerId, freelancerUsers.id))
+        .leftJoin(profiles, eq(bookings.freelancerId, profiles.userId))
+        .leftJoin(servicePackages, eq(bookings.servicePackageId, servicePackages.id))
+        .orderBy(desc(bookings.createdAt));
+
+      const header = "Order ID,Buyer,Seller,Gig,Amount ZAR,Commission ZAR,Status,Academy Level";
+      const csvRows = rows.map(r => {
+        const amount = r.totalAmount;
+        const commission = Math.round(amount * 0.1);
+        return `"${r.id}","${r.clientName}","${r.freelancerName}","${r.gigTitle || 'Untitled'}",${amount},${commission},"${r.status}","${r.freelancerLevel || 'Unknown'}"`;
       });
 
       res.setHeader("Content-Type", "text/csv");
       res.setHeader("Content-Disposition", `attachment; filename="orders-${Date.now()}.csv"`);
-      res.send([header, ...rows].join("\n"));
+      res.send([header, ...csvRows].join("\n"));
     } catch (err) { res.status(500).json({ error: "Export failed" }); }
   });
 
