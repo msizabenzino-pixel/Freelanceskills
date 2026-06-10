@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Navbar } from "@/components/Navbar";
@@ -7,7 +7,7 @@ import { AuthGuard } from "@/components/AuthGuard";
 import {
   Briefcase, DollarSign, CheckCircle, Clock, MessageSquare, Star,
   Zap, Users, ChevronDown, ChevronUp, UserCheck, XCircle, CalendarClock,
-  FileText, Eye,
+  FileText, Eye, LayoutList, Columns,
 } from "lucide-react";
 
 interface ClientJob {
@@ -50,6 +50,27 @@ const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   hired:       { label: "Hired",        color: "bg-emerald-600/20 text-emerald-400 border-emerald-600/40" },
 };
 
+// ── Pipeline column definitions ────────────────────────────────────────────────
+const PIPELINE_COLUMNS: Array<{
+  key: string;
+  label: string;
+  headerColor: string;
+  dotColor: string;
+  dropBg: string;
+}> = [
+  { key: "applied",     label: "Applied",     headerColor: "text-slate-300",   dotColor: "bg-slate-500",   dropBg: "bg-slate-800/80" },
+  { key: "shortlisted", label: "Shortlisted", headerColor: "text-amber-300",   dotColor: "bg-amber-500",   dropBg: "bg-amber-900/20" },
+  { key: "interview",   label: "Interview",   headerColor: "text-purple-300",  dotColor: "bg-purple-500",  dropBg: "bg-purple-900/20" },
+  { key: "offer",       label: "Offer",       headerColor: "text-emerald-300", dotColor: "bg-emerald-500", dropBg: "bg-emerald-900/20" },
+  { key: "hired",       label: "Hired",       headerColor: "text-green-300",   dotColor: "bg-green-500",   dropBg: "bg-green-900/20" },
+];
+
+// ── Shared initials helper ─────────────────────────────────────────────────────
+function getInitials(name: string) {
+  return name.split(" ").map((p) => p[0]).join("").slice(0, 2).toUpperCase();
+}
+
+// ── List view card ─────────────────────────────────────────────────────────────
 function ApplicantCard({
   applicant,
   onStatusChange,
@@ -62,12 +83,7 @@ function ApplicantCard({
   const [expanded, setExpanded] = useState(false);
   const [, setLocation] = useLocation();
   const statusCfg = STATUS_CONFIG[applicant.status] || STATUS_CONFIG.applied;
-  const initials = applicant.freelancerName
-    .split(" ")
-    .map((p) => p[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+  const initials = getInitials(applicant.freelancerName);
 
   return (
     <div
@@ -183,7 +199,6 @@ function ApplicantCard({
             </button>
           </>
         )}
-        {/* Message button — always visible for all statuses */}
         <button
           data-testid={`message-${applicant.id}`}
           onClick={() => setLocation(`/messages?new=${applicant.userId}`)}
@@ -193,13 +208,210 @@ function ApplicantCard({
           Message
         </button>
       </div>
-
     </div>
   );
 }
 
+// ── Pipeline kanban card (draggable, compact) ──────────────────────────────────
+function PipelineCard({
+  applicant,
+  onDragStart,
+  onStatusChange,
+  isPending,
+}: {
+  applicant: Applicant;
+  onDragStart: (id: string) => void;
+  onStatusChange: (id: string, status: string) => void;
+  isPending: boolean;
+}) {
+  const [, setLocation] = useLocation();
+  const initials = getInitials(applicant.freelancerName);
+
+  return (
+    <div
+      draggable
+      onDragStart={() => onDragStart(applicant.id)}
+      data-testid={`pipeline-card-${applicant.id}`}
+      className="bg-slate-800 border border-slate-700 rounded-lg p-3 cursor-grab active:cursor-grabbing hover:border-slate-500 transition-colors select-none"
+    >
+      {/* Avatar + name */}
+      <div className="flex items-center gap-2 mb-2">
+        {applicant.profilePhotoUrl ? (
+          <img
+            src={applicant.profilePhotoUrl}
+            alt={applicant.freelancerName}
+            className="w-7 h-7 rounded-full object-cover shrink-0"
+          />
+        ) : (
+          <div className="w-7 h-7 rounded-full bg-blue-600/30 text-blue-300 flex items-center justify-center text-[11px] font-bold shrink-0">
+            {initials}
+          </div>
+        )}
+        <div className="min-w-0">
+          <p className="text-xs font-semibold text-white truncate">{applicant.freelancerName}</p>
+          {applicant.profileTitle && (
+            <p className="text-[10px] text-slate-400 truncate">{applicant.profileTitle}</p>
+          )}
+        </div>
+      </div>
+
+      {/* Rate + rating */}
+      <div className="flex items-center gap-2 flex-wrap mb-2">
+        {applicant.hourlyRate !== null && (
+          <span className="text-[10px] text-emerald-400">
+            R{(applicant.hourlyRate / 100).toLocaleString()}/hr
+          </span>
+        )}
+        {applicant.rating !== null && applicant.rating > 0 && (
+          <span className="flex items-center gap-0.5 text-[10px] text-amber-400">
+            <Star className="w-2.5 h-2.5 fill-amber-400" />
+            {(applicant.rating / 100).toFixed(1)}
+          </span>
+        )}
+        <span className="text-[10px] text-slate-600 ml-auto">
+          {new Date(applicant.appliedAt).toLocaleDateString("en-ZA", { day: "numeric", month: "short" })}
+        </span>
+      </div>
+
+      {/* Quick actions */}
+      <div className="flex gap-1">
+        <button
+          data-testid={`pipeline-message-${applicant.id}`}
+          onClick={(e) => { e.stopPropagation(); setLocation(`/messages?new=${applicant.userId}`); }}
+          className="flex-1 flex items-center justify-center gap-1 py-1 text-[10px] text-slate-400 hover:text-slate-300 bg-slate-700/40 hover:bg-slate-700 rounded transition"
+        >
+          <MessageSquare className="w-3 h-3" /> Msg
+        </button>
+        {applicant.status !== "hired" && applicant.status !== "rejected" && (
+          <button
+            data-testid={`pipeline-reject-${applicant.id}`}
+            disabled={isPending}
+            onClick={(e) => { e.stopPropagation(); onStatusChange(applicant.id, "rejected"); }}
+            className="flex-1 flex items-center justify-center gap-1 py-1 text-[10px] text-red-400 hover:text-red-300 bg-red-900/10 hover:bg-red-900/20 rounded transition disabled:opacity-50"
+          >
+            <XCircle className="w-3 h-3" /> Reject
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Pipeline kanban board ──────────────────────────────────────────────────────
+function PipelineView({
+  applicants,
+  onStatusChange,
+  isPending,
+}: {
+  applicants: Applicant[];
+  onStatusChange: (id: string, status: string) => void;
+  isPending: boolean;
+}) {
+  const [draggedId, setDraggedId] = useState<string | null>(null);
+  const [dragOverCol, setDragOverCol] = useState<string | null>(null);
+  // Optimistic local status overrides (cleared once server refetch lands)
+  const [localStatuses, setLocalStatuses] = useState<Record<string, string>>({});
+  const dragCounter = useRef<Record<string, number>>({});
+
+  function getStatus(a: Applicant) {
+    return localStatuses[a.id] ?? a.status;
+  }
+
+  function handleDrop(colKey: string) {
+    if (!draggedId) return;
+    const applicant = applicants.find((a) => a.id === draggedId);
+    if (!applicant) return;
+    const currentStatus = getStatus(applicant);
+    if (currentStatus === colKey) {
+      setDraggedId(null);
+      setDragOverCol(null);
+      return;
+    }
+    // Optimistic update
+    setLocalStatuses((prev) => ({ ...prev, [draggedId]: colKey }));
+    onStatusChange(draggedId, colKey);
+    setDraggedId(null);
+    setDragOverCol(null);
+    dragCounter.current = {};
+  }
+
+  function handleDragEnter(colKey: string) {
+    dragCounter.current[colKey] = (dragCounter.current[colKey] ?? 0) + 1;
+    setDragOverCol(colKey);
+  }
+
+  function handleDragLeave(colKey: string) {
+    dragCounter.current[colKey] = (dragCounter.current[colKey] ?? 0) - 1;
+    if ((dragCounter.current[colKey] ?? 0) <= 0) {
+      dragCounter.current[colKey] = 0;
+      setDragOverCol((prev) => (prev === colKey ? null : prev));
+    }
+  }
+
+  return (
+    <div
+      className="overflow-x-auto pb-2"
+      data-testid="pipeline-view"
+    >
+      <div className="flex gap-3 min-w-max">
+        {PIPELINE_COLUMNS.map((col) => {
+          const colApplicants = applicants.filter((a) => getStatus(a) === col.key);
+          const isOver = dragOverCol === col.key;
+
+          return (
+            <div
+              key={col.key}
+              data-testid={`pipeline-column-${col.key}`}
+              className={`w-48 flex flex-col rounded-xl border transition-colors ${
+                isOver
+                  ? `${col.dropBg} border-slate-500`
+                  : "bg-slate-800/40 border-slate-700/60"
+              }`}
+              onDragOver={(e) => e.preventDefault()}
+              onDragEnter={() => handleDragEnter(col.key)}
+              onDragLeave={() => handleDragLeave(col.key)}
+              onDrop={() => handleDrop(col.key)}
+            >
+              {/* Column header */}
+              <div className="flex items-center gap-2 px-3 py-2.5 border-b border-slate-700/60">
+                <span className={`w-2 h-2 rounded-full ${col.dotColor} shrink-0`} />
+                <span className={`text-xs font-semibold ${col.headerColor} flex-1`}>{col.label}</span>
+                <span className="text-xs text-slate-500 font-medium">{colApplicants.length}</span>
+              </div>
+
+              {/* Cards */}
+              <div className="flex-1 p-2 space-y-2 min-h-[120px]">
+                {colApplicants.length === 0 ? (
+                  <div className={`h-full flex items-center justify-center text-[10px] text-slate-600 ${isOver ? "text-slate-400" : ""}`}>
+                    {isOver ? "Drop here" : "Empty"}
+                  </div>
+                ) : (
+                  colApplicants.map((a) => (
+                    <PipelineCard
+                      key={a.id}
+                      applicant={{ ...a, status: getStatus(a) }}
+                      onDragStart={setDraggedId}
+                      onStatusChange={(id, status) => {
+                        setLocalStatuses((prev) => ({ ...prev, [id]: status }));
+                        onStatusChange(id, status);
+                      }}
+                      isPending={isPending}
+                    />
+                  ))
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ── Main dashboard ─────────────────────────────────────────────────────────────
 export default function ClientDashboard() {
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<"list" | "pipeline">("list");
   const queryClient = useQueryClient();
 
   const { data: jobsData, isLoading: jobsLoading } = useQuery({
@@ -245,6 +457,10 @@ export default function ClientDashboard() {
       queryClient.invalidateQueries({ queryKey: ["jobApplicants", selectedJobId] });
     },
   });
+
+  const handleStatusChange = (applicationId: string, status: string) => {
+    statusMutation.mutate({ applicationId, status });
+  };
 
   const openJobs = jobs.filter((j) => j.status === "open").length;
   const activeJobs = jobs.filter((j) => ["hired", "in_progress"].includes(j.status)).length;
@@ -355,24 +571,55 @@ export default function ClientDashboard() {
                   {selectedJobId && selectedJob ? (
                     <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6">
                       {/* Panel header */}
-                      <div className="flex items-start justify-between mb-5">
-                        <div>
+                      <div className="flex items-start justify-between mb-5 gap-3 flex-wrap">
+                        <div className="min-w-0">
                           <h2 className="text-lg font-bold text-white flex items-center gap-2">
                             <Users className="w-5 h-5 text-blue-400" /> Applicants
                           </h2>
                           <p className="text-sm text-slate-400 mt-0.5 line-clamp-1">{selectedJob.title}</p>
                         </div>
-                        <button
-                          onClick={() => setSelectedJobId(null)}
-                          data-testid="close-applicants"
-                          className="text-xs px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-lg transition"
-                        >
-                          Close
-                        </button>
+                        <div className="flex items-center gap-2 shrink-0">
+                          {/* View mode toggle */}
+                          {applicants.length > 0 && (
+                            <div className="flex items-center bg-slate-800 rounded-lg p-0.5 border border-slate-700">
+                              <button
+                                data-testid="view-mode-list"
+                                onClick={() => setViewMode("list")}
+                                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all ${
+                                  viewMode === "list"
+                                    ? "bg-blue-600 text-white"
+                                    : "text-slate-400 hover:text-slate-300"
+                                }`}
+                              >
+                                <LayoutList className="w-3.5 h-3.5" />
+                                List
+                              </button>
+                              <button
+                                data-testid="view-mode-pipeline"
+                                onClick={() => setViewMode("pipeline")}
+                                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all ${
+                                  viewMode === "pipeline"
+                                    ? "bg-blue-600 text-white"
+                                    : "text-slate-400 hover:text-slate-300"
+                                }`}
+                              >
+                                <Columns className="w-3.5 h-3.5" />
+                                Pipeline
+                              </button>
+                            </div>
+                          )}
+                          <button
+                            onClick={() => setSelectedJobId(null)}
+                            data-testid="close-applicants"
+                            className="text-xs px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-lg transition"
+                          >
+                            Close
+                          </button>
+                        </div>
                       </div>
 
-                      {/* Summary bar */}
-                      {applicants.length > 0 && (
+                      {/* Summary bar (list view only) */}
+                      {applicants.length > 0 && viewMode === "list" && (
                         <div className="grid grid-cols-4 gap-2 mb-5">
                           {[
                             { label: "New",        value: applicantsByStatus.new,         color: "text-slate-400" },
@@ -388,25 +635,31 @@ export default function ClientDashboard() {
                         </div>
                       )}
 
-                      {/* Applicant cards */}
+                      {/* Content */}
                       {applicantsLoading ? (
                         <div className="flex items-center justify-center py-12 text-slate-400 gap-3">
                           <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
                           Loading applicants…
                         </div>
                       ) : applicants.length > 0 ? (
-                        <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
-                          {applicants.map((a) => (
-                            <ApplicantCard
-                              key={a.id}
-                              applicant={a}
-                              onStatusChange={(id, status) =>
-                                statusMutation.mutate({ applicationId: id, status })
-                              }
-                              isPending={statusMutation.isPending}
-                            />
-                          ))}
-                        </div>
+                        viewMode === "pipeline" ? (
+                          <PipelineView
+                            applicants={applicants}
+                            onStatusChange={handleStatusChange}
+                            isPending={statusMutation.isPending}
+                          />
+                        ) : (
+                          <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
+                            {applicants.map((a) => (
+                              <ApplicantCard
+                                key={a.id}
+                                applicant={a}
+                                onStatusChange={handleStatusChange}
+                                isPending={statusMutation.isPending}
+                              />
+                            ))}
+                          </div>
+                        )
                       ) : (
                         <div className="text-center py-12">
                           <Users className="w-10 h-10 text-slate-600 mx-auto mb-3" />
