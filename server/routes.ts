@@ -349,6 +349,19 @@ export async function registerRoutes(
         allJobs = allJobs.filter((j) => j.status === "open" || j.status === "in_progress");
       }
 
+      // Compute applicant counts when fetching a client's own jobs
+      let appCounts: Record<string, number> = {};
+      if (clientId && allJobs.length > 0) {
+        try {
+          const jobIds = allJobs.map((j) => j.id);
+          const rows = await storage.query(
+            `SELECT job_id, COUNT(*)::int AS cnt FROM job_applications WHERE job_id = ANY($1) GROUP BY job_id`,
+            [jobIds]
+          );
+          rows.forEach((r: any) => { appCounts[r.job_id] = r.cnt; });
+        } catch (_) { /* non-fatal */ }
+      }
+
       const jobsWithNames = await Promise.all(
         allJobs.map(async (job) => {
           try {
@@ -357,12 +370,14 @@ export async function registerRoutes(
               ...job,
               budgetFormatted: `R${(job.budget / 100).toLocaleString("en-ZA")}`,
               clientName: profile?.title || "FreelanceSkills Client",
+              applicantCount: appCounts[job.id] ?? 0,
             };
           } catch {
             return {
               ...job,
               budgetFormatted: `R${(job.budget / 100).toLocaleString("en-ZA")}`,
               clientName: "FreelanceSkills Client",
+              applicantCount: appCounts[job.id] ?? 0,
             };
           }
         })
@@ -384,6 +399,23 @@ export async function registerRoutes(
     } catch (error) {
       console.error("Error fetching job:", error);
       res.status(500).json({ message: "Failed to fetch job" });
+    }
+  });
+
+  // GET /api/jobs/:id/applicants — returns applicants for a job (client who owns the job only)
+  app.get("/api/jobs/:id/applicants", isAuthenticated, async (req: any, res) => {
+    try {
+      const sessionUserId: string = (req.session as any).userId;
+      const job = await storage.getJob(req.params.id);
+      if (!job) return res.status(404).json({ message: "Job not found" });
+      if (job.clientId !== sessionUserId) {
+        return res.status(403).json({ message: "You do not own this job" });
+      }
+      const applicants = await storage.getJobApplicants(req.params.id);
+      res.json({ applicants, total: applicants.length });
+    } catch (error) {
+      console.error("Error fetching job applicants:", error);
+      res.status(500).json({ message: "Failed to fetch applicants" });
     }
   });
 
@@ -2952,12 +2984,16 @@ Respond with ONLY the JSON object, no markdown.`
       if (!updated) return res.status(404).json({ message: "Application not found" });
 
       // Send in-app notification for meaningful status changes
-      const notifyStatuses = ["reviewing", "interview", "offer"];
+      const notifyStatuses = ["reviewing", "shortlisted", "interview", "offer", "rejected"];
       if (notifyStatuses.includes(status)) {
         const statusMessages: Record<string, { title: string; message: string }> = {
           reviewing: {
             title: "Your application is being reviewed",
             message: `Great news! A client is reviewing your application for "${application.jobTitle}". Keep an eye on updates.`,
+          },
+          shortlisted: {
+            title: "You've been shortlisted!",
+            message: `Good news! You have been shortlisted for "${application.jobTitle}". The client may reach out soon.`,
           },
           interview: {
             title: "Interview invitation!",
@@ -2966,6 +3002,10 @@ Respond with ONLY the JSON object, no markdown.`
           offer: {
             title: "You have an offer!",
             message: `Amazing news! You've received an offer for "${application.jobTitle}". Check your applications for details.`,
+          },
+          rejected: {
+            title: "Application update",
+            message: `Thank you for applying to "${application.jobTitle}". Unfortunately, the client has decided to move forward with other candidates.`,
           },
         };
 

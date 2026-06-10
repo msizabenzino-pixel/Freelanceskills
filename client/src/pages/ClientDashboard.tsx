@@ -1,16 +1,12 @@
-import { useState, useEffect } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AuthGuard } from "@/components/AuthGuard";
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, LineChart, Line,
-} from "recharts";
-import {
-  Briefcase, DollarSign, Users, TrendingUp, Eye, CheckCircle, Clock,
-  MessageSquare, Star, ArrowRight, Filter, Download, MoreHorizontal,
-  Zap, AlertCircle, ChevronDown, Eye as EyeIcon,
+  Briefcase, DollarSign, CheckCircle, Clock, MessageSquare, Star,
+  Zap, Users, ChevronDown, ChevronUp, UserCheck, XCircle, CalendarClock,
+  FileText, Eye,
 } from "lucide-react";
 
 interface ClientJob {
@@ -20,78 +16,245 @@ interface ClientJob {
   status: string;
   freelancerId?: string;
   createdAt: string;
-  bidCount: number;
+  applicantCount?: number;
 }
 
-interface BidWithFreelancer {
+interface Applicant {
   id: string;
-  freelancerId: string;
-  amount: number;
-  message: string;
-  estimatedDelivery: number;
+  userId: string;
+  jobId: string;
+  jobTitle: string;
+  coverLetter: string | null;
+  resumeSummary: string | null;
   status: string;
-  createdAt: string;
-  freelancer: { title: string; rating: number };
+  appliedAt: string;
+  freelancerName: string;
+  freelancerEmail: string | null;
+  profileTitle: string | null;
+  profileBio: string | null;
+  profilePhotoUrl: string | null;
+  hourlyRate: number | null;
+  rating: number | null;
+  completedJobs: number;
+  employabilityScore: number | null;
+}
+
+const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
+  applied:     { label: "Applied",      color: "bg-slate-600/20 text-slate-400 border-slate-600/40" },
+  reviewing:   { label: "Reviewing",    color: "bg-blue-600/20 text-blue-400 border-blue-600/40" },
+  shortlisted: { label: "Shortlisted",  color: "bg-amber-600/20 text-amber-400 border-amber-600/40" },
+  interview:   { label: "Interview",    color: "bg-purple-600/20 text-purple-400 border-purple-600/40" },
+  offer:       { label: "Offer Sent",   color: "bg-emerald-600/20 text-emerald-400 border-emerald-600/40" },
+  rejected:    { label: "Rejected",     color: "bg-red-600/20 text-red-400 border-red-600/40" },
+  hired:       { label: "Hired",        color: "bg-emerald-600/20 text-emerald-400 border-emerald-600/40" },
+};
+
+function ApplicantCard({
+  applicant,
+  onStatusChange,
+  isPending,
+}: {
+  applicant: Applicant;
+  onStatusChange: (id: string, status: string) => void;
+  isPending: boolean;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const statusCfg = STATUS_CONFIG[applicant.status] || STATUS_CONFIG.applied;
+  const initials = applicant.freelancerName
+    .split(" ")
+    .map((p) => p[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+  return (
+    <div
+      data-testid={`applicant-card-${applicant.id}`}
+      className="bg-slate-800/60 border border-slate-700 rounded-xl p-4 space-y-3"
+    >
+      {/* Header row */}
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          {applicant.profilePhotoUrl ? (
+            <img
+              src={applicant.profilePhotoUrl}
+              alt={applicant.freelancerName}
+              className="w-10 h-10 rounded-full object-cover shrink-0"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-blue-600/30 text-blue-300 flex items-center justify-center text-sm font-bold shrink-0">
+              {initials}
+            </div>
+          )}
+          <div className="min-w-0">
+            <p className="font-semibold text-white text-sm truncate">{applicant.freelancerName}</p>
+            {applicant.profileTitle && (
+              <p className="text-xs text-slate-400 truncate">{applicant.profileTitle}</p>
+            )}
+            <div className="flex items-center gap-3 mt-1 flex-wrap">
+              {applicant.hourlyRate !== null && (
+                <span className="text-xs text-emerald-400">
+                  R{(applicant.hourlyRate / 100).toLocaleString()}/hr
+                </span>
+              )}
+              {applicant.rating !== null && applicant.rating > 0 && (
+                <span className="flex items-center gap-0.5 text-xs text-amber-400">
+                  <Star className="w-3 h-3 fill-amber-400" />
+                  {(applicant.rating / 100).toFixed(1)}
+                </span>
+              )}
+              {applicant.completedJobs > 0 && (
+                <span className="text-xs text-slate-500">{applicant.completedJobs} jobs done</span>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col items-end gap-2 shrink-0">
+          <span className={`text-xs px-2 py-0.5 rounded-full border ${statusCfg.color}`}>
+            {statusCfg.label}
+          </span>
+          <span className="text-xs text-slate-600">
+            {new Date(applicant.appliedAt).toLocaleDateString("en-ZA", { day: "numeric", month: "short" })}
+          </span>
+        </div>
+      </div>
+
+      {/* Cover letter preview */}
+      {(applicant.coverLetter || applicant.resumeSummary) && (
+        <div>
+          <button
+            data-testid={`toggle-cover-${applicant.id}`}
+            onClick={() => setExpanded(!expanded)}
+            className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-300 transition"
+          >
+            <FileText className="w-3.5 h-3.5" />
+            {expanded ? "Hide cover letter" : "View cover letter"}
+            {expanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+          </button>
+          {expanded && (
+            <div className="mt-2 p-3 bg-slate-700/30 rounded-lg border border-slate-700/60 text-sm text-slate-300 whitespace-pre-line">
+              {applicant.coverLetter || applicant.resumeSummary}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Bio */}
+      {!expanded && applicant.profileBio && (
+        <p className="text-xs text-slate-500 line-clamp-2">{applicant.profileBio}</p>
+      )}
+
+      {/* Action buttons */}
+      {applicant.status !== "hired" && applicant.status !== "rejected" && (
+        <div className="flex gap-2 flex-wrap pt-1">
+          {applicant.status !== "shortlisted" && (
+            <button
+              data-testid={`shortlist-${applicant.id}`}
+              disabled={isPending}
+              onClick={() => onStatusChange(applicant.id, "shortlisted")}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-amber-600/20 hover:bg-amber-600/30 text-amber-400 border border-amber-600/40 rounded-lg transition disabled:opacity-50"
+            >
+              <UserCheck className="w-3.5 h-3.5" />
+              Shortlist
+            </button>
+          )}
+          {applicant.status !== "interview" && (
+            <button
+              data-testid={`interview-${applicant.id}`}
+              disabled={isPending}
+              onClick={() => onStatusChange(applicant.id, "interview")}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-purple-600/20 hover:bg-purple-600/30 text-purple-400 border border-purple-600/40 rounded-lg transition disabled:opacity-50"
+            >
+              <CalendarClock className="w-3.5 h-3.5" />
+              Interview
+            </button>
+          )}
+          <button
+            data-testid={`reject-${applicant.id}`}
+            disabled={isPending}
+            onClick={() => onStatusChange(applicant.id, "rejected")}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-600/40 rounded-lg transition disabled:opacity-50"
+          >
+            <XCircle className="w-3.5 h-3.5" />
+            Reject
+          </button>
+          {applicant.freelancerEmail && (
+            <a
+              href={`mailto:${applicant.freelancerEmail}`}
+              data-testid={`message-${applicant.id}`}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-slate-700/50 hover:bg-slate-700 text-slate-300 border border-slate-600/40 rounded-lg transition"
+            >
+              <MessageSquare className="w-3.5 h-3.5" />
+              Message
+            </a>
+          )}
+        </div>
+      )}
+
+    </div>
+  );
 }
 
 export default function ClientDashboard() {
-  const [selectedJob, setSelectedJob] = useState<string | null>(null);
-  const [expandedBid, setExpandedBid] = useState<string | null>(null);
+  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
-  // Fetch client's jobs
-  const { data: jobs, isLoading: jobsLoading } = useQuery({
+  const { data: jobsData, isLoading: jobsLoading } = useQuery({
     queryKey: ["clientJobs"],
     queryFn: async () => {
       const res = await fetch("/api/jobs?clientId=me", { credentials: "include" });
       if (!res.ok) throw new Error("Failed to fetch jobs");
-      return res.json() as Promise<ClientJob[]>;
+      const data = await res.json();
+      return (Array.isArray(data) ? data : data.jobs ?? []) as ClientJob[];
     },
   });
 
-  // Fetch bids for selected job
-  const { data: bids, isLoading: bidsLoading } = useQuery({
-    queryKey: ["jobBids", selectedJob],
+  const jobs = jobsData ?? [];
+
+  const { data: applicantsData, isLoading: applicantsLoading } = useQuery({
+    queryKey: ["jobApplicants", selectedJobId],
     queryFn: async () => {
-      if (!selectedJob) return [];
-      const res = await fetch(`/api/jobs/${selectedJob}/bids`, { credentials: "include" });
-      if (!res.ok) throw new Error("Failed to fetch bids");
-      return res.json() as Promise<BidWithFreelancer[]>;
+      if (!selectedJobId) return { applicants: [], total: 0 };
+      const res = await fetch(`/api/jobs/${selectedJobId}/applicants`, { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch applicants");
+      return res.json() as Promise<{ applicants: Applicant[]; total: number }>;
     },
-    enabled: !!selectedJob,
+    enabled: !!selectedJobId,
   });
 
-  // Accept bid mutation
-  const acceptBidMutation = useMutation({
-    mutationFn: async ({ jobId, bidId }: { jobId: string; bidId: string }) => {
-      const res = await fetch(`/api/jobs/${jobId}/accept-bid/${bidId}`, {
-        method: "POST",
+  const applicants = applicantsData?.applicants ?? [];
+
+  const statusMutation = useMutation({
+    mutationFn: async ({ applicationId, status }: { applicationId: string; status: string }) => {
+      const res = await fetch(`/api/job-applications/${applicationId}/status`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
+        body: JSON.stringify({ status }),
       });
-      if (!res.ok) throw new Error("Failed to accept bid");
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || "Failed to update status");
+      }
       return res.json();
     },
     onSuccess: () => {
-      setSelectedJob(null);
+      queryClient.invalidateQueries({ queryKey: ["jobApplicants", selectedJobId] });
     },
   });
 
-  // Release escrow mutation
-  const releaseEscrowMutation = useMutation({
-    mutationFn: async (escrowId: string) => {
-      const res = await fetch(`/api/escrow/release/${escrowId}`, {
-        method: "POST",
-        credentials: "include",
-      });
-      if (!res.ok) throw new Error("Failed to release escrow");
-      return res.json();
-    },
-  });
+  const openJobs = jobs.filter((j) => j.status === "open").length;
+  const activeJobs = jobs.filter((j) => ["hired", "in_progress"].includes(j.status)).length;
+  const completedJobs = jobs.filter((j) => j.status === "completed").length;
+  const totalSpent = jobs.reduce((sum, j) => sum + j.budget / 100, 0);
+  const selectedJob = jobs.find((j) => j.id === selectedJobId);
 
-  const openJobs = (jobs || []).filter(j => j.status === "open").length;
-  const activeJobs = (jobs || []).filter(j => ["hired", "in_progress"].includes(j.status)).length;
-  const completedJobs = (jobs || []).filter(j => j.status === "completed").length;
-  const totalSpent = (jobs || []).reduce((sum, j) => sum + (j.budget / 100), 0);
+  const applicantsByStatus = {
+    new: applicants.filter((a) => a.status === "applied").length,
+    shortlisted: applicants.filter((a) => a.status === "shortlisted").length,
+    interview: applicants.filter((a) => a.status === "interview").length,
+    rejected: applicants.filter((a) => a.status === "rejected").length,
+  };
 
   return (
     <AuthGuard>
@@ -99,16 +262,14 @@ export default function ClientDashboard() {
         <Navbar />
 
         <div className="flex-1 max-w-7xl mx-auto w-full px-4 py-8">
-          {/* Header */}
           <div className="mb-8">
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-2">
               <Briefcase className="w-8 h-8 text-blue-400" />
               <h1 className="text-3xl font-bold text-white">Client Dashboard</h1>
             </div>
-            <p className="text-slate-400">Manage your jobs, review bids, and release payments</p>
+            <p className="text-slate-400">Manage your jobs, review applicants, and hire top talent</p>
           </div>
 
-          {/* Loading state */}
           {jobsLoading && (
             <div className="flex items-center justify-center py-24 text-slate-400">
               <div className="flex items-center gap-3">
@@ -118,155 +279,161 @@ export default function ClientDashboard() {
             </div>
           )}
 
-          {/* KPI Cards + Main Content */}
-          {!jobsLoading && <><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            {[
-              { label: "Open Jobs", value: openJobs, icon: <Clock className="w-5 h-5" />, color: "blue" },
-              { label: "Active", value: activeJobs, icon: <Zap className="w-5 h-5" />, color: "emerald" },
-              { label: "Completed", value: completedJobs, icon: <CheckCircle className="w-5 h-5" />, color: "purple" },
-              { label: "Total Spent", value: `R${totalSpent.toLocaleString()}`, icon: <DollarSign className="w-5 h-5" />, color: "amber" },
-            ].map(kpi => (
-              <div key={kpi.label} className={`bg-slate-900 border border-slate-700 rounded-xl p-4 text-${kpi.color}-400`}>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-slate-500">{kpi.label}</span>
-                  {kpi.icon}
-                </div>
-                <p className="text-2xl font-bold text-white">{kpi.value}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Main Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Jobs List */}
-            <div className="lg:col-span-1">
-              <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6">
-                <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                  <Briefcase className="w-5 h-5" /> Your Jobs
-                </h2>
-
-                <div className="space-y-2 max-h-[600px] overflow-y-auto">
-                  {jobs && jobs.length > 0 ? (
-                    jobs.map(job => (
-                      <button
-                        key={job.id}
-                        onClick={() => setSelectedJob(job.id)}
-                        data-testid={`job-card-${job.id}`}
-                        className={`w-full text-left p-3 rounded-lg border transition-all ${
-                          selectedJob === job.id
-                            ? "bg-blue-600/20 border-blue-500"
-                            : "bg-slate-800/50 border-slate-700 hover:border-slate-600"
-                        }`}>
-                        <p className="font-medium text-white text-sm line-clamp-2">{job.title}</p>
-                        <div className="flex items-center justify-between mt-2">
-                          <span className={`text-xs px-2 py-0.5 rounded-full ${
-                            job.status === "open" ? "bg-blue-600/20 text-blue-400" :
-                            job.status === "hired" ? "bg-emerald-600/20 text-emerald-400" :
-                            "bg-slate-700/40 text-slate-400"
-                          }`}>
-                            {job.status}
-                          </span>
-                          <span className="text-xs text-slate-500">{job.bidCount} bids</span>
-                        </div>
-                      </button>
-                    ))
-                  ) : (
-                    <p className="text-slate-500 text-sm">No jobs posted yet</p>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Bids & Details */}
-            <div className="lg:col-span-2">
-              {selectedJob ? (
-                <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                      <Users className="w-5 h-5" /> Bids
-                    </h2>
-                    <button
-                      onClick={() => setSelectedJob(null)}
-                      className="text-xs px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-lg transition">
-                      Close
-                    </button>
+          {!jobsLoading && (
+            <>
+              {/* KPI Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                {[
+                  { label: "Open Jobs",    value: openJobs,                             icon: <Clock className="w-5 h-5" />,        color: "blue" },
+                  { label: "Active",       value: activeJobs,                           icon: <Zap className="w-5 h-5" />,           color: "emerald" },
+                  { label: "Completed",    value: completedJobs,                        icon: <CheckCircle className="w-5 h-5" />,   color: "purple" },
+                  { label: "Total Spent",  value: `R${totalSpent.toLocaleString()}`,    icon: <DollarSign className="w-5 h-5" />,    color: "amber" },
+                ].map((kpi) => (
+                  <div key={kpi.label} className={`bg-slate-900 border border-slate-700 rounded-xl p-4 text-${kpi.color}-400`}>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-slate-500">{kpi.label}</span>
+                      {kpi.icon}
+                    </div>
+                    <p className="text-2xl font-bold text-white">{kpi.value}</p>
                   </div>
+                ))}
+              </div>
 
-                  {bidsLoading ? (
-                    <p className="text-slate-400">Loading bids...</p>
-                  ) : bids && bids.length > 0 ? (
-                    <div className="space-y-3">
-                      {bids.map(bid => (
-                        <div key={bid.id} className="bg-slate-800/50 border border-slate-700 rounded-xl p-4">
-                          <div className="flex items-start justify-between mb-3">
-                            <div>
-                              <p className="font-medium text-white text-sm">{bid.freelancer?.title || "Freelancer"}</p>
-                              <div className="flex items-center gap-1 mt-1">
-                                <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-                                <span className="text-xs text-slate-400">{bid.freelancer?.rating || "N/A"}★</span>
-                              </div>
+              {/* Main layout */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Jobs list */}
+                <div className="lg:col-span-1">
+                  <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6">
+                    <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                      <Briefcase className="w-5 h-5" /> Your Jobs
+                    </h2>
+                    <div className="space-y-2 max-h-[600px] overflow-y-auto pr-1">
+                      {jobs.length > 0 ? (
+                        jobs.map((job) => (
+                          <button
+                            key={job.id}
+                            onClick={() => setSelectedJobId(job.id === selectedJobId ? null : job.id)}
+                            data-testid={`job-card-${job.id}`}
+                            className={`w-full text-left p-3 rounded-lg border transition-all ${
+                              selectedJobId === job.id
+                                ? "bg-blue-600/20 border-blue-500"
+                                : "bg-slate-800/50 border-slate-700 hover:border-slate-600"
+                            }`}
+                          >
+                            <p className="font-medium text-white text-sm line-clamp-2">{job.title}</p>
+                            <div className="flex items-center justify-between mt-2">
+                              <span
+                                className={`text-xs px-2 py-0.5 rounded-full ${
+                                  job.status === "open"
+                                    ? "bg-blue-600/20 text-blue-400"
+                                    : job.status === "hired"
+                                    ? "bg-emerald-600/20 text-emerald-400"
+                                    : "bg-slate-700/40 text-slate-400"
+                                }`}
+                              >
+                                {job.status}
+                              </span>
+                              <span className="flex items-center gap-1 text-xs text-slate-500">
+                                <Users className="w-3 h-3" />
+                                {job.applicantCount ?? 0}
+                              </span>
                             </div>
-                            <div className="text-right">
-                              <p className="font-bold text-emerald-400">R {(bid.amount / 100).toLocaleString()}</p>
-                              <p className="text-xs text-slate-500">{bid.estimatedDelivery} days</p>
-                            </div>
-                          </div>
+                          </button>
+                        ))
+                      ) : (
+                        <p className="text-slate-500 text-sm">No jobs posted yet</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
 
-                          {bid.message && (
-                            <button
-                              onClick={() => setExpandedBid(expandedBid === bid.id ? null : bid.id)}
-                              className="w-full text-left mb-3 p-2 bg-slate-700/30 hover:bg-slate-700/50 rounded-lg transition">
-                              <p className="text-xs text-slate-400 line-clamp-1">{bid.message}</p>
-                              <p className="text-xs text-slate-600 mt-1">Click to read full message</p>
-                            </button>
-                          )}
-
-                          {expandedBid === bid.id && bid.message && (
-                            <div className="mb-3 p-2 bg-slate-700/20 rounded-lg border border-slate-700">
-                              <p className="text-sm text-slate-300">{bid.message}</p>
-                            </div>
-                          )}
-
-                          <div className="flex gap-2">
-                            {bid.status === "pending" && (
-                              <button
-                                onClick={() =>
-                                  acceptBidMutation.mutate({
-                                    jobId: selectedJob,
-                                    bidId: bid.id,
-                                  })
-                                }
-                                disabled={acceptBidMutation.isPending}
-                                data-testid={`accept-bid-${bid.id}`}
-                                className="flex-1 px-3 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 text-white text-sm font-medium rounded-lg transition">
-                                {acceptBidMutation.isPending ? "Accepting..." : "Accept"}
-                              </button>
-                            )}
-                            {bid.status === "accepted" && (
-                              <div className="flex-1 px-3 py-2 bg-emerald-600/20 text-emerald-400 text-sm font-medium rounded-lg border border-emerald-600/50 flex items-center justify-center">
-                                ✓ Accepted
-                              </div>
-                            )}
-                            <button className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-400 text-sm rounded-lg transition">
-                              <MessageSquare className="w-4 h-4" />
-                            </button>
-                          </div>
+                {/* Applicants panel */}
+                <div className="lg:col-span-2">
+                  {selectedJobId && selectedJob ? (
+                    <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6">
+                      {/* Panel header */}
+                      <div className="flex items-start justify-between mb-5">
+                        <div>
+                          <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                            <Users className="w-5 h-5 text-blue-400" /> Applicants
+                          </h2>
+                          <p className="text-sm text-slate-400 mt-0.5 line-clamp-1">{selectedJob.title}</p>
                         </div>
-                      ))}
+                        <button
+                          onClick={() => setSelectedJobId(null)}
+                          data-testid="close-applicants"
+                          className="text-xs px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-lg transition"
+                        >
+                          Close
+                        </button>
+                      </div>
+
+                      {/* Summary bar */}
+                      {applicants.length > 0 && (
+                        <div className="grid grid-cols-4 gap-2 mb-5">
+                          {[
+                            { label: "New",        value: applicantsByStatus.new,         color: "text-slate-400" },
+                            { label: "Shortlisted", value: applicantsByStatus.shortlisted, color: "text-amber-400" },
+                            { label: "Interview",  value: applicantsByStatus.interview,   color: "text-purple-400" },
+                            { label: "Rejected",   value: applicantsByStatus.rejected,    color: "text-red-400" },
+                          ].map((s) => (
+                            <div key={s.label} className="bg-slate-800/60 rounded-lg p-2 text-center">
+                              <p className={`text-lg font-bold ${s.color}`}>{s.value}</p>
+                              <p className="text-xs text-slate-500">{s.label}</p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Applicant cards */}
+                      {applicantsLoading ? (
+                        <div className="flex items-center justify-center py-12 text-slate-400 gap-3">
+                          <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                          Loading applicants…
+                        </div>
+                      ) : applicants.length > 0 ? (
+                        <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
+                          {applicants.map((a) => (
+                            <ApplicantCard
+                              key={a.id}
+                              applicant={a}
+                              onStatusChange={(id, status) =>
+                                statusMutation.mutate({ applicationId: id, status })
+                              }
+                              isPending={statusMutation.isPending}
+                            />
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center py-12">
+                          <Users className="w-10 h-10 text-slate-600 mx-auto mb-3" />
+                          <p className="text-slate-400 text-sm">No applicants yet</p>
+                          <p className="text-slate-600 text-xs mt-1">
+                            Share your job post to attract more talent
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Status mutation error */}
+                      {statusMutation.isError && (
+                        <p className="text-red-400 text-xs mt-3 text-center">
+                          {(statusMutation.error as Error).message}
+                        </p>
+                      )}
                     </div>
                   ) : (
-                    <p className="text-slate-500 text-sm">No bids yet. Be patient or boost your job listing!</p>
+                    <div className="bg-slate-900 border border-slate-700 rounded-2xl p-12 text-center">
+                      <Eye className="w-12 h-12 text-slate-600 mx-auto mb-4" />
+                      <p className="text-slate-400">Select a job to review its applicants</p>
+                      <p className="text-slate-600 text-sm mt-2">
+                        Click any job on the left to see who has applied
+                      </p>
+                    </div>
                   )}
                 </div>
-              ) : (
-                <div className="bg-slate-900 border border-slate-700 rounded-2xl p-12 text-center">
-                  <EyeIcon className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-                  <p className="text-slate-400">Select a job to view and manage bids</p>
-                </div>
-              )}
-            </div>
-          </div>
-          </>}
+              </div>
+            </>
+          )}
         </div>
 
         <Footer />

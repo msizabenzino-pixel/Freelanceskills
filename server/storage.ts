@@ -16,7 +16,7 @@ import {
   jobs, profiles, servicePackages, bookings, reviews, conversations, messages,
   freelancerVerifications, privateFeedback, enterpriseLeads, aggregatedJobs, jobApplications,
   businessInvitations, referrals, courses, lessons, courseProgress, certificates, notifications,
-  fraudFlags, auditLogs, escrowTransactions, premiumTiers, disputes
+  fraudFlags, auditLogs, escrowTransactions, premiumTiers, disputes, users
 } from "@shared/schema";
 import { db, pool } from "./db";
 import { eq, and, or, sql, desc, count } from "drizzle-orm";
@@ -87,6 +87,7 @@ export interface IStorage {
   // Job application operations
   createJobApplication(application: InsertJobApplication): Promise<JobApplication>;
   getUserApplications(userId: string): Promise<JobApplication[]>;
+  getJobApplicants(jobId: string): Promise<Array<JobApplication & { freelancerName: string; freelancerEmail: string | null; profileTitle: string | null; profileBio: string | null; profilePhotoUrl: string | null; hourlyRate: number | null; rating: number | null; completedJobs: number }>>;
   updateJobApplication(id: string, updates: Partial<Pick<JobApplication, "status" | "notes" | "aiCoverLetter" | "employabilityScore" | "interviewDate">>): Promise<JobApplication | undefined>;
 
   // Business invitation operations
@@ -823,6 +824,71 @@ class DatabaseStorage implements IStorage {
     return db.select().from(jobApplications)
       .where(eq(jobApplications.userId, userId))
       .orderBy(desc(jobApplications.appliedAt));
+  }
+
+  async getJobApplicants(jobId: string): Promise<Array<JobApplication & { freelancerName: string; freelancerEmail: string | null; profileTitle: string | null; profileBio: string | null; profilePhotoUrl: string | null; hourlyRate: number | null; rating: number | null; completedJobs: number }>> {
+    const rows = await db
+      .select({
+        id: jobApplications.id,
+        userId: jobApplications.userId,
+        jobId: jobApplications.jobId,
+        aggregatedJobId: jobApplications.aggregatedJobId,
+        jobTitle: jobApplications.jobTitle,
+        company: jobApplications.company,
+        location: jobApplications.location,
+        coverLetter: jobApplications.coverLetter,
+        aiCoverLetter: jobApplications.aiCoverLetter,
+        resumeSummary: jobApplications.resumeSummary,
+        employabilityScore: jobApplications.employabilityScore,
+        status: jobApplications.status,
+        notes: jobApplications.notes,
+        interviewDate: jobApplications.interviewDate,
+        source: jobApplications.source,
+        applyUrl: jobApplications.applyUrl,
+        appliedAt: jobApplications.appliedAt,
+        userFirstName: users.firstName,
+        userLastName: users.lastName,
+        userEmail: users.email,
+        profileTitle: profiles.title,
+        profileBio: profiles.bio,
+        profilePhotoUrl: profiles.photoUrl,
+        hourlyRate: profiles.hourlyRate,
+        rating: profiles.rating,
+        completedJobs: profiles.completedJobs,
+      })
+      .from(jobApplications)
+      .leftJoin(users, eq(users.id, jobApplications.userId))
+      .leftJoin(profiles, eq(profiles.userId, jobApplications.userId))
+      .where(eq(jobApplications.jobId, jobId))
+      .orderBy(desc(jobApplications.appliedAt));
+
+    return rows.map(r => ({
+      id: r.id,
+      userId: r.userId,
+      jobId: r.jobId,
+      aggregatedJobId: r.aggregatedJobId,
+      jobTitle: r.jobTitle,
+      company: r.company,
+      location: r.location,
+      coverLetter: r.coverLetter,
+      aiCoverLetter: r.aiCoverLetter,
+      resumeSummary: r.resumeSummary,
+      employabilityScore: r.employabilityScore,
+      status: r.status,
+      notes: r.notes,
+      interviewDate: r.interviewDate,
+      source: r.source,
+      applyUrl: r.applyUrl,
+      appliedAt: r.appliedAt,
+      freelancerName: [r.userFirstName, r.userLastName].filter(Boolean).join(" ") || r.profileTitle || r.userEmail || "Unknown Freelancer",
+      freelancerEmail: r.userEmail,
+      profileTitle: r.profileTitle,
+      profileBio: r.profileBio,
+      profilePhotoUrl: r.profilePhotoUrl,
+      hourlyRate: r.hourlyRate,
+      rating: r.rating,
+      completedJobs: r.completedJobs ?? 0,
+    }));
   }
 
   async updateJobApplication(id: string, updates: Partial<Pick<JobApplication, "status" | "notes" | "aiCoverLetter" | "employabilityScore" | "interviewDate">>): Promise<JobApplication | undefined> {
