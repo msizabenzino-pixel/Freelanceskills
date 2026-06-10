@@ -1,6 +1,7 @@
-import { pgTable, text, integer, timestamp, varchar, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, timestamp, varchar, boolean, index } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { users } from "./auth";
 
 export const POINT_ACTIONS = {
   profile_complete: { points: 50, label: "Complete your profile", icon: "👤", category: "profile" },
@@ -36,27 +37,35 @@ export const REWARDS_CATALOGUE = [
   { id: "academy_course", name: "Free Premium Course", cost: 800, icon: "🎓", description: "Unlock any paid Academy course for free", category: "learning" },
 ] as const;
 
-export const pointTransactions = pgTable("point_transactions", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  userId: varchar("user_id", { length: 255 }).notNull(),
-  amount: integer("amount").notNull(),
-  action: varchar("action", { length: 100 }).notNull(),
-  description: text("description").notNull(),
-  balanceAfter: integer("balance_after").notNull(),
-  metadata: text("metadata"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+export const pointTransactions = pgTable(
+  "point_transactions",
+  {
+    id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+    userId: varchar("user_id", { length: 255 }).notNull().references(() => users.id, { onDelete: "cascade" }),
+    amount: integer("amount").notNull(),
+    action: varchar("action", { length: 100 }).notNull(),
+    description: text("description").notNull(),
+    balanceAfter: integer("balance_after").notNull(),
+    metadata: text("metadata"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [index("idx_point_transactions_user").on(table.userId)]
+);
 
-export const rewardRedemptions = pgTable("reward_redemptions", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  userId: varchar("user_id", { length: 255 }).notNull(),
-  rewardId: varchar("reward_id", { length: 100 }).notNull(),
-  rewardName: varchar("reward_name", { length: 255 }).notNull(),
-  pointsCost: integer("points_cost").notNull(),
-  status: varchar("status", { length: 50 }).notNull().default("pending"),
-  appliedAt: timestamp("applied_at"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+export const rewardRedemptions = pgTable(
+  "reward_redemptions",
+  {
+    id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+    userId: varchar("user_id", { length: 255 }).notNull().references(() => users.id, { onDelete: "cascade" }),
+    rewardId: varchar("reward_id", { length: 100 }).notNull(),
+    rewardName: varchar("reward_name", { length: 255 }).notNull(),
+    pointsCost: integer("points_cost").notNull(),
+    status: varchar("status", { length: 50 }).notNull().default("pending"),
+    appliedAt: timestamp("applied_at"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [index("idx_reward_redemptions_user").on(table.userId)]
+);
 
 export const insertPointTransactionSchema = createInsertSchema(pointTransactions).omit({ id: true, createdAt: true });
 export type PointTransaction = typeof pointTransactions.$inferSelect;

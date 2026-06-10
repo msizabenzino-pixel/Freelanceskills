@@ -21,6 +21,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { users } from "./auth";
 import { jobs } from "./jobs";
+import { escrowStatusEnum } from "./enums";
 
 /**
  * PaymentEscrow — core financial record for the Payments Control Centre
@@ -43,7 +44,7 @@ export const paymentEscrows = pgTable("payment_escrows", {
 
   // Status lifecycle
   // held → released | refunded | disputed | auto_released
-  status: text("status").notNull().default("held"),
+  status: escrowStatusEnum("status").notNull().default("held"),
 
   // AI scores (0–100)
   releaseScore: integer("release_score").notNull().default(50),  // AI Release Score

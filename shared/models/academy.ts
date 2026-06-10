@@ -14,9 +14,10 @@
  * - SA provincial skill demand heatmap
  * - Township economy freelancers tracked separately for govt reporting
  */
-import { pgTable, serial, text, integer, boolean, timestamp, real } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, integer, boolean, timestamp, real, index, unique } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { users } from "./auth";
 
 export const courses = pgTable("courses", {
   id: serial("id").primaryKey(),
@@ -43,27 +44,36 @@ export const courses = pgTable("courses", {
 
 export const lessons = pgTable("lessons", {
   id: serial("id").primaryKey(),
-  courseId: integer("course_id").references(() => courses.id).notNull(),
+  courseId: integer("course_id").references(() => courses.id, { onDelete: "cascade" }).notNull(),
   title: text("title").notNull(),
   content: text("content").notNull(), // markdown
   orderIndex: integer("order_index").notNull(),
   type: text("type").notNull(), // video, text, quiz
   videoUrl: text("video_url"),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const courseProgress = pgTable("course_progress", {
-  id: serial("id").primaryKey(),
-  userId: text("user_id").notNull(),
-  courseId: integer("course_id").references(() => courses.id).notNull(),
-  lessonId: integer("lesson_id").references(() => lessons.id).notNull(),
-  completed: boolean("completed").default(false).notNull(),
-  completedAt: timestamp("completed_at"),
-});
+export const courseProgress = pgTable(
+  "course_progress",
+  {
+    id: serial("id").primaryKey(),
+    userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    courseId: integer("course_id").references(() => courses.id, { onDelete: "cascade" }).notNull(),
+    lessonId: integer("lesson_id").references(() => lessons.id, { onDelete: "cascade" }).notNull(),
+    completed: boolean("completed").default(false).notNull(),
+    completedAt: timestamp("completed_at"),
+  },
+  (table) => [
+    unique("uq_course_progress_user_lesson").on(table.userId, table.lessonId),
+    index("idx_course_progress_user").on(table.userId),
+    index("idx_course_progress_course").on(table.courseId),
+  ]
+);
 
 export const certificates = pgTable("certificates", {
   id: serial("id").primaryKey(),
-  userId: text("user_id").notNull(),
-  courseId: integer("course_id").references(() => courses.id).notNull(),
+  userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  courseId: integer("course_id").references(() => courses.id, { onDelete: "cascade" }).notNull(),
   issuedAt: timestamp("issued_at").defaultNow().notNull(),
   certificateCode: text("certificate_code").unique().notNull(),
   // Extended for admin management
@@ -74,6 +84,7 @@ export const certificates = pgTable("certificates", {
   earningsAfterCents: integer("earnings_after_cents").default(0),
   jobWinsBeforeCert: integer("job_wins_before_cert").default(0),
   jobWinsAfterCert: integer("job_wins_after_cert").default(0),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 /**
@@ -99,16 +110,24 @@ export const skillDemandForecasts = pgTable("skill_demand_forecasts", {
 /**
  * AcademyEnrolment — tracks per-user course enrolments (separate from lesson-level progress)
  */
-export const academyEnrolments = pgTable("academy_enrolments", {
-  id: serial("id").primaryKey(),
-  userId: text("user_id").notNull(),
-  courseId: integer("course_id").references(() => courses.id).notNull(),
-  enroledAt: timestamp("enroled_at").defaultNow(),
-  completedAt: timestamp("completed_at"),
-  progressPct: real("progress_pct").default(0),                  // 0–100
-  streakDays: integer("streak_days").default(0),
-  lastActiveAt: timestamp("last_active_at").defaultNow(),
-});
+export const academyEnrolments = pgTable(
+  "academy_enrolments",
+  {
+    id: serial("id").primaryKey(),
+    userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    courseId: integer("course_id").references(() => courses.id, { onDelete: "cascade" }).notNull(),
+    enroledAt: timestamp("enroled_at").defaultNow(),
+    completedAt: timestamp("completed_at"),
+    progressPct: real("progress_pct").default(0),                  // 0–100
+    streakDays: integer("streak_days").default(0),
+    lastActiveAt: timestamp("last_active_at").defaultNow(),
+  },
+  (table) => [
+    unique("uq_academy_enrolments_user_course").on(table.userId, table.courseId),
+    index("idx_academy_enrolments_user").on(table.userId),
+    index("idx_academy_enrolments_course").on(table.courseId),
+  ]
+);
 
 export const insertCourseSchema = createInsertSchema(courses).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertLessonSchema = createInsertSchema(lessons).omit({ id: true });

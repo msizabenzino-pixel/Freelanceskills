@@ -1,10 +1,12 @@
 import { pgTable, text, integer, timestamp, varchar, boolean, jsonb, real } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { users } from "./auth";
+import { escrowStatusEnum } from "./enums";
 
 export const auditLogs = pgTable("audit_logs", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  userId: varchar("user_id"),
+  userId: varchar("user_id").references(() => users.id, { onDelete: "set null" }),
   action: varchar("action").notNull(),
   resource: varchar("resource").notNull(),
   resourceId: varchar("resource_id"),
@@ -18,15 +20,18 @@ export const insertAuditLogSchema = createInsertSchema(auditLogs).omit({ id: tru
 export type AuditLog = typeof auditLogs.$inferSelect;
 export type InsertAuditLog = z.infer<typeof insertAuditLogSchema>;
 
+// escrow_transactions: booking-level holds integrated with PayFast ITN
+// (distinct from payment_escrows in payments.ts = AI-scored contracts,
+//  and job_escrow in marketplace.ts = bid milestone tracking)
 export const escrowTransactions = pgTable("escrow_transactions", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   bookingId: varchar("booking_id").notNull(),
-  clientId: varchar("client_id").notNull(),
-  freelancerId: varchar("freelancer_id").notNull(),
+  clientId: varchar("client_id").notNull().references(() => users.id, { onDelete: "set null" }),
+  freelancerId: varchar("freelancer_id").notNull().references(() => users.id, { onDelete: "set null" }),
   amount: integer("amount").notNull(),
   currency: varchar("currency").notNull().default("ZAR"),
   payfastPaymentId: varchar("payfast_payment_id"),
-  status: varchar("status").notNull().default("held"),
+  status: escrowStatusEnum("status").notNull().default("held"),
   releasedAt: timestamp("released_at"),
   refundedAt: timestamp("refunded_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -38,7 +43,7 @@ export type InsertEscrowTransaction = z.infer<typeof insertEscrowTransactionSche
 
 export const premiumTiers = pgTable("premium_tiers", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  userId: varchar("user_id").notNull(),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   tier: varchar("tier").notNull().default("free"),
   visibilityBoost: integer("visibility_boost").notNull().default(0),
   rateLimitMultiplier: real("rate_limit_multiplier").notNull().default(1),

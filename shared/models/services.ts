@@ -1,8 +1,9 @@
 import { sql } from "drizzle-orm";
-import { pgTable, varchar, text, integer, timestamp, boolean, time, date } from "drizzle-orm/pg-core";
+import { pgTable, varchar, text, integer, timestamp, boolean, time, date, index, unique } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { users } from "./auth";
+import { bookingStatusEnum } from "./enums";
 
 export const servicePackages = pgTable("service_packages", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -14,35 +15,53 @@ export const servicePackages = pgTable("service_packages", {
   duration: text("duration"),
   isActive: boolean("is_active").notNull().default(true),
   bookingCount: integer("booking_count").notNull().default(0),
+  deletedAt: timestamp("deleted_at"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const availabilitySlots = pgTable("availability_slots", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  freelancerId: varchar("freelancer_id").notNull().references(() => users.id),
-  dayOfWeek: integer("day_of_week").notNull(),
-  startTime: time("start_time").notNull(),
-  endTime: time("end_time").notNull(),
-  isAvailable: boolean("is_available").notNull().default(true),
-});
+export const availabilitySlots = pgTable(
+  "availability_slots",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    freelancerId: varchar("freelancer_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    dayOfWeek: integer("day_of_week").notNull(),
+    startTime: time("start_time").notNull(),
+    endTime: time("end_time").notNull(),
+    isAvailable: boolean("is_available").notNull().default(true),
+  },
+  (table) => [
+    unique("uq_availability_slots_freelancer_day_time").on(table.freelancerId, table.dayOfWeek, table.startTime),
+    index("idx_availability_slots_freelancer").on(table.freelancerId),
+  ]
+);
 
-export const bookings = pgTable("bookings", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  clientId: varchar("client_id").notNull().references(() => users.id),
-  freelancerId: varchar("freelancer_id").notNull().references(() => users.id),
-  servicePackageId: varchar("service_package_id").references(() => servicePackages.id),
-  jobId: varchar("job_id"),
-  bookingDate: date("booking_date").notNull(),
-  startTime: time("start_time").notNull(),
-  endTime: time("end_time"),
-  status: text("status").notNull().default("pending"),
-  totalAmount: integer("total_amount").notNull(),
-  location: text("location"),
-  notes: text("notes"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
+export const bookings = pgTable(
+  "bookings",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    clientId: varchar("client_id").notNull().references(() => users.id),
+    freelancerId: varchar("freelancer_id").notNull().references(() => users.id),
+    servicePackageId: varchar("service_package_id").references(() => servicePackages.id),
+    jobId: varchar("job_id"),
+    bookingDate: date("booking_date").notNull(),
+    startTime: time("start_time").notNull(),
+    endTime: time("end_time"),
+    status: bookingStatusEnum("status").notNull().default("pending"),
+    totalAmount: integer("total_amount").notNull(),
+    location: text("location"),
+    notes: text("notes"),
+    deletedAt: timestamp("deleted_at"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => [
+    index("idx_bookings_client").on(table.clientId),
+    index("idx_bookings_freelancer").on(table.freelancerId),
+    index("idx_bookings_status").on(table.status),
+  ]
+);
 
+// reviews: for service-package bookings (distinct from bid_reviews in marketplace.ts which covers job bids)
 export const reviews = pgTable("reviews", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   bookingId: varchar("booking_id").notNull().references(() => bookings.id),

@@ -8,6 +8,20 @@
       "when": 1775461087823,
       "tag": "0000_dear_anita_blake",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1781060488056,
+      "tag": "0001_nappy_siren",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1781061577144,
+      "tag": "0002_schema_enums_indexes",
+      "breakpoints": true
     }
   ]
 }

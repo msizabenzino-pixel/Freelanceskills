@@ -1,3 +1,4 @@
+export * from "./models/enums";
 export * from "./models/auth";
 export * from "./models/jobs";
 export * from "./models/profiles";
@@ -33,3 +34,4 @@ export * from "./models/marketplace";
 export * from "./models/blog";
 export * from "./models/vetting";
 export * from "./models/rewards";
+export * from "./models/gigs";

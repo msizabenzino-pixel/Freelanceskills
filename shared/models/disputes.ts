@@ -2,107 +2,112 @@
  * DISPUTE MANAGEMENT SYSTEM SCHEMA
  * Fair, transparent, AI-powered conflict resolution
  */
-import { pgTable, text, timestamp, integer, boolean, json, varchar } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { pgTable, text, timestamp, integer, boolean, json, varchar, index } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { users } from "./auth";
+import { disputeStatusEnum, disputePriorityEnum, disputeReasonEnum } from "./enums";
 
 // ─── MAIN DISPUTE TABLE ───────────────────────────────────────
-export const disputes = pgTable("disputes", {
-  id: varchar("id").primaryKey().default(() => Math.random().toString(36).substring(7)),
-  orderId: varchar("order_id").notNull(),
-  contractId: varchar("contract_id"),
-  clientId: varchar("client_id").notNull(),
-  clientName: text("client_name"),
-  clientLTV: integer("client_ltv").default(0), // Lifetime value in ZAR cents
-  freelancerId: varchar("freelancer_id").notNull(),
-  freelancerName: text("freelancer_name"),
-  freelancerAcademyLevel: varchar("freelancer_academy_level").default("Intermediate"), // Top Rated / Pro / Intermediate / Beginner
-  freelancerEarningsLift: integer("freelancer_earnings_lift").default(0), // % earnings increase from Academy
-  reason: varchar("reason").notNull(), // Categorised: quality / payment / timeline / communication / theft / other
-  customReason: text("custom_reason"), // Free-text reason
-  status: varchar("status").default("open"), // open / under_review / resolved / closed / escalated
-  priority: varchar("priority").default("medium"), // low / medium / high / critical
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-  closedAt: timestamp("closed_at"),
-  resolvedAt: timestamp("resolved_at"),
-});
+export const disputes = pgTable(
+  "disputes",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    orderId: varchar("order_id").notNull(),
+    contractId: varchar("contract_id"),
+    clientId: varchar("client_id").notNull().references(() => users.id, { onDelete: "set null" }),
+    clientName: text("client_name"),
+    clientLTV: integer("client_ltv").default(0),
+    freelancerId: varchar("freelancer_id").notNull().references(() => users.id, { onDelete: "set null" }),
+    freelancerName: text("freelancer_name"),
+    freelancerAcademyLevel: varchar("freelancer_academy_level").default("Intermediate"),
+    freelancerEarningsLift: integer("freelancer_earnings_lift").default(0),
+    reason: disputeReasonEnum("reason").notNull(),
+    customReason: text("custom_reason"),
+    status: disputeStatusEnum("status").default("open"),
+    priority: disputePriorityEnum("priority").default("medium"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+    closedAt: timestamp("closed_at"),
+    resolvedAt: timestamp("resolved_at"),
+  },
+  (table) => [
+    index("idx_disputes_client").on(table.clientId),
+    index("idx_disputes_freelancer").on(table.freelancerId),
+    index("idx_disputes_status").on(table.status),
+  ]
+);
 
 // ─── EVIDENCE VAULT ───────────────────────────────────────────
 export const evidenceItems = pgTable("evidence_items", {
-  id: varchar("id").primaryKey().default(() => Math.random().toString(36).substring(7)),
-  disputeId: varchar("dispute_id").notNull().references(() => disputes.id),
-  type: varchar("type").notNull(), // file / photo / screenshot / voice_note / chat_log / code
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  disputeId: varchar("dispute_id").notNull().references(() => disputes.id, { onDelete: "cascade" }),
+  type: varchar("type").notNull(),
   fileName: text("file_name"),
   filePath: text("file_path"),
   mimeType: varchar("mime_type"),
-  uploadedBy: varchar("uploaded_by").notNull(), // client / freelancer / admin
+  uploadedBy: varchar("uploaded_by").notNull(),
   uploadedAt: timestamp("uploaded_at").defaultNow(),
-  // AI Analysis
-  aiSentiment: varchar("ai_sentiment"), // positive / neutral / negative / aggressive
-  aiTrust: integer("ai_trust").default(50), // 0-100: plagiarism/authenticity score
-  transcription: text("transcription"), // For voice notes
-  highlightedText: text("highlighted_text"), // Key excerpts from chat logs
+  aiSentiment: varchar("ai_sentiment"),
+  aiTrust: integer("ai_trust").default(50),
+  transcription: text("transcription"),
+  highlightedText: text("highlighted_text"),
 });
 
 // ─── RESOLUTION LOG ─────────────────────────────────────────────
 export const resolutionLogs = pgTable("resolution_logs", {
-  id: varchar("id").primaryKey().default(() => Math.random().toString(36).substring(7)),
-  disputeId: varchar("dispute_id").notNull().references(() => disputes.id),
-  action: varchar("action").notNull(), // split_payment / refund_client / pay_freelancer / escalate / close / reopen
-  adminId: varchar("admin_id"),
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  disputeId: varchar("dispute_id").notNull().references(() => disputes.id, { onDelete: "cascade" }),
+  action: varchar("action").notNull(),
+  adminId: varchar("admin_id").references(() => users.id, { onDelete: "set null" }),
   notes: text("notes"),
-  clientPaymentZAR: integer("client_payment_zar"), // What client gets (in cents)
-  freelancerPaymentZAR: integer("freelancer_payment_zar"), // What freelancer gets (in cents)
-  platformRetainedZAR: integer("platform_retained_zar"), // What platform keeps
-  reason: text("reason"), // Why this decision
+  clientPaymentZAR: integer("client_payment_zar"),
+  freelancerPaymentZAR: integer("freelancer_payment_zar"),
+  platformRetainedZAR: integer("platform_retained_zar"),
+  reason: text("reason"),
   createdAt: timestamp("created_at").defaultNow(),
-  // Immutable audit
   ipAddress: varchar("ip_address"),
   userAgent: text("user_agent"),
 });
 
 // ─── FAIRNESS SCORE (AI) ──────────────────────────────────────
 export const fairnessScores = pgTable("fairness_scores", {
-  id: varchar("id").primaryKey().default(() => Math.random().toString(36).substring(7)),
-  disputeId: varchar("dispute_id").notNull().references(() => disputes.id),
-  overallScore: integer("overall_score"), // 0-100
-  clientCaseStrength: integer("client_case_strength"), // 0-100: how strong is client's claim
-  freelancerCaseStrength: integer("freelancer_case_strength"), // 0-100: how strong is freelancer's claim
-  academyImpact: integer("academy_impact"), // 0-100: does freelancer have Academy certification?
-  recommendedSplit: text("recommended_split"), // JSON: { clientZAR, freelancerZAR, platformZAR }
-  recommendedAction: varchar("recommended_action"), // full_refund / full_pay / 50_50_split / other
-  confidence: integer("confidence"), // 0-100: how confident is the AI in this recommendation
-  reasoning: text("reasoning"), // Explainable AI: why this recommendation
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  disputeId: varchar("dispute_id").notNull().references(() => disputes.id, { onDelete: "cascade" }),
+  overallScore: integer("overall_score"),
+  clientCaseStrength: integer("client_case_strength"),
+  freelancerCaseStrength: integer("freelancer_case_strength"),
+  academyImpact: integer("academy_impact"),
+  recommendedSplit: text("recommended_split"),
+  recommendedAction: varchar("recommended_action"),
+  confidence: integer("confidence"),
+  reasoning: text("reasoning"),
   generatedAt: timestamp("generated_at").defaultNow(),
 });
 
 // ─── POST-DISPUTE GROWTH PATH ───────────────────────────────────
 export const growthPaths = pgTable("growth_paths", {
-  id: varchar("id").primaryKey().default(() => Math.random().toString(36).substring(7)),
-  disputeId: varchar("dispute_id").notNull().references(() => disputes.id),
-  freelancerId: varchar("freelancer_id"),
-  clientId: varchar("client_id"),
-  // For freelancer
-  recommendedCourses: json("recommended_courses"), // Array of Academy courses to prevent future disputes
-  expectedEarningsLift: integer("expected_earnings_lift"), // % expected increase after training
-  // For client
-  communicationTips: text("communication_tips"), // How to work better with freelancers
-  // General
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  disputeId: varchar("dispute_id").notNull().references(() => disputes.id, { onDelete: "cascade" }),
+  freelancerId: varchar("freelancer_id").references(() => users.id, { onDelete: "set null" }),
+  clientId: varchar("client_id").references(() => users.id, { onDelete: "set null" }),
+  recommendedCourses: json("recommended_courses"),
+  expectedEarningsLift: integer("expected_earnings_lift"),
+  communicationTips: text("communication_tips"),
   nextSteps: text("next_steps"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
 // ─── CHAT HISTORY (Full conversation replay) ───────────────────
 export const disputeChats = pgTable("dispute_chats", {
-  id: varchar("id").primaryKey().default(() => Math.random().toString(36).substring(7)),
-  disputeId: varchar("dispute_id").notNull().references(() => disputes.id),
-  sender: varchar("sender").notNull(), // client / freelancer
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  disputeId: varchar("dispute_id").notNull().references(() => disputes.id, { onDelete: "cascade" }),
+  sender: varchar("sender").notNull(),
   message: text("message").notNull(),
   sentAt: timestamp("sent_at").defaultNow(),
-  // AI Highlighting
   isHighlighted: boolean("is_highlighted").default(false),
-  highlightReason: varchar("highlight_reason"), // key_agreement / key_disagreement / payment_mention / etc
+  highlightReason: varchar("highlight_reason"),
 });
 
 // ─── ZOD SCHEMAS ───────────────────────────────────────────────
