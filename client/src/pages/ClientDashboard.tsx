@@ -218,21 +218,43 @@ function PipelineCard({
   onStatusChange,
   isPending,
   isDragging,
+  isKeyActive,
+  onKeyMove,
+  onKeyDrop,
+  onKeyCancel,
 }: {
   applicant: Applicant;
   onStatusChange: (id: string, status: string) => void;
   isPending: boolean;
   isDragging: boolean;
+  isKeyActive: boolean;
+  onKeyMove: (cardId: string, dir: -1 | 1) => void;
+  onKeyDrop: (cardId: string) => void;
+  onKeyCancel: () => void;
 }) {
   const [, setLocation] = useLocation();
   const initials = getInitials(applicant.freelancerName);
+
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === "ArrowLeft")  { e.preventDefault(); onKeyMove(applicant.id, -1); }
+    else if (e.key === "ArrowRight") { e.preventDefault(); onKeyMove(applicant.id,  1); }
+    else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onKeyDrop(applicant.id); }
+    else if (e.key === "Escape") { onKeyCancel(); }
+  }
 
   return (
     <div
       data-pipeline-card-id={applicant.id}
       data-testid={`pipeline-card-${applicant.id}`}
-      className={`bg-slate-800 border border-slate-700 rounded-lg p-3 cursor-grab hover:border-slate-500 transition-colors select-none ${
-        isDragging ? "opacity-40" : ""
+      tabIndex={0}
+      aria-label={`${applicant.freelancerName}${applicant.profileTitle ? `, ${applicant.profileTitle}` : ""}. Press Left or Right arrow to choose a column, then Enter to move.`}
+      onKeyDown={handleKeyDown}
+      className={`bg-slate-800 border rounded-lg p-3 cursor-grab hover:border-slate-500 transition-colors select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 focus-visible:ring-offset-1 focus-visible:ring-offset-slate-900 ${
+        isKeyActive
+          ? "border-blue-400 ring-2 ring-blue-400/50 ring-offset-1 ring-offset-slate-900"
+          : isDragging
+          ? "opacity-40 border-slate-700"
+          : "border-slate-700"
       }`}
     >
       {/* Avatar + name */}
@@ -336,6 +358,8 @@ function findCardId(target: EventTarget | null): string | null {
   return null;
 }
 
+type KbState = { cardId: string; colIndex: number } | null;
+
 function PipelineView({
   applicants,
   onStatusChange,
@@ -348,6 +372,8 @@ function PipelineView({
   const [dragState, setDragState] = useState<DragState>(null);
   const [dragOverCol, setDragOverCol] = useState<string | null>(null);
   const [localStatuses, setLocalStatuses] = useState<Record<string, string>>({});
+  const [kbState, setKbState] = useState<KbState>(null);
+  const [kbAnnounce, setKbAnnounce] = useState("");
   const colRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const boardRef = useRef<HTMLDivElement>(null);
 
@@ -430,25 +456,69 @@ function PipelineView({
     setDragOverCol(null);
   }
 
+  // ── Keyboard navigation handlers ────────────────────────────────────────────
+  function handleKeyMove(cardId: string, dir: -1 | 1) {
+    const applicant = applicants.find((a) => a.id === cardId);
+    if (!applicant) return;
+    const currentColIndex = kbState?.cardId === cardId
+      ? kbState.colIndex
+      : PIPELINE_COLUMNS.findIndex((c) => c.key === getStatus(applicant));
+    const nextIndex = Math.max(0, Math.min(PIPELINE_COLUMNS.length - 1, currentColIndex + dir));
+    setKbState({ cardId, colIndex: nextIndex });
+    setKbAnnounce(`Target column: ${PIPELINE_COLUMNS[nextIndex].label}. Press Enter to move.`);
+  }
+
+  function handleKeyDrop(cardId: string) {
+    if (!kbState || kbState.cardId !== cardId) return;
+    const applicant = applicants.find((a) => a.id === cardId);
+    if (!applicant) return;
+    const targetCol = PIPELINE_COLUMNS[kbState.colIndex];
+    const current = getStatus(applicant);
+    if (current !== targetCol.key) {
+      setLocalStatuses((prev) => ({ ...prev, [cardId]: targetCol.key }));
+      onStatusChange(cardId, targetCol.key);
+      setKbAnnounce(`${applicant.freelancerName} moved to ${targetCol.label}.`);
+    } else {
+      setKbAnnounce(`Already in ${targetCol.label}.`);
+    }
+    setKbState(null);
+  }
+
+  function handleKeyCancel() {
+    setKbState(null);
+    setKbAnnounce("Move cancelled.");
+  }
+
   const ghostApplicant = dragState
     ? applicants.find((a) => a.id === dragState.id)
     : null;
 
+  // A column is highlighted if a pointer drag is over it OR keyboard navigation targets it
+  const kbTargetColKey = kbState !== null ? PIPELINE_COLUMNS[kbState.colIndex].key : null;
+
   return (
-    <div
-      ref={boardRef}
-      className="overflow-x-auto pb-2"
+    <div ref={boardRef} className="overflow-x-auto pb-2" data-testid="pipeline-view"
       style={{ touchAction: dragState ? "none" : "pan-x" }}
-      data-testid="pipeline-view"
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerCancel}
     >
+      {/* Screen-reader live region for keyboard move announcements */}
+      <div aria-live="polite" aria-atomic="true" className="sr-only">{kbAnnounce}</div>
+
+      {kbState && (
+        <p className="text-[10px] text-blue-400 mb-2 px-1">
+          ← → to pick column · Enter to move · Esc to cancel
+        </p>
+      )}
+
       <div className="flex gap-3 min-w-max">
         {PIPELINE_COLUMNS.map((col) => {
           const colApplicants = applicants.filter((a) => getStatus(a) === col.key);
-          const isOver = dragOverCol === col.key && dragState?.started;
+          const isDragOver = dragOverCol === col.key && dragState?.started;
+          const isKbTarget = kbTargetColKey === col.key;
+          const isOver = isDragOver || isKbTarget;
 
           return (
             <div
@@ -457,7 +527,7 @@ function PipelineView({
               data-testid={`pipeline-column-${col.key}`}
               className={`w-48 flex flex-col rounded-xl border transition-colors ${
                 isOver
-                  ? `${col.dropBg} border-slate-500`
+                  ? `${col.dropBg} border-slate-500${isKbTarget && !isDragOver ? " ring-2 ring-blue-400/40" : ""}`
                   : "bg-slate-800/40 border-slate-700/60"
               }`}
             >
@@ -466,6 +536,9 @@ function PipelineView({
                 <span className={`w-2 h-2 rounded-full ${col.dotColor} shrink-0`} />
                 <span className={`text-xs font-semibold ${col.headerColor} flex-1`}>{col.label}</span>
                 <span className="text-xs text-slate-500 font-medium">{colApplicants.length}</span>
+                {isKbTarget && !isDragOver && (
+                  <span className="text-[9px] text-blue-400 font-semibold uppercase tracking-wide">Target</span>
+                )}
               </div>
 
               {/* Cards */}
@@ -485,6 +558,10 @@ function PipelineView({
                       }}
                       isPending={isPending}
                       isDragging={dragState?.started === true && dragState.id === a.id}
+                      isKeyActive={kbState?.cardId === a.id}
+                      onKeyMove={handleKeyMove}
+                      onKeyDrop={handleKeyDrop}
+                      onKeyCancel={handleKeyCancel}
                     />
                   ))
                 )}
