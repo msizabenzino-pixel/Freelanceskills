@@ -81,8 +81,9 @@ export function OnboardingCarousel() {
   const [isVisible, setIsVisible] = useState(false);
   const [step, setStep] = useState<Step>("slides");
   const [selectedRole, setSelectedRole] = useState<Role>(null);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const profileCheckedRef = useRef(false);
+  const showTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Freelancer state
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
@@ -105,6 +106,15 @@ export function OnboardingCarousel() {
     // Fast path: already dismissed/completed
     if (localStorage.getItem("onboarding_completed")) return;
 
+    // Wait until auth state is resolved before deciding
+    if (isLoading) return;
+
+    // Clean up any stale timeout on re-run
+    if (showTimeoutRef.current) {
+      clearTimeout(showTimeoutRef.current);
+      showTimeoutRef.current = null;
+    }
+
     // For authenticated users: check the DB before showing.
     // If they already have a real profile, mark done and skip.
     if (isAuthenticated && !profileCheckedRef.current) {
@@ -125,22 +135,30 @@ export function OnboardingCarousel() {
           if (profile && (profile as any).__skip) return;
           if (profile && profile.id) {
             localStorage.setItem("onboarding_completed", "true");
-            // Don't show — profile exists
+            setIsVisible(false);
           } else {
-            setTimeout(() => setIsVisible(true), 800);
+            showTimeoutRef.current = setTimeout(() => setIsVisible(true), 800);
           }
         })
         .catch(() => {
           // Network error — don't show carousel
+          setIsVisible(false);
         });
       return;
     }
 
     // Unauthenticated visitors always see the intro
     if (!isAuthenticated) {
-      setTimeout(() => setIsVisible(true), 800);
+      showTimeoutRef.current = setTimeout(() => setIsVisible(true), 800);
     }
-  }, [isAuthenticated]);
+
+    return () => {
+      if (showTimeoutRef.current) {
+        clearTimeout(showTimeoutRef.current);
+        showTimeoutRef.current = null;
+      }
+    };
+  }, [isAuthenticated, isLoading]);
 
   const toggleSkill = (skill: string) => {
     setSelectedSkills(prev =>
