@@ -109,6 +109,8 @@ export async function registerRoutes(
   // Setup authentication FIRST
   await setupAuth(app);
   registerAuthRoutes(app);
+  const { registerMarketplaceRoutes } = await import("./marketplaceRoutes");
+  registerMarketplaceRoutes(app);
   const { isAuthenticated } = await import("./replit_integrations/auth");
   const { insertJobSchema, insertProfileSchema, insertServicePackageSchema, insertBookingSchema, insertReviewSchema, insertMessageSchema } = await import("@shared/schema");
   const { checkMessageSafety, SAFETY_DISCLAIMERS, REPORT_REASONS } = await import("@shared/safety");
