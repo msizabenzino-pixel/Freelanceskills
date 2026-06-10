@@ -43,7 +43,7 @@ function buildFreelancerHtml(baseHtml: string, profile: any, name: string): stri
   const rating = profile.rating ? `${(profile.rating / 100).toFixed(1)} stars` : "5.0 stars";
   const bio = escapeHtml((profile.bio || profile.tagline || "").slice(0, 300));
   const desc = `${category} in ${location}${rate ? ` · ${rate}` : ""} · ${rating}. ${bio}`.trim();
-  const url = `https://freelanceskills.net/freelancer-profile/${profile.id}`;
+  const url = `https://freelanceskills.net/profile/${profile.id}`;
   const avatar = profile.avatarUrl || "https://freelanceskills.net/hero-bg.png";
 
   const skills: string[] = [];
@@ -179,7 +179,12 @@ function getIndexHtml(): string {
 }
 
 export function registerPrerenderRoutes(app: Express): void {
-  app.get("/freelancer-profile/:id", async (req: Request, res: Response, next: NextFunction) => {
+  // 301 redirect old profile URLs to canonical /profile/:id
+  app.get("/freelancer-profile/:id", (req: Request, res: Response) => {
+    res.redirect(301, `/profile/${req.params.id}`);
+  });
+
+  app.get("/profile/:id", async (req: Request, res: Response, next: NextFunction) => {
     const ua = req.headers["user-agent"] || "";
     if (!isBot(ua)) return next();
 

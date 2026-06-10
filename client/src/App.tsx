@@ -1,4 +1,4 @@
-import { Switch, Route, useLocation } from "wouter";
+import { Switch, Route, Redirect, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -250,7 +250,7 @@ function Router() {
         <Route path="/contact" component={Support} />
         <Route path="/find-talent" component={FindTalent} />
         <Route path="/freelancer-profile/:id">
-          <FreelancerProfile />
+          <Redirect to={"/profile/" + window.location.pathname.split("/").pop()} />
         </Route>
         <Route path="/gig-marketplace" component={Explore} />
         <Route path="/admin" component={AdminRouter} />
