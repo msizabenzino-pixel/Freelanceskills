@@ -610,6 +610,15 @@ function PipelineView({
 
   return (
     <div className="relative" data-testid="pipeline-view">
+      {/* Keyframes for first-visit arrow pulse */}
+      <style>{`
+        @keyframes arrowPulse {
+          0%   { transform: scale(1);    opacity: 0.9; }
+          40%  { transform: scale(1.35); opacity: 1;   }
+          100% { transform: scale(1);    opacity: 0.9; }
+        }
+      `}</style>
+
       {/* Left fade + arrow hint */}
       <div
         aria-hidden="true"
@@ -620,7 +629,13 @@ function PipelineView({
           transition: "opacity 0.25s ease",
         }}
       >
-        <span className="ml-1 text-white text-lg font-bold select-none opacity-90">←</span>
+        <span
+          className="ml-1 text-white text-lg font-bold select-none opacity-90"
+          style={showSwipeHint && canScrollLeft ? {
+            animation: "arrowPulse 0.65s ease-in-out 0.35s 3",
+            display: "inline-block",
+          } : undefined}
+        >←</span>
       </div>
 
       {/* Right fade + arrow hint */}
@@ -633,7 +648,13 @@ function PipelineView({
           transition: "opacity 0.25s ease",
         }}
       >
-        <span className="mr-1 text-white text-lg font-bold select-none opacity-90">→</span>
+        <span
+          className="mr-1 text-white text-lg font-bold select-none opacity-90"
+          style={showSwipeHint && canScrollRight ? {
+            animation: "arrowPulse 0.65s ease-in-out 0.35s 3",
+            display: "inline-block",
+          } : undefined}
+        >→</span>
       </div>
 
     <div ref={boardRef} className="overflow-x-auto pb-2"
