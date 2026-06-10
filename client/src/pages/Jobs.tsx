@@ -795,7 +795,7 @@ export default function Jobs() {
                           <div className="flex-1 h-px bg-border" />
                           <span className="text-xs text-muted-foreground">{aggJobs.length} jobs</span>
                         </div>
-                        <div className="grid lg:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           {aggJobs.map((job) => (
                             <AggregatedJobCard
                               key={job.id}
@@ -819,7 +819,7 @@ export default function Jobs() {
                           <div className="flex-1 h-px bg-border" />
                           <span className="text-xs text-muted-foreground">{filteredFirebaseJobs.length} jobs</span>
                         </div>
-                        <div className="grid lg:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           {filteredFirebaseJobs.map((job) => (
                             <JobCard
                               key={job.id}
@@ -877,7 +877,7 @@ export default function Jobs() {
                         </div>
                       </div>
                     )}
-                    <div className="grid lg:grid-cols-2 gap-4" data-testid="aggregated-jobs-grid">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" data-testid="aggregated-jobs-grid">
                       {aggJobs.map((job) => (
                         <AggregatedJobCard
                           key={job.id}
@@ -903,7 +903,7 @@ export default function Jobs() {
                 ) : filteredFirebaseJobs.length === 0 ? (
                   <EmptyState onClear={clearFilters} hasFilters={!!hasActiveFilters} message="No marketplace jobs found. Try adjusting your search." />
                 ) : (
-                  <div className="grid lg:grid-cols-2 gap-4" data-testid="marketplace-jobs-grid">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" data-testid="marketplace-jobs-grid">
                     {filteredFirebaseJobs.map((job) => (
                       <JobCard
                         key={job.id}

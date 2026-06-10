@@ -9,6 +9,7 @@ import { pool, db } from "./db";
 import { runDbOptimizations } from "./dbOptimize";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { seedFreelancersIfEmpty } from "./seedFreelancers";
+import { seedAllData } from "./seedData";
 import path from "path";
 import fs from "fs";
 
@@ -99,17 +100,45 @@ app.use((req, res, next) => {
 app.use(auditMiddleware);
 
 // ── Health check endpoint ─────────────────────────────────────────────────────
-// Responds with DB ping, pool stats, and uptime.
+// Responds with DB ping, pool stats, table counts, and dependency status.
 // Used by Replit deployment health checks and external monitoring.
 app.get("/api/health", async (_req: Request, res: Response) => {
   const uptimeMs = Date.now() - SERVER_START_TIME;
-  let dbStatus = "ok";
+  let dbStatus: "ok" | "error" = "ok";
   let dbLatencyMs = 0;
+  let tableCounts: Record<string, number> = {};
+  let dbSize = "unknown";
 
   try {
     const t0 = Date.now();
     await pool.query("SELECT 1");
     dbLatencyMs = Date.now() - t0;
+
+    // Quick table counts for key entities
+    const countTables = [
+      "users", "profiles", "jobs", "job_applications", "service_packages",
+      "bookings", "reviews", "messages", "conversations", "notifications",
+      "gigs", "taxonomy_categories", "taxonomy_skills", "courses", "lessons",
+      "aggregated_jobs", "escrow_transactions", "disputes", "audit_logs",
+    ];
+    for (const table of countTables) {
+      try {
+        const result = await pool.query(`SELECT COUNT(*) as c FROM "${table}"`);
+        tableCounts[table] = parseInt(result.rows[0].c, 10);
+      } catch {
+        tableCounts[table] = -1;
+      }
+    }
+
+    // Database size
+    try {
+      const sizeResult = await pool.query(
+        "SELECT pg_size_pretty(pg_database_size(current_database())) as size"
+      );
+      dbSize = sizeResult.rows[0].size;
+    } catch {
+      /* ignore */
+    }
   } catch {
     dbStatus = "error";
   }
@@ -124,8 +153,19 @@ app.get("/api/health", async (_req: Request, res: Response) => {
   return res.status(status).json({
     status: dbStatus === "ok" ? "healthy" : "degraded",
     uptime: `${Math.floor(uptimeMs / 1000)}s`,
-    db: { status: dbStatus, latencyMs: dbLatencyMs },
+    db: {
+      status: dbStatus,
+      latencyMs: dbLatencyMs,
+      size: dbSize,
+      tables: tableCounts,
+    },
     pool: poolStats,
+    dependencies: {
+      payfast: process.env.PAYFAST_MERCHANT_ID ? "configured" : "missing",
+      openai: process.env.OPENAI_API_KEY ? "configured" : "missing",
+      paypal: process.env.PAYPAL_CLIENT_ID ? "configured" : "missing",
+      adzuna: process.env.ADZUNA_APP_KEY ? "configured" : "missing",
+    },
     version: "2.0.0",
     platform: "FreelanceSkills.net",
     timestamp: new Date().toISOString(),
@@ -304,6 +344,9 @@ app.use((req, res, next) => {
 
   // ── Seed demo freelancer profiles (idempotent — only runs once) ───────────
   await seedFreelancersIfEmpty();
+  // ── Seed categories, skills, jobs, gigs, packages, clients ───────────────
+  await seedAllData();
+
 
   await registerRoutes(httpServer, app);
 
