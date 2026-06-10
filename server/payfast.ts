@@ -277,13 +277,32 @@ export async function handleITN(req: Request, res: Response) {
         status: "processing",
       }).returning({ id: webhookEvents.id });
       webhookEventId = ev.id;
-    } catch (err: any) {
-      // Unique constraint violation = duplicate replay; return 200 immediately
-      if (err?.message?.includes("unique") || err?.code === "23505") {
-        console.log(`PayFast ITN duplicate ignored (unique violation): ${idempotencyKey}`);
-        return res.status(200).send("OK");
+    } catch (insertErr: any) {
+      // Unique constraint violation — existing row exists
+      if (insertErr?.message?.includes("unique") || insertErr?.code === "23505") {
+        const [existing] = await db.select({ id: webhookEvents.id, status: webhookEvents.status })
+          .from(webhookEvents)
+          .where(and(eq(webhookEvents.source, "payfast"), eq(webhookEvents.idempotencyKey, idempotencyKey)))
+          .limit(1);
+
+        if (!existing) {
+          // Race: row disappeared — let PayFast retry
+          return res.status(500).send("Transient conflict — please retry");
+        }
+        if (existing.status === "processed") {
+          // Truly already done — acknowledge safely
+          console.log(`PayFast ITN duplicate ACK (already processed): ${idempotencyKey}`);
+          return res.status(200).send("OK");
+        }
+        // Status is 'failed' or 'processing' (timed out) — reclaim and reprocess
+        console.log(`PayFast ITN reclaiming ${existing.status} event: ${idempotencyKey}`);
+        await db.update(webhookEvents)
+          .set({ status: "processing", processedAt: new Date(), errorMessage: null })
+          .where(eq(webhookEvents.id, existing.id));
+        webhookEventId = existing.id;
+      } else {
+        throw insertErr; // unexpected DB error — surface as 500
       }
-      throw err; // unexpected DB error — surface as 500
     }
 
     // ── Step 6: Process the event (escrow creation must succeed on COMPLETE) ─

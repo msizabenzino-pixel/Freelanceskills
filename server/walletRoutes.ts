@@ -66,13 +66,28 @@ export function startEscrowAutoReleaseCron() {
 
       for (const tx of due) {
         try {
-          await db.update(paymentEscrows).set({
+          // Atomic conditional UPDATE — only succeeds if escrow is still in its expected
+          // state. If an admin already released it between our SELECT and this UPDATE,
+          // the WHERE conditions fail → rowCount=0 → we skip wallet credit safely.
+          const updated = await db.update(paymentEscrows).set({
             status: "auto_released",
             releasedAt: now,
             releasedBy: "auto",
             payoutStatus: "processing",
             updatedAt: now,
-          }).where(eq(paymentEscrows.id, tx.id));
+          }).where(and(
+            eq(paymentEscrows.id, tx.id),
+            eq(paymentEscrows.status, "held"),
+            eq(paymentEscrows.isOnHold, false),
+            not(isNull(paymentEscrows.autoReleaseAt)),
+            lte(paymentEscrows.autoReleaseAt, now),
+          )).returning({ id: paymentEscrows.id });
+
+          // Skip wallet credit if the row was not actually transitioned
+          if (updated.length === 0) {
+            log("info", `[AutoRelease] Escrow ${tx.id.slice(0, 8)} skipped — already handled by another process`);
+            continue;
+          }
 
           // Credit freelancer wallet
           if (tx.freelancerId) {
@@ -170,17 +185,23 @@ export function registerWalletRoutes(app: Express) {
         return res.status(400).json({ success: false, code: "INSUFFICIENT_BALANCE", message: "No balance available for withdrawal." });
       }
 
-      // Check no pending payout request already exists
-      const pending = await db.select({ id: walletTransactions.id })
-        .from(walletTransactions)
-        .where(and(
-          eq(walletTransactions.userId, userId),
-          eq(walletTransactions.type, "payout_request"),
-          sql`${walletTransactions.createdAt} > NOW() - INTERVAL '24 hours'`,
-        ))
-        .limit(1);
-      if (pending.length > 0) {
-        return res.status(400).json({ success: false, code: "DUPLICATE_REQUEST", message: "You already have a pending withdrawal request. Please allow 24 hours for processing." });
+      // Check for any UNRESOLVED payout_request — i.e. a request where no corresponding
+      // payout_complete/payout_paid transaction references it yet.
+      // This is true pending-state enforcement, not a time-window heuristic.
+      const unresolved = await db.execute(sql`
+        SELECT id FROM wallet_transactions
+        WHERE user_id = ${userId}
+          AND type = 'payout_request'
+          AND id NOT IN (
+            SELECT COALESCE(reference_id, '')
+            FROM wallet_transactions
+            WHERE user_id = ${userId}
+              AND type IN ('payout_complete', 'payout_paid', 'payout_reversed')
+          )
+        LIMIT 1
+      `);
+      if (unresolved.rows.length > 0) {
+        return res.status(400).json({ success: false, code: "PENDING_WITHDRAWAL", message: "You already have a pending withdrawal request. Please wait for it to be processed before requesting another." });
       }
 
       // Debit wallet
