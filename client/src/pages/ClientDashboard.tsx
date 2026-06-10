@@ -212,27 +212,28 @@ function ApplicantCard({
   );
 }
 
-// ── Pipeline kanban card (draggable, compact) ──────────────────────────────────
+// ── Pipeline kanban card — pointer-events-based dragging (mouse + touch) ────────
 function PipelineCard({
   applicant,
-  onDragStart,
   onStatusChange,
   isPending,
+  isDragging,
 }: {
   applicant: Applicant;
-  onDragStart: (id: string) => void;
   onStatusChange: (id: string, status: string) => void;
   isPending: boolean;
+  isDragging: boolean;
 }) {
   const [, setLocation] = useLocation();
   const initials = getInitials(applicant.freelancerName);
 
   return (
     <div
-      draggable
-      onDragStart={() => onDragStart(applicant.id)}
+      data-pipeline-card-id={applicant.id}
       data-testid={`pipeline-card-${applicant.id}`}
-      className="bg-slate-800 border border-slate-700 rounded-lg p-3 cursor-grab active:cursor-grabbing hover:border-slate-500 transition-colors select-none"
+      className={`bg-slate-800 border border-slate-700 rounded-lg p-3 cursor-grab hover:border-slate-500 transition-colors select-none ${
+        isDragging ? "opacity-40" : ""
+      }`}
     >
       {/* Avatar + name */}
       <div className="flex items-center gap-2 mb-2">
@@ -273,9 +274,10 @@ function PipelineCard({
         </span>
       </div>
 
-      {/* Quick actions */}
-      <div className="flex gap-1">
+      {/* Quick actions — data-no-drag prevents these taps from starting a drag */}
+      <div className="flex gap-1" data-no-drag>
         <button
+          data-no-drag
           data-testid={`pipeline-message-${applicant.id}`}
           onClick={(e) => { e.stopPropagation(); setLocation(`/messages?new=${applicant.userId}`); }}
           className="flex-1 flex items-center justify-center gap-1 py-1 text-[10px] text-slate-400 hover:text-slate-300 bg-slate-700/40 hover:bg-slate-700 rounded transition"
@@ -284,6 +286,7 @@ function PipelineCard({
         </button>
         {applicant.status !== "hired" && applicant.status !== "rejected" && (
           <button
+            data-no-drag
             data-testid={`pipeline-reject-${applicant.id}`}
             disabled={isPending}
             onClick={(e) => { e.stopPropagation(); onStatusChange(applicant.id, "rejected"); }}
@@ -297,7 +300,32 @@ function PipelineCard({
   );
 }
 
-// ── Pipeline kanban board ──────────────────────────────────────────────────────
+// ── Pipeline kanban board — Pointer Events (works on iOS Safari + Android) ─────
+const DRAG_THRESHOLD = 6; // px movement before drag "starts"
+
+type DragState = {
+  id: string;
+  startX: number;
+  startY: number;
+  ghostX: number;
+  ghostY: number;
+  offsetX: number; // pointer offset from card top-left
+  offsetY: number;
+  started: boolean;
+} | null;
+
+/** Walk up from a DOM element to find the nearest data-pipeline-card-id value,
+ *  stopping early if we hit a data-no-drag element. */
+function findCardId(target: EventTarget | null): string | null {
+  let el = target as HTMLElement | null;
+  while (el) {
+    if (el.dataset.noDrag !== undefined) return null;
+    if (el.dataset.pipelineCardId) return el.dataset.pipelineCardId;
+    el = el.parentElement;
+  }
+  return null;
+}
+
 function PipelineView({
   applicants,
   onStatusChange,
@@ -307,70 +335,114 @@ function PipelineView({
   onStatusChange: (id: string, status: string) => void;
   isPending: boolean;
 }) {
-  const [draggedId, setDraggedId] = useState<string | null>(null);
+  const [dragState, setDragState] = useState<DragState>(null);
   const [dragOverCol, setDragOverCol] = useState<string | null>(null);
-  // Optimistic local status overrides (cleared once server refetch lands)
   const [localStatuses, setLocalStatuses] = useState<Record<string, string>>({});
-  const dragCounter = useRef<Record<string, number>>({});
+  const colRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const boardRef = useRef<HTMLDivElement>(null);
 
   function getStatus(a: Applicant) {
     return localStatuses[a.id] ?? a.status;
   }
 
-  function handleDrop(colKey: string) {
-    if (!draggedId) return;
-    const applicant = applicants.find((a) => a.id === draggedId);
-    if (!applicant) return;
-    const currentStatus = getStatus(applicant);
-    if (currentStatus === colKey) {
-      setDraggedId(null);
-      setDragOverCol(null);
-      return;
+  /** Determine which pipeline column (if any) the pointer is currently over. */
+  function colAtPoint(x: number, y: number): string | null {
+    for (const col of PIPELINE_COLUMNS) {
+      const el = colRefs.current[col.key];
+      if (!el) continue;
+      const r = el.getBoundingClientRect();
+      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return col.key;
     }
-    // Optimistic update
-    setLocalStatuses((prev) => ({ ...prev, [draggedId]: colKey }));
-    onStatusChange(draggedId, colKey);
-    setDraggedId(null);
+    return null;
+  }
+
+  function handlePointerDown(e: React.PointerEvent) {
+    const cardId = findCardId(e.target);
+    if (!cardId) return;
+    const cardEl = boardRef.current?.querySelector(`[data-pipeline-card-id="${cardId}"]`);
+    const rect = cardEl?.getBoundingClientRect();
+    setDragState({
+      id: cardId,
+      startX: e.clientX,
+      startY: e.clientY,
+      ghostX: e.clientX,
+      ghostY: e.clientY,
+      offsetX: rect ? e.clientX - rect.left : 0,
+      offsetY: rect ? e.clientY - rect.top : 0,
+      started: false,
+    });
+  }
+
+  function handlePointerMove(e: React.PointerEvent) {
+    if (!dragState) return;
+
+    const dx = e.clientX - dragState.startX;
+    const dy = e.clientY - dragState.startY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (!dragState.started && dist < DRAG_THRESHOLD) return;
+
+    // Crossed threshold — commit to drag
+    if (!dragState.started) {
+      // Capture pointer so events keep arriving even if pointer leaves the board
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    }
+
+    e.preventDefault(); // prevent scroll on touch
+    const newOver = colAtPoint(e.clientX, e.clientY);
+    setDragOverCol(newOver);
+    setDragState((prev) =>
+      prev ? { ...prev, ghostX: e.clientX, ghostY: e.clientY, started: true } : null
+    );
+  }
+
+  function handlePointerUp(e: React.PointerEvent) {
+    if (!dragState) return;
+    if (dragState.started && dragOverCol) {
+      const current = getStatus(applicants.find((a) => a.id === dragState.id)!);
+      if (current !== dragOverCol) {
+        setLocalStatuses((prev) => ({ ...prev, [dragState.id]: dragOverCol }));
+        onStatusChange(dragState.id, dragOverCol);
+      }
+    }
+    setDragState(null);
     setDragOverCol(null);
-    dragCounter.current = {};
   }
 
-  function handleDragEnter(colKey: string) {
-    dragCounter.current[colKey] = (dragCounter.current[colKey] ?? 0) + 1;
-    setDragOverCol(colKey);
+  function handlePointerCancel() {
+    setDragState(null);
+    setDragOverCol(null);
   }
 
-  function handleDragLeave(colKey: string) {
-    dragCounter.current[colKey] = (dragCounter.current[colKey] ?? 0) - 1;
-    if ((dragCounter.current[colKey] ?? 0) <= 0) {
-      dragCounter.current[colKey] = 0;
-      setDragOverCol((prev) => (prev === colKey ? null : prev));
-    }
-  }
+  const ghostApplicant = dragState
+    ? applicants.find((a) => a.id === dragState.id)
+    : null;
 
   return (
     <div
-      className="overflow-x-auto pb-2"
+      ref={boardRef}
+      className="overflow-x-auto pb-2 touch-none"
       data-testid="pipeline-view"
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
     >
       <div className="flex gap-3 min-w-max">
         {PIPELINE_COLUMNS.map((col) => {
           const colApplicants = applicants.filter((a) => getStatus(a) === col.key);
-          const isOver = dragOverCol === col.key;
+          const isOver = dragOverCol === col.key && dragState?.started;
 
           return (
             <div
               key={col.key}
+              ref={(el) => { colRefs.current[col.key] = el; }}
               data-testid={`pipeline-column-${col.key}`}
               className={`w-48 flex flex-col rounded-xl border transition-colors ${
                 isOver
                   ? `${col.dropBg} border-slate-500`
                   : "bg-slate-800/40 border-slate-700/60"
               }`}
-              onDragOver={(e) => e.preventDefault()}
-              onDragEnter={() => handleDragEnter(col.key)}
-              onDragLeave={() => handleDragLeave(col.key)}
-              onDrop={() => handleDrop(col.key)}
             >
               {/* Column header */}
               <div className="flex items-center gap-2 px-3 py-2.5 border-b border-slate-700/60">
@@ -382,7 +454,7 @@ function PipelineView({
               {/* Cards */}
               <div className="flex-1 p-2 space-y-2 min-h-[120px]">
                 {colApplicants.length === 0 ? (
-                  <div className={`h-full flex items-center justify-center text-[10px] text-slate-600 ${isOver ? "text-slate-400" : ""}`}>
+                  <div className={`h-full flex items-center justify-center text-[10px] ${isOver ? "text-slate-400" : "text-slate-600"}`}>
                     {isOver ? "Drop here" : "Empty"}
                   </div>
                 ) : (
@@ -390,12 +462,12 @@ function PipelineView({
                     <PipelineCard
                       key={a.id}
                       applicant={{ ...a, status: getStatus(a) }}
-                      onDragStart={setDraggedId}
                       onStatusChange={(id, status) => {
                         setLocalStatuses((prev) => ({ ...prev, [id]: status }));
                         onStatusChange(id, status);
                       }}
                       isPending={isPending}
+                      isDragging={dragState?.started === true && dragState.id === a.id}
                     />
                   ))
                 )}
@@ -404,6 +476,34 @@ function PipelineView({
           );
         })}
       </div>
+
+      {/* Drag ghost — follows pointer, pointer-events:none so it doesn't interfere */}
+      {dragState?.started && ghostApplicant && (
+        <div
+          aria-hidden
+          style={{
+            position: "fixed",
+            left: dragState.ghostX - dragState.offsetX,
+            top: dragState.ghostY - dragState.offsetY,
+            width: 192, // w-48 = 12rem = 192px
+            pointerEvents: "none",
+            zIndex: 9999,
+            opacity: 0.85,
+            transform: "rotate(2deg) scale(1.03)",
+          }}
+          className="bg-slate-800 border border-blue-500 rounded-lg p-3 shadow-2xl"
+        >
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-full bg-blue-600/30 text-blue-300 flex items-center justify-center text-[11px] font-bold shrink-0">
+              {getInitials(ghostApplicant.freelancerName)}
+            </div>
+            <p className="text-xs font-semibold text-white truncate">{ghostApplicant.freelancerName}</p>
+          </div>
+          {ghostApplicant.profileTitle && (
+            <p className="text-[10px] text-slate-400 truncate mt-1">{ghostApplicant.profileTitle}</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
