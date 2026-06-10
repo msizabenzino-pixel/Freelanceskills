@@ -780,7 +780,9 @@ function PipelineView({
 
 // ── Main dashboard ─────────────────────────────────────────────────────────────
 export default function ClientDashboard() {
-  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
+  const [selectedJobId, setSelectedJobId] = useState<string | null>(() => {
+    return localStorage.getItem("client_dashboard_selected_job") ?? null;
+  });
   const [viewMode, setViewMode] = useState<"list" | "pipeline">(() => {
     const saved = localStorage.getItem("client_dashboard_view_mode");
     return saved === "pipeline" ? "pipeline" : "list";
@@ -790,6 +792,16 @@ export default function ClientDashboard() {
     setViewMode(mode);
     localStorage.setItem("client_dashboard_view_mode", mode);
   }
+
+  function handleSelectJob(id: string | null) {
+    setSelectedJobId(id);
+    if (id === null) {
+      localStorage.removeItem("client_dashboard_selected_job");
+    } else {
+      localStorage.setItem("client_dashboard_selected_job", id);
+    }
+  }
+
   const queryClient = useQueryClient();
 
   const { data: jobsData, isLoading: jobsLoading } = useQuery({
@@ -803,6 +815,12 @@ export default function ClientDashboard() {
   });
 
   const jobs = jobsData ?? [];
+
+  useEffect(() => {
+    if (jobsData && selectedJobId && !jobsData.find((j) => j.id === selectedJobId)) {
+      handleSelectJob(null);
+    }
+  }, [jobsData]);
 
   const { data: applicantsData, isLoading: applicantsLoading } = useQuery({
     queryKey: ["jobApplicants", selectedJobId],
@@ -909,7 +927,7 @@ export default function ClientDashboard() {
                         jobs.map((job) => (
                           <button
                             key={job.id}
-                            onClick={() => setSelectedJobId(job.id === selectedJobId ? null : job.id)}
+                            onClick={() => handleSelectJob(job.id === selectedJobId ? null : job.id)}
                             data-testid={`job-card-${job.id}`}
                             className={`w-full text-left p-3 rounded-lg border transition-all ${
                               selectedJobId === job.id
