@@ -237,22 +237,22 @@ export default function FreelancerProfile() {
       <Navbar />
 
       <main id="main-content">
-        <div className="h-64 bg-gradient-to-br from-emerald-950/60 via-slate-900 to-slate-950 relative overflow-hidden shrink-0">
+        <div className="h-48 sm:h-64 bg-gradient-to-br from-emerald-950/60 via-slate-900 to-slate-950 relative overflow-hidden shrink-0">
           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-20 mix-blend-overlay" />
           <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent" />
         </div>
 
         <div className="container mx-auto px-4 md:px-6 relative -mt-24 pb-20 flex-1">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
             <div className="space-y-6">
               <div className="bg-slate-900 rounded-2xl p-6 shadow-lg border border-slate-800 text-center relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-2 bg-accent" />
                 <div className="relative inline-block mb-4">
                   {/* Online pulse ring */}
                   <div className="p-1 rounded-full bg-gradient-to-br from-emerald-500/60 to-teal-500/40">
-                    <Avatar className="w-28 h-28 border-4 border-slate-900 shadow-2xl">
+                    <Avatar className="w-24 h-24 sm:w-28 sm:h-28 border-4 border-slate-900 shadow-2xl">
                       <AvatarImage src={profile.profilePhotoUrl || `https://avatar.iran.liara.run/public/boy?username=${id}`} />
-                      <AvatarFallback className="text-2xl font-black bg-emerald-900 text-emerald-300">{displayName.substring(0, 2).toUpperCase()}</AvatarFallback>
+                      <AvatarFallback className="text-xl sm:text-2xl font-black bg-emerald-900 text-emerald-300">{displayName.substring(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
                   </div>
                   {profile.role === "freelancer" && (
@@ -264,7 +264,7 @@ export default function FreelancerProfile() {
                   <div className="absolute top-1 right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-slate-900 animate-pulse" title="Online now" />
                 </div>
 
-                <h1 className="text-2xl font-bold text-white mb-2" data-testid="text-freelancer-name">{displayName}</h1>
+                <h1 className="text-xl sm:text-2xl font-bold text-white mb-2" data-testid="text-freelancer-name">{displayName}</h1>
                 <div className="flex items-center justify-center gap-2 mb-3">
                   <LevelBadge
                     level={getLevelFromStats(reviews.length, (profile as any).rating ?? 0, 0)}
@@ -320,21 +320,23 @@ export default function FreelancerProfile() {
                   ))}
                 </div>
 
-                <Button
-                  className="w-full bg-primary text-white hover:bg-primary/90 font-bold shadow-lg mb-3"
-                  data-testid="button-hire-freelancer"
-                  onClick={() => navigate(`/post-job?hire=${id}`)}
-                >
-                  Hire {displayName.split(" ")[0]}
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  data-testid="button-message-freelancer"
-                  onClick={() => navigate(`/messages?new=${id}`)}
-                >
-                  <MessageSquare className="w-4 h-4 mr-2" /> Message
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <Button
+                    className="flex-1 bg-primary text-white hover:bg-primary/90 font-bold shadow-lg"
+                    data-testid="button-hire-freelancer"
+                    onClick={() => navigate(`/post-job?hire=${id}`)}
+                  >
+                    Hire {displayName.split(" ")[0]}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    data-testid="button-message-freelancer"
+                    onClick={() => navigate(`/messages?new=${id}`)}
+                  >
+                    <MessageSquare className="w-4 h-4 mr-2" /> Message
+                  </Button>
+                </div>
               </div>
 
               <div className="bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-800">
