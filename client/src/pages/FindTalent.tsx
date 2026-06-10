@@ -135,7 +135,7 @@ function FreelancerCard({ f, onSelect, selected }: { f: FreelancerResult; onSele
           )}
         </div>
 
-        <Link href={`/freelancer-profile/${f.userId}`} className="w-full" onClick={(e) => e.stopPropagation()}>
+        <Link href={`/profile/${f.userId}`} className="w-full" onClick={(e) => e.stopPropagation()}>
           <Button variant="outline" className="w-full h-9 text-sm border-slate-700 text-slate-300 hover:border-emerald-500/50 hover:text-emerald-400 hover:bg-emerald-500/5 transition-all" data-testid={`button-view-profile-${f.id}`}>
             View Profile →
           </Button>

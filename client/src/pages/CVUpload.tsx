@@ -410,6 +410,8 @@ export default function CVUpload() {
           await saveFreelancerProfile({ userId: user.id, fullName: `${formData.firstName} ${formData.lastName}`.trim() || user.displayName || "Freelancer", profilePhotoUrl: formData.photo || "", bio: formData.bio, title: formData.title, skills: formData.skills, expertise: [], categories: formData.category ? [formData.category] : [], hourlyRate: formData.hourlyRate ? Math.round(parseFloat(formData.hourlyRate) * 100) : 0, location: formData.location, portfolioLinks: formData.portfolioUrl ? [formData.portfolioUrl] : [], experienceLevel: formData.experienceLevel, availability: formData.availability, role: "freelancer", onboardingCompleted: true, publishedProfile: true });
         } catch {}
       }
+      // CRITICAL: mark onboarding completed so carousel never shows again
+      localStorage.setItem("onboarding_completed", "true");
       try {
         const pts = await earnPoints("profile_complete", user?.id ?? "");
         if (pts?.success) toast({ title: `+${pts.points} points earned!`, description: "Keep building your profile to unlock more rewards." });

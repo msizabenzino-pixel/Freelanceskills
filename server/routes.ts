@@ -575,7 +575,12 @@ export async function registerRoutes(
 
   app.get("/api/profile/:id", async (req, res) => {
     try {
-      const profile = await storage.getProfileById(req.params.id);
+      // Accept both profile UUID and userId (freelancer UID)
+      let profile = await storage.getProfileById(req.params.id);
+      if (!profile) {
+        // Fallback: treat :id as userId (the public route uses userId)
+        profile = await storage.getProfile(req.params.id);
+      }
       if (!profile) {
         return res.status(404).json({ message: "Profile not found" });
       }

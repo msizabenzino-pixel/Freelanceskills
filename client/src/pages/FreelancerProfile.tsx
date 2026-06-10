@@ -40,6 +40,53 @@ function getFaviconUrl(url: string): string {
   }
 }
 
+/* ── Fetch from Postgres (primary) with Firestore fallback ───────────────── */
+async function fetchProfileUnified(id: string): Promise<FirebaseFreelancerProfile | null> {
+  // 1. Try Postgres API first
+  try {
+    const res = await fetch(`/api/profile/${id}`, { credentials: "include" });
+    if (res.ok) {
+      const p = await res.json();
+      // Parse portfolio projects JSON
+      let portfolioLinks: string[] = [];
+      try {
+        if (p.portfolioProjectsJson) {
+          const parsed = JSON.parse(p.portfolioProjectsJson);
+          if (Array.isArray(parsed)) {
+            portfolioLinks = parsed.map((proj: any) => proj.link || proj.url).filter(Boolean);
+          }
+        } else if (p.portfolioUrl) {
+          portfolioLinks = [p.portfolioUrl];
+        }
+      } catch { /* ignore */ }
+      // Build user name from user row if needed — API returns profile shape only
+      return {
+        userId: id,
+        fullName: (p as any).fullName || (p as any).name || p.title || "Freelancer",
+        profilePhotoUrl: p.photoUrl || "",
+        bio: p.bio || "",
+        title: p.title || "",
+        skills: p.skills || [],
+        expertise: [],
+        categories: p.category ? [p.category] : [],
+        hourlyRate: p.hourlyRate || 0,
+        location: p.location || "South Africa",
+        portfolioLinks,
+        experienceLevel: p.experienceLevel || "",
+        availability: p.availability || "",
+        role: p.role || "freelancer",
+        onboardingCompleted: true,
+        updatedAt: new Date(p.updatedAt),
+      };
+    }
+  } catch (e) {
+    console.warn("[FreelancerProfile] Postgres fetch failed, falling back to Firestore:", e);
+  }
+
+  // 2. Fallback to Firestore
+  return fetchFreelancerProfile(id);
+}
+
 export default function FreelancerProfile() {
   const { id } = useParams<{ id: string }>();
   const [, navigate] = useLocation();
@@ -53,8 +100,8 @@ export default function FreelancerProfile() {
   const [reviewComment, setReviewComment] = useState("");
 
   const profileQuery = useQuery({
-    queryKey: ["firebase", "freelancer-profile", id],
-    queryFn: () => fetchFreelancerProfile(id!),
+    queryKey: ["unified", "freelancer-profile", id],
+    queryFn: () => fetchProfileUnified(id!),
     enabled: Boolean(id),
   });
 
