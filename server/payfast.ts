@@ -418,7 +418,8 @@ export async function getPaymentStatus(req: Request, res: Response) {
     const { and, eq } = await import("drizzle-orm");
 
     const [event] = await db.select({
-      status: webhookEvents.eventType,
+      eventType: webhookEvents.eventType,
+      status: webhookEvents.status,
       processedAt: webhookEvents.processedAt,
     }).from(webhookEvents).where(
       and(eq(webhookEvents.source, "payfast"), eq(webhookEvents.idempotencyKey, paymentId))
@@ -427,7 +428,11 @@ export async function getPaymentStatus(req: Request, res: Response) {
     if (event) {
       return res.json({
         paymentId,
-        status: event.status === "COMPLETE" ? "complete" : event.status?.toLowerCase() || "processed",
+        paymentStatus: event.eventType,
+        status: event.status === "processed" && event.eventType === "COMPLETE" ? "complete"
+          : event.status === "failed" ? "failed"
+          : event.status === "processing" ? "processing"
+          : event.status || "pending",
         processedAt: event.processedAt,
         gateway: "PayFast",
       });
