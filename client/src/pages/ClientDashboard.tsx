@@ -219,6 +219,7 @@ function PipelineCard({
   isPending,
   isDragging,
   isKeyActive,
+  kbMoveActive,
   onKeyMove,
   onKeyDrop,
   onKeyCancel,
@@ -228,6 +229,7 @@ function PipelineCard({
   isPending: boolean;
   isDragging: boolean;
   isKeyActive: boolean;
+  kbMoveActive: boolean;
   onKeyMove: (cardId: string, dir: -1 | 1) => void;
   onKeyDrop: (cardId: string) => void;
   onKeyCancel: () => void;
@@ -242,12 +244,17 @@ function PipelineCard({
     else if (e.key === "Escape") { onKeyCancel(); }
   }
 
+  // During keyboard-move mode, remove all cards (and their buttons) from the
+  // natural tab order so Tab cycles only between column headers.
+  const cardTabIndex = kbMoveActive ? -1 : 0;
+  const btnTabIndex = kbMoveActive ? -1 : undefined;
+
   return (
     <div
       data-pipeline-card-id={applicant.id}
       data-testid={`pipeline-card-${applicant.id}`}
-      tabIndex={0}
-      aria-label={`${applicant.freelancerName}${applicant.profileTitle ? `, ${applicant.profileTitle}` : ""}. Press Left or Right arrow to choose a column, then Enter to move.`}
+      tabIndex={cardTabIndex}
+      aria-label={`${applicant.freelancerName}${applicant.profileTitle ? `, ${applicant.profileTitle}` : ""}. Press Left or Right arrow to choose a column, then Enter to move. Tab to a column header and press Enter to move there directly.`}
       onKeyDown={handleKeyDown}
       className={`bg-slate-800 border rounded-lg p-3 cursor-grab hover:border-slate-500 transition-colors select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 focus-visible:ring-offset-1 focus-visible:ring-offset-slate-900 ${
         isKeyActive
@@ -301,6 +308,7 @@ function PipelineCard({
         <button
           data-no-drag
           data-testid={`pipeline-message-${applicant.id}`}
+          tabIndex={btnTabIndex}
           onClick={(e) => { e.stopPropagation(); setLocation(`/messages?new=${applicant.userId}`); }}
           className="flex-1 flex items-center justify-center gap-1 py-1 text-[10px] text-slate-400 hover:text-slate-300 bg-slate-700/40 hover:bg-slate-700 rounded transition"
         >
@@ -309,6 +317,7 @@ function PipelineCard({
         {applicant.status === "offer" && (
           <button
             data-testid={`pipeline-hire-${applicant.id}`}
+            tabIndex={btnTabIndex}
             disabled={isPending}
             onClick={(e) => { e.stopPropagation(); onStatusChange(applicant.id, "hired"); }}
             className="flex-1 flex items-center justify-center gap-1 py-1 text-[10px] text-emerald-400 hover:text-emerald-300 bg-emerald-900/20 hover:bg-emerald-900/30 rounded transition disabled:opacity-50"
@@ -320,6 +329,7 @@ function PipelineCard({
           <button
             data-no-drag
             data-testid={`pipeline-reject-${applicant.id}`}
+            tabIndex={btnTabIndex}
             disabled={isPending}
             onClick={(e) => { e.stopPropagation(); onStatusChange(applicant.id, "rejected"); }}
             className="flex-1 flex items-center justify-center gap-1 py-1 text-[10px] text-red-400 hover:text-red-300 bg-red-900/10 hover:bg-red-900/20 rounded transition disabled:opacity-50"
@@ -375,7 +385,19 @@ function PipelineView({
   const [kbState, setKbState] = useState<KbState>(null);
   const [kbAnnounce, setKbAnnounce] = useState("");
   const colRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const colHeaderRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const boardRef = useRef<HTMLDivElement>(null);
+
+  // When keyboard-move mode activates, focus the column header matching the
+  // card's current target so Tab immediately cycles across headers only.
+  const prevKbState = useRef<KbState>(null);
+  useEffect(() => {
+    if (kbState !== null && prevKbState.current === null) {
+      const targetKey = PIPELINE_COLUMNS[kbState.colIndex].key;
+      colHeaderRefs.current[targetKey]?.focus();
+    }
+    prevKbState.current = kbState;
+  }, [kbState]);
 
   function getStatus(a: Applicant) {
     return localStatuses[a.id] ?? a.status;
@@ -465,7 +487,7 @@ function PipelineView({
       : PIPELINE_COLUMNS.findIndex((c) => c.key === getStatus(applicant));
     const nextIndex = Math.max(0, Math.min(PIPELINE_COLUMNS.length - 1, currentColIndex + dir));
     setKbState({ cardId, colIndex: nextIndex });
-    setKbAnnounce(`Target column: ${PIPELINE_COLUMNS[nextIndex].label}. Press Enter to move.`);
+    setKbAnnounce(`Target column: ${PIPELINE_COLUMNS[nextIndex].label}. Press Enter to move, or Tab to a column header and press Enter.`);
   }
 
   function handleKeyDrop(cardId: string) {
@@ -487,6 +509,23 @@ function PipelineView({
   function handleKeyCancel() {
     setKbState(null);
     setKbAnnounce("Move cancelled.");
+  }
+
+  function handleHeaderDrop(colKey: string) {
+    if (!kbState) return;
+    const applicant = applicants.find((a) => a.id === kbState.cardId);
+    if (!applicant) return;
+    const targetCol = PIPELINE_COLUMNS.find((c) => c.key === colKey);
+    if (!targetCol) return;
+    const current = getStatus(applicant);
+    if (current !== colKey) {
+      setLocalStatuses((prev) => ({ ...prev, [kbState.cardId]: colKey }));
+      onStatusChange(kbState.cardId, colKey);
+      setKbAnnounce(`${applicant.freelancerName} moved to ${targetCol.label}.`);
+    } else {
+      setKbAnnounce(`Already in ${targetCol.label}.`);
+    }
+    setKbState(null);
   }
 
   const ghostApplicant = dragState
@@ -556,7 +595,7 @@ function PipelineView({
 
       {kbState && (
         <p className="text-[10px] text-blue-400 mb-2 px-1">
-          ← → to pick column · Enter to move · Esc to cancel
+          ← → to pick column · Tab to column header · Enter to move · Esc to cancel
         </p>
       )}
 
@@ -579,7 +618,18 @@ function PipelineView({
               }`}
             >
               {/* Column header */}
-              <div className="flex items-center gap-2 px-3 py-2.5 border-b border-slate-700/60">
+              <div
+                ref={(el) => { colHeaderRefs.current[col.key] = el; }}
+                className={`flex items-center gap-2 px-3 py-2.5 border-b border-slate-700/60 ${kbState ? "cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-t-xl" : ""}`}
+                tabIndex={kbState ? 0 : -1}
+                role={kbState ? "button" : undefined}
+                aria-label={kbState ? `Move to ${col.label}` : undefined}
+                onKeyDown={kbState ? (e) => {
+                  if (e.key === "Enter") { e.preventDefault(); handleHeaderDrop(col.key); }
+                  if (e.key === "Escape") { e.preventDefault(); handleKeyCancel(); }
+                } : undefined}
+                onClick={kbState ? () => handleHeaderDrop(col.key) : undefined}
+              >
                 <span className={`w-2 h-2 rounded-full ${col.dotColor} shrink-0`} />
                 <span className={`text-xs font-semibold ${col.headerColor} flex-1`}>{col.label}</span>
                 <span className="text-xs text-slate-500 font-medium">{colApplicants.length}</span>
@@ -606,6 +656,7 @@ function PipelineView({
                       isPending={isPending}
                       isDragging={dragState?.started === true && dragState.id === a.id}
                       isKeyActive={kbState?.cardId === a.id}
+                      kbMoveActive={kbState !== null}
                       onKeyMove={handleKeyMove}
                       onKeyDrop={handleKeyDrop}
                       onKeyCancel={handleKeyCancel}
