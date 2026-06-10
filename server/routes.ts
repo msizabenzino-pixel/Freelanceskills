@@ -2984,7 +2984,7 @@ Respond with ONLY the JSON object, no markdown.`
       if (!updated) return res.status(404).json({ message: "Application not found" });
 
       // Send in-app notification for meaningful status changes
-      const notifyStatuses = ["reviewing", "shortlisted", "interview", "offer", "rejected"];
+      const notifyStatuses = ["reviewing", "shortlisted", "interview", "offer", "rejected", "hired"];
       if (notifyStatuses.includes(status)) {
         const statusMessages: Record<string, { title: string; message: string }> = {
           reviewing: {
@@ -3006,6 +3006,10 @@ Respond with ONLY the JSON object, no markdown.`
           rejected: {
             title: "Application update",
             message: `Thank you for applying to "${application.jobTitle}". Unfortunately, the client has decided to move forward with other candidates.`,
+          },
+          hired: {
+            title: "You've been hired! 🎉",
+            message: `Congratulations! The client has selected you for "${application.jobTitle}". Check your applications for next steps.`,
           },
         };
 
