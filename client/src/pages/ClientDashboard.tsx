@@ -552,6 +552,11 @@ function PipelineView({
     localStorage.setItem(SWIPE_HINT_KEY, "1");
   }
 
+  function reshowSwipeHint() {
+    localStorage.removeItem(SWIPE_HINT_KEY);
+    setShowSwipeHint(true);
+  }
+
   // Auto-dismiss after 4 seconds
   useEffect(() => {
     if (!showSwipeHint) return;
@@ -786,6 +791,19 @@ function PipelineView({
             <span aria-hidden="true">←</span>
             Swipe to see all {PIPELINE_COLUMNS.length} columns
           </span>
+        </div>
+      )}
+
+      {/* Re-show hint button (visible when hint is dismissed) */}
+      {!showSwipeHint && (
+        <div className="flex justify-center mt-2">
+          <button
+            onClick={reshowSwipeHint}
+            data-testid="reshow-swipe-hint"
+            className="text-[11px] text-slate-500 hover:text-slate-300 transition-colors underline underline-offset-2"
+          >
+            Re-show hint
+          </button>
         </div>
       )}
 
