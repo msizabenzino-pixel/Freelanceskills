@@ -284,6 +284,16 @@ function PipelineCard({
         >
           <MessageSquare className="w-3 h-3" /> Msg
         </button>
+        {applicant.status === "offer" && (
+          <button
+            data-testid={`pipeline-hire-${applicant.id}`}
+            disabled={isPending}
+            onClick={(e) => { e.stopPropagation(); onStatusChange(applicant.id, "hired"); }}
+            className="flex-1 flex items-center justify-center gap-1 py-1 text-[10px] text-emerald-400 hover:text-emerald-300 bg-emerald-900/20 hover:bg-emerald-900/30 rounded transition disabled:opacity-50"
+          >
+            <UserCheck className="w-3 h-3" /> Hire
+          </button>
+        )}
         {applicant.status !== "hired" && applicant.status !== "rejected" && (
           <button
             data-no-drag
