@@ -237,14 +237,12 @@ export async function handleITN(req: Request, res: Response) {
       }
     }
 
-    // ── Step 4: Server-side validate call to PayFast ───────────────────────
+    // ── Step 4: Server-side validate call to PayFast (sandbox + production) ──
     const rawBodyForValidate = bodyString || new URLSearchParams(data).toString();
-    if (!config.sandbox) {
-      const isValid = await callPayFastValidate(rawBodyForValidate, config.validateUrl);
-      if (!isValid) {
-        console.error("PayFast ITN REJECTED: PayFast validate returned INVALID");
-        return res.status(400).send("Validation failed");
-      }
+    const isValid = await callPayFastValidate(rawBodyForValidate, config.validateUrl);
+    if (!isValid) {
+      console.error(`PayFast ITN REJECTED: PayFast validate returned INVALID (sandbox=${config.sandbox})`);
+      return res.status(400).send("Validation failed");
     }
 
     const paymentStatus = data.payment_status;

@@ -186,7 +186,7 @@ export function registerWalletRoutes(app: Express) {
       // Debit wallet
       const newBalance = 0;
       await db.update(profiles).set({ walletBalance: newBalance, updatedAt: new Date() }).where(eq(profiles.userId, userId));
-      await db.insert(walletTransactions).values({
+      const [txRow] = await db.insert(walletTransactions).values({
         userId,
         type: "payout_request",
         amountCents: -balance,
@@ -194,7 +194,25 @@ export function registerWalletRoutes(app: Express) {
         description: "Withdrawal request — pending admin approval",
         referenceType: "payout",
         performedBy: userId,
-      });
+      }).returning();
+
+      // Mark all freelancer's held/released escrows as payout_status='requested'
+      // so admin can see which escrows need paying out
+      try {
+        await db.update(paymentEscrows).set({
+          payoutStatus: "requested",
+          updatedAt: new Date(),
+        }).where(
+          and(
+            eq(paymentEscrows.freelancerId, userId),
+            inArray(paymentEscrows.status, ["held", "auto_released", "released"]),
+            eq(paymentEscrows.payoutStatus, "pending"),
+          )
+        );
+      } catch (e) {
+        // Non-fatal — wallet debit already succeeded
+        console.error("[Withdraw] Failed to update escrow payout_status:", e);
+      }
 
       await auditLog(userId, userId, "withdrawal_requested", `Withdrawal request: R${(balance / 100).toFixed(2)}`);
 

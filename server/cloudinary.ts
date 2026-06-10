@@ -235,14 +235,22 @@ export function registerCloudinaryRoutes(app: any) {
     }
   });
 
-  // ── DELETE /api/upload/portfolio/:id ──────────────────────────────────────
-  app.delete("/api/upload/portfolio/:id", requireAuth, async (req: any, res: Response) => {
+  // ── DELETE /api/upload/portfolio/:publicId ────────────────────────────────
+  // Accepts either the DB row id (uuid) or the Cloudinary public_id.
+  // Cloudinary public IDs that contain "/" must be URL-encoded by the client
+  // (e.g. "freelanceskills%2Fportfolio%2Fabc") — Express decodes them automatically.
+  app.delete("/api/upload/portfolio/:publicId", requireAuth, async (req: any, res: Response) => {
     try {
       const userId = (req.session as any).userId;
-      const { id } = req.params;
+      const publicId: string = req.params.publicId || "";
 
+      // Look up by DB id first, then by cloudinary_public_id
+      const { or } = await import("drizzle-orm");
       const [image] = await db.select().from(portfolioImages)
-        .where(eq(portfolioImages.id, id)).limit(1);
+        .where(and(
+          eq(portfolioImages.userId, userId),
+          or(eq(portfolioImages.id, publicId), eq(portfolioImages.cloudinaryPublicId, publicId)),
+        )).limit(1);
 
       if (!image) {
         return res.status(404).json({ success: false, message: "Portfolio image not found." });
@@ -252,9 +260,9 @@ export function registerCloudinaryRoutes(app: any) {
       }
 
       if (image.cloudinaryPublicId) await deleteFromCloudinary(image.cloudinaryPublicId);
-      await db.delete(portfolioImages).where(eq(portfolioImages.id, id));
+      await db.delete(portfolioImages).where(eq(portfolioImages.id, image.id));
 
-      res.json({ success: true, message: "Portfolio image removed." });
+      res.json({ success: true, message: "Portfolio image removed.", id: image.id, cloudinaryPublicId: image.cloudinaryPublicId });
     } catch (err: any) {
       res.status(500).json({ success: false, message: err.message || "Failed to delete image" });
     }
