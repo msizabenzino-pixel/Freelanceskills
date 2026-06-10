@@ -19,7 +19,7 @@ import path from "path";
 import fs from "fs";
 import { db } from "./db";
 import { portfolioImages, profiles } from "@shared/schema";
-import { eq, count, desc } from "drizzle-orm";
+import { eq, count, desc, and, or } from "drizzle-orm";
 import { log } from "./logger";
 
 cloudinary.config({
@@ -245,7 +245,6 @@ export function registerCloudinaryRoutes(app: any) {
       const publicId: string = req.params.publicId || "";
 
       // Look up by DB id first, then by cloudinary_public_id
-      const { or } = await import("drizzle-orm");
       const [image] = await db.select().from(portfolioImages)
         .where(and(
           eq(portfolioImages.userId, userId),

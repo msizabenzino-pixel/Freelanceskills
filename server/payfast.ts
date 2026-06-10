@@ -262,66 +262,72 @@ export async function handleITN(req: Request, res: Response) {
     const { webhookEvents, paymentEscrows, profiles, walletTransactions, userActivityLogs } = await import("@shared/schema");
     const { eq, and } = await import("drizzle-orm");
 
-    // ── Step 5: Idempotency — deduplicate replays ──────────────────────────
+    // ── Step 5: Atomic idempotency claim (INSERT first, process after) ───────
+    // Insert with status='processing'. Unique constraint on (source, idempotency_key)
+    // guarantees only one concurrent request proceeds, even under replay/race conditions.
     const idempotencyKey = paymentId || `pf-${pfPaymentId || Date.now()}`;
+    const eventPayload = JSON.stringify({ paymentId, paymentStatus, amountGross, bookingId });
+    let webhookEventId: string;
     try {
-      const existing = await db.select({ id: webhookEvents.id })
-        .from(webhookEvents)
-        .where(and(eq(webhookEvents.source, "payfast"), eq(webhookEvents.idempotencyKey, idempotencyKey)))
-        .limit(1);
-      if (existing.length > 0) {
-        console.log(`PayFast ITN duplicate ignored: ${idempotencyKey}`);
+      const [ev] = await db.insert(webhookEvents).values({
+        source: "payfast",
+        eventType: paymentStatus || "unknown",
+        idempotencyKey,
+        payload: eventPayload,
+        status: "processing",
+      }).returning({ id: webhookEvents.id });
+      webhookEventId = ev.id;
+    } catch (err: any) {
+      // Unique constraint violation = duplicate replay; return 200 immediately
+      if (err?.message?.includes("unique") || err?.code === "23505") {
+        console.log(`PayFast ITN duplicate ignored (unique violation): ${idempotencyKey}`);
         return res.status(200).send("OK");
       }
-    } catch (err) {
-      console.error("Idempotency check failed (non-fatal):", err);
+      throw err; // unexpected DB error — surface as 500
     }
 
-    // ── Step 6: Process the event ──────────────────────────────────────────
-    if (paymentStatus === "COMPLETE") {
-      const { storage } = await import("./storage");
-      const amountCents = Math.round(parseFloat(amountGross || "0") * 100);
+    // ── Step 6: Process the event (escrow creation must succeed on COMPLETE) ─
+    try {
+      if (paymentStatus === "COMPLETE") {
+        const { storage } = await import("./storage");
+        const amountCents = Math.round(parseFloat(amountGross || "0") * 100);
 
-      // Flag high-value transactions
-      if (amountCents > 10000000) {
-        try {
-          await storage.createFraudFlag({
-            userId: userId || "unknown",
-            bookingId: bookingId || null,
-            riskScore: 85,
-            flags: ["High value transaction (> R100,000)"],
-            recommendation: "review",
-          });
-        } catch {}
-      }
+        // Flag high-value transactions (non-fatal)
+        if (amountCents > 10000000) {
+          try {
+            await storage.createFraudFlag({
+              userId: userId || "unknown",
+              bookingId: bookingId || null,
+              riskScore: 85,
+              flags: ["High value transaction (> R100,000)"],
+              recommendation: "review",
+            });
+          } catch {}
+        }
 
-      // Confirm booking in old system (backward compat)
-      if (bookingId) {
-        try {
-          await storage.updateBookingStatus(bookingId, "confirmed");
-        } catch {}
-      }
+        // Confirm booking in old system (backward compat, non-fatal)
+        if (bookingId) {
+          try { await storage.updateBookingStatus(bookingId, "confirmed"); } catch {}
+        }
 
-      // Create payment_escrow record (the canonical escrow)
-      const platformFeeCents = Math.round(amountCents * (PLATFORM_COMMISSION_BPS / 10000));
-      const freelancerPayoutCents = amountCents - platformFeeCents;
+        // Resolve freelancer from booking
+        let freelancerId: string | undefined;
+        if (bookingId) {
+          try {
+            const booking = await storage.getBooking(bookingId);
+            if (booking?.freelancerId) freelancerId = booking.freelancerId;
+          } catch {}
+        }
 
-      let freelancerId: string | undefined;
-      if (bookingId) {
-        try {
-          const booking = await storage.getBooking(bookingId);
-          if (booking?.freelancerId) freelancerId = booking.freelancerId;
-        } catch {}
-      }
+        const platformFeeCents = Math.round(amountCents * (PLATFORM_COMMISSION_BPS / 10000));
+        const freelancerPayoutCents = amountCents - platformFeeCents;
+        const fraudRisk = computeITNFraudRisk(amountCents, 30);
+        const { score: releaseScore, autoReleaseHours } = await computeITNReleaseScore(
+          freelancerId || "", userId || "", amountCents
+        );
+        const autoReleaseAt = new Date(Date.now() + autoReleaseHours * 3600 * 1000);
 
-      const daysSinceCreated = 30; // conservative default — no account creation date in context
-      const fraudRisk = computeITNFraudRisk(amountCents, daysSinceCreated);
-      const { score: releaseScore, autoReleaseHours } = await computeITNReleaseScore(
-        freelancerId || "", userId || "", amountCents
-      );
-      const autoReleaseAt = new Date(Date.now() + autoReleaseHours * 3600 * 1000);
-
-      try {
+        // CRITICAL: escrow creation is required for COMPLETE; let failure propagate
         await db.insert(paymentEscrows).values({
           jobId: null,
           jobTitle: data.item_name || null,
@@ -339,36 +345,31 @@ export async function handleITN(req: Request, res: Response) {
           payoutRef: pfPaymentId || paymentId,
         });
         console.log(`[PayFast] Escrow created: R${(amountCents / 100).toFixed(2)} for booking ${bookingId}`);
-      } catch (err) {
-        console.error("[PayFast] Failed to create payment_escrow:", err);
+
+      } else if (paymentStatus === "CANCELLED") {
+        const { storage } = await import("./storage");
+        if (bookingId) {
+          try { await storage.updateBookingStatus(bookingId, "cancelled"); } catch {}
+        }
       }
 
-    } else if (paymentStatus === "CANCELLED") {
-      const { storage } = await import("./storage");
-      if (bookingId) {
-        try {
-          await storage.updateBookingStatus(bookingId, "cancelled");
-        } catch {}
-      }
+      // ── Step 7: Mark event as processed ─────────────────────────────────
+      await db.update(webhookEvents)
+        .set({ status: "processed", processedAt: new Date() })
+        .where(eq(webhookEvents.id, webhookEventId));
+
+      res.status(200).send("OK");
+
+    } catch (processingErr: any) {
+      // Mark event as failed so admin can see it + PayFast can retry
+      console.error("[PayFast] ITN processing failed (will retry):", processingErr.message);
+      try {
+        await db.update(webhookEvents)
+          .set({ status: "failed", errorMessage: String(processingErr.message).substring(0, 500) })
+          .where(eq(webhookEvents.id, webhookEventId));
+      } catch {}
+      return res.status(500).send("Processing failed — will retry");
     }
-
-    // ── Step 7: Record processed event for idempotency ─────────────────────
-    try {
-      await db.insert(webhookEvents).values({
-        source: "payfast",
-        eventType: paymentStatus || "unknown",
-        idempotencyKey,
-        payload: JSON.stringify({ paymentId, paymentStatus, amountGross, bookingId }),
-        status: "processed",
-      });
-    } catch (err: any) {
-      // unique constraint violation = already processed (race condition) — safe to ignore
-      if (!err?.message?.includes("unique")) {
-        console.error("[PayFast] Failed to log webhook event:", err);
-      }
-    }
-
-    res.status(200).send("OK");
   } catch (error: any) {
     console.error("PayFast ITN error:", error.message);
     res.status(500).send("ITN processing failed");
