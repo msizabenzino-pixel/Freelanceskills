@@ -541,6 +541,24 @@ function PipelineView({
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
 
+  // ── First-visit swipe hint ────────────────────────────────────────────────────
+  const SWIPE_HINT_KEY = "pipeline_swipe_hint_seen";
+  const [showSwipeHint, setShowSwipeHint] = useState(
+    () => !localStorage.getItem(SWIPE_HINT_KEY)
+  );
+
+  function dismissSwipeHint() {
+    setShowSwipeHint(false);
+    localStorage.setItem(SWIPE_HINT_KEY, "1");
+  }
+
+  // Auto-dismiss after 4 seconds
+  useEffect(() => {
+    if (!showSwipeHint) return;
+    const t = setTimeout(dismissSwipeHint, 4000);
+    return () => clearTimeout(t);
+  }, [showSwipeHint]);
+
   useEffect(() => {
     const el = boardRef.current;
     if (!el) return;
@@ -560,6 +578,19 @@ function PipelineView({
       ro.disconnect();
     };
   }, []);
+
+  // Dismiss swipe hint on first actual user scroll (one-time listener)
+  useEffect(() => {
+    if (!showSwipeHint) return;
+    const el = boardRef.current;
+    if (!el) return;
+    function onFirstScroll() {
+      dismissSwipeHint();
+      el!.removeEventListener("scroll", onFirstScroll);
+    }
+    el.addEventListener("scroll", onFirstScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onFirstScroll);
+  }, [showSwipeHint]);
 
   // Restore saved scroll position on mount; save it on every scroll
   useEffect(() => {
@@ -719,6 +750,30 @@ function PipelineView({
         </div>
       )}
     </div>
+
+      {/* First-visit swipe hint pill */}
+      {showSwipeHint && (
+        <div
+          aria-live="polite"
+          data-testid="swipe-hint-pill"
+          className="pointer-events-none flex justify-center mt-2"
+          style={{
+            animation: "fadeInUp 0.35s ease both",
+          }}
+        >
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-700/90 border border-slate-600/60 px-3 py-1 text-[11px] text-slate-300 shadow-lg backdrop-blur-sm select-none">
+            <span aria-hidden="true">←</span>
+            Swipe to see all {PIPELINE_COLUMNS.length} columns
+          </span>
+        </div>
+      )}
+
+      <style>{`
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 }
