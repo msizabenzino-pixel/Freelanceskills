@@ -580,26 +580,30 @@ function PipelineView({
   return (
     <div className="relative" data-testid="pipeline-view">
       {/* Left fade + arrow hint */}
-      {canScrollLeft && (
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute left-0 top-0 bottom-0 z-10 w-16 flex items-center justify-start"
-          style={{ background: "linear-gradient(to right, rgba(15,23,42,0.85) 0%, transparent 100%)" }}
-        >
-          <span className="ml-1 text-white text-lg font-bold select-none opacity-90">←</span>
-        </div>
-      )}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute left-0 top-0 bottom-0 z-10 w-16 flex items-center justify-start"
+        style={{
+          background: "linear-gradient(to right, rgba(15,23,42,0.85) 0%, transparent 100%)",
+          opacity: canScrollLeft ? 1 : 0,
+          transition: "opacity 0.25s ease",
+        }}
+      >
+        <span className="ml-1 text-white text-lg font-bold select-none opacity-90">←</span>
+      </div>
 
       {/* Right fade + arrow hint */}
-      {canScrollRight && (
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute right-0 top-0 bottom-0 z-10 w-16 flex items-center justify-end"
-          style={{ background: "linear-gradient(to left, rgba(15,23,42,0.85) 0%, transparent 100%)" }}
-        >
-          <span className="mr-1 text-white text-lg font-bold select-none opacity-90">→</span>
-        </div>
-      )}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute right-0 top-0 bottom-0 z-10 w-16 flex items-center justify-end"
+        style={{
+          background: "linear-gradient(to left, rgba(15,23,42,0.85) 0%, transparent 100%)",
+          opacity: canScrollRight ? 1 : 0,
+          transition: "opacity 0.25s ease",
+        }}
+      >
+        <span className="mr-1 text-white text-lg font-bold select-none opacity-90">→</span>
+      </div>
 
     <div ref={boardRef} className="overflow-x-auto pb-2"
       style={{ touchAction: dragState ? "none" : "pan-x" }}
