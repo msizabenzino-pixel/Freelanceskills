@@ -70,6 +70,63 @@ const VALID_PAYFAST_IPS = [
   "41.74.179.204", "41.74.179.205", "41.74.179.206", "41.74.179.207",
 ];
 
+async function callPayFastValidate(rawBody: string, validateUrl: string): Promise<boolean> {
+  try {
+    const resp = await fetch(validateUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: rawBody,
+      signal: AbortSignal.timeout(10000),
+    });
+    const text = await resp.text();
+    return text.trim().toUpperCase() === "VALID";
+  } catch (err) {
+    console.error("PayFast validate call failed:", err);
+    return false;
+  }
+}
+
+const PLATFORM_COMMISSION_BPS = 1000; // 10%
+
+async function computeITNReleaseScore(freelancerId: string, clientId: string, amountCents: number): Promise<{ score: number; autoReleaseHours: number }> {
+  try {
+    const { db } = await import("./db");
+    const { profiles, certificates, walletTransactions, freelancerProfiles } = await import("@shared/schema");
+    const { eq, count, sum, and, sql } = await import("drizzle-orm");
+
+    let score = 28; // base
+
+    const certs = await db.select({ c: count() }).from(certificates).where(eq(sql`${certificates.userId}`, freelancerId));
+    if (Number(certs[0]?.c || 0) > 0) score += 30;
+
+    const [fp] = await db.select({ completed: profiles.completedJobs, kyc: profiles.kycStatus }).from(profiles).where(eq(profiles.userId, freelancerId));
+    if (fp) {
+      const completed = fp.completed || 0;
+      score += Math.min(Math.round((completed / Math.max(completed + 5, 1)) * 25), 25);
+      if (fp.kyc === "verified") score += 10;
+    }
+
+    const [fpRow] = await db.select({ rt: freelancerProfiles.responseTimeHours }).from(freelancerProfiles).where(eq(freelancerProfiles.userId, freelancerId));
+    const rt = fpRow?.rt || 24;
+    score += rt <= 8 ? 15 : rt <= 24 ? 8 : rt <= 48 ? 4 : 0;
+
+    score = Math.min(score, 100);
+    const autoReleaseHours = score >= 80 ? 48 : 72;
+    return { score, autoReleaseHours };
+  } catch {
+    return { score: 28, autoReleaseHours: 72 };
+  }
+}
+
+function computeITNFraudRisk(amountCents: number, daysSinceAccountCreated: number): number {
+  let risk = 0;
+  if (amountCents > 5000000) risk += 20;
+  if (amountCents > 10000000) risk += 15;
+  if (daysSinceAccountCreated < 1) risk += 25;
+  else if (daysSinceAccountCreated < 7) risk += 15;
+  return Math.min(risk, 100);
+}
+
 export async function createPayment(req: Request, res: Response) {
   const config = getConfig();
 
@@ -87,7 +144,6 @@ export async function createPayment(req: Request, res: Response) {
   const paymentId = `PF-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
   let baseUrl = process.env.PUBLIC_URL || process.env.SITE_URL || "";
-  
   if (!baseUrl) {
     if (process.env.REPLIT_DOMAINS) {
       baseUrl = `https://${process.env.REPLIT_DOMAINS.split(",")[0]}`;
@@ -139,7 +195,7 @@ export async function handleITN(req: Request, res: Response) {
   const config = getConfig();
 
   try {
-    // Parse raw body buffer (set by express.raw middleware) for exact signature verification
+    // ── Step 1: Parse raw body ──────────────────────────────────────────────
     const rawBody = req.body as Buffer;
     const bodyString = rawBody ? rawBody.toString("utf-8") : "";
     const data: Record<string, string> = {};
@@ -147,7 +203,6 @@ export async function handleITN(req: Request, res: Response) {
       const params = new URLSearchParams(bodyString);
       params.forEach((v, k) => { data[k] = v; });
     }
-    // Fallback to parsed body if no raw buffer
     if (!bodyString && req.body && typeof req.body === "object") {
       for (const [k, v] of Object.entries(req.body)) {
         if (typeof v === "string") data[k] = v;
@@ -161,6 +216,7 @@ export async function handleITN(req: Request, res: Response) {
       timestamp: new Date().toISOString(),
     }));
 
+    // ── Step 2: IP whitelist (production only) ─────────────────────────────
     if (!config.sandbox) {
       const clientIp = (req.headers["x-forwarded-for"] as string || req.socket.remoteAddress || "").split(",")[0].trim();
       if (!VALID_PAYFAST_IPS.includes(clientIp)) {
@@ -169,15 +225,25 @@ export async function handleITN(req: Request, res: Response) {
       }
     }
 
+    // ── Step 3: Signature validation ───────────────────────────────────────
     if (config.passphrase) {
       if (!data.signature) {
-        console.error("PayFast ITN REJECTED: Missing signature in payload");
+        console.error("PayFast ITN REJECTED: Missing signature");
         return res.status(400).send("Missing signature");
       }
-      const isValid = validateSignature(data, data.signature);
-      if (!isValid) {
-        console.error("PayFast ITN REJECTED: Signature validation failed");
+      if (!validateSignature(data, data.signature)) {
+        console.error("PayFast ITN REJECTED: Invalid signature");
         return res.status(400).send("Invalid signature");
+      }
+    }
+
+    // ── Step 4: Server-side validate call to PayFast ───────────────────────
+    const rawBodyForValidate = bodyString || new URLSearchParams(data).toString();
+    if (!config.sandbox) {
+      const isValid = await callPayFastValidate(rawBodyForValidate, config.validateUrl);
+      if (!isValid) {
+        console.error("PayFast ITN REJECTED: PayFast validate returned INVALID");
+        return res.status(400).send("Validation failed");
       }
     }
 
@@ -186,56 +252,121 @@ export async function handleITN(req: Request, res: Response) {
     const amountGross = data.amount_gross;
     const bookingId = data.custom_str1;
     const userId = data.custom_str2;
+    const pfPaymentId = data.pf_payment_id;
 
     console.log(JSON.stringify({
       event: "payfast_itn",
-      paymentId,
-      paymentStatus,
-      amountGross,
-      bookingId,
-      userId,
-      pfPaymentId: data.pf_payment_id,
+      paymentId, paymentStatus, amountGross, bookingId, userId, pfPaymentId,
       timestamp: new Date().toISOString(),
     }));
 
+    const { db } = await import("./db");
+    const { webhookEvents, paymentEscrows, profiles, walletTransactions, userActivityLogs } = await import("@shared/schema");
+    const { eq, and } = await import("drizzle-orm");
+
+    // ── Step 5: Idempotency — deduplicate replays ──────────────────────────
+    const idempotencyKey = paymentId || `pf-${pfPaymentId || Date.now()}`;
+    try {
+      const existing = await db.select({ id: webhookEvents.id })
+        .from(webhookEvents)
+        .where(and(eq(webhookEvents.source, "payfast"), eq(webhookEvents.idempotencyKey, idempotencyKey)))
+        .limit(1);
+      if (existing.length > 0) {
+        console.log(`PayFast ITN duplicate ignored: ${idempotencyKey}`);
+        return res.status(200).send("OK");
+      }
+    } catch (err) {
+      console.error("Idempotency check failed (non-fatal):", err);
+    }
+
+    // ── Step 6: Process the event ──────────────────────────────────────────
     if (paymentStatus === "COMPLETE") {
       const { storage } = await import("./storage");
-
       const amountCents = Math.round(parseFloat(amountGross || "0") * 100);
 
+      // Flag high-value transactions
       if (amountCents > 10000000) {
-        await storage.createFraudFlag({
-          userId: userId || "unknown",
-          bookingId: bookingId || null,
-          riskScore: 85,
-          flags: ["High value transaction (> R100,000)"],
-          recommendation: "review",
-        });
-        console.log(`High value transaction flagged: ${paymentId}`);
-      }
-
-      if (bookingId) {
-        await storage.updateBookingStatus(bookingId, "confirmed");
-        console.log(`Booking ${bookingId} confirmed via PayFast ITN`);
-
-        const booking = await storage.getBooking(bookingId);
-        if (booking && booking.freelancerId) {
-          await storage.createEscrowTransaction({
-            bookingId,
-            clientId: userId || "unknown",
-            freelancerId: booking.freelancerId,
-            amount: amountCents,
-            payfastPaymentId: data.pf_payment_id || paymentId,
-            status: "held",
+        try {
+          await storage.createFraudFlag({
+            userId: userId || "unknown",
+            bookingId: bookingId || null,
+            riskScore: 85,
+            flags: ["High value transaction (> R100,000)"],
+            recommendation: "review",
           });
-          console.log(`Escrow created for booking ${bookingId}: R${amountGross}`);
-        }
+        } catch {}
       }
+
+      // Confirm booking in old system (backward compat)
+      if (bookingId) {
+        try {
+          await storage.updateBookingStatus(bookingId, "confirmed");
+        } catch {}
+      }
+
+      // Create payment_escrow record (the canonical escrow)
+      const platformFeeCents = Math.round(amountCents * (PLATFORM_COMMISSION_BPS / 10000));
+      const freelancerPayoutCents = amountCents - platformFeeCents;
+
+      let freelancerId: string | undefined;
+      if (bookingId) {
+        try {
+          const booking = await storage.getBooking(bookingId);
+          if (booking?.freelancerId) freelancerId = booking.freelancerId;
+        } catch {}
+      }
+
+      const daysSinceCreated = 30; // conservative default — no account creation date in context
+      const fraudRisk = computeITNFraudRisk(amountCents, daysSinceCreated);
+      const { score: releaseScore, autoReleaseHours } = await computeITNReleaseScore(
+        freelancerId || "", userId || "", amountCents
+      );
+      const autoReleaseAt = new Date(Date.now() + autoReleaseHours * 3600 * 1000);
+
+      try {
+        await db.insert(paymentEscrows).values({
+          jobId: null,
+          jobTitle: data.item_name || null,
+          clientId: userId || "unknown",
+          freelancerId: freelancerId || null,
+          amountCents,
+          platformFeeCents,
+          freelancerPayoutCents,
+          status: "held",
+          releaseScore,
+          fraudRiskScore: fraudRisk,
+          autoReleaseAt: releaseScore >= 60 ? autoReleaseAt : null,
+          isOnHold: fraudRisk >= 60,
+          holdReason: fraudRisk >= 60 ? "AI fraud risk auto-hold" : null,
+          payoutRef: pfPaymentId || paymentId,
+        });
+        console.log(`[PayFast] Escrow created: R${(amountCents / 100).toFixed(2)} for booking ${bookingId}`);
+      } catch (err) {
+        console.error("[PayFast] Failed to create payment_escrow:", err);
+      }
+
     } else if (paymentStatus === "CANCELLED") {
       const { storage } = await import("./storage");
       if (bookingId) {
-        await storage.updateBookingStatus(bookingId, "cancelled");
-        console.log(`Booking ${bookingId} cancelled via PayFast ITN`);
+        try {
+          await storage.updateBookingStatus(bookingId, "cancelled");
+        } catch {}
+      }
+    }
+
+    // ── Step 7: Record processed event for idempotency ─────────────────────
+    try {
+      await db.insert(webhookEvents).values({
+        source: "payfast",
+        eventType: paymentStatus || "unknown",
+        idempotencyKey,
+        payload: JSON.stringify({ paymentId, paymentStatus, amountGross, bookingId }),
+        status: "processed",
+      });
+    } catch (err: any) {
+      // unique constraint violation = already processed (race condition) — safe to ignore
+      if (!err?.message?.includes("unique")) {
+        console.error("[PayFast] Failed to log webhook event:", err);
       }
     }
 
@@ -263,12 +394,33 @@ export async function getPaymentStatus(req: Request, res: Response) {
   if (!paymentId) {
     return res.status(400).json({ error: "Payment ID required" });
   }
+  try {
+    const { db } = await import("./db");
+    const { webhookEvents } = await import("@shared/schema");
+    const { and, eq } = await import("drizzle-orm");
+
+    const [event] = await db.select({
+      status: webhookEvents.eventType,
+      processedAt: webhookEvents.processedAt,
+    }).from(webhookEvents).where(
+      and(eq(webhookEvents.source, "payfast"), eq(webhookEvents.idempotencyKey, paymentId))
+    ).limit(1);
+
+    if (event) {
+      return res.json({
+        paymentId,
+        status: event.status === "COMPLETE" ? "complete" : event.status?.toLowerCase() || "processed",
+        processedAt: event.processedAt,
+        gateway: "PayFast",
+      });
+    }
+  } catch {}
 
   res.json({
     paymentId,
     status: "pending",
     gateway: "PayFast",
-    message: "Payment status is updated via ITN callback. Check your dashboard for the latest status.",
+    message: "Payment status is updated via ITN callback.",
   });
 }
 
@@ -318,4 +470,3 @@ ${inputs}
 <script>document.getElementById("pf").submit();</script>
 </body></html>`);
 }
-

@@ -115,6 +115,26 @@ export const insertBusinessInvitationSchema = createInsertSchema(businessInvitat
   claimedByUserId: true,
 });
 
+export const portfolioImages = pgTable(
+  "portfolio_images",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    cloudinaryPublicId: varchar("cloudinary_public_id"),
+    url: text("url").notNull(),
+    caption: text("caption"),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => [
+    index("idx_portfolio_images_user").on(table.userId),
+  ]
+);
+
+export const insertPortfolioImageSchema = createInsertSchema(portfolioImages).omit({
+  id: true,
+  createdAt: true,
+});
+
 export type ServicePackage = typeof servicePackages.$inferSelect;
 export type InsertServicePackage = z.infer<typeof insertServicePackageSchema>;
 export type Booking = typeof bookings.$inferSelect;
@@ -124,3 +144,5 @@ export type InsertReview = z.infer<typeof insertReviewSchema>;
 export type AvailabilitySlot = typeof availabilitySlots.$inferSelect;
 export type BusinessInvitation = typeof businessInvitations.$inferSelect;
 export type InsertBusinessInvitation = z.infer<typeof insertBusinessInvitationSchema>;
+export type PortfolioImage = typeof portfolioImages.$inferSelect;
+export type InsertPortfolioImage = z.infer<typeof insertPortfolioImageSchema>;

@@ -134,6 +134,9 @@ export async function registerRoutes(
   registerClientRoutes(app);
   const { registerPaymentsRoutes } = await import("./paymentsRoutes");
   registerPaymentsRoutes(app);
+  const { registerWalletRoutes, startEscrowAutoReleaseCron } = await import("./walletRoutes");
+  registerWalletRoutes(app);
+  startEscrowAutoReleaseCron();
   const { registerAcademyAdminRoutes } = await import("./academyAdminRoutes");
   registerAcademyAdminRoutes(app);
   const { registerCertVerifyRoutes } = await import("./certVerifyRoutes");
