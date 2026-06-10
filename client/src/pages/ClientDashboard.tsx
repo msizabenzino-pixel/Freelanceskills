@@ -374,10 +374,12 @@ function PipelineView({
   applicants,
   onStatusChange,
   isPending,
+  scrollKey,
 }: {
   applicants: Applicant[];
   onStatusChange: (id: string, status: string) => void;
   isPending: boolean;
+  scrollKey: string;
 }) {
   const [dragState, setDragState] = useState<DragState>(null);
   const [dragOverCol, setDragOverCol] = useState<string | null>(null);
@@ -559,6 +561,22 @@ function PipelineView({
     };
   }, []);
 
+  // Restore saved scroll position on mount; save it on every scroll
+  useEffect(() => {
+    const el = boardRef.current;
+    if (!el) return;
+    const saved = localStorage.getItem(scrollKey);
+    if (saved !== null) {
+      el.scrollLeft = parseInt(saved, 10) || 0;
+    }
+    function saveScroll() {
+      if (!el) return;
+      localStorage.setItem(scrollKey, String(el.scrollLeft));
+    }
+    el.addEventListener("scroll", saveScroll, { passive: true });
+    return () => el.removeEventListener("scroll", saveScroll);
+  }, [scrollKey]);
+
   return (
     <div className="relative" data-testid="pipeline-view">
       {/* Left fade + arrow hint */}
@@ -704,7 +722,15 @@ function PipelineView({
 // ── Main dashboard ─────────────────────────────────────────────────────────────
 export default function ClientDashboard() {
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<"list" | "pipeline">("list");
+  const [viewMode, setViewMode] = useState<"list" | "pipeline">(() => {
+    const saved = localStorage.getItem("client_dashboard_view_mode");
+    return saved === "pipeline" ? "pipeline" : "list";
+  });
+
+  function handleSetViewMode(mode: "list" | "pipeline") {
+    setViewMode(mode);
+    localStorage.setItem("client_dashboard_view_mode", mode);
+  }
   const queryClient = useQueryClient();
 
   const { data: jobsData, isLoading: jobsLoading } = useQuery({
@@ -877,7 +903,7 @@ export default function ClientDashboard() {
                             <div className="flex items-center bg-slate-800 rounded-lg p-0.5 border border-slate-700">
                               <button
                                 data-testid="view-mode-list"
-                                onClick={() => setViewMode("list")}
+                                onClick={() => handleSetViewMode("list")}
                                 className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all ${
                                   viewMode === "list"
                                     ? "bg-blue-600 text-white"
@@ -889,7 +915,7 @@ export default function ClientDashboard() {
                               </button>
                               <button
                                 data-testid="view-mode-pipeline"
-                                onClick={() => setViewMode("pipeline")}
+                                onClick={() => handleSetViewMode("pipeline")}
                                 className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all ${
                                   viewMode === "pipeline"
                                     ? "bg-blue-600 text-white"
@@ -940,6 +966,7 @@ export default function ClientDashboard() {
                             applicants={applicants}
                             onStatusChange={handleStatusChange}
                             isPending={statusMutation.isPending}
+                            scrollKey={`pipeline_scroll_${selectedJobId}`}
                           />
                         ) : (
                           <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
