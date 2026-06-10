@@ -2861,6 +2861,89 @@ Respond with ONLY the JSON object, no markdown.`
     }
   });
 
+  // GET /api/my-applications — dashboard shape { applications, total }
+  app.get("/api/my-applications", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const applications = await storage.getUserApplications(userId);
+      res.json({ applications, total: applications.length });
+    } catch (error) {
+      console.error("Error fetching my-applications:", error);
+      res.status(500).json({ message: "Failed to fetch applications" });
+    }
+  });
+
+  // PATCH /api/my-applications/:id — update status, notes, etc.
+  app.patch("/api/my-applications/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const { status, notes, aiCoverLetter, employabilityScore, interviewDate } = req.body;
+      const updated = await storage.updateJobApplication(req.params.id, {
+        ...(status !== undefined && { status }),
+        ...(notes !== undefined && { notes }),
+        ...(aiCoverLetter !== undefined && { aiCoverLetter }),
+        ...(employabilityScore !== undefined && { employabilityScore }),
+        ...(interviewDate !== undefined && { interviewDate }),
+      });
+      if (!updated) return res.status(404).json({ message: "Application not found" });
+      res.json(updated);
+    } catch (error) {
+      console.error("Error updating application:", error);
+      res.status(500).json({ message: "Failed to update application" });
+    }
+  });
+
+  // ── User Notifications (non-admin) ─────────────────────────────────────────
+  // IMPORTANT: These must come BEFORE registerNotificationsRoutes() registration
+  // so they take precedence over any admin-only overlapping paths.
+  // GET /api/notifications — list current user's notifications
+  app.get("/api/notifications", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const notifs = await storage.getNotifications(userId);
+      res.json(notifs);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+      res.status(500).json({ message: "Failed to fetch notifications" });
+    }
+  });
+
+  // GET /api/notifications/unread-count — badge count for navbar bell
+  app.get("/api/notifications/unread-count", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const count = await storage.getUnreadCount(userId);
+      res.json({ count });
+    } catch (error) {
+      console.error("Error fetching unread notification count:", error);
+      res.status(500).json({ count: 0 });
+    }
+  });
+
+  // PATCH /api/notifications/:id/read — mark single notification read
+  app.patch("/api/notifications/:id/read", isAuthenticated, async (req: any, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) return res.status(400).json({ message: "Invalid notification ID" });
+      const updated = await storage.markAsRead(id);
+      res.json(updated || { id, isRead: true });
+    } catch (error) {
+      console.error("Error marking notification read:", error);
+      res.status(500).json({ message: "Failed to mark as read" });
+    }
+  });
+
+  // PATCH /api/notifications/read-all — mark all read for current user
+  app.patch("/api/notifications/read-all", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      await storage.markAllAsRead(userId);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error marking all notifications read:", error);
+      res.status(500).json({ message: "Failed to mark all as read" });
+    }
+  });
+
   // ============ ACADEMY ROUTES ============
 
   app.get("/api/courses", async (req: any, res) => {
