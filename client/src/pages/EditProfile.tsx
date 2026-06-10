@@ -895,7 +895,7 @@ export default function EditProfile() {
                   <CardTitle className="text-white text-sm">Quick Actions</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <Button variant="outline" className="w-full justify-start border-slate-700 text-slate-300 hover:text-white" onClick={() => navigate(`/freelancer/${user?.id}`)} data-testid="btn-view-public">
+                  <Button variant="outline" className="w-full justify-start border-slate-700 text-slate-300 hover:text-white" onClick={() => navigate(`/profile/${user?.id}`)} data-testid="btn-view-public">
                     <ArrowLeft className="w-3.5 h-3.5 mr-2 rotate-180" /> View Public Profile
                   </Button>
                   <Button variant="outline" className="w-full justify-start border-slate-700 text-slate-300 hover:text-white" onClick={() => navigate("/dashboard")} data-testid="btn-go-dashboard">

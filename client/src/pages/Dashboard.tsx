@@ -259,7 +259,7 @@ export default function Dashboard() {
                   {profileStatus.status === "draft" ? "Publish Profile" : "Build Profile"}
                 </Button>
               )}
-              <Button size="sm" variant="outline" className="gap-1.5 text-xs border-slate-700 text-slate-300 hover:bg-slate-800" onClick={() => navigate(`/freelancer/${user?.id}`)} data-testid="btn-view-profile">
+              <Button size="sm" variant="outline" className="gap-1.5 text-xs border-slate-700 text-slate-300 hover:bg-slate-800" onClick={() => navigate(`/profile/${user?.id}`)} data-testid="btn-view-profile">
                 View Public Profile <ArrowRight className="w-3 h-3" />
               </Button>
             </div>

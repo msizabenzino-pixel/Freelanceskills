@@ -153,7 +153,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                     <CommandItem
                       key={f.id}
                       value={`freelancer-${f.id}`}
-                      onSelect={() => go(`/freelancer-profile/${f.id}`)}
+                      onSelect={() => go(`/profile/${f.id}`)}
                       className="flex items-center gap-2 cursor-pointer"
                       data-testid={`cmd-freelancer-${f.id}`}
                     >

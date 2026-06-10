@@ -249,7 +249,9 @@ function Router() {
         <Route path="/help" component={Support} />
         <Route path="/contact" component={Support} />
         <Route path="/find-talent" component={FindTalent} />
-        <Route path="/freelancer-profile/:id" component={FreelancerProfile} />
+        <Route path="/freelancer-profile/:id">
+          <FreelancerProfile />
+        </Route>
         <Route path="/gig-marketplace" component={Explore} />
         <Route path="/admin" component={AdminRouter} />
         <Route path="/admin/:rest*" component={AdminRouter} />

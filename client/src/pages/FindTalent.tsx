@@ -537,7 +537,7 @@ export default function FindTalent() {
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-2 mt-4">
-                    <Link href={`/freelancer-profile/${selectedPro.userId}`} className="w-full">
+                    <Link href={`/profile/${selectedPro.userId}`} className="w-full">
                       <Button variant="outline" className="w-full" size="sm" data-testid="button-view-profile-map">
                         <ExternalLink className="w-3.5 h-3.5 mr-1" /> View Profile
                       </Button>
