@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Navbar } from "@/components/Navbar";
@@ -496,8 +496,55 @@ function PipelineView({
   // A column is highlighted if a pointer drag is over it OR keyboard navigation targets it
   const kbTargetColKey = kbState !== null ? PIPELINE_COLUMNS[kbState.colIndex].key : null;
 
+  // ── Horizontal scroll hint state ─────────────────────────────────────────────
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  useEffect(() => {
+    const el = boardRef.current;
+    if (!el) return;
+
+    function checkScroll() {
+      if (!el) return;
+      setCanScrollLeft(el.scrollLeft > 4);
+      setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+    }
+
+    checkScroll();
+    el.addEventListener("scroll", checkScroll, { passive: true });
+    const ro = new ResizeObserver(checkScroll);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener("scroll", checkScroll);
+      ro.disconnect();
+    };
+  }, []);
+
   return (
-    <div ref={boardRef} className="overflow-x-auto pb-2" data-testid="pipeline-view"
+    <div className="relative" data-testid="pipeline-view">
+      {/* Left fade + arrow hint */}
+      {canScrollLeft && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-0 top-0 bottom-0 z-10 w-16 flex items-center justify-start"
+          style={{ background: "linear-gradient(to right, rgba(15,23,42,0.85) 0%, transparent 100%)" }}
+        >
+          <span className="ml-1 text-white text-lg font-bold select-none opacity-90">←</span>
+        </div>
+      )}
+
+      {/* Right fade + arrow hint */}
+      {canScrollRight && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute right-0 top-0 bottom-0 z-10 w-16 flex items-center justify-end"
+          style={{ background: "linear-gradient(to left, rgba(15,23,42,0.85) 0%, transparent 100%)" }}
+        >
+          <span className="mr-1 text-white text-lg font-bold select-none opacity-90">→</span>
+        </div>
+      )}
+
+    <div ref={boardRef} className="overflow-x-auto pb-2"
       style={{ touchAction: dragState ? "none" : "pan-x" }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
@@ -598,6 +645,7 @@ function PipelineView({
           )}
         </div>
       )}
+    </div>
     </div>
   );
 }
