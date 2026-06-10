@@ -19,6 +19,7 @@ import {
 import {
   Briefcase, Building2, MapPin, Clock, Copy, ExternalLink, CheckCircle,
   BrainCircuit, ChevronRight, Loader2, Star, Zap, AlertCircle, Calendar,
+  XCircle,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -54,9 +55,12 @@ function ScoreBadge({ score }: { score: number }) {
 
 // ── Application card ───────────────────────────────────────────────────────
 
+const TERMINAL_STATUSES = ["offer", "rejected", "withdrawn"];
+
 function AppCard({ app, onUpdate }: { app: JobApplication; onUpdate: () => void }) {
   const [showDetail, setShowDetail] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [withdrawConfirm, setWithdrawConfirm] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -122,6 +126,15 @@ function AppCard({ app, onUpdate }: { app: JobApplication; onUpdate: () => void 
                 <ExternalLink className="w-3 h-3" /> Live Link
               </span>
             )}
+            {!TERMINAL_STATUSES.includes(app.status) && (
+              <button
+                className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1 border border-red-500/30 hover:border-red-400/50 rounded-full px-2 py-0.5 transition-colors"
+                onClick={(e) => { e.stopPropagation(); setWithdrawConfirm(true); }}
+                data-testid={`btn-withdraw-${app.id}`}
+              >
+                <XCircle className="w-3 h-3" /> Withdraw
+              </button>
+            )}
           </div>
         </div>
 
@@ -144,6 +157,50 @@ function AppCard({ app, onUpdate }: { app: JobApplication; onUpdate: () => void 
           })}
         </div>
       </div>
+
+      {/* Withdraw confirmation dialog */}
+      <Dialog open={withdrawConfirm} onOpenChange={setWithdrawConfirm}>
+        <DialogContent className="max-w-sm bg-slate-950 border-white/10 text-white" data-testid="dialog-withdraw-confirm">
+          <DialogHeader>
+            <DialogTitle className="text-white flex items-center gap-2">
+              <XCircle className="w-5 h-5 text-red-400" /> Withdraw Application?
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-white/60 leading-relaxed">
+            Are you sure you want to withdraw your application for <span className="font-semibold text-white">{app.jobTitle}</span>?
+            This cannot be undone.
+          </p>
+          <div className="flex gap-3 pt-1">
+            <Button
+              className="flex-1 bg-red-500 hover:bg-red-400 text-white font-bold gap-2"
+              disabled={updateMutation.isPending}
+              onClick={() => {
+                updateMutation.mutate(
+                  { status: "withdrawn" },
+                  {
+                    onSuccess: () => {
+                      setWithdrawConfirm(false);
+                      toast({ title: "Application withdrawn", description: `Your application for ${app.jobTitle} has been withdrawn.` });
+                    },
+                  }
+                );
+              }}
+              data-testid="btn-confirm-withdraw"
+            >
+              {updateMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />}
+              Yes, Withdraw
+            </Button>
+            <Button
+              variant="outline"
+              className="flex-1 border-white/20 text-white/70 hover:text-white"
+              onClick={() => setWithdrawConfirm(false)}
+              data-testid="btn-cancel-withdraw"
+            >
+              Keep Application
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Detail dialog */}
       <Dialog open={showDetail} onOpenChange={setShowDetail}>
