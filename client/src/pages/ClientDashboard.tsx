@@ -391,6 +391,7 @@ function PipelineView({
   const [localStatuses, setLocalStatuses] = useState<Record<string, string>>({});
   const [kbState, setKbState] = useState<KbState>(null);
   const [kbAnnounce, setKbAnnounce] = useState("");
+  const [hoveredColKey, setHoveredColKey] = useState<string | null>(null);
   const colRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const colHeaderRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -416,6 +417,8 @@ function PipelineView({
       }
     }
     prevKbState.current = kbState;
+    // Clear column hover highlight when kb-move mode exits
+    if (kbState === null) setHoveredColKey(null);
   }, [kbState]);
 
   function getStatus(a: Applicant) {
@@ -709,17 +712,23 @@ function PipelineView({
           const colApplicants = applicants.filter((a) => getStatus(a) === col.key);
           const isDragOver = dragOverCol === col.key && dragState?.started;
           const isKbTarget = kbTargetColKey === col.key;
-          const isOver = isDragOver || isKbTarget;
+          const isKbHovered = kbState !== null && hoveredColKey === col.key;
+          const isKbHighlighted = isKbTarget || isKbHovered;
+          const isOver = isDragOver || isKbHighlighted;
 
           return (
             <div
               key={col.key}
               ref={(el) => { colRefs.current[col.key] = el; }}
               data-testid={`pipeline-column-${col.key}`}
+              onMouseEnter={kbState ? () => setHoveredColKey(col.key) : undefined}
+              onMouseLeave={kbState ? () => setHoveredColKey(null) : undefined}
               className={`w-48 flex flex-col rounded-xl border transition-colors ${
-                isOver
-                  ? `${col.dropBg} border-slate-500${isKbTarget && !isDragOver ? " ring-2 ring-blue-400/40" : ""}`
-                  : "bg-slate-800/40 border-slate-700/60"
+                isDragOver
+                  ? `${col.dropBg} border-slate-500`
+                  : isKbHighlighted
+                    ? `${col.dropBg} border-blue-400 ring-2 ring-blue-400/70`
+                    : "bg-slate-800/40 border-slate-700/60"
               }`}
             >
               {/* Column header */}
@@ -738,8 +747,10 @@ function PipelineView({
                 <span className={`w-2 h-2 rounded-full ${col.dotColor} shrink-0`} />
                 <span className={`text-xs font-semibold ${col.headerColor} flex-1`}>{col.label}</span>
                 <span className="text-xs text-slate-500 font-medium">{colApplicants.length}</span>
-                {isKbTarget && !isDragOver && (
-                  <span className="text-[9px] text-blue-400 font-semibold uppercase tracking-wide">Target</span>
+                {isKbHighlighted && !isDragOver && (
+                  <span className="text-[9px] text-blue-400 font-semibold uppercase tracking-wide">
+                    {isKbTarget ? "Target" : "Drop here"}
+                  </span>
                 )}
               </div>
 
