@@ -885,6 +885,17 @@ export default function ClientDashboard() {
     }
   }
 
+  // Sync selected job across browser tabs via storage event
+  useEffect(() => {
+    function onStorage(e: StorageEvent) {
+      if (e.key === "client_dashboard_selected_job") {
+        setSelectedJobId(e.newValue ?? null);
+      }
+    }
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
   const queryClient = useQueryClient();
 
   const { data: jobsData, isLoading: jobsLoading } = useQuery({
