@@ -162,10 +162,21 @@ export function registerAggregatedJobRoutes(app: Express) {
         remoteFallback = finalJobs.length > 0;
       }
 
-      // 5. Build response
+      // 5. Build response — total must be full DB count, not page size
+      const totalCount = await storage.countAggregatedJobs({
+        province:        params.province,
+        country:         params.country,
+        category:        params.category,
+        source:          params.source,
+        jobType:         params.jobType,
+        experienceLevel: params.experienceLevel,
+        isUrgent:        params.isUrgent === "true" ? true : undefined,
+        isRemote:        params.isRemote === "true" ? true : undefined,
+        search:          params.search,
+      });
       const payload = {
         jobs: finalJobs,
-        total: finalJobs.length,
+        total: totalCount,
         remoteFallback,
         remoteFallbackCountry: remoteFallback ? params.country : undefined,
       };

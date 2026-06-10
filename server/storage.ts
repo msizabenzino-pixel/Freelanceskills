@@ -79,6 +79,17 @@ export interface IStorage {
   createManyAggregatedJobs(jobs: InsertAggregatedJob[]): Promise<AggregatedJob[]>;
   getAggregatedJobs(filters?: { province?: string; category?: string; source?: string; jobType?: string }): Promise<AggregatedJob[]>;
   getAggregatedJobCount(): Promise<number>;
+  countAggregatedJobs(filters?: {
+    province?: string;
+    country?: string;
+    category?: string;
+    source?: string;
+    jobType?: string;
+    experienceLevel?: string;
+    isUrgent?: boolean;
+    isRemote?: boolean;
+    search?: string;
+  }): Promise<number>;
   getExistingApplyUrls(): Promise<Set<string>>;
   getAggregatedJobStats(provinces: string[], countries: string[], categories: string[]): Promise<{ totalActive: number; urgent: number; remote: number; aiGenerated: number; avgScore: number; byProvince: Record<string, number>; byCountry: Record<string, number>; byCategory: Record<string, number>; bySource: Record<string, number> }>;
   clearOldAggregatedJobs(): Promise<void>;
@@ -526,6 +537,74 @@ class DatabaseStorage implements IStorage {
 
   async getAggregatedJobCount(): Promise<number> {
     const result = await db.select({ count: sql<number>`cast(count(*) as integer)` }).from(aggregatedJobs).where(eq(aggregatedJobs.isActive, true));
+    return result[0]?.count || 0;
+  }
+
+  // Count aggregated jobs matching the same filter set as searchAggregatedJobs
+  // Used for the total field in the jobs API response.
+  async countAggregatedJobs(filters?: {
+    province?: string;
+    country?: string;
+    category?: string;
+    source?: string;
+    jobType?: string;
+    experienceLevel?: string;
+    isUrgent?: boolean;
+    isRemote?: boolean;
+    search?: string;
+  }): Promise<number> {
+    const conditions = [eq(aggregatedJobs.isActive, true)];
+
+    if (filters?.country && filters.country !== "all") {
+      if (filters.country === "South Africa") {
+        conditions.push(
+          sql`${aggregatedJobs.province} = ANY(ARRAY['Gauteng','Western Cape','KwaZulu-Natal','Eastern Cape','Limpopo','Mpumalanga','Free State','North West','Northern Cape']::text[])`,
+        );
+      } else {
+        conditions.push(eq(aggregatedJobs.country, filters.country));
+      }
+    } else if (filters?.province) {
+      conditions.push(eq(aggregatedJobs.province, filters.province));
+    }
+    if (filters?.category) {
+      conditions.push(eq(aggregatedJobs.category, filters.category));
+    }
+    if (filters?.source) {
+      conditions.push(eq(aggregatedJobs.liveSource, filters.source));
+    }
+    if (filters?.jobType) {
+      conditions.push(eq(aggregatedJobs.jobType, filters.jobType));
+    }
+    if (filters?.experienceLevel) {
+      conditions.push(eq(aggregatedJobs.experienceLevel, filters.experienceLevel));
+    }
+    if (filters?.isUrgent) {
+      conditions.push(eq(aggregatedJobs.isUrgent, true));
+    }
+    if (filters?.isRemote) {
+      conditions.push(eq(aggregatedJobs.isRemote, true));
+    }
+    if (filters?.search) {
+      const q = filters.search.trim();
+      if (q.length >= 3) {
+        conditions.push(
+          sql`to_tsvector('english',
+                coalesce(${aggregatedJobs.title},'') || ' ' ||
+                coalesce(${aggregatedJobs.company},'') || ' ' ||
+                coalesce(${aggregatedJobs.skills},'')
+              ) @@ plainto_tsquery('english', ${q})`,
+        );
+      } else {
+        conditions.push(
+          sql`(${aggregatedJobs.title} ILIKE ${q + "%"} OR ${aggregatedJobs.company} ILIKE ${q + "%"})`,
+        );
+      }
+    }
+
+    const result = await db
+      .select({ count: sql<number>`cast(count(*) as integer)` })
+      .from(aggregatedJobs)
+      .where(and(...conditions));
     return result[0]?.count || 0;
   }
 
