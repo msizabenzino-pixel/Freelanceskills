@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AuthGuard } from "@/components/AuthGuard";
+import { useToast } from "@/hooks/use-toast";
 import {
   Briefcase, DollarSign, CheckCircle, Clock, MessageSquare, Star,
   Zap, Users, ChevronDown, ChevronUp, UserCheck, XCircle, CalendarClock,
-  FileText, Eye,
+  FileText, Eye, Loader2,
 } from "lucide-react";
 
 interface ClientJob {
@@ -59,7 +61,28 @@ function ApplicantCard({
   isPending: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
+  const [, setLocation] = useLocation();
+  const { toast } = useToast();
   const statusCfg = STATUS_CONFIG[applicant.status] || STATUS_CONFIG.applied;
+
+  const messageMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch("/api/conversations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ recipientId: applicant.userId, jobId: applicant.jobId }),
+      });
+      if (!res.ok) throw new Error("Failed to open conversation");
+      return res.json();
+    },
+    onSuccess: () => {
+      setLocation("/messages");
+    },
+    onError: () => {
+      toast({ title: "Could not open conversation", description: "Please try again.", variant: "destructive" });
+    },
+  });
   const initials = applicant.freelancerName
     .split(" ")
     .map((p) => p[0])
@@ -145,51 +168,55 @@ function ApplicantCard({
       )}
 
       {/* Action buttons */}
-      {applicant.status !== "hired" && applicant.status !== "rejected" && (
-        <div className="flex gap-2 flex-wrap pt-1">
-          {applicant.status !== "shortlisted" && (
+      <div className="flex gap-2 flex-wrap pt-1">
+        {applicant.status !== "hired" && applicant.status !== "rejected" && (
+          <>
+            {applicant.status !== "shortlisted" && (
+              <button
+                data-testid={`shortlist-${applicant.id}`}
+                disabled={isPending}
+                onClick={() => onStatusChange(applicant.id, "shortlisted")}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-amber-600/20 hover:bg-amber-600/30 text-amber-400 border border-amber-600/40 rounded-lg transition disabled:opacity-50"
+              >
+                <UserCheck className="w-3.5 h-3.5" />
+                Shortlist
+              </button>
+            )}
+            {applicant.status !== "interview" && (
+              <button
+                data-testid={`interview-${applicant.id}`}
+                disabled={isPending}
+                onClick={() => onStatusChange(applicant.id, "interview")}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-purple-600/20 hover:bg-purple-600/30 text-purple-400 border border-purple-600/40 rounded-lg transition disabled:opacity-50"
+              >
+                <CalendarClock className="w-3.5 h-3.5" />
+                Interview
+              </button>
+            )}
             <button
-              data-testid={`shortlist-${applicant.id}`}
+              data-testid={`reject-${applicant.id}`}
               disabled={isPending}
-              onClick={() => onStatusChange(applicant.id, "shortlisted")}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-amber-600/20 hover:bg-amber-600/30 text-amber-400 border border-amber-600/40 rounded-lg transition disabled:opacity-50"
+              onClick={() => onStatusChange(applicant.id, "rejected")}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-600/40 rounded-lg transition disabled:opacity-50"
             >
-              <UserCheck className="w-3.5 h-3.5" />
-              Shortlist
+              <XCircle className="w-3.5 h-3.5" />
+              Reject
             </button>
-          )}
-          {applicant.status !== "interview" && (
-            <button
-              data-testid={`interview-${applicant.id}`}
-              disabled={isPending}
-              onClick={() => onStatusChange(applicant.id, "interview")}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-purple-600/20 hover:bg-purple-600/30 text-purple-400 border border-purple-600/40 rounded-lg transition disabled:opacity-50"
-            >
-              <CalendarClock className="w-3.5 h-3.5" />
-              Interview
-            </button>
-          )}
-          <button
-            data-testid={`reject-${applicant.id}`}
-            disabled={isPending}
-            onClick={() => onStatusChange(applicant.id, "rejected")}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-600/40 rounded-lg transition disabled:opacity-50"
-          >
-            <XCircle className="w-3.5 h-3.5" />
-            Reject
-          </button>
-          {applicant.freelancerEmail && (
-            <a
-              href={`mailto:${applicant.freelancerEmail}`}
-              data-testid={`message-${applicant.id}`}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-slate-700/50 hover:bg-slate-700 text-slate-300 border border-slate-600/40 rounded-lg transition"
-            >
-              <MessageSquare className="w-3.5 h-3.5" />
-              Message
-            </a>
-          )}
-        </div>
-      )}
+          </>
+        )}
+        {/* Message button — always visible for all statuses */}
+        <button
+          data-testid={`message-${applicant.id}`}
+          disabled={messageMutation.isPending}
+          onClick={() => messageMutation.mutate()}
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-slate-700/50 hover:bg-slate-700 text-slate-300 border border-slate-600/40 rounded-lg transition disabled:opacity-50"
+        >
+          {messageMutation.isPending
+            ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            : <MessageSquare className="w-3.5 h-3.5" />}
+          Message
+        </button>
+      </div>
 
     </div>
   );
