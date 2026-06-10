@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useDarkMode } from "@/hooks/use-dark-mode";
+import { useSocketNotifications } from "@/hooks/use-socket-notifications";
 import { BrandLogo } from "@/components/BrandLogo";
 import { NotificationBell } from "./NotificationBell";
 import {
@@ -33,6 +34,9 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
   const { user, isAuthenticated, logout } = useAuth();
   const { isDark, toggle: toggleDarkMode } = useDarkMode();
   const searchRef = useRef<HTMLInputElement>(null);
+
+  // Activate socket notifications for real-time badge updates
+  useSocketNotifications(user?.id);
 
   const { data: unreadMsgData } = useQuery<{ count: number }>({
     queryKey: ["/api/conversations/unread-count"],

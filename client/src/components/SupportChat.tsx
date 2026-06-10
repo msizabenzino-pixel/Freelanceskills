@@ -8,6 +8,7 @@ import {
   subscribeSupportMessages,
   type ChatMessage,
 } from "@/lib/firebaseAppData";
+import { io, Socket } from "socket.io-client";
 import {
   MessageCircle,
   X,
@@ -86,6 +87,9 @@ export function SupportChat() {
   const [isSending, setIsSending] = useState(false);
   const [chatError, setChatError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const socketRef = useRef<Socket | null>(null);
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [supportTyping, setSupportTyping] = useState(false);
 
   const welcomeText = useMemo(() => {
     if (!user?.id) {
@@ -98,6 +102,47 @@ export function SupportChat() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isOpen]);
 
+  // Socket.io integration for real-time support chat
+  useEffect(() => {
+    if (!isOpen || !user?.id) return;
+
+    const socket = io(window.location.origin, { transports: ["websocket", "polling"] });
+    socketRef.current = socket;
+
+    socket.on("connect", () => {
+      socket.emit("authenticate", user.id);
+      if (chatId) socket.emit("join_conversation", `support_${chatId}`);
+    });
+
+    socket.on("new_message", (message: any) => {
+      if (message.senderType === "support" || message.senderType === "system") {
+        setMessages((prev) => {
+          if (prev.some((m) => m.id === message.id)) return prev;
+          return [...prev, {
+            id: message.id || `${Date.now()}-${Math.random()}`,
+            content: message.content,
+            senderType: message.senderType || "support",
+            createdAt: message.createdAt || new Date().toISOString(),
+          }];
+        });
+      }
+    });
+
+    socket.on("typing", (data: any) => {
+      if (data.conversationId === `support_${chatId}`) {
+        setSupportTyping(true);
+        if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = setTimeout(() => setSupportTyping(false), 2500);
+      }
+    });
+
+    return () => {
+      socket.disconnect();
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    };
+  }, [isOpen, user?.id, chatId]);
+
+  // Firebase fallback for loading chat history
   useEffect(() => {
     if (!isOpen || !user?.id) return;
 
@@ -134,6 +179,15 @@ export function SupportChat() {
 
     try {
       setInputValue("");
+      // Send via socket if connected
+      if (socketRef.current?.connected) {
+        socketRef.current.emit("send_message", {
+          conversationId: `support_${chatId}`,
+          senderId: user.id,
+          content: trimmed,
+        });
+      }
+      // Persist to Firebase
       await sendSupportMessage({
         chatId,
         senderType: "user",
@@ -313,6 +367,27 @@ export function SupportChat() {
                   </div>
                 );
               })}
+
+            {/* Typing indicator */}
+            {supportTyping && !isSending && (
+              <div className="flex justify-start">
+                <div
+                  className="rounded-2xl rounded-bl-sm p-3 flex items-center gap-2"
+                  style={{
+                    backgroundColor: "#1B2130",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    color: "#A7B0C0",
+                  }}
+                >
+                  <span className="inline-flex gap-0.5">
+                    <span className="w-1 h-1 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                    <span className="w-1 h-1 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                    <span className="w-1 h-1 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                  </span>
+                  <span className="text-sm">Support is typing...</span>
+                </div>
+              </div>
+            )}
 
             {/* Sending indicator */}
             {isSending && (

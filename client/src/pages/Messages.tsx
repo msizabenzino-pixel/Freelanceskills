@@ -122,11 +122,20 @@ export default function Messages() {
 
   // ── Socket.IO ──────────────────────────────────────────────────────────────
   useEffect(() => {
-    const socket = io(window.location.origin);
+    const socket = io(window.location.origin, {
+      transports: ["websocket", "polling"],
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      reconnectionAttempts: 10,
+    });
     socketRef.current = socket;
 
     socket.on("connect", () => {
       if (user) socket.emit("authenticate", user.id);
+      // Rejoin conversation after reconnect
+      if (selectedConversationId) {
+        socket.emit("join_conversation", selectedConversationId);
+      }
     });
 
     socket.on("user_online", (userId: string) => {
@@ -159,14 +168,47 @@ export default function Messages() {
       }
     });
 
-    return () => { socket.disconnect(); };
-  }, [user, selectedConversationId]);
+    socket.on("messages_read", (data: { conversationId: string; userId: string }) => {
+      if (data.conversationId === selectedConversationId) {
+        queryClient.setQueryData(
+          ["/api/conversations", data.conversationId, "messages"],
+          (old: any[] | undefined) => {
+            if (!old) return old;
+            return old.map(m => (m.senderId === user?.id ? { ...m, isRead: true } : m));
+          }
+        );
+      }
+    });
+
+    socket.on("message_error", (data: { message: string; hint?: string }) => {
+      // Show error as toast-like notification
+      const errorEl = document.createElement("div");
+      errorEl.className = "fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-red-900/90 text-red-100 px-4 py-2 rounded-lg text-sm shadow-xl border border-red-700/50 animate-in fade-in slide-in-from-top-2";
+      errorEl.innerHTML = `<strong>${data.message}</strong>${data.hint ? `<br/>${data.hint}` : ""}`;
+      document.body.appendChild(errorEl);
+      setTimeout(() => errorEl.remove(), 4000);
+    });
+
+    socket.on("message_sent", (data: { messageId: string; conversationId: string }) => {
+      // Confirm message was broadcast — optionally refresh
+      queryClient.invalidateQueries({ queryKey: ["/api/conversations", data.conversationId, "messages"] });
+    });
+
+    return () => {
+      socket.disconnect();
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    };
+  }, [user?.id, selectedConversationId]);
 
   useEffect(() => {
     if (selectedConversationId && socketRef.current) {
       socketRef.current.emit("join_conversation", selectedConversationId);
+      // Mark messages as read when viewing this conversation
+      if (user?.id) {
+        socketRef.current.emit("mark_read", { conversationId: selectedConversationId, userId: user.id });
+      }
     }
-  }, [selectedConversationId]);
+  }, [selectedConversationId, user?.id]);
 
   useEffect(() => {
     if (!conversations) return;

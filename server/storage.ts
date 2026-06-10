@@ -60,6 +60,7 @@ export interface IStorage {
   getUserConversations(userId: string): Promise<Conversation[]>;
   sendMessage(message: InsertMessage): Promise<Message>;
   getConversationMessages(conversationId: string): Promise<Message[]>;
+  markMessagesAsRead(conversationId: string, userId: string): Promise<number>;
   
   // Verification operations
   getFreelancerVerification(freelancerId: string): Promise<any>;
@@ -411,6 +412,20 @@ class DatabaseStorage implements IStorage {
     return db.select().from(messages)
       .where(eq(messages.conversationId, conversationId))
       .orderBy(messages.createdAt);
+  }
+
+  async markMessagesAsRead(conversationId: string, userId: string): Promise<number> {
+    const result = await db.update(messages)
+      .set({ isRead: true })
+      .where(
+        and(
+          eq(messages.conversationId, conversationId),
+          eq(messages.isRead, false),
+          sql`${messages.senderId} != ${userId}`
+        )
+      )
+      .returning();
+    return result.length;
   }
 
   // Verification operations
