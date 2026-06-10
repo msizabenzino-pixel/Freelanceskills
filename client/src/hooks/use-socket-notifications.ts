@@ -27,13 +27,18 @@ export function useSocketNotifications(userId: string | undefined) {
       setSocketConnected(false);
     });
 
-    // Listen for new message notifications
-    socket.on("notification", (data: { type: string; conversationId: string; senderId: string; preview: string; messageId: string; createdAt: string }) => {
+    // Listen for new message notifications and application status updates
+    socket.on("notification", (data: { type: string; conversationId?: string; senderId?: string; preview?: string; messageId?: string; createdAt?: string }) => {
       if (data.type === "new_message") {
         // Invalidate unread count
         queryClient.invalidateQueries({ queryKey: ["/api/conversations/unread-count"] });
         // Invalidate conversation list
         queryClient.invalidateQueries({ queryKey: ["/api/conversations"] });
+      }
+      if (data.type === "application_status") {
+        // Refresh the notification bell and unread count
+        queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/notifications/unread-count"] });
       }
     });
 

@@ -2901,6 +2901,102 @@ Respond with ONLY the JSON object, no markdown.`
     }
   });
 
+  // PATCH /api/job-applications/:id/status — client updates an applicant's status
+  app.patch("/api/job-applications/:id/status", isAuthenticated, async (req: any, res) => {
+    try {
+      const sessionUserId: string = (req.session as any).userId;
+      const { status } = req.body;
+      const validStatuses = ["reviewing", "shortlisted", "interview", "offer", "rejected", "hired"];
+      if (!status || !validStatuses.includes(status)) {
+        return res.status(400).json({ message: "Invalid status. Must be one of: " + validStatuses.join(", ") });
+      }
+
+      const { db } = await import("./db");
+      const { jobApplications, jobs } = await import("../shared/models/jobs");
+      const { eq } = await import("drizzle-orm");
+
+      const [application] = await db.select().from(jobApplications)
+        .where(eq(jobApplications.id, req.params.id));
+
+      if (!application) {
+        return res.status(404).json({ message: "Application not found" });
+      }
+
+      // Prevent the applicant from changing their own status via this endpoint
+      if (application.userId === sessionUserId) {
+        return res.status(403).json({ message: "Applicants cannot change their own application status using this endpoint" });
+      }
+
+      // Authorization: verify the caller is the client who posted the job.
+      // jobApplications.jobId links to the PostgreSQL jobs table (jobs.clientId).
+      // If the jobId is missing, empty, or does not resolve to a job owned by the caller,
+      // we deny the request — we cannot confirm ownership.
+      if (!application.jobId) {
+        return res.status(403).json({ message: "Cannot verify job ownership for this application" });
+      }
+
+      const [job] = await db.select({ clientId: jobs.clientId })
+        .from(jobs)
+        .where(eq(jobs.id, application.jobId));
+
+      if (!job || job.clientId !== sessionUserId) {
+        return res.status(403).json({ message: "You are not authorized to update this application" });
+      }
+
+      // Only update (and notify) when the status is actually changing
+      if (application.status === status) {
+        return res.json(application);
+      }
+
+      const updated = await storage.updateJobApplication(req.params.id, { status });
+      if (!updated) return res.status(404).json({ message: "Application not found" });
+
+      // Send in-app notification for meaningful status changes
+      const notifyStatuses = ["reviewing", "interview", "offer"];
+      if (notifyStatuses.includes(status)) {
+        const statusMessages: Record<string, { title: string; message: string }> = {
+          reviewing: {
+            title: "Your application is being reviewed",
+            message: `Great news! A client is reviewing your application for "${application.jobTitle}". Keep an eye on updates.`,
+          },
+          interview: {
+            title: "Interview invitation!",
+            message: `Congratulations! Your application for "${application.jobTitle}" has progressed to the interview stage.`,
+          },
+          offer: {
+            title: "You have an offer!",
+            message: `Amazing news! You've received an offer for "${application.jobTitle}". Check your applications for details.`,
+          },
+        };
+
+        const { title, message } = statusMessages[status];
+
+        try {
+          const notification = await storage.createNotification({
+            userId: application.userId,
+            type: "application_status",
+            title,
+            message,
+            link: "/my-applications",
+          });
+
+          const { emitToUser } = await import("./socket");
+          emitToUser(application.userId, "notification", {
+            ...notification,
+            type: "application_status",
+          });
+        } catch (notifError) {
+          console.error("Failed to send application status notification:", notifError);
+        }
+      }
+
+      res.json(updated);
+    } catch (error) {
+      console.error("Error updating application status:", error);
+      res.status(500).json({ message: "Failed to update application status" });
+    }
+  });
+
   // ── User Notifications (non-admin) ─────────────────────────────────────────
   // IMPORTANT: These must come BEFORE registerNotificationsRoutes() registration
   // so they take precedence over any admin-only overlapping paths.
