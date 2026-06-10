@@ -320,7 +320,7 @@ Respond ONLY with a valid JSON array. No markdown, no preamble. No explanation.
 Format: [{"title":"...","company":"...","description":"...","requirements":"...","skills":"skill1,skill2,skill3,skill4,skill5","salaryMin":${minSal},"salaryMax":${maxSal},"isUrgent":false,"companySize":"medium (51-200)","beeLevel":"Level 2"}]`;
 
   const resp = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+    model: "gpt-5-mini",
     messages: [{ role: "user", content: prompt }],
     temperature: 0.85,
     max_tokens: 2500,

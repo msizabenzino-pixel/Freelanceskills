@@ -1369,7 +1369,7 @@ Guidelines:
           "Authorization": `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: "gpt-4o-mini",
+          model: "gpt-5-mini",
           messages,
           temperature: 0.7,
         }),
@@ -1818,7 +1818,7 @@ User: ${message}`;
           "Authorization": `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: "gpt-4o-mini",
+          model: "gpt-5-mini",
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: message }
@@ -2350,7 +2350,7 @@ User: ${message}`;
         baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
       });
       const response = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: "gpt-5-mini",
         messages: [
           {
             role: "system",
@@ -2627,7 +2627,7 @@ User: ${message}`;
       });
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: "gpt-5-mini",
         messages: [
           {
             role: "system",
@@ -2698,7 +2698,7 @@ Respond with ONLY the JSON object, no markdown.`
           - experienceLevel (string - "entry" | "intermediate" | "senior" | "executive")`;
 
           const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: "gpt-5-mini",
             messages: [
               { role: "system", content: seedPrompt },
               { role: "user", content: "Source 20 fresh global job listings across multiple categories and locations as of today." }
@@ -2777,7 +2777,7 @@ Respond with ONLY the JSON object, no markdown.`
       - experienceLevel (string - "entry" | "intermediate" | "senior" | "executive")`;
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: "gpt-5-mini",
         messages: [
           {
             role: "system",
@@ -3098,7 +3098,7 @@ Never make up information. If unsure, say "Let me check the lesson content" and 
           "Authorization": `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: "gpt-4o-mini",
+          model: "gpt-5-mini",
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: message },
@@ -3208,7 +3208,7 @@ Never make up information. If unsure, say "Let me check the lesson content" and 
       });
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: "gpt-5-mini",
         messages: [
           {
             role: "system",
@@ -3253,7 +3253,7 @@ My name: ${userName || 'Candidate'}`
       const requestedTypes = types?.length > 0 ? types.join(", ") : "jobs, apprenticeships, bursaries, learnerships, internships, graduate programmes";
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: "gpt-5-mini",
         messages: [
           {
             role: "system",
@@ -4186,7 +4186,7 @@ Be professional, helpful, concise. Use South African English and Rand (R).`;
       const response = await fetch(`${baseUrl}/chat/completions`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
-        body: JSON.stringify({ model: "gpt-4o-mini", messages, temperature: 0.7 }),
+        body: JSON.stringify({ model: "gpt-5-mini", messages, temperature: 0.7 }),
       });
       if (!response.ok) throw new Error("AI API error");
       const data = await response.json();
@@ -7211,7 +7211,7 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
         const response = await fetch(`${baseUrl}/chat/completions`, {
           method: "POST",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
-          body: JSON.stringify({ model: "gpt-4o-mini", messages, temperature: 0.75, max_tokens: 1200 }),
+          body: JSON.stringify({ model: "gpt-5-mini", messages, temperature: 0.75, max_tokens: 1200 }),
         });
 
         if (!response.ok) {
@@ -7382,7 +7382,7 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
           const response = await fetch(`${baseUrl}/chat/completions`, {
             method: "POST",
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
-            body: JSON.stringify({ model: "gpt-4o-mini", messages: [{ role: "system", content: systemPrompt }, { role: "user", content: input }], temperature: 0.7, max_tokens: 800 }),
+            body: JSON.stringify({ model: "gpt-5-mini", messages: [{ role: "system", content: systemPrompt }, { role: "user", content: input }], temperature: 0.7, max_tokens: 800 }),
           });
           const data: any = await response.json();
           res.json({ result: data.choices?.[0]?.message?.content || "Sub-agent did not respond.", agent: agentName });
@@ -7673,7 +7673,7 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
         ].join("\n");
 
         const completion = await openai.chat.completions.create({
-          model: "gpt-4o-mini",
+          model: "gpt-5-mini",
           messages: [
             { role: "system", content: systemPrompt },
             {
@@ -8446,7 +8446,7 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
         body: JSON.stringify({
-          model: "gpt-4o-mini",
+          model: "gpt-5-mini",
           messages: [
             {
               role: "system",

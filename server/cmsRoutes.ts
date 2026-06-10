@@ -49,7 +49,7 @@ async function callOpenAI(prompt: string, systemPrompt: string, maxTokens = 900)
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
     body: JSON.stringify({
-      model: "gpt-4o-mini",
+      model: "gpt-5-mini",
       max_tokens: maxTokens,
       messages: [
         { role: "system", content: systemPrompt },

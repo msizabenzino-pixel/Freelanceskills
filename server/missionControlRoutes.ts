@@ -337,10 +337,10 @@ export async function registerMissionControlRoutes(app: Express, _isAuth: any) {
         ...history.slice(-6),
         { role: "user", content: message },
       ];
-      const resp = await client.chat.completions.create({ model: "gpt-4o-mini", messages, response_format: { type: "json_object" }, temperature: 0.7, max_tokens: 800 });
+      const resp = await client.chat.completions.create({ model: "gpt-5-mini", messages, response_format: { type: "json_object" }, temperature: 0.7, max_tokens: 800 });
       const raw = resp.choices[0].message.content || "{}";
       const parsed = JSON.parse(raw);
-      res.json({ ...parsed, tokens: resp.usage?.total_tokens, model: "gpt-4o-mini" });
+      res.json({ ...parsed, tokens: resp.usage?.total_tokens, model: "gpt-5-mini" });
     } catch (e: any) {
       res.json({ answer: "I'm the FreelanceSkills Mission Control AI. I have context on all 33 departments. " + (e.message?.includes("key") ? "AI temporarily unavailable." : `Error: ${e.message}`), category: "system", actionableSteps: [], relatedDepts: [], urgency: "low" });
     }

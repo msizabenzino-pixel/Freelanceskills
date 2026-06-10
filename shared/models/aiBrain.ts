@@ -26,7 +26,7 @@ export const aiAgents = pgTable("ai_agents", {
   name: varchar("name", { length: 64 }).notNull(),
   specialization: varchar("specialization", { length: 64 }).notNull(),
   description: text("description"),
-  model: varchar("model", { length: 64 }).default("gpt-4o-mini"),
+  model: varchar("model", { length: 64 }).default("gpt-5-mini"),
   status: varchar("status", { length: 16 }).default("online"),
   healthScore: real("health_score").default(100),
   totalInferences: integer("total_inferences").default(0),

@@ -7,7 +7,7 @@ async function aiChat(systemPrompt: string, messages: { role: string; content: s
   const response = await fetch(`${AI_BASE_URL()}/chat/completions`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "Authorization": `Bearer ${AI_API_KEY()}` },
-    body: JSON.stringify({ model: "gpt-4o-mini", messages: [{ role: "system", content: systemPrompt }, ...messages], temperature }),
+    body: JSON.stringify({ model: "gpt-5-mini", messages: [{ role: "system", content: systemPrompt }, ...messages], temperature }),
   });
   if (!response.ok) throw new Error(`AI API error: ${response.status}`);
   const data = await response.json();

@@ -72,7 +72,7 @@ from langchain_openai import ChatOpenAI
 from langchain.agents import create_react_agent, AgentExecutor
 from langchain_community.tools import DuckDuckGoSearchRun
 
-llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+llm = ChatOpenAI(model="gpt-5-mini", temperature=0)
 tools = [DuckDuckGoSearchRun()]
 agent = create_react_agent(llm, tools, prompt)
 executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
@@ -2676,7 +2676,7 @@ guard = gd.Guard.from_pydantic(
 result = guard(
     openai.chat.completions.create,
     prompt_params={"customer_query": "How do I cancel my account?"},
-    model="gpt-4o-mini"
+    model="gpt-5-mini"
 )
 
 # Langfuse: Observability for LLM applications
@@ -5838,7 +5838,7 @@ Never break character. SA slang and cultural references are appropriate.
 """
         
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-5-mini",
             messages=[
                 {"role": "system", "content": context},
                 *[{"role": "user" if i % 2 == 0 else "assistant", "content": m} 

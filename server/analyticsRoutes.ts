@@ -523,7 +523,7 @@ export function registerAnalyticsRoutes(app: Express, isAuthenticated: any) {
     const r = await fetch(`${AI_URL()}/chat/completions`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "Authorization": `Bearer ${AI_KEY()}` },
-      body: JSON.stringify({ model: "gpt-4o-mini", messages: [{ role: "system", content: prompt }, { role: "user", content: user }], temperature: json ? 0.2 : 0.6 }),
+      body: JSON.stringify({ model: "gpt-5-mini", messages: [{ role: "system", content: prompt }, { role: "user", content: user }], temperature: json ? 0.2 : 0.6 }),
     });
     if (!r.ok) throw new Error(`AI error ${r.status}`);
     const d = await r.json();

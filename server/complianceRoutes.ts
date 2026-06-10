@@ -86,7 +86,7 @@ function calcSlaDeadline(jurisdiction: string, submittedAt: Date = new Date()): 
 async function openAiCall(prompt: string): Promise<string> {
   const { default: OpenAI } = await import("openai");
   const client = new OpenAI({ baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL, apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY });
-  const resp = await client.chat.completions.create({ model: "gpt-4o-mini", messages: [{ role: "user", content: prompt }], response_format: { type: "json_object" }, temperature: 0.3 });
+  const resp = await client.chat.completions.create({ model: "gpt-5-mini", messages: [{ role: "user", content: prompt }], response_format: { type: "json_object" }, temperature: 0.3 });
   return resp.choices[0].message.content || "{}";
 }
 

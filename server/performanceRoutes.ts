@@ -557,7 +557,7 @@ function startBackgroundLoops() {
       const apiDur = snap.apiP50 + Math.floor(Math.random() * 80);
       recordSpan({ traceId: trId, spanId: trId.slice(0, 8), service: "express-api", op: `GET /api/${["proposals", "ai/swarm", "orders", "finance"][Math.floor(Math.random() * 4)]}`, ts: Date.now(), duration: apiDur, status: Math.random() < 0.02 ? "error" : "ok", tags: { corrId: trId.slice(0, 8), host: "fsl-api-1" }, businessContext: ["proposal ranking", "order escrow", "AI matching", "payment"][Math.floor(Math.random() * 4)] });
       synthChildSpan(trId, "postgresql", "SELECT proposals", snap.dbQueryAvgMs + Math.floor(Math.random() * 30), "ok", { table: "proposals", rows: String(Math.floor(Math.random() * 500)) });
-      if (Math.random() < 0.4) synthChildSpan(trId, "openai", "chat.completions", aiMs + Math.floor(Math.random() * 200), "ok", { model: "gpt-4o-mini", tokens: String(Math.floor(Math.random() * 800 + 100)) });
+      if (Math.random() < 0.4) synthChildSpan(trId, "openai", "chat.completions", aiMs + Math.floor(Math.random() * 200), "ok", { model: "gpt-5-mini", tokens: String(Math.floor(Math.random() * 800 + 100)) });
       if (Math.random() < 0.2) synthChildSpan(trId, "payfast", "payment.verify", snap.paymentGatewayMs + Math.floor(Math.random() * 100), "ok", { txId: uuidv4().slice(0, 8) });
     }
   }, 10000);
@@ -1385,10 +1385,10 @@ export async function registerPerformanceRoutes(app: Express, _isAuth: any) {
     try {
       const { default: OpenAI } = await import("openai");
       const client = new OpenAI({ baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL, apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY });
-      const resp = await client.chat.completions.create({ model: "gpt-4o-mini", messages: [{ role: "user", content: prompt }], response_format: { type: "json_object" }, temperature: 0.4 });
+      const resp = await client.chat.completions.create({ model: "gpt-5-mini", messages: [{ role: "user", content: prompt }], response_format: { type: "json_object" }, temperature: 0.4 });
       const raw = resp.choices[0].message.content || "{}";
       const parsed = JSON.parse(raw);
-      res.json({ anomaly: target, ...parsed, model: "gpt-4o-mini", generatedAt: new Date().toISOString() });
+      res.json({ anomaly: target, ...parsed, model: "gpt-5-mini", generatedAt: new Date().toISOString() });
     } catch (err: any) {
       res.json({ anomaly: target, explanation: `Anomaly in ${target.metric} (z=${target.zScore?.toFixed(2)}): value ${target.value} is ${target.zScore && target.zScore > 0 ? "above" : "below"} the 3-sigma threshold. Likely cause: ${target.metric.includes("P99") ? "slow DB query or external API call" : target.metric.includes("heap") ? "memory leak or large object allocation" : target.metric.includes("error") ? "upstream service degradation" : "traffic spike or resource exhaustion"}.`, recommendations: ["Check /api/performance/slow-queries for hot endpoints", "Review /api/performance/root-cause for business context", "Acknowledge anomaly and set alert rule to notify on next occurrence"], businessImpact: "Estimating R" + Math.round(snap.apiErrorRate * 12 * 4500) + "/hr revenue at risk", confidence: 72, fallback: true, error: err.message });
     }

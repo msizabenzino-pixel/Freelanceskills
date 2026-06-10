@@ -70,7 +70,7 @@ async function callOpenAI(prompt: string, systemPrompt: string, maxTokens = 600)
   const r = await fetch(`${baseURL}/chat/completions`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
-    body: JSON.stringify({ model: "gpt-4o-mini", messages: [{ role: "system", content: systemPrompt }, { role: "user", content: prompt }], max_tokens: maxTokens }),
+    body: JSON.stringify({ model: "gpt-5-mini", messages: [{ role: "system", content: systemPrompt }, { role: "user", content: prompt }], max_tokens: maxTokens }),
   });
   const d: any = await r.json();
   return d.choices?.[0]?.message?.content || "";
