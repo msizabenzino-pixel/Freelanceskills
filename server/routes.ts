@@ -479,6 +479,7 @@ export async function registerRoutes(
           ready: false,
           profileStatus: "none",
           score: 0,
+          identityVerified: false,
           nextAction: "create_profile",
           message: "You don't have a profile yet. Build your AI profile in 60 seconds to start applying.",
           missingItems: [
@@ -541,6 +542,7 @@ export async function registerRoutes(
         ready,
         profileStatus: isPublished ? "published" : (profile.title || profile.bio ? "draft" : "empty"),
         score,
+        identityVerified: Boolean(profile.identityVerified),
         nextAction,
         message,
         missingItems: missing,

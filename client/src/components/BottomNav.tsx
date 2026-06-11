@@ -19,7 +19,6 @@ const HIDDEN_PREFIXES = [
   "/cv-upload",
   "/profile-builder",
   "/client-onboarding",
-  "/gig",
 ];
 
 interface Tab {
@@ -70,11 +69,11 @@ export function BottomNav() {
     refetchInterval: 60000,
   });
 
-  const { data: readiness } = useQuery<{ score: number }>({
+  const { data: readiness } = useQuery<{ score: number; identityVerified?: boolean }>({
     queryKey: ["/api/profile/check-readiness"],
     queryFn: async () => {
       const res = await apiFetch("/api/profile/check-readiness");
-      if (!res.ok) return { score: 100 };
+      if (!res.ok) return { score: 100, identityVerified: true };
       return res.json();
     },
     enabled: authed && !hidden,
@@ -86,7 +85,12 @@ export function BottomNav() {
   const pendingOrders = authed && Array.isArray(bookings)
     ? bookings.filter((b) => b?.status === "pending").length
     : 0;
-  const showProfileDot = authed && typeof readiness?.score === "number" && readiness.score < 60;
+  // Spec C10: red dot when profile completion < 60% OR identity unverified.
+  const showProfileDot =
+    authed &&
+    readiness != null &&
+    ((typeof readiness.score === "number" && readiness.score < 60) ||
+      readiness.identityVerified === false);
 
   const badgeFor = (label: string): { count?: number; dot?: boolean } => {
     if (label === "Messages" && unreadCount > 0) return { count: unreadCount };

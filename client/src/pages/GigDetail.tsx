@@ -382,10 +382,10 @@ export default function GigDetail() {
         </section>
       </main>
 
-      {/* Sticky Hire Now bar */}
+      {/* Sticky Hire Now bar — sits above the mobile BottomNav (md:hidden);
+          drops to the very bottom on md+ where the nav is hidden. */}
       <div
-        className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#1F2937] bg-[#0D1117]"
-        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+        className="fixed left-0 right-0 z-40 border-t border-[#1F2937] bg-[#0D1117] bottom-[calc(60px_+_env(safe-area-inset-bottom))] md:bottom-0 pb-0 md:pb-[env(safe-area-inset-bottom)]"
         data-testid="hire-bar"
       >
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
