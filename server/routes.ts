@@ -712,12 +712,17 @@ export async function registerRoutes(
           : null;
       }
 
-      // Update firstName/lastName in users table if provided
-      if (firstName !== undefined || lastName !== undefined) {
-        try {
-          const { db: _db } = await import("./db");
-          const { users: usersTable } = await import("../shared/models/auth");
-          await _db
+      // ATOMIC: wrap the users-table name write and the profiles-table write in a
+      // single transaction so a crash between them can't leave the two tables out
+      // of sync (e.g. names updated but profile not, or vice versa).
+      const { db: _db } = await import("./db");
+      const { users: usersTable } = await import("../shared/models/auth");
+      const { profiles: profilesTable } = await import("@shared/schema");
+      const { eq } = await import("drizzle-orm");
+
+      const profile = await _db.transaction(async (tx) => {
+        if (firstName !== undefined || lastName !== undefined) {
+          await tx
             .update(usersTable)
             .set({
               ...(firstName !== undefined && { firstName: String(firstName).slice(0, 50) || null }),
@@ -725,20 +730,21 @@ export async function registerRoutes(
               updatedAt: new Date(),
             })
             .where(eq(usersTable.id, userId));
-        } catch (nameErr) {
-          console.warn("[profile] name update non-fatal:", nameErr);
         }
-      }
 
-      const profile = await storage.updateProfile(userId, safeData);
+        const [updated] = await tx
+          .update(profilesTable)
+          .set({ ...safeData, updatedAt: new Date() })
+          .where(eq(profilesTable.userId, userId))
+          .returning();
+        return updated;
+      });
 
       if (!profile) {
         return res.status(404).json({ message: "Profile not found" });
       }
 
       // CRITICAL: Return merged profile + users shape so frontend has firstName/lastName
-      const { db: _db } = await import("./db");
-      const { users: usersTable } = await import("../shared/models/auth");
       const { inArray } = await import("drizzle-orm");
       const userRows = await _db
         .select({ firstName: usersTable.firstName, lastName: usersTable.lastName, profileImageUrl: usersTable.profileImageUrl })
@@ -2546,37 +2552,12 @@ User: ${message}`;
       const userId = (req.session as any).userId;
       if (!userId) return res.status(401).json({ success: false, message: "Session expired — please sign in again." });
 
-      // CRITICAL: Ensure user row exists BEFORE any profile operation.
-      try {
-        const { db: _db } = await import("./db");
-        const { users: usersTable } = await import("../shared/models/auth");
-        await _db.insert(usersTable).values({ id: userId }).onConflictDoNothing();
-      } catch (_) {}
-
       const {
         bio, title, skills, hourlyRate, location, isPro,
         photoUrl, certifications, languages, linkedinUrl, githubUrl, portfolioUrl,
         availability, availableNow, tagline, experienceLevel, category,
         portfolioProjects, firstName, lastName,
       } = req.body;
-
-      // Update firstName/lastName in users table if provided
-      if (firstName || lastName) {
-        try {
-          const { db: _db } = await import("./db");
-          const { users: usersTable } = await import("../shared/models/auth");
-          await _db
-            .update(usersTable)
-            .set({
-              ...(firstName !== undefined && { firstName: String(firstName).slice(0, 50) || null }),
-              ...(lastName !== undefined && { lastName: String(lastName).slice(0, 50) || null }),
-              updatedAt: new Date(),
-            })
-            .where(eq(usersTable.id, userId));
-        } catch (nameErr) {
-          console.warn("[go-live] name update non-fatal:", nameErr);
-        }
-      }
 
       const saveData: any = {
         bio: bio || null,
@@ -2605,18 +2586,53 @@ User: ${message}`;
           : null,
       };
 
-      const existing = await storage.getProfile(userId);
-      let profile: any;
-
-      if (existing) {
-        profile = await storage.updateProfile(userId, saveData);
-      } else {
-        profile = await storage.createProfile({ ...saveData, userId });
-      }
-
-      // Return merged shape with names from users table
+      // ATOMIC: ensure the user row exists, update names, and upsert the profile
+      // all in a single transaction so a crash mid-way can't desync the users and
+      // profiles tables (the root cause of "names disappearing" bugs).
       const { db: __db } = await import("./db");
       const { users: usersT } = await import("../shared/models/auth");
+      const { profiles: profilesTable } = await import("@shared/schema");
+      const { eq } = await import("drizzle-orm");
+
+      let profile: any;
+      await __db.transaction(async (tx) => {
+        // Ensure user row exists BEFORE any profile operation (prevents FK error).
+        await tx.insert(usersT).values({ id: userId }).onConflictDoNothing();
+
+        // Update firstName/lastName in users table if provided.
+        if (firstName || lastName) {
+          await tx
+            .update(usersT)
+            .set({
+              ...(firstName !== undefined && { firstName: String(firstName).slice(0, 50) || null }),
+              ...(lastName !== undefined && { lastName: String(lastName).slice(0, 50) || null }),
+              updatedAt: new Date(),
+            })
+            .where(eq(usersT.id, userId));
+        }
+
+        const [existing] = await tx
+          .select({ id: profilesTable.id })
+          .from(profilesTable)
+          .where(eq(profilesTable.userId, userId));
+
+        if (existing) {
+          const [updated] = await tx
+            .update(profilesTable)
+            .set({ ...saveData, updatedAt: new Date() })
+            .where(eq(profilesTable.userId, userId))
+            .returning();
+          profile = updated;
+        } else {
+          const [created] = await tx
+            .insert(profilesTable)
+            .values({ ...saveData, userId })
+            .returning();
+          profile = created;
+        }
+      });
+
+      // Return merged shape with names from users table
       const userRows = await __db
         .select({ firstName: usersT.firstName, lastName: usersT.lastName, profileImageUrl: usersT.profileImageUrl })
         .from(usersT)
