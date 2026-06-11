@@ -399,7 +399,7 @@ export default function CVUpload() {
           tagline: data.tagline,
           experienceLevel: data.experienceLevel,
           category: data.category,
-          portfolioProjectsJson: portfolioProjects.length > 0 ? JSON.stringify(portfolioProjects) : null,
+          portfolioProjects: portfolioProjects.length > 0 ? portfolioProjects : null,
         },
       });
     },
