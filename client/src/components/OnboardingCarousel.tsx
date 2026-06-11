@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import {
   ChevronRight, ChevronLeft, Check, Briefcase, Users, Zap, Shield,
   DollarSign, Tag, Star, Building2, Code2, Palette, Megaphone,
-  Database, Wrench, BookOpen, X, Link as LinkIcon,
+  Database, Wrench, BookOpen, X, Link as LinkIcon, MapPin, User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
@@ -75,7 +75,7 @@ const HIRE_TYPES = [
 const AUTH_PATHS = ["/login", "/auth", "/onboarding", "/profile-builder", "/signup"];
 const HOME_ONLY = true; // Only show carousel on the home page ("/"), never block content pages
 
-type Step = "slides" | "role" | "skills" | "rate" | "portfolio" | "hire_type" | "budget";
+type Step = "slides" | "role" | "skills" | "rate" | "location" | "bio" | "portfolio" | "verify" | "hire_type" | "budget";
 
 export function OnboardingCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -91,6 +91,9 @@ export function OnboardingCarousel() {
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [customSkill, setCustomSkill] = useState("");
   const [selectedRate, setSelectedRate] = useState<string | null>(null);
+  const [location, setLocation] = useState("");
+  const [bio, setBio] = useState("");
+  const [headline, setHeadline] = useState("");
   const [portfolioUrls, setPortfolioUrls] = useState<string[]>(["", "", ""]);
 
   // Client state
@@ -181,6 +184,9 @@ export function OnboardingCarousel() {
     if (selectedRole) localStorage.setItem("user_role_preference", selectedRole);
     if (selectedSkills.length) localStorage.setItem("onboarding_skills", JSON.stringify(selectedSkills));
     if (selectedRate) localStorage.setItem("onboarding_rate", selectedRate);
+    if (location) localStorage.setItem("onboarding_location", location);
+    if (bio) localStorage.setItem("onboarding_bio", bio);
+    if (headline) localStorage.setItem("onboarding_headline", headline);
     const filledUrls = portfolioUrls.filter(u => u.trim());
     if (filledUrls.length) localStorage.setItem("onboarding_portfolio", JSON.stringify(filledUrls));
 
@@ -192,6 +198,9 @@ export function OnboardingCarousel() {
           role: selectedRole || "client",
           skills: selectedSkills,
           rateMinCents: selectedRate ? Number(selectedRate) : 0,
+          location,
+          bio,
+          headline,
           portfolioUrls: filledUrls,
         });
       } catch (_) {
@@ -217,6 +226,10 @@ export function OnboardingCarousel() {
     } else if (step === "skills") {
       setStep("rate");
     } else if (step === "rate") {
+      setStep("location");
+    } else if (step === "location") {
+      setStep("bio");
+    } else if (step === "bio") {
       setStep("portfolio");
     } else if (step === "portfolio") {
       handleComplete();
@@ -231,7 +244,9 @@ export function OnboardingCarousel() {
     if (step === "role") { setStep("slides"); setCurrentSlide(slides.length - 1); }
     else if (step === "skills") setStep("role");
     else if (step === "rate") setStep("skills");
-    else if (step === "portfolio") setStep("rate");
+    else if (step === "location") setStep("rate");
+    else if (step === "bio") setStep("location");
+    else if (step === "portfolio") setStep("bio");
     else if (step === "hire_type") setStep("role");
     else if (step === "budget") setStep("hire_type");
     else if (step === "slides" && currentSlide > 0) setCurrentSlide(p => p - 1);
@@ -242,6 +257,8 @@ export function OnboardingCarousel() {
     if (step === "role") return !!selectedRole;
     if (step === "skills") return selectedSkills.length >= 1;
     if (step === "rate") return !!selectedRate;
+    if (step === "location") return location.length > 0;
+    if (step === "bio") return headline.length > 0;
     if (step === "portfolio") return true;
     if (step === "hire_type") return !!selectedHireType;
     if (step === "budget") return !!selectedBudget;
@@ -249,7 +266,7 @@ export function OnboardingCarousel() {
   };
 
   // Calculate progress dot count + active index
-  const FREELANCER_STEPS: Step[] = ["slides", "role", "skills", "rate", "portfolio"];
+  const FREELANCER_STEPS: Step[] = ["slides", "role", "skills", "rate", "location", "bio", "portfolio"];
   const CLIENT_STEPS: Step[] = ["slides", "role", "hire_type", "budget"];
   const allSteps = selectedRole === "client" ? CLIENT_STEPS : FREELANCER_STEPS;
   const totalDots = slides.length + (allSteps.length - 1);
@@ -454,6 +471,78 @@ export function OnboardingCarousel() {
               )}
 
               {/* ── Freelancer: portfolio ────────────────── */}
+              {step === "location" && (
+                <motion.div
+                  key="location-step"
+                  initial={{ opacity: 0, x: 24 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -24 }}
+                  transition={{ duration: 0.25 }}
+                  data-testid="onboarding-location-step"
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <MapPin className="w-5 h-5 text-emerald-500" />
+                    <h2 className="text-xl font-bold">Where are you based?</h2>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-6">Clients prefer local talent. You can work remotely too.</p>
+                  <div className="space-y-3">
+                    {["Johannesburg", "Cape Town", "Durban", "Pretoria", "Port Elizabeth", "Bloemfontein", "Remote / Anywhere"].map(city => (
+                      <button
+                        key={city}
+                        onClick={() => setLocation(city)}
+                        className={cn(
+                          "w-full flex items-center gap-3 p-3 rounded-xl border-2 transition-all text-left hover:border-primary hover:bg-primary/5",
+                          location === city ? "border-primary bg-primary/10" : "border-border"
+                        )}
+                      >
+                        <MapPin className={cn("w-4 h-4", location === city ? "text-primary" : "text-muted-foreground")} />
+                        <span className="text-sm font-medium">{city}</span>
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
+              {step === "bio" && (
+                <motion.div
+                  key="bio-step"
+                  initial={{ opacity: 0, x: 24 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -24 }}
+                  transition={{ duration: 0.25 }}
+                  data-testid="onboarding-bio-step"
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <User className="w-5 h-5 text-emerald-500" />
+                    <h2 className="text-xl font-bold">Tell clients about yourself</h2>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-6">A strong headline and bio get you 3x more invites.</p>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">Professional Headline</label>
+                      <Input
+                        placeholder="e.g. Senior React Developer & UI Designer"
+                        value={headline}
+                        onChange={e => setHeadline(e.target.value)}
+                        className="h-10"
+                        data-testid="input-headline"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">Bio (2+ sentences)</label>
+                      <textarea
+                        value={bio}
+                        onChange={e => setBio(e.target.value)}
+                        placeholder="I help startups build fast, beautiful web apps..."
+                        className="w-full h-24 rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
+                        data-testid="input-bio"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">{bio.length} characters</p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
               {step === "portfolio" && (
                 <motion.div
                   key="portfolio-step"

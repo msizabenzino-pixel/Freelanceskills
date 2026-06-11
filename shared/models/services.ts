@@ -14,6 +14,8 @@ export const servicePackages = pgTable("service_packages", {
   price: integer("price").notNull(),
   duration: text("duration"),
   isActive: boolean("is_active").notNull().default(true),
+  isPromoted: boolean("is_promoted").notNull().default(false),
+  promotedBid: integer("promoted_bid").default(0),
   bookingCount: integer("booking_count").notNull().default(0),
   deletedAt: timestamp("deleted_at"),
   createdAt: timestamp("created_at").defaultNow(),
@@ -77,6 +79,8 @@ export const insertServicePackageSchema = createInsertSchema(servicePackages).om
   id: true,
   createdAt: true,
   bookingCount: true,
+  isPromoted: true,
+  promotedBid: true,
 });
 
 export const insertBookingSchema = createInsertSchema(bookings).omit({

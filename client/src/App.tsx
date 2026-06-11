@@ -13,6 +13,7 @@ import { CommandPalette } from "@/components/CommandPalette";
 import { OfflineScreen } from "@/components/OfflineScreen";
 import { AuthGuard } from "@/components/AuthGuard";
 import { FloatingActionButton } from "@/components/FloatingActionButton";
+import { TrustBar } from "@/components/TrustBar";
 import NotFound from "@/pages/not-found";
 import GlobalAiAssistant from "@/components/GlobalAiAssistant";
 import { RequireAdmin } from "@/components/admin/RequireAdmin";
@@ -98,10 +99,20 @@ const AdminAuditLogs = lazy(() => import("@/pages/admin/AuditLogs"));
 const AdminSecurity = lazy(() => import("@/pages/admin/Security"));
 const PaymentProtection = lazy(() => import("@/pages/PaymentProtection"));
 const WhyUs = lazy(() => import("@/pages/WhyUs"));
+const Categories = lazy(() => import("@/pages/Categories"));
+const CategoryDetail = lazy(() => import("@/pages/CategoryDetail"));
+const GigDetail = lazy(() => import("@/pages/GigDetail"));
+const ClientOnboarding = lazy(() => import("@/pages/ClientOnboarding"));
+const SellerLevel = lazy(() => import("@/pages/SellerLevel"));
+const SEOLandingPage = lazy(() => import("@/pages/SEOLandingPage"));
+const PromotedGigs = lazy(() => import("@/pages/PromotedGigs"));
+const WhatsAppNotifications = lazy(() => import("@/pages/WhatsAppNotifications"));
+const ReferralProgram = lazy(() => import("@/pages/ReferralProgram"));
 const AdminSystemSettings = lazy(() => import("@/pages/admin/SystemSettings"));
 const AdminMonitoring = lazy(() => import("@/pages/admin/Monitoring"));
 const AdminAiTools = lazy(() => import("@/pages/admin/AiTools"));
 const AdminMissionControl = lazy(() => import("@/pages/admin/MissionControl"));
+const ProfileCompletion = lazy(() => import("@/pages/ProfileCompletion"));
 
 function PageLoader() {
   return (
@@ -201,6 +212,11 @@ function Router() {
         <Route path="/pricing" component={Pricing} />
         <Route path="/freelancers" component={FindTalent} />
         <Route path="/profile/:id" component={FreelancerProfile} />
+        <Route path="/profile-completion">
+          <AuthGuard>
+            <ProfileCompletion />
+          </AuthGuard>
+        </Route>
         <Route path="/messages">
           <AuthGuard>
             <Messages />
@@ -255,6 +271,31 @@ function Router() {
         <Route path="/ai-smart-match" component={AISmartMatch} />
         <Route path="/payment-protection" component={PaymentProtection} />
         <Route path="/why-us" component={WhyUs} />
+        <Route path="/categories" component={Categories} />
+        <Route path="/categories/:rest*" component={CategoryDetail} />
+        <Route path="/gig/:id" component={GigDetail} />
+        <Route path="/client-onboarding" component={ClientOnboarding} />
+        <Route path="/seller-level">
+          <AuthGuard>
+            <SellerLevel />
+          </AuthGuard>
+        </Route>
+        <Route path="/hire/:skill/:city?" component={SEOLandingPage} />
+        <Route path="/promote-gigs">
+          <AuthGuard>
+            <PromotedGigs />
+          </AuthGuard>
+        </Route>
+        <Route path="/whatsapp-notifications">
+          <AuthGuard>
+            <WhatsAppNotifications />
+          </AuthGuard>
+        </Route>
+        <Route path="/referral">
+          <AuthGuard>
+            <ReferralProgram />
+          </AuthGuard>
+        </Route>
         {/* Alias routes for SEO / nav */}
         <Route path="/help" component={Support} />
         <Route path="/contact" component={Support} />
@@ -298,6 +339,7 @@ function App() {
             >
               Skip to main content
             </a>
+            <TrustBar />
             <Toaster />
             <CountrySelectorDialog />
             <CommandPalette open={cmdOpen} onOpenChange={setCmdOpen} />
