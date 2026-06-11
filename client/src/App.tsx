@@ -14,6 +14,7 @@ import { OfflineScreen } from "@/components/OfflineScreen";
 import { AuthGuard } from "@/components/AuthGuard";
 import { FloatingActionButton } from "@/components/FloatingActionButton";
 import { TrustBar } from "@/components/TrustBar";
+import { BottomNav } from "@/components/BottomNav";
 import NotFound from "@/pages/not-found";
 import GlobalAiAssistant from "@/components/GlobalAiAssistant";
 import { RequireAdmin } from "@/components/admin/RequireAdmin";
@@ -102,6 +103,8 @@ const WhyUs = lazy(() => import("@/pages/WhyUs"));
 const Categories = lazy(() => import("@/pages/Categories"));
 const CategoryDetail = lazy(() => import("@/pages/CategoryDetail"));
 const GigDetail = lazy(() => import("@/pages/GigDetail"));
+const Search = lazy(() => import("@/pages/Search"));
+const SearchResults = lazy(() => import("@/pages/SearchResults"));
 const ClientOnboarding = lazy(() => import("@/pages/ClientOnboarding"));
 const SellerLevel = lazy(() => import("@/pages/SellerLevel"));
 const SEOLandingPage = lazy(() => import("@/pages/SEOLandingPage"));
@@ -185,7 +188,7 @@ function Router() {
   return (
     <div
       key={location}
-      className="animate-in fade-in duration-200"
+      className="app-shell animate-in fade-in duration-200"
       style={{ willChange: "opacity" }}
     >
     <Suspense fallback={<PageLoader />}>
@@ -272,12 +275,24 @@ function Router() {
         <Route path="/payment-protection" component={PaymentProtection} />
         <Route path="/why-us" component={WhyUs} />
         <Route path="/categories" component={Categories} />
+        <Route path="/categories/:cat/:subcat" component={SearchResults} />
         <Route path="/categories/:rest*" component={CategoryDetail} />
         <Route path="/gig/:id" component={GigDetail} />
+        <Route path="/search" component={Search} />
+        <Route path="/orders">
+          <AuthGuard>
+            <Dashboard />
+          </AuthGuard>
+        </Route>
         <Route path="/client-onboarding" component={ClientOnboarding} />
         <Route path="/seller-level">
           <AuthGuard>
             <SellerLevel />
+          </AuthGuard>
+        </Route>
+        <Route path="/hire/:gigId/configure">
+          <AuthGuard>
+            <Checkout />
           </AuthGuard>
         </Route>
         <Route path="/hire/:skill/:city?" component={SEOLandingPage} />
@@ -344,6 +359,7 @@ function App() {
             <CountrySelectorDialog />
             <CommandPalette open={cmdOpen} onOpenChange={setCmdOpen} />
             <Router />
+            <BottomNav />
             <div id="floating-fab"><FloatingActionButton /></div>
             <div id="floating-support"><SupportChat /></div>
             <CookieConsent />

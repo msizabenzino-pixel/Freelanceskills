@@ -19,14 +19,7 @@ export function HorizontalCarousel({ title, seeAllLink, children, className }: H
           </Link>
         )}
       </header>
-      <div
-        className="flex overflow-x-auto scroll-snap-x mandatory gap-3 pl-4 pr-0 scrollbar-hide"
-        style={{
-          WebkitOverflowScrolling: "touch",
-          scrollbarWidth: "none",
-          msOverflowStyle: "none",
-        }}
-      >
+      <div className="carousel-container">
         {children}
       </div>
     </section>
@@ -35,10 +28,7 @@ export function HorizontalCarousel({ title, seeAllLink, children, className }: H
 
 export function CarouselCard({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <div
-      className={`flex-shrink-0 scroll-snap-start rounded-lg overflow-hidden ${className || ""}`}
-      style={{ minWidth: "68vw", maxWidth: "280px" }}
-    >
+    <div className={`carousel-card rounded-lg overflow-hidden ${className || ""}`}>
       {children}
     </div>
   );

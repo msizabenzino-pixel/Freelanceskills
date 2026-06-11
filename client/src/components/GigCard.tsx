@@ -45,7 +45,7 @@ export function GigCard({ gig, displayMode = "list", showAd, onSave, isSaved }: 
     <div
       className={cn(
         "relative bg-slate-800 rounded-lg border overflow-hidden group cursor-pointer",
-        isTopPerformer ? "border-amber-500/50" : "border-slate-700",
+        isTopPerformer ? "border-amber-600" : "border-slate-700",
         displayMode === "carousel" ? "w-full" : ""
       )}
       data-testid={`card-gig-${gig.id}`}
@@ -58,18 +58,17 @@ export function GigCard({ gig, displayMode = "list", showAd, onSave, isSaved }: 
           className="w-full h-full object-cover transition-transform group-hover:scale-105"
           loading="lazy"
         />
-        {/* Top-left badge */}
+        {/* Top-left badge — 'AD' or 'Pro', never both (AD takes priority) */}
         <div className="absolute top-2 left-2 flex gap-1.5">
-          {isAd && (
+          {isAd ? (
             <span className="px-2 py-0.5 bg-orange-600 text-white text-[10px] font-bold rounded">
               AD
             </span>
-          )}
-          {gig.isProVerified && (
+          ) : gig.isProVerified ? (
             <span className="px-2 py-0.5 bg-slate-950 border border-emerald-500 text-white text-[10px] font-bold rounded">
               PRO
             </span>
-          )}
+          ) : null}
         </div>
         {/* Save heart */}
         <button

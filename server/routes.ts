@@ -1004,6 +1004,7 @@ export async function registerRoutes(
           portfolioUrl: prof.portfolioUrl,
           linkedinUrl: prof.linkedinUrl,
           githubUrl: prof.githubUrl,
+          portfolioProjectsJson: prof.portfolioProjectsJson,
         })
         .from(sp)
         .innerJoin(prof, eq(sp.freelancerId, prof.userId))
@@ -1049,6 +1050,14 @@ export async function registerRoutes(
         portfolioUrl: row.portfolioUrl,
         linkedinUrl: row.linkedinUrl,
         githubUrl: row.githubUrl,
+        portfolioProjects: (() => {
+          try {
+            const parsed = row.portfolioProjectsJson ? JSON.parse(row.portfolioProjectsJson) : [];
+            return Array.isArray(parsed) ? parsed : [];
+          } catch {
+            return [];
+          }
+        })(),
         reviews: reviews.map((r) => ({
           id: r.id,
           rating: r.rating,

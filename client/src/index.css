@@ -514,3 +514,40 @@
   0%, 100% { box-shadow: 0 0 8px hsl(var(--accent) / 0.4); }
   50% { box-shadow: 0 0 20px hsl(var(--accent) / 0.7), 0 0 40px hsl(var(--accent) / 0.2); }
 }
+
+/* ── C06: Horizontal Scroll Carousel — Peek Pattern (FSN spec, exact) ── */
+.carousel-container {
+  display: flex;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;          /* Firefox */
+  gap: 12px;
+  padding-left: 16px;
+  padding-right: 0;               /* CRITICAL: no right padding — cards bleed to edge */
+}
+.carousel-container::-webkit-scrollbar {
+  display: none;                  /* Chrome/Safari — hide scrollbar */
+}
+.carousel-card {
+  min-width: 68vw;                /* 68% of screen = peek of next card guaranteed */
+  max-width: 280px;              /* cap on large screens */
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+/* On screens wider than 768px: show 3 cards with peek */
+@media (min-width: 768px) {
+  .carousel-card {
+    min-width: 30%;
+  }
+}
+
+/* ── C10: leave room for the fixed mobile BottomNav (60px + safe area) ── */
+.app-shell {
+  padding-bottom: calc(60px + env(safe-area-inset-bottom));
+}
+@media (min-width: 768px) {
+  .app-shell {
+    padding-bottom: 0;
+  }
+}

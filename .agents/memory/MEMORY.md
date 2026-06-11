@@ -3,3 +3,4 @@
 - [Form Data Mapping](form-data-mapping.md) — mapProfileToForm must match the API response shape exactly. If API returns firstName/lastName separately, don't split fullName.
 - [Drizzle Payload Validation](drizzle-payload.md) — PATCH/POST payloads must only contain valid DB columns. Never spread form objects (e.g., portfolioProjects array) into DB updates.
 - [Profile Endpoint Consistency](profile-endpoints.md) — All profile endpoints (GET /api/profile, GET /api/profile/:id, POST /api/profile/go-live) must return the same merged shape (profile + user data) for client consistency.
+- [service_packages schema/DB drift](service-packages-drift.md) — DB may lack is_promoted/promoted_bid cols the schema defines; full-row select from servicePackages 500s until ALTER adds them.
