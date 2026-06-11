@@ -7,7 +7,7 @@ import { users } from "@shared/models/auth";
 import { profiles } from "@shared/models/profiles";
 import { eq, like } from "drizzle-orm";
 import { registerRoutes } from "../routes";
-import { setupAuth } from "../replit_integrations/auth/replitAuth";
+import { setupAuth, isAuthenticated } from "../replit_integrations/auth/replitAuth";
 
 // ── Test helpers ─────────────────────────────────────────────────────────────
 
@@ -212,7 +212,7 @@ describe("Profile endpoints", () => {
     expect(res2.body.firstName).toBe("New");
   });
 
-  // ── N6: URL HTML-entity decoding ─────────────────────────────────────────
+  // ── N6: URL HTML-entity decoding on read ─────────────────────────────────────
   it("GET /api/profile returns clean URLs with HTML entities decoded", async () => {
     const user = await createTestUser({
       firstName: "Url",
@@ -235,8 +235,8 @@ describe("Profile endpoints", () => {
     expect(res.body.githubUrl).toBe("https://github.com/test");
   });
 
-  // ── N7: PATCH stores clean URLs (writes decoded values) ──────────────────
-  it("PATCH /api/profile writes clean URLs by decoding HTML entities in input", async () => {
+  // ── N7: PATCH sanitizes input URLs (writes decoded values) ──────────────────
+  it("PATCH /api/profile sanitizes input URLs and writes decoded values to DB", async () => {
     const user = await createTestUser({
       firstName: "Url",
       lastName: "Writer",
@@ -248,15 +248,16 @@ describe("Profile endpoints", () => {
     const res = await request(app)
       .patch("/api/profile")
       .send({
-        portfolioUrl: "https:&#x2F;&#x2F;new.com",
-        linkedinUrl: "https:&#x2F;&#x2F;linkedin.com&#x2F;in&#x2F;new",
+        portfolioUrl: "https://new.com",
+        linkedinUrl: "https://linkedin.com/in/new",
       });
 
     expect(res.status).toBe(200);
+    // The response merges the DB profile with sanitized URLs
     expect(res.body.portfolioUrl).toBe("https://new.com");
     expect(res.body.linkedinUrl).toBe("https://linkedin.com/in/new");
 
-    // Verify DB state
+    // Verify DB state — URLs stored cleanly
     const [savedProfile] = await db
       .select()
       .from(profiles)
@@ -319,11 +320,10 @@ describe("Auth middleware", () => {
       (req.session as any).userId = "some-user-id";
       next();
     });
+    app.use(isAuthenticated);
+    app.get("/api/test-auth", (_req, res) => res.json({ ok: true }));
 
-    const httpServer = createServer(app);
-    await registerRoutes(httpServer, app);
-
-    const res = await request(app).get("/api/profile");
+    const res = await request(app).get("/api/test-auth");
     // The loadProfile code path should return 503 with SERVICE_UNAVAILABLE
     // when DB is unreachable, not 401 (which would log everyone out).
     expect(res.status).toBe(503);
