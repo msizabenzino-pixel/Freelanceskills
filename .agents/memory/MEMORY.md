@@ -8,3 +8,4 @@
 - [service_packages schema/DB drift](service-packages-drift.md) — DB may lack is_promoted/promoted_bid cols the schema defines; full-row select from servicePackages 500s until ALTER adds them.
 - [AuthGuard Refresh Flash](authguard-flash.md) — Firebase onAuthStateChanged takes a moment. AuthGuard must stay in spinner until `hasResolved` is true, not redirect on brief `isAuthenticated=false` during init.
 - [Profile Cache Invalidation](profile-cache.md) — `clearProfileCache` is server-side in-memory. Must be called on every profile update (PATCH/go-live) so stale 5-min cache doesn't serve old names/portfolio.
+- [jsonText custom column](json-text-columns.md) — profiles.portfolioProjects uses a text-backed JSON Drizzle type; read/write arrays directly, never JSON.parse/stringify, no migration.

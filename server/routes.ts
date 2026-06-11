@@ -672,8 +672,8 @@ export async function registerRoutes(
         return res.json({ created: false, profile: existing });
       }
 
-      const portfolioJson = Array.isArray(portfolioUrls) && portfolioUrls.filter(Boolean).length > 0
-        ? JSON.stringify(portfolioUrls.filter(Boolean).map((url: string, i: number) => ({ id: String(i), title: "Portfolio", link: url, description: "", technologies: [] })))
+      const portfolioProjects = Array.isArray(portfolioUrls) && portfolioUrls.filter(Boolean).length > 0
+        ? portfolioUrls.filter(Boolean).map((url: string, i: number) => ({ id: String(i), title: "Portfolio", link: url, description: "", technologies: [] }))
         : null;
 
       const profile = await storage.createProfile({
@@ -683,7 +683,7 @@ export async function registerRoutes(
         skills: Array.isArray(skills) ? skills.slice(0, 10) : [],
         hourlyRate: rateMinCents && rateMinCents > 0 ? Number(rateMinCents) * 100 : null,
         publishedProfile: false,
-        ...(portfolioJson ? { portfolioProjectsJson: portfolioJson } : {}),
+        ...(portfolioProjects ? { portfolioProjects } : {}),
       } as any);
 
       res.status(201).json({ created: true, profile });
@@ -699,7 +699,6 @@ export async function registerRoutes(
       const userId = (req.session as any).userId;
       const { userId: _u, id: _i, isPro: _p, firstName, lastName, portfolioProjects, ...rawData } = req.body;
 
-      // CRITICAL: Convert portfolioProjects array → portfolioProjectsJson string
       const safeData: any = {
         ...rawData,
         ...(rawData.bio !== undefined && { bio: sanitizeText(rawData.bio, 2000) }),
@@ -707,8 +706,8 @@ export async function registerRoutes(
         ...(rawData.tagline !== undefined && { tagline: sanitizeText(rawData.tagline, 300) }),
       };
       if (portfolioProjects !== undefined) {
-        safeData.portfolioProjectsJson = Array.isArray(portfolioProjects) && portfolioProjects.length > 0
-          ? JSON.stringify(portfolioProjects)
+        safeData.portfolioProjects = Array.isArray(portfolioProjects) && portfolioProjects.length > 0
+          ? portfolioProjects
           : null;
       }
 
@@ -1027,7 +1026,7 @@ export async function registerRoutes(
           portfolioUrl: prof.portfolioUrl,
           linkedinUrl: prof.linkedinUrl,
           githubUrl: prof.githubUrl,
-          portfolioProjectsJson: prof.portfolioProjectsJson,
+          portfolioProjects: prof.portfolioProjects,
         })
         .from(sp)
         .innerJoin(prof, eq(sp.freelancerId, prof.userId))
@@ -1073,14 +1072,7 @@ export async function registerRoutes(
         portfolioUrl: row.portfolioUrl,
         linkedinUrl: row.linkedinUrl,
         githubUrl: row.githubUrl,
-        portfolioProjects: (() => {
-          try {
-            const parsed = row.portfolioProjectsJson ? JSON.parse(row.portfolioProjectsJson) : [];
-            return Array.isArray(parsed) ? parsed : [];
-          } catch {
-            return [];
-          }
-        })(),
+        portfolioProjects: Array.isArray(row.portfolioProjects) ? row.portfolioProjects : [],
         reviews: reviews.map((r) => ({
           id: r.id,
           rating: r.rating,
@@ -2581,8 +2573,8 @@ User: ${message}`;
         tagline: tagline || null,
         experienceLevel: experienceLevel || null,
         category: category || null,
-        portfolioProjectsJson: (Array.isArray(portfolioProjects) && portfolioProjects.length > 0)
-          ? JSON.stringify(portfolioProjects)
+        portfolioProjects: (Array.isArray(portfolioProjects) && portfolioProjects.length > 0)
+          ? portfolioProjects
           : null,
       };
 
@@ -9019,7 +9011,7 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
         { id: "rate", label: "Hourly rate set", points: 10, done: profile.hourlyRate != null && profile.hourlyRate > 0 },
         { id: "location", label: "Location set", points: 5, done: !!(profile.location && profile.location.length > 0) },
         { id: "skills", label: "3+ skills tags", points: 10, done: (profile.skills?.length || 0) >= 3 },
-        { id: "portfolio", label: "1+ portfolio item", points: 15, done: !!(profile.portfolioProjectsJson && profile.portfolioProjectsJson.length > 0) },
+        { id: "portfolio", label: "1+ portfolio item", points: 15, done: !!(profile.portfolioProjects && profile.portfolioProjects.length > 0) },
         { id: "identity", label: "Identity verified", points: 20, done: profile.identityVerified === true },
       ];
       const score = items.reduce((s, i) => s + (i.done ? i.points : 0), 0);

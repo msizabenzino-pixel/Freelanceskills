@@ -3,6 +3,7 @@ import { pgTable, varchar, text, integer, boolean, timestamp } from "drizzle-orm
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { users } from "./auth";
+import { jsonText, type PortfolioProject } from "./customTypes";
 
 export const freelancerProfiles = pgTable("freelancer_profiles", {
   userId: varchar("user_id").primaryKey().references(() => users.id),
@@ -26,7 +27,7 @@ export const freelancerProfiles = pgTable("freelancer_profiles", {
   totalEarningsCents: integer("total_earnings_cents").notNull().default(0),
   monthlyAvgEarningsCents: integer("monthly_avg_earnings_cents").notNull().default(0),
   proposalSuccessCount: integer("proposal_success_count").default(0),
-  portfolioProjectsJson: text("portfolio_projects_json"),
+  portfolioProjects: jsonText<PortfolioProject[]>("portfolio_projects_json"),
   gigPackagesJson: text("gig_packages_json"),
   verificationStagesJson: text("verification_stages_json"),
   updatedAt: timestamp("updated_at").defaultNow(),

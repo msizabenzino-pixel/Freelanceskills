@@ -303,13 +303,8 @@ export default function CVUpload() {
       .then(r => r.ok ? r.json() : null)
       .then(profile => {
         if (!profile) return;
-        try {
-          const raw = profile.portfolioProjectsJson;
-          if (typeof raw === "string" && raw.trim().startsWith("[")) {
-            const parsed: PortfolioProject[] = JSON.parse(raw);
-            if (Array.isArray(parsed) && parsed.length > 0) setPortfolioProjects(parsed);
-          }
-        } catch {}
+        const parsed: PortfolioProject[] = profile.portfolioProjects;
+        if (Array.isArray(parsed) && parsed.length > 0) setPortfolioProjects(parsed);
       })
       .catch(() => {});
   }, []);

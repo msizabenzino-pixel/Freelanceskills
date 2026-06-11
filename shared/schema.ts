@@ -1,3 +1,4 @@
+export * from "./models/customTypes";
 export * from "./models/enums";
 export * from "./models/auth";
 export * from "./models/jobs";

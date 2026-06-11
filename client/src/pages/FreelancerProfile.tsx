@@ -48,18 +48,12 @@ async function fetchProfileUnified(id: string): Promise<FirebaseFreelancerProfil
     const res = await fetch(`/api/profile/${id}`, { credentials: "include" });
     if (res.ok) {
       const p = await res.json();
-      // Parse portfolio projects JSON
       let portfolioLinks: string[] = [];
-      try {
-        if (p.portfolioProjectsJson) {
-          const parsed = JSON.parse(p.portfolioProjectsJson);
-          if (Array.isArray(parsed)) {
-            portfolioLinks = parsed.map((proj: any) => proj.link || proj.url).filter(Boolean);
-          }
-        } else if (p.portfolioUrl) {
-          portfolioLinks = [p.portfolioUrl];
-        }
-      } catch { /* ignore */ }
+      if (Array.isArray(p.portfolioProjects)) {
+        portfolioLinks = p.portfolioProjects.map((proj: any) => proj.link || proj.url).filter(Boolean);
+      } else if (p.portfolioUrl) {
+        portfolioLinks = [p.portfolioUrl];
+      }
       // Build user name from user row if needed — API returns profile shape only
       return {
         userId: id,

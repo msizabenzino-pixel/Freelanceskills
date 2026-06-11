@@ -95,13 +95,11 @@ function mapProfileToForm(profile: any): EditProfileForm {
     lastName = nameParts.slice(1).join(" ") || "";
   }
   let portfolioProjects: any[] = [];
-  try {
-    if (profile?.portfolioProjectsJson) {
-      portfolioProjects = JSON.parse(profile.portfolioProjectsJson);
-    } else if (profile?.portfolioUrl) {
-      portfolioProjects = [{ id: "1", title: "Portfolio", link: profile.portfolioUrl, description: "", technologies: [] }];
-    }
-  } catch { /* ignore */ }
+  if (Array.isArray(profile?.portfolioProjects)) {
+    portfolioProjects = profile.portfolioProjects;
+  } else if (profile?.portfolioUrl) {
+    portfolioProjects = [{ id: "1", title: "Portfolio", link: profile.portfolioUrl, description: "", technologies: [] }];
+  }
 
   return {
     firstName,
@@ -216,9 +214,7 @@ export default function EditProfile() {
         portfolioUrl: data.portfolioUrl || null,
         certifications: data.certifications || null,
         photoUrl: data.photoUrl || null,
-        portfolioProjectsJson: data.portfolioProjects.length > 0
-          ? JSON.stringify(data.portfolioProjects)
-          : null,
+        portfolioProjects: data.portfolioProjects.length > 0 ? data.portfolioProjects : null,
       };
 
       // Save to Postgres
@@ -283,9 +279,7 @@ export default function EditProfile() {
         portfolioUrl: formData.portfolioUrl || null,
         certifications: formData.certifications || null,
         photoUrl: formData.photoUrl || null,
-        portfolioProjectsJson: formData.portfolioProjects.length > 0
-          ? JSON.stringify(formData.portfolioProjects)
-          : null,
+        portfolioProjects: formData.portfolioProjects.length > 0 ? formData.portfolioProjects : null,
       };
       const updated = await apiPatch<any>("/api/profile", payload);
       await apiJson<any>("/api/profile/publish", { method: "POST" });

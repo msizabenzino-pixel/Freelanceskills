@@ -4,6 +4,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { users } from "./auth";
 import { userTypeEnum, profileStatusEnum, profileRoleEnum, kycStatusEnum } from "./enums";
+import { jsonText, type PortfolioProject } from "./customTypes";
 
 export type ProCredential = {
   title: string;
@@ -45,7 +46,7 @@ export const profiles = pgTable(
     deletedAt: timestamp("deleted_at"),
     deletedBy: varchar("deleted_by", { length: 50 }),
     deleteReason: text("delete_reason"),
-    portfolioProjectsJson: text("portfolio_projects_json"),
+    portfolioProjects: jsonText<PortfolioProject[]>("portfolio_projects_json"),
     workHistoryJson: text("work_history_json"),
     // Extended profile fields
     photoUrl: text("photo_url"),
