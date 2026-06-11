@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "wouter";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { trackGigView } from "@/lib/track";
 import {
   Star,
   Clock,
@@ -44,6 +45,9 @@ function formatZar(rand: number): string {
 export default function GigDetail() {
   const [location] = useLocation();
   const id = location.split("/gig/")[1]?.split("/")[0] || "";
+  useEffect(() => {
+    if (id) trackGigView(id);
+  }, [id]);
   const [saved, setSaved] = useState(false);
   const [bioExpanded, setBioExpanded] = useState(false);
   const [showAllReviews, setShowAllReviews] = useState(false);

@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, varchar, text, integer, timestamp, boolean, time, date, index, unique } from "drizzle-orm/pg-core";
+import { pgTable, varchar, text, integer, real, timestamp, boolean, time, date, index, unique } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { users } from "./auth";
@@ -17,6 +17,9 @@ export const servicePackages = pgTable("service_packages", {
   isPromoted: boolean("is_promoted").notNull().default(false),
   promotedBid: integer("promoted_bid").default(0),
   bookingCount: integer("booking_count").notNull().default(0),
+  // Activity tracking (Command 15)
+  viewCount: integer("view_count").notNull().default(0),
+  conversionRate: real("conversion_rate").notNull().default(0), // orders_90d / views_90d, 0.0 if < 10 views
   deletedAt: timestamp("deleted_at"),
   createdAt: timestamp("created_at").defaultNow(),
 });

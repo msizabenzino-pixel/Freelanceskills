@@ -1,5 +1,6 @@
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { useSearch, Link } from "wouter";
+import { trackSearch } from "@/lib/track";
 import { useQuery } from "@tanstack/react-query";
 import SmartSearch from "@/components/SmartSearch";
 import { GigCard, GigCardSkeleton } from "@/components/GigCard";
@@ -26,6 +27,11 @@ export default function Search() {
   });
 
   const services = data?.services || [];
+
+  useEffect(() => {
+    if (!isLoading && (q || cat)) trackSearch(q, cat, services.length);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [q, cat, isLoading]);
 
   return (
     <main className="min-h-screen bg-[#0D1117]" data-testid="page-search">

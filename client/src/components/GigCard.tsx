@@ -2,6 +2,8 @@ import { Link } from "wouter";
 import { Heart, Star, BadgeCheck, Crown, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { toggleSaveGig } from "@/lib/track";
+import { useAuth } from "@/hooks/use-auth";
 
 export interface GigCardData {
   id: string;
@@ -28,13 +30,21 @@ interface GigCardProps {
 }
 
 export function GigCard({ gig, displayMode = "list", showAd, onSave, isSaved }: GigCardProps) {
+  const { isAuthenticated } = useAuth();
   const [saved, setSaved] = useState(isSaved ?? false);
   const priceZar = (gig.priceCents / 100).toLocaleString("en-ZA", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   const handleSave = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setSaved(!saved);
+    // The save endpoint is auth-gated; only toggle/persist when logged in so
+    // the heart never lies. Parent can use onSave to prompt sign-in.
+    if (!isAuthenticated) {
+      onSave?.(gig.id);
+      return;
+    }
+    setSaved((s) => !s);
+    void toggleSaveGig(gig.id).then((next) => setSaved(next));
     onSave?.(gig.id);
   };
 

@@ -3,6 +3,7 @@ import { authStorage } from "./storage";
 import { isAuthenticated } from "./replitAuth";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import { mergeSessionActivity } from "../../tracking";
 
 const LINKEDIN_AUTH_URL = "https://www.linkedin.com/oauth/v2/authorization";
 const LINKEDIN_TOKEN_URL = "https://www.linkedin.com/oauth/v2/accessToken";
@@ -99,6 +100,7 @@ export function registerAuthRoutes(app: Express): void {
       }
 
       (req.session as any).userId = user.id;
+      mergeSessionActivity(req.sessionID, user.id).catch(() => {});
       console.log(`[linkedin] User ${email} signed in (id: ${user.id})`);
       res.redirect("/dashboard?linkedin_welcome=1");
     } catch (err) {
@@ -197,6 +199,7 @@ export function registerAuthRoutes(app: Express): void {
       });
 
       (req.session as any).userId = user.id;
+      mergeSessionActivity(req.sessionID, user.id).catch(() => {});
 
       const { password: _, ...safeUser } = user;
       res.json(safeUser);
@@ -225,6 +228,7 @@ export function registerAuthRoutes(app: Express): void {
       }
 
       (req.session as any).userId = user.id;
+      mergeSessionActivity(req.sessionID, user.id).catch(() => {});
 
       const { password: _, ...safeUser } = user;
       res.json(safeUser);
@@ -307,6 +311,7 @@ export function registerAuthRoutes(app: Express): void {
       // Set the server session so isAuthenticated passes for this user.
       (req.session as any).userId = uid;
       (req.session as any).firebaseSynced = true;
+      mergeSessionActivity(req.sessionID, uid).catch(() => {});
 
       res.json({ success: true, message: "Session synchronised", userId: uid });
     } catch (error) {

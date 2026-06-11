@@ -3,4 +3,6 @@
 - [Form Data Mapping](form-data-mapping.md) — mapProfileToForm must match the API response shape exactly. If API returns firstName/lastName separately, don't split fullName.
 - [Drizzle Payload Validation](drizzle-payload.md) — PATCH/POST payloads must only contain valid DB columns. Never spread form objects (e.g., portfolioProjects array) into DB updates.
 - [Profile Endpoint Consistency](profile-endpoints.md) — All profile endpoints (GET /api/profile, GET /api/profile/:id, POST /api/profile/go-live) must return the same merged shape (profile + user data) for client consistency.
+- [db:push is unsafe here](db-push-drift.md) — never run drizzle-kit push; apply schema changes via idempotent SQL DDL to avoid data-loss prompts/drift.
+- [Category taxonomy gap](category-taxonomy-gap.md) — frontend category slugs (skilled-trades) don't match stored gig category tokens (trades/tech); log display names + token-ILIKE match in Recommended.
 - [service_packages schema/DB drift](service-packages-drift.md) — DB may lack is_promoted/promoted_bid cols the schema defines; full-row select from servicePackages 500s until ALTER adds them.

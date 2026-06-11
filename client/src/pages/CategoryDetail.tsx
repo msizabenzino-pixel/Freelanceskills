@@ -1,7 +1,9 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Link, useLocation } from "wouter";
+import { useEffect } from "react";
 import { ChevronRight, ArrowLeft } from "lucide-react";
+import { trackCategory } from "@/lib/track";
 
 const SUBCATEGORIES: Record<string, { groups: Record<string, string[]> }> = {
   "skilled-trades": {
@@ -93,6 +95,11 @@ const SUBCATEGORIES: Record<string, { groups: Record<string, string[]> }> = {
 export default function CategoryDetail() {
   const [location] = useLocation();
   const slug = location.split("/categories/")[1]?.split("/")[0] || "";
+  useEffect(() => {
+    // Log the human-readable category name, not the URL slug, so it has a
+    // chance of matching real gig categories in the Recommended feed.
+    if (slug) trackCategory(slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()));
+  }, [slug]);
   const categoryData = SUBCATEGORIES[slug];
   const categoryName = slug.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
 

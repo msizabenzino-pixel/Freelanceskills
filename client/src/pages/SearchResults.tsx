@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useParams, useLocation, Link } from "wouter";
+import { trackCategory } from "@/lib/track";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Search as SearchIcon } from "lucide-react";
 import { GigCard, GigCardSkeleton } from "@/components/GigCard";
@@ -21,6 +22,11 @@ export default function SearchResults() {
   const cat = params.cat || "";
   const subcat = params.subcat || "";
   const title = deslugify(subcat) || deslugify(cat);
+
+  useEffect(() => {
+    // Log human-readable names (not URL slugs) for Recommended-feed matching.
+    if (cat) trackCategory(deslugify(cat), deslugify(subcat));
+  }, [cat, subcat]);
 
   const [activeSort, setActiveSort] = useState<SortKey | null>(null);
   const [activeSubType, setActiveSubType] = useState<string | null>(null);

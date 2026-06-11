@@ -36,3 +36,4 @@ export * from "./models/vetting";
 export * from "./models/rewards";
 export * from "./models/gigs";
 export * from "./models/webhooks";
+export * from "./models/activity";

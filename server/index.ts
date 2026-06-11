@@ -2,6 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import compression from "compression";
 import { registerRoutes } from "./routes";
 import { startVerificationCron } from "./verificationCron";
+import { recomputeGigConversionRates } from "./tracking";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 import { setupSocket } from "./socket";
@@ -353,6 +354,11 @@ app.use((req, res, next) => {
 
   // ── C04: Top Performer nightly evaluation (02:00 SAST) ───────────────────
   startVerificationCron();
+
+  // ── C15: Per-gig conversion-rate recompute (orders_90d / gig_views_90d) ──
+  // Runs shortly after boot, then every 6 hours. Fire-and-forget, never crashes.
+  setTimeout(() => { recomputeGigConversionRates().catch((e) => log(`[cron] conversion-rate recompute failed: ${e?.message}`, "cron")); }, 30_000);
+  setInterval(() => { recomputeGigConversionRates().catch((e) => log(`[cron] conversion-rate recompute failed: ${e?.message}`, "cron")); }, 6 * 60 * 60 * 1000);
 
   // ── Static uploads directory ────────────────────────────────────────────────
   const uploadsDir = path.join(process.cwd(), "uploads");

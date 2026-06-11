@@ -4,6 +4,11 @@ import { storage } from "./storage";
 import { computeVerificationTier } from "./verificationCron";
 import { setupAuth, registerAuthRoutes, getUser, getUserId, requireAuth, requireAdmin, requireClient, requireFreelancer, requireKyc, requireOwnership, clearProfileCache } from "./replit_integrations/auth";
 import { ACADEMY_COURSES, getAcademyStats } from "./academyData";
+import { searchFreelancersRanked } from "./searchRanking";
+import { getPopularCategories, getRecommended, getTopRatedWeek, getTradesNearMe, getNewVerified, getRecentlyViewed, getTrendingSa } from "./homeFeed";
+import { trackEvent, recordGigView, recordSearch, recordCategoryView, toggleSavedGig } from "./tracking";
+import { evaluateProfileCompletion } from "./profileCompletion";
+import { mapGigCard } from "./discoveryShared";
 
 async function awardPoints(userId: string, action: string): Promise<void> {
   if (!userId) return;
@@ -491,33 +496,16 @@ export async function registerRoutes(
 
       const isPublished = Boolean(profile.publishedProfile);
 
-      // Score each field that matters for a compelling profile
+      // Single source of truth shared with the search completion gate (Command 12).
       type ReadinessItem = { field: string; label: string; critical: boolean; href: string };
-      const checks: Array<{ field: string; label: string; critical: boolean; href: string; value: unknown }> = [
-        { field: "title",          label: "Professional title",              critical: true,  href: "/cv-upload#basics",    value: profile.title },
-        { field: "bio",            label: "Professional bio (2+ sentences)", critical: true,  href: "/cv-upload#basics",    value: profile.bio && (profile.bio as string).length > 40 ? profile.bio : null },
-        { field: "skills",         label: "At least 3 skills listed",        critical: true,  href: "/cv-upload#skills",    value: Array.isArray(profile.skills) && profile.skills.length >= 3 ? profile.skills : null },
-        { field: "hourlyRate",     label: "Hourly rate (ZAR)",               critical: true,  href: "/cv-upload#rates",     value: profile.hourlyRate && profile.hourlyRate > 0 ? profile.hourlyRate : null },
-        { field: "location",       label: "Your location",                   critical: false, href: "/cv-upload#basics",    value: profile.location },
-        { field: "category",       label: "Work category",                   critical: false, href: "/cv-upload#basics",    value: profile.category },
-        { field: "publishedProfile", label: "Profile published (visible to employers)", critical: true, href: "/cv-upload#preview", value: isPublished ? true : null },
-      ];
-
+      const { checks: completionChecks, score } = evaluateProfileCompletion(profile);
       const missing: ReadinessItem[] = [];
       const completed: ReadinessItem[] = [];
-
-      for (const c of checks) {
+      for (const c of completionChecks) {
         const item = { field: c.field, label: c.label, critical: c.critical, href: c.href };
-        if (c.value) {
-          completed.push(item);
-        } else {
-          missing.push(item);
-        }
+        if (c.passed) completed.push(item);
+        else missing.push(item);
       }
-
-      const totalWeight = checks.length;
-      const doneWeight = completed.length;
-      const score = Math.round((doneWeight / totalWeight) * 100);
 
       const criticalMissing = missing.filter((m) => m.critical);
       const ready = criticalMissing.length === 0;
@@ -8981,100 +8969,161 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
     }
   });
 
-  // ── Personalized Home Data (C13) ──
-  app.get("/api/home/personalized", isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = (req.session as any).userId;
-      const profile = await storage.getProfile(userId);
-      const allPackages = await storage.getActiveServicePackages();
-      const allJobs = await storage.getAllJobs();
-      const freelancers = await storage.searchFreelancers(undefined, undefined, { limit: 12 });
-
-      // 7 personalization carousels
-      const carousels = {
-        recommended: allPackages.filter(p => !profile || (p.category && profile.skills?.includes(p.category))).slice(0, 12),
-        recentlyViewed: allPackages.slice(0, 6), // Stub: real would use redis/memory
-        buyItAgain: allPackages.filter(p => p.bookingCount > 0).slice(0, 6),
-        trending: allPackages.slice(0, 12),
-        topRated: allPackages.filter(p => p.rating && p.rating > 400).slice(0, 12),
-        budget: allPackages.filter(p => p.priceFrom < 10000).slice(0, 12),
-        bestMatch: allPackages.filter(p => p.isPro || p.rating > 400).slice(0, 12),
-      };
-
-      // Recent jobs
-      const recentJobs = allJobs.filter(j => j.status === "active").sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 6);
-
-      // Top freelancers
-      const topFreelancers = freelancers.slice(0, 6);
-
-      res.json({
-        user: {
-          name: profile?.name || "Freelancer",
-          role: profile?.userType || "freelancer",
-          completionScore: profile ? 0 : 0,
-        },
-        carousels,
-        recentJobs,
-        topFreelancers,
-      });
-    } catch (e) {
-      console.error("[home/personalized]", e);
-      res.status(500).json({ message: "Failed to load personalized data" });
-    }
+  // ── Personalised Home Feed (Command 13) — each returns { items, sectionTitle, seeAllLink } ──
+  app.get("/api/home/popular-categories", async (_req, res) => {
+    try { res.json(await getPopularCategories()); }
+    catch (e) { console.error("[home/popular-categories]", e); res.status(500).json({ message: "Failed to load popular categories" }); }
   });
 
-  // ── Ranked Search (C12) ──
-  app.get("/api/search/ranked", async (req, res) => {
-    try {
-      const { q, category, minRating, verified, location, page = "1" } = req.query;
-      const query = (q as string) || "";
-      const pageNum = Math.max(1, parseInt(page as string, 10));
-      const limit = 20;
-      const offset = (pageNum - 1) * limit;
+  app.get("/api/home/recommended", isAuthenticated, async (req: any, res) => {
+    try { res.json(await getRecommended((req.session as any).userId)); }
+    catch (e) { console.error("[home/recommended]", e); res.status(500).json({ message: "Failed to load recommendations" }); }
+  });
 
-      let freelancers = await storage.searchFreelancers(query, location as string, {
-        verifiedOnly: verified === "true",
-        minRating: minRating ? parseInt(minRating as string, 10) : undefined,
-        limit: 200,
+  app.get("/api/home/top-rated-week", async (_req, res) => {
+    try { res.json(await getTopRatedWeek()); }
+    catch (e) { console.error("[home/top-rated-week]", e); res.status(500).json({ message: "Failed to load top-rated gigs" }); }
+  });
+
+  app.get("/api/home/trades-near-me", async (req, res) => {
+    try { res.json(await getTradesNearMe((req.query.location as string) || undefined)); }
+    catch (e) { console.error("[home/trades-near-me]", e); res.status(500).json({ message: "Failed to load nearby trades" }); }
+  });
+
+  app.get("/api/home/new-verified", async (_req, res) => {
+    try { res.json(await getNewVerified()); }
+    catch (e) { console.error("[home/new-verified]", e); res.status(500).json({ message: "Failed to load new talent" }); }
+  });
+
+  app.get("/api/home/recently-viewed", isAuthenticated, async (req: any, res) => {
+    try { res.json(await getRecentlyViewed((req.session as any).userId)); }
+    catch (e) { console.error("[home/recently-viewed]", e); res.status(500).json({ message: "Failed to load recently viewed" }); }
+  });
+
+  app.get("/api/home/trending-sa", async (_req, res) => {
+    try { res.json(await getTrendingSa()); }
+    catch (e) { console.error("[home/trending-sa]", e); res.status(500).json({ message: "Failed to load trending gigs" }); }
+  });
+
+  // ── Activity Tracking (Command 15) — fire-and-forget; trusted fields derived server-side ──
+  app.post("/api/track/gig-view", async (req: any, res) => {
+    const gigId = typeof req.body?.gigId === "string" ? req.body.gigId.trim() : "";
+    if (!gigId || gigId.length > 64) return res.status(400).json({ message: "Invalid gigId" });
+    const userId = (req.session as any)?.userId || null;
+    const sessionId = req.sessionID || null;
+    trackEvent(() => recordGigView({ gigId, userId, sessionId }));
+    res.json({ ok: true });
+  });
+
+  app.post("/api/track/search", async (req: any, res) => {
+    const query = typeof req.body?.query === "string" ? req.body.query.slice(0, 200) : null;
+    const category = typeof req.body?.category === "string" ? req.body.category.slice(0, 100) : null;
+    const resultsCount = Number.isFinite(req.body?.resultsCount) ? Math.max(0, Math.min(1000000, Math.floor(req.body.resultsCount))) : 0;
+    const userId = (req.session as any)?.userId || null;
+    const sessionId = req.sessionID || null;
+    trackEvent(() => recordSearch({ query, category, resultsCount, userId, sessionId }));
+    res.json({ ok: true });
+  });
+
+  app.post("/api/track/category", async (req: any, res) => {
+    const category = typeof req.body?.category === "string" ? req.body.category.trim().slice(0, 100) : "";
+    if (!category) return res.status(400).json({ message: "Invalid category" });
+    const subcategory = typeof req.body?.subcategory === "string" ? req.body.subcategory.trim().slice(0, 100) : null;
+    const userId = (req.session as any)?.userId || null;
+    const sessionId = req.sessionID || null;
+    trackEvent(() => recordCategoryView({ category, subcategory, userId, sessionId }));
+    res.json({ ok: true });
+  });
+
+  // gig_saved — toggle a saved gig (Command 15). Auth required (saved list is per-user).
+  app.post("/api/gigs/:gigId/save", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const gigId = (req.params.gigId || "").trim();
+      if (!gigId) return res.status(400).json({ message: "Invalid gigId" });
+      const saved = await toggleSavedGig({ gigId, userId });
+      res.json({ ok: true, saved });
+    } catch (e) { console.error("[gigs/save]", e); res.status(500).json({ message: "Failed to save gig" }); }
+  });
+
+  // ── Completed Orders (Command 14 — "Hire Again") ──
+  app.get("/api/orders/completed", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const limit = Math.min(50, Math.max(1, parseInt((req.query.limit as string) || "5", 10)));
+      const { db: _db } = await import("./db");
+      const { bookings: bk, servicePackages: sp, profiles: pr, users: us } = await import("@shared/schema");
+      const { eq, and, sql, desc } = await import("drizzle-orm");
+      const rows = await _db
+        .select({
+          bookingId: bk.id,
+          createdAt: bk.createdAt,
+          id: sp.id,
+          title: sp.title,
+          description: sp.description,
+          category: sp.category,
+          price: sp.price,
+          duration: sp.duration,
+          bookingCount: sp.bookingCount,
+          viewCount: sp.viewCount,
+          conversionRate: sp.conversionRate,
+          freelancerId: sp.freelancerId,
+          location: pr.location,
+          bio: pr.bio,
+          rating: pr.rating,
+          completedJobs: pr.completedJobs,
+          isPro: pr.isPro,
+          kycStatus: pr.kycStatus,
+          photoUrl: pr.photoUrl,
+          skills: pr.skills,
+          profTitle: pr.title,
+          firstName: us.firstName,
+          lastName: us.lastName,
+        })
+        .from(bk)
+        .innerJoin(sp, eq(bk.servicePackageId, sp.id))
+        .innerJoin(pr, eq(sp.freelancerId, pr.userId))
+        .leftJoin(us, eq(sp.freelancerId, us.id))
+        .where(and(eq(bk.clientId, userId), sql`${bk.status} = 'completed'`))
+        .orderBy(desc(bk.createdAt))
+        .limit(limit);
+      const seen = new Set<string>();
+      const items = rows
+        .filter((r) => { if (seen.has(r.id)) return false; seen.add(r.id); return true; })
+        .map((r) => ({ ...mapGigCard(r), bookingId: r.bookingId, hireAgainLink: `/hire/${r.id}/configure` }));
+      res.json({ items, total: items.length });
+    } catch (e) { console.error("[orders/completed]", e); res.status(500).json({ message: "Failed to load completed orders" }); }
+  });
+
+  // ── Freelancer Search & Ranking (Command 12) ──
+  app.get("/api/search", async (req: any, res) => {
+    try {
+      const { q, category, subcategory, location, minPrice, maxPrice, sellerLevel, deliveryDays, page, limit } = req.query;
+      const result = await searchFreelancersRanked({
+        q: q as string,
+        category: category as string,
+        subcategory: subcategory as string,
+        location: location as string,
+        minPrice: minPrice !== undefined ? parseFloat(minPrice as string) : undefined,
+        maxPrice: maxPrice !== undefined ? parseFloat(maxPrice as string) : undefined,
+        sellerLevel: sellerLevel as string,
+        deliveryDays: deliveryDays !== undefined ? parseInt(deliveryDays as string, 10) : undefined,
+        page: page !== undefined ? parseInt(page as string, 10) : 1,
+        limit: limit !== undefined ? parseInt(limit as string, 10) : 20,
       });
 
-      if (category && category !== "all") {
-        freelancers = freelancers.filter(f => f.category === category || f.skills?.includes(category as string));
+      // search_performed (Command 15): log server-side so it is reliable and trusted.
+      const qStr = (q as string) || "";
+      const catStr = (category as string) || "";
+      if (qStr.trim() || catStr.trim()) {
+        const userId = (req.session as any)?.userId || null;
+        const sessionId = req.sessionID || null;
+        trackEvent(() => recordSearch({ query: qStr || null, category: catStr || null, resultsCount: result.total, userId, sessionId }));
       }
 
-      // 7-signal ranking
-      const ranked = freelancers.map(f => {
-        const r = (f.rating || 0) / 100;
-        const completion = (f.bio?.length || 0) > 100 ? 1 : 0;
-        const verified = (f.kycStatus === "verified" || f.identityVerified) ? 1 : 0;
-        const pro = f.isPro ? 1 : 0;
-        const online = f.availableNow ? 1 : 0;
-        const delivery = (f.onTimeDeliveryRate || 0) / 100;
-        const skills = (f.skills?.length || 0) / 10;
-        const score = (r * 0.25) + (completion * 0.10) + (verified * 0.15) + (pro * 0.15) + (online * 0.10) + (delivery * 0.15) + (skills * 0.10);
-        return { ...f, score: Math.round(score * 100) / 100 };
-      }).sort((a, b) => b.score - a.score);
-
-      const total = ranked.length;
-      const paginated = ranked.slice(offset, offset + limit);
-
-      res.json({
-        results: paginated,
-        total,
-        page: pageNum,
-        totalPages: Math.ceil(total / limit),
-        signals: {
-          rating: "25%",
-          completion: "10%",
-          verified: "15%",
-          pro: "15%",
-          online: "10%",
-          delivery: "15%",
-          skills: "10%",
-        },
-      });
+      res.json(result);
     } catch (e) {
-      console.error("[search/ranked]", e);
+      console.error("[search]", e);
       res.status(500).json({ message: "Search failed" });
     }
   });

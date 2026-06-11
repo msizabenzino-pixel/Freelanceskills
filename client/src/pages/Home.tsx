@@ -3,6 +3,7 @@ import { Footer } from "@/components/Footer";
 import { RemoteAIJobsWidget } from "@/components/RemoteAIJobsWidget";
 import { AIBriefGenerator } from "@/components/AIBriefGenerator";
 import { LevelBadge, type FreelancerLevel } from "@/components/LevelBadge";
+import HomeDiscovery from "@/components/HomeDiscovery";
 import {
   ArrowRight, CheckCircle2, Shield, Sparkles, GraduationCap, TrendingUp, Users,
   Building2, Brain, Globe, ShieldCheck, Lock, Headphones, Star, Quote, Send,
@@ -723,6 +724,9 @@ export default function Home() {
       </div>
 
       <main id="main-content" role="main">
+
+        {/* ══ Personalised discovery feed (C13/C14) — retention rows FIRST, then carousels. Empty sections hidden (real data only). ══ */}
+        <HomeDiscovery />
 
         {/* ══ Open to Gigs Network Layer ════════════════ */}
         <section className="py-20 bg-gradient-to-b from-slate-950 to-slate-900/60 border-b border-slate-800/50" aria-labelledby="network-heading" data-testid="section-open-to-gigs">
