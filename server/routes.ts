@@ -741,6 +741,9 @@ export async function registerRoutes(
         ...(rawData.githubUrl !== undefined && { githubUrl: sanitizeUrl(rawData.githubUrl) }),
       };
       if (portfolioProjects !== undefined) {
+        // The frontend sends portfolioProjects as an array of objects.
+        // The database column is `portfolio_projects_json` (json type via jsonText custom type).
+        // We store it as-is — the jsonText type handles DB serialization.
         safeData.portfolioProjects = Array.isArray(portfolioProjects) && portfolioProjects.length > 0
           ? portfolioProjects
           : null;
@@ -792,9 +795,10 @@ export async function registerRoutes(
         linkedinUrl: sanitizeUrl(profile.linkedinUrl),
         githubUrl: sanitizeUrl(profile.githubUrl),
         photoUrl: sanitizeUrl(profile.photoUrl),
-        firstName: userRow?.firstName || null,
-        lastName: userRow?.lastName || null,
-        profileImageUrl: userRow?.profileImageUrl || null,
+        firstName: userRow?.firstName || "",
+        lastName: userRow?.lastName || "",
+        profileImageUrl: userRow?.profileImageUrl || "",
+        fullName: `${userRow?.firstName || ""} ${userRow?.lastName || ""}`.trim(),
       };
 
       // Invalidate cached session data so next request sees updated names
@@ -2565,11 +2569,11 @@ User: ${message}`;
             set: { publishedProfile: true, publishedAt: new Date() },
           })
           .returning();
-        log(`[profile/publish] Created+published profile for ${userId}`, "profile");
+        console.log(`[profile/publish] Created+published profile for ${userId}`);
         return res.json({ success: true, message: "Profile is now live and visible to employers!", profile: created });
       }
 
-      log(`[profile/publish] User ${userId} published profile`, "profile");
+      console.log(`[profile/publish] User ${userId} published profile`);
       res.json({ success: true, message: "Profile is now live and visible to employers!", profile: updated });
     } catch (err) {
       console.error("[profile/publish] Error:", err);
@@ -8808,7 +8812,7 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
         return res.json(fallback);
       }
     } catch (error) {
-      log("AI brief generator error", "ai");
+      console.error("[AI brief] Error:", error);
       const fallback = generateFallbackBrief(req.body?.description || "");
       return res.json(fallback);
     }
