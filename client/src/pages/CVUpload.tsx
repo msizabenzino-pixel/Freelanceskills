@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { earnPoints } from "@/lib/earnPoints";
-import { apiJson } from "@/lib/api";
+import { apiJson, apiFetch } from "@/lib/api";
 import { saveFreelancerProfile } from "@/lib/firebaseAppData";
 import { calcStrength } from "@/lib/profileStrength";
 import { ProfileStrengthMeter } from "@/components/ProfileStrengthMeter";
@@ -299,7 +299,7 @@ export default function CVUpload() {
   }, [toast]);
 
   useEffect(() => {
-    fetch("/api/profile", { credentials: "include" })
+    apiFetch("/api/profile")
       .then(r => r.ok ? r.json() : null)
       .then(profile => {
         if (!profile) return;
@@ -749,7 +749,7 @@ export default function CVUpload() {
                       >
                         {formData.photo ? <img src={formData.photo} alt="Profile" className="w-full h-full object-cover" /> : <Camera className="w-8 h-8 text-slate-600" />}
                       </div>
-                      <input ref={photoInputRef} type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) { setPhotoFile(file); setPhotoUploading(true); try { const fd = new FormData(); fd.append("photo", file); await syncSessionNow(); const res = await fetch("/api/profile/upload-photo", { method: "POST", body: fd, credentials: "include" }); const json = await res.json(); if (json.success && json.photoUrl) { updateField("photo", json.photoUrl); toast({ title: "Photo uploaded!", description: "Your profile photo is ready." }); } else { throw new Error(json.message || "Upload failed"); } } catch (err: any) { toast({ variant: "destructive", title: "Photo upload failed", description: err?.message || "Please try again." }); } finally { setPhotoUploading(false); } } }} data-testid="input-photo" />
+                      <input ref={photoInputRef} type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) { setPhotoFile(file); setPhotoUploading(true); try { const fd = new FormData(); fd.append("photo", file); await syncSessionNow(); const res = await apiFetch("/api/profile/upload-photo", { method: "POST", body: fd }); const json = await res.json(); if (json.success && json.photoUrl) { updateField("photo", json.photoUrl); toast({ title: "Photo uploaded!", description: "Your profile photo is ready." }); } else { throw new Error(json.message || "Upload failed"); } } catch (err: any) { toast({ variant: "destructive", title: "Photo upload failed", description: err?.message || "Please try again." }); } finally { setPhotoUploading(false); } } }} data-testid="input-photo" />
                       <div>
                         <Button size="sm" variant="outline" onClick={() => photoInputRef.current?.click()} className="border-slate-700 text-slate-300 hover:border-emerald-500/40 hover:text-emerald-400" data-testid="btn-upload-photo">
                           <Camera className="w-3.5 h-3.5 mr-1" /> Upload Photo

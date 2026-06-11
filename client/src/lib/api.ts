@@ -13,10 +13,11 @@ import { syncSessionNow } from "@/hooks/use-auth";
 
 export interface ApiOptions extends Omit<RequestInit, "body"> {
   json?: unknown;
+  body?: BodyInit | null;
 }
 
 function buildInit(options: ApiOptions = {}): RequestInit {
-  const { json, headers: extraHeaders, ...rest } = options;
+  const { json, body, headers: extraHeaders, ...rest } = options;
   const headers: HeadersInit = {
     ...(json !== undefined ? { "Content-Type": "application/json" } : {}),
     ...(extraHeaders ?? {}),
@@ -24,7 +25,7 @@ function buildInit(options: ApiOptions = {}): RequestInit {
   return {
     credentials: "include",
     ...rest,
-    ...(json !== undefined ? { body: JSON.stringify(json) } : {}),
+    ...(json !== undefined ? { body: JSON.stringify(json) } : body !== undefined ? { body } : {}),
     headers,
   };
 }

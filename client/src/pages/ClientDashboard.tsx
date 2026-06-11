@@ -4,6 +4,7 @@ import { useLocation } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AuthGuard } from "@/components/AuthGuard";
+import { apiFetch } from "@/lib/api";
 import {
   Briefcase, DollarSign, CheckCircle, Clock, MessageSquare, Star,
   Zap, Users, ChevronDown, ChevronUp, UserCheck, XCircle, CalendarClock,
@@ -916,7 +917,7 @@ export default function ClientDashboard() {
   const { data: jobsData, isLoading: jobsLoading } = useQuery({
     queryKey: ["clientJobs"],
     queryFn: async () => {
-      const res = await fetch("/api/jobs?clientId=me", { credentials: "include" });
+      const res = await apiFetch("/api/jobs?clientId=me");
       if (!res.ok) throw new Error("Failed to fetch jobs");
       const data = await res.json();
       return (Array.isArray(data) ? data : data.jobs ?? []) as ClientJob[];
@@ -935,7 +936,7 @@ export default function ClientDashboard() {
     queryKey: ["jobApplicants", selectedJobId],
     queryFn: async () => {
       if (!selectedJobId) return { applicants: [], total: 0 };
-      const res = await fetch(`/api/jobs/${selectedJobId}/applicants`, { credentials: "include" });
+      const res = await apiFetch(`/api/jobs/${selectedJobId}/applicants`);
       if (!res.ok) throw new Error("Failed to fetch applicants");
       return res.json() as Promise<{ applicants: Applicant[]; total: number }>;
     },

@@ -9,6 +9,7 @@ import {
   Sparkles, Globe, FileText, Moon, Sun
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { apiFetch } from "@/lib/api";
 import { useDarkMode } from "@/hooks/use-dark-mode";
 import { useSocketNotifications } from "@/hooks/use-socket-notifications";
 import { BrandLogo } from "@/components/BrandLogo";
@@ -66,7 +67,7 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
 
   useEffect(() => {
     if (!isAuthenticated) { setProfileStatus(null); return; }
-    fetch("/api/profile/check-readiness", { credentials: "include" })
+    apiFetch("/api/profile/check-readiness")
       .then(r => r.ok ? r.json() : null)
       .then(d => { if (d?.profileStatus) setProfileStatus(d.profileStatus); })
       .catch(() => {});

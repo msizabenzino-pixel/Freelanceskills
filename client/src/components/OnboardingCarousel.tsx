@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
+import { apiFetch } from "@/lib/api";
 
 type Role = "freelancer" | "client" | null;
 
@@ -119,7 +120,7 @@ export function OnboardingCarousel() {
     // If they already have a real profile, mark done and skip.
     if (isAuthenticated && !profileCheckedRef.current) {
       profileCheckedRef.current = true;
-      fetch("/api/profile", { credentials: "include" })
+      apiFetch("/api/profile")
         .then(r => {
           if (r.status === 401) {
             // Session expired/unauthenticated — don't show carousel

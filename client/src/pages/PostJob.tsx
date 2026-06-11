@@ -16,6 +16,7 @@ import { AIJobPostHelper } from "@/components/AIJobPostHelper";
 import { SERVICE_CATEGORIES } from "@shared/categories";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserCheck } from "lucide-react";
+import { apiPost } from "@/lib/api";
 
 interface JobPostSuggestion {
   title: string;
@@ -80,17 +81,7 @@ export default function PostJob() {
       budget: number;
       skills?: string[];
     }) => {
-      const response = await fetch("/api/jobs", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) {
-        const err = await response.json().catch(() => ({}));
-        throw new Error(err.message || "Failed to post job");
-      }
-      return response.json();
+      return apiPost("/api/jobs", data);
     },
     onSuccess: (job) => {
       setSuccessJobId(job.id);

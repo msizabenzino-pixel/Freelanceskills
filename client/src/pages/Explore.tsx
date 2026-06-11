@@ -11,6 +11,7 @@ import { JobCard } from "@/components/JobCard";
 import { SERVICE_CATEGORIES } from "@shared/categories";
 import { useAuth } from "@/hooks/use-auth";
 import { useCurrency } from "@/lib/currency";
+import { apiFetch, apiPost } from "@/lib/api";
 import { AlertCircle, Briefcase, MapPin, Search, Sparkles, Zap } from "lucide-react";
 
 const STATE_KEY = "freelanceskills_explore_filters";
@@ -100,7 +101,7 @@ export default function Explore() {
   const jobsQuery = useQuery<{ jobs: ApiJob[]; total: number }>({
     queryKey: ["api", "jobs", searchParams.toString()],
     queryFn: async () => {
-      const res = await fetch(`/api/jobs?${searchParams.toString()}`, { credentials: "include" });
+      const res = await apiFetch(`/api/jobs?${searchParams.toString()}`);
       if (!res.ok) throw new Error("Failed to fetch jobs");
       return res.json();
     },
@@ -109,7 +110,7 @@ export default function Explore() {
   const myApplicationsQuery = useQuery({
     queryKey: ["api", "applications", user?.id],
     queryFn: async () => {
-      const res = await fetch("/api/applications", { credentials: "include" });
+      const res = await apiFetch("/api/applications");
       if (!res.ok) throw new Error("Failed to fetch applications");
       return res.json();
     },
@@ -126,23 +127,13 @@ export default function Explore() {
       if (!user?.id) {
         throw new Error("Please sign in to apply.");
       }
-      const res = await fetch("/api/applications", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          jobId: job.id,
-          jobTitle: job.title,
-          company: job.clientName || "Client",
-          coverLetter: "",
-          source: "explore",
-        }),
+      return apiPost("/api/applications", {
+        jobId: job.id,
+        jobTitle: job.title,
+        company: job.clientName || "Client",
+        coverLetter: "",
+        source: "explore",
       });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || "Failed to apply");
-      }
-      return res.json();
     },
     onSuccess: () => {
       setStatusText("Application submitted successfully.");

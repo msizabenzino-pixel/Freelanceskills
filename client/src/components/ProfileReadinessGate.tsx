@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { apiFetch } from "@/lib/api";
 import {
   CheckCircle2, XCircle, AlertCircle, ArrowRight,
   Zap, Lock, Globe, User, Briefcase, DollarSign,
@@ -67,7 +68,7 @@ export function ProfileReadinessGate({ open, jobTitle, onClose, onReady }: Profi
   const { data, isLoading } = useQuery<ReadinessData>({
     queryKey: ["/api/profile/check-readiness"],
     queryFn: async () => {
-      const res = await fetch("/api/profile/check-readiness", { credentials: "include" });
+      const res = await apiFetch("/api/profile/check-readiness");
       if (!res.ok) throw new Error("Could not check profile status");
       return res.json();
     },
@@ -95,7 +96,7 @@ export function ProfileReadinessGate({ open, jobTitle, onClose, onReady }: Profi
 
   const publishProfile = async () => {
     try {
-      const res = await fetch("/api/profile/publish", { method: "POST", credentials: "include" });
+      const res = await apiFetch("/api/profile/publish", { method: "POST" });
       if (res.ok) {
         onClose();
         setTimeout(onReady, 300);
@@ -228,7 +229,7 @@ export function useReadiness(enabled: boolean) {
   return useQuery<ReadinessData>({
     queryKey: ["/api/profile/check-readiness"],
     queryFn: async () => {
-      const res = await fetch("/api/profile/check-readiness", { credentials: "include" });
+      const res = await apiFetch("/api/profile/check-readiness");
       if (!res.ok) throw new Error("Could not check profile status");
       return res.json();
     },

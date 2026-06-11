@@ -12,6 +12,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
+import { apiPost } from "@/lib/api";
 import { 
   Camera, Globe, Sparkles, ShieldCheck, ThumbsUp, Plus, Upload,
   Briefcase, GraduationCap, Clock, MapPin, Eye, Save, CheckCircle2, WandSparkles,
@@ -31,29 +32,16 @@ export default function ProfileBuilder() {
 
   const publishMutation = useMutation({
     mutationFn: async () => {
-      const res = await fetch("/api/profile", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          userId: user?.id,
-          userType: "freelancer",
-          bio,
-          title: headline,
-          skills: SKILLS,
-          hourlyRate: 0,
-          location: "",
-          isPro: false,
-        }),
+      return apiPost("/api/profile", {
+        userId: user?.id,
+        userType: "freelancer",
+        bio,
+        title: headline,
+        skills: SKILLS,
+        hourlyRate: 0,
+        location: "",
+        isPro: false,
       });
-      if (res.status === 401) {
-        throw new Error("401:Session expired — please sign in again.");
-      }
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({})) as any;
-        throw new Error(body?.message || "Could not publish profile. Please try again.");
-      }
-      return res.json();
     },
     onSuccess: () => {
       toast({

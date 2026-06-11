@@ -10,6 +10,7 @@ import { Loader2, MapPin, AlertCircle, CheckCircle2, FileText } from "lucide-rea
 import { useCurrency } from "@/lib/currency";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
+import { apiFetch, apiPost } from "@/lib/api";
 
 interface ApiJob {
   id: string;
@@ -40,7 +41,7 @@ export default function JobDetails() {
   const jobQuery = useQuery<ApiJob>({
     queryKey: ["api", "job", params?.id],
     queryFn: async () => {
-      const res = await fetch(`/api/jobs/${params!.id}`, { credentials: "include" });
+      const res = await apiFetch(`/api/jobs/${params!.id}`);
       if (!res.ok) throw new Error("Job not found");
       return res.json();
     },
@@ -50,7 +51,7 @@ export default function JobDetails() {
   const myAppsQuery = useQuery({
     queryKey: ["api", "applications", user?.id],
     queryFn: async () => {
-      const res = await fetch("/api/applications", { credentials: "include" });
+      const res = await apiFetch("/api/applications");
       if (!res.ok) throw new Error("Failed to fetch applications");
       return res.json();
     },
@@ -64,23 +65,13 @@ export default function JobDetails() {
   const applyMutation = useMutation({
     mutationFn: async () => {
       if (!jobQuery.data || !user?.id) throw new Error("Please sign in first.");
-      const res = await fetch("/api/applications", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          jobId: jobQuery.data.id,
-          jobTitle: jobQuery.data.title,
-          company: jobQuery.data.clientName || "Client",
-          coverLetter: coverLetter.trim(),
-          source: "job-details",
-        }),
+      return apiPost("/api/applications", {
+        jobId: jobQuery.data.id,
+        jobTitle: jobQuery.data.title,
+        company: jobQuery.data.clientName || "Client",
+        coverLetter: coverLetter.trim(),
+        source: "job-details",
       });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || "Failed to apply");
-      }
-      return res.json();
     },
     onSuccess: () => {
       setApplied(true);

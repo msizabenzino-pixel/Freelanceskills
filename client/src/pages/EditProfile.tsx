@@ -261,8 +261,22 @@ export default function EditProfile() {
       await syncSessionNow();
       const formData = form.getValues();
       const payload = {
-        ...formData,
+        title: formData.title,
+        tagline: formData.tagline || null,
+        bio: formData.bio,
+        skills: formData.skills,
+        category: formData.category,
+        experienceLevel: formData.experienceLevel,
         hourlyRate: Math.round(formData.hourlyRate * 100),
+        location: formData.location,
+        languages: formData.languages,
+        availability: formData.availability || null,
+        availableNow: formData.availableNow,
+        linkedinUrl: formData.linkedinUrl || null,
+        githubUrl: formData.githubUrl || null,
+        portfolioUrl: formData.portfolioUrl || null,
+        certifications: formData.certifications || null,
+        photoUrl: formData.photoUrl || null,
         portfolioProjectsJson: formData.portfolioProjects.length > 0
           ? JSON.stringify(formData.portfolioProjects)
           : null,
@@ -291,7 +305,7 @@ export default function EditProfile() {
       await syncSessionNow();
       const fd = new FormData();
       fd.append("photo", file);
-      const res = await fetch("/api/profile/upload-photo", { method: "POST", body: fd, credentials: "include" });
+      const res = await apiFetch("/api/profile/upload-photo", { method: "POST", body: fd });
       const json = await res.json();
       if (json.success && json.photoUrl) {
         form.setValue("photoUrl", json.photoUrl);
