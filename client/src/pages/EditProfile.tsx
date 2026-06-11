@@ -85,9 +85,15 @@ type EditProfileForm = z.infer<typeof editProfileSchema>;
 /* ── Helper: Postgres → Form mapping ─────────────────────────────────────── */
 
 function mapProfileToForm(profile: any): EditProfileForm {
-  const nameParts = (profile?.fullName || " ").split(" ");
-  const firstName = nameParts[0] || "";
-  const lastName = nameParts.slice(1).join(" ") || "";
+  // Prefer separate firstName/lastName from the API (joined from users table)
+  // Fall back to splitting fullName if only that is available
+  let firstName = profile?.firstName || "";
+  let lastName = profile?.lastName || "";
+  if (!firstName && !lastName && profile?.fullName) {
+    const nameParts = (profile.fullName || " ").split(" ");
+    firstName = nameParts[0] || "";
+    lastName = nameParts.slice(1).join(" ") || "";
+  }
   let portfolioProjects: any[] = [];
   try {
     if (profile?.portfolioProjectsJson) {
@@ -115,7 +121,7 @@ function mapProfileToForm(profile: any): EditProfileForm {
     githubUrl: profile?.githubUrl || "",
     portfolioUrl: profile?.portfolioUrl || "",
     certifications: profile?.certifications || "",
-    photoUrl: profile?.photoUrl || "",
+    photoUrl: profile?.photoUrl || profile?.photo_url || profile?.profileImageUrl || profile?.profile_photo_url || "",
     portfolioProjects: portfolioProjects.length > 0 ? portfolioProjects : [],
   };
 }
@@ -192,6 +198,8 @@ export default function EditProfile() {
       await syncSessionNow();
 
       const payload = {
+        firstName: data.firstName,
+        lastName: data.lastName,
         title: data.title,
         tagline: data.tagline || null,
         bio: data.bio,
@@ -261,6 +269,8 @@ export default function EditProfile() {
       await syncSessionNow();
       const formData = form.getValues();
       const payload = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
         title: formData.title,
         tagline: formData.tagline || null,
         bio: formData.bio,

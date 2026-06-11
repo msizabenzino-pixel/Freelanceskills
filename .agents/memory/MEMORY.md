@@ -1,2 +1,5 @@
-- [Profile photo upload](profile-photo-upload.md) — Uses multer diskStorage to `/uploads/avatars/`, served via `/uploads` static route. No Cloudinary needed.
-- [Profile schema extensions](profile-schema-extensions.md) — 11 new columns added via ALTER TABLE, no migrations needed for additive changes.
+- [Profile Data Persistence](profile-persistence.md) — GET /api/profile must JOIN users table to return firstName/lastName. Profiles table has no name columns; names live in users table.
+- [Auth Interceptor Pattern](auth-interceptor.md) — All client fetch calls must use apiFetch/apiPost (with 401 auto-retry via syncSessionNow). Raw fetch causes silent 401 failures on stale sessions.
+- [Form Data Mapping](form-data-mapping.md) — mapProfileToForm must match the API response shape exactly. If API returns firstName/lastName separately, don't split fullName.
+- [Drizzle Payload Validation](drizzle-payload.md) — PATCH/POST payloads must only contain valid DB columns. Never spread form objects (e.g., portfolioProjects array) into DB updates.
+- [Profile Endpoint Consistency](profile-endpoints.md) — All profile endpoints (GET /api/profile, GET /api/profile/:id, POST /api/profile/go-live) must return the same merged shape (profile + user data) for client consistency.

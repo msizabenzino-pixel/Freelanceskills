@@ -187,16 +187,12 @@ export function OnboardingCarousel() {
     // 2. If authenticated, persist to the DB so Dashboard never shows false "No Profile"
     if (isAuthenticated) {
       try {
-        await fetch("/api/onboarding/complete", {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            role: selectedRole || "client",
-            skills: selectedSkills,
-            rateMinCents: selectedRate ? Number(selectedRate) : 0,
-            portfolioUrls: filledUrls,
-          }),
+        const { apiPost } = await import("@/lib/api");
+        await apiPost("/api/onboarding/complete", {
+          role: selectedRole || "client",
+          skills: selectedSkills,
+          rateMinCents: selectedRate ? Number(selectedRate) : 0,
+          portfolioUrls: filledUrls,
         });
       } catch (_) {
         // Non-fatal — continue even if API call fails

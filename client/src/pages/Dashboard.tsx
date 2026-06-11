@@ -176,17 +176,17 @@ export default function Dashboard() {
   const renderOverview = () => {
     const fp = profileStatus.profile;
     const strengthInput = {
-      firstName: fp?.fullName?.split(" ")[0] ?? "",
-      lastName: fp?.fullName?.split(" ").slice(1).join(" ") ?? "",
+      firstName: fp?.firstName || fp?.fullName?.split(" ")[0] || "",
+      lastName: fp?.lastName || fp?.fullName?.split(" ").slice(1).join(" ") || "",
       title: fp?.title,
       bio: fp?.bio,
       skills: fp?.skills,
-      category: fp?.categories?.[0],
+      category: fp?.categories?.[0] || fp?.category,
       hourlyRate: fp?.hourlyRate,
       location: fp?.location,
-      photo: fp?.profilePhotoUrl,
-      portfolioUrl: fp?.portfolioLinks?.[0],
-      languages: [],
+      photo: fp?.photoUrl || fp?.profileImageUrl || fp?.profilePhotoUrl || "",
+      portfolioUrl: fp?.portfolioLinks?.[0] || fp?.portfolioUrl || "",
+      languages: fp?.languages || [],
       availability: fp?.availability,
     };
     return (
@@ -197,7 +197,10 @@ export default function Dashboard() {
             <User className="w-7 h-7 text-emerald-400" />
           </div>
           <div className="flex-1">
-            <h2 className="text-xl font-bold text-white">Welcome back{user?.displayName ? `, ${user.displayName.split(" ")[0]}` : ""}!</h2>
+            <h2 className="text-xl font-bold text-white">Welcome back{
+              fp?.fullName ? `, ${fp.fullName.split(" ")[0]}` :
+              user?.displayName ? `, ${user.displayName.split(" ")[0]}` : ""
+            }!</h2>
             <p className="text-slate-400 text-sm mt-0.5">Manage your jobs, applications, and profile from here.</p>
           </div>
           <div className="flex gap-2 flex-shrink-0">

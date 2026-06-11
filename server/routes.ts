@@ -561,12 +561,31 @@ export async function registerRoutes(
     }
   });
 
-  // Profile routes
+  // Profile routes — JOIN users table so firstName/lastName are always present
   app.get("/api/profile", isAuthenticated, async (req: any, res) => {
     try {
       const userId = (req.session as any).userId;
       const profile = await storage.getProfile(userId);
-      res.json(profile);
+      if (!profile) {
+        return res.json(null);
+      }
+      // Join users table to get name + email
+      const { db: _db } = await import("./db");
+      const { users: usersTable } = await import("../shared/models/auth");
+      const [userRow] = await _db
+        .select({ firstName: usersTable.firstName, lastName: usersTable.lastName, email: usersTable.email, profileImageUrl: usersTable.profileImageUrl })
+        .from(usersTable)
+        .where(eq(usersTable.id, userId))
+        .limit(1);
+
+      res.json({
+        ...profile,
+        firstName: userRow?.firstName || "",
+        lastName: userRow?.lastName || "",
+        email: userRow?.email || "",
+        profileImageUrl: userRow?.profileImageUrl || "",
+        fullName: `${userRow?.firstName || ""} ${userRow?.lastName || ""}`.trim(),
+      });
     } catch (error) {
       console.error("Error fetching profile:", error);
       res.status(500).json({ message: "Failed to fetch profile" });
@@ -584,9 +603,30 @@ export async function registerRoutes(
       if (!profile) {
         return res.status(404).json({ message: "Profile not found" });
       }
+      // Join users table for name + photo
+      const userId = profile.userId;
+      let userRow: any = null;
+      try {
+        const { db: _db } = await import("./db");
+        const { users: usersTable } = await import("../shared/models/auth");
+        const [row] = await _db
+          .select({ firstName: usersTable.firstName, lastName: usersTable.lastName, email: usersTable.email, profileImageUrl: usersTable.profileImageUrl })
+          .from(usersTable)
+          .where(eq(usersTable.id, userId))
+          .limit(1);
+        userRow = row;
+      } catch { /* non-fatal */ }
+
       res.setHeader("Cache-Control", "public, max-age=60, s-maxage=120, stale-while-revalidate=300");
       res.setHeader("Vary", "Accept-Encoding");
-      res.json(profile);
+      res.json({
+        ...profile,
+        firstName: userRow?.firstName || "",
+        lastName: userRow?.lastName || "",
+        fullName: `${userRow?.firstName || ""} ${userRow?.lastName || ""}`.trim(),
+        email: userRow?.email || "",
+        profileImageUrl: userRow?.profileImageUrl || "",
+      });
     } catch (error) {
       console.error("Error fetching profile by id:", error);
       res.status(500).json({ message: "Failed to fetch profile" });
@@ -666,19 +706,38 @@ export async function registerRoutes(
   app.patch("/api/profile", isAuthenticated, async (req: any, res) => {
     try {
       const userId = (req.session as any).userId;
-      const { userId: _u, id: _i, isPro: _p, ...rawData } = req.body;
+      const { userId: _u, id: _i, isPro: _p, firstName, lastName, ...rawData } = req.body;
       const safeData = {
         ...rawData,
         ...(rawData.bio !== undefined && { bio: sanitizeText(rawData.bio, 2000) }),
         ...(rawData.title !== undefined && { title: sanitizeText(rawData.title, 150) }),
         ...(rawData.tagline !== undefined && { tagline: sanitizeText(rawData.tagline, 300) }),
       };
+
+      // Update firstName/lastName in users table if provided
+      if (firstName || lastName) {
+        try {
+          const { db: _db } = await import("./db");
+          const { users: usersTable } = await import("../shared/models/auth");
+          await _db
+            .update(usersTable)
+            .set({
+              ...(firstName !== undefined && { firstName: String(firstName).slice(0, 50) || null }),
+              ...(lastName !== undefined && { lastName: String(lastName).slice(0, 50) || null }),
+              updatedAt: new Date(),
+            })
+            .where(eq(usersTable.id, userId));
+        } catch (nameErr) {
+          console.warn("[profile] name update non-fatal:", nameErr);
+        }
+      }
+
       const profile = await storage.updateProfile(userId, safeData);
-      
+
       if (!profile) {
         return res.status(404).json({ message: "Profile not found" });
       }
-      
+
       res.json(profile);
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -2467,8 +2526,26 @@ User: ${message}`;
         bio, title, skills, hourlyRate, location, isPro,
         photoUrl, certifications, languages, linkedinUrl, githubUrl, portfolioUrl,
         availability, availableNow, tagline, experienceLevel, category,
-        portfolioProjects,
+        portfolioProjects, firstName, lastName,
       } = req.body;
+
+      // Update firstName/lastName in users table if provided
+      if (firstName || lastName) {
+        try {
+          const { db: _db } = await import("./db");
+          const { users: usersTable } = await import("../shared/models/auth");
+          await _db
+            .update(usersTable)
+            .set({
+              ...(firstName !== undefined && { firstName: String(firstName).slice(0, 50) || null }),
+              ...(lastName !== undefined && { lastName: String(lastName).slice(0, 50) || null }),
+              updatedAt: new Date(),
+            })
+            .where(eq(usersTable.id, userId));
+        } catch (nameErr) {
+          console.warn("[go-live] name update non-fatal:", nameErr);
+        }
+      }
 
       const saveData: any = {
         bio: bio || null,

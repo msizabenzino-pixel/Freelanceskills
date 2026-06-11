@@ -10,6 +10,7 @@
  */
 
 import { useQuery } from "@tanstack/react-query";
+import { apiJson } from "@/lib/api";
 
 export type ProfileStatus = "loading" | "none" | "draft" | "published";
 
@@ -39,13 +40,15 @@ export function useProfileStatus(userId: string | undefined): ProfileStatusResul
     queryKey: ["/api/profile-status", userId],
     queryFn: async () => {
       if (!userId) return null;
-      const res = await fetch("/api/profile", { credentials: "include" });
-      if (res.status === 401) return SENTINEL_401;
-      if (!res.ok) return null;
-      return res.json();
+      try {
+        return await apiJson<any>("/api/profile");
+      } catch (e: any) {
+        if (e?.status === 401) return SENTINEL_401;
+        return null;
+      }
     },
     enabled: !!userId,
-    refetchInterval: 60_000,   // 1 minute — stop hammering the server
+    refetchInterval: 60_000,
     staleTime: 30_000,
     retry: false,
   });
@@ -62,18 +65,22 @@ export function useProfileStatus(userId: string | undefined): ProfileStatusResul
   const status: ProfileStatus = data.publishedProfile ? "published" : "draft";
   const score = computeScore(data);
 
+  // Build fullName from joined data (firstName/lastName are now returned from API)
+  const fullName = data.fullName
+    || `${data.firstName || ""} ${data.lastName || ""}`.trim();
+
   const profile = {
     ...data,
-    fullName: data.fullName || "",
+    fullName: fullName || "",
     title: data.title || "",
     bio: data.bio || "",
     skills: data.skills || [],
     hourlyRate: data.hourlyRate ? data.hourlyRate / 100 : undefined,
     location: data.location || "",
-    categories: [],
-    profilePhotoUrl: "",
-    portfolioLinks: [],
-    availability: undefined,
+    categories: data.categories || [],
+    profilePhotoUrl: data.photoUrl || data.profileImageUrl || "",
+    portfolioLinks: data.portfolioLinks || [],
+    availability: data.availability,
     publishedProfile: data.publishedProfile,
     profileScore: score,
   };

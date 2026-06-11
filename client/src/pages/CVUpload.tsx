@@ -380,6 +380,8 @@ export default function CVUpload() {
       return apiJson<any>("/api/profile/go-live", {
         method: "POST",
         json: {
+          firstName: data.firstName,
+          lastName: data.lastName,
           bio: data.bio,
           title: data.title,
           skills: data.skills,
