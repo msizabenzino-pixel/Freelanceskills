@@ -689,7 +689,12 @@ export async function registerRoutes(
   app.post("/api/onboarding/complete", isAuthenticated, async (req: any, res) => {
     try {
       const userId = (req.session as any).userId;
-      const { role, skills, rateMinCents, portfolioUrls } = req.body;
+      const { role, skills, rateMinCents, portfolioUrls, location, bio, headline } = req.body;
+
+      // Validate role
+      if (!role || !["freelancer", "client"].includes(role)) {
+        return res.status(400).json({ error: "Invalid role. Must be 'freelancer' or 'client'." });
+      }
 
       // Ensure user row exists (prevents FK constraint failure for new OAuth users)
       try {
@@ -714,6 +719,9 @@ export async function registerRoutes(
         role: role === "freelancer" ? "freelancer" : "client",
         skills: Array.isArray(skills) ? skills.slice(0, 10) : [],
         hourlyRate: rateMinCents && rateMinCents > 0 ? Number(rateMinCents) * 100 : null,
+        location: location || null,
+        bio: bio || null,
+        title: headline || null,
         publishedProfile: false,
         ...(portfolioProjects ? { portfolioProjects } : {}),
       } as any);
@@ -818,6 +826,7 @@ export async function registerRoutes(
       const maxRateCents = maxRate ? Math.round(parseFloat(maxRate as string) * 100) : undefined;
       const minRatingScaled = minRating ? Math.round(parseFloat(minRating as string) * 100) : undefined;
 
+      const minJobs = req.query.minJobs ? parseInt(req.query.minJobs as string) : undefined;
       const freelancers = await storage.searchFreelancers(
         q as string | undefined,
         location as string | undefined,
@@ -825,6 +834,7 @@ export async function registerRoutes(
           verifiedOnly: verified === "true",
           maxRateCents,
           minRating: minRatingScaled,
+          minJobs,
           limit: limit ? parseInt(limit as string) : 50,
           offset: offset ? parseInt(offset as string) : 0,
         }
@@ -1542,7 +1552,7 @@ Guidelines:
           "Authorization": `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: "gpt-5-mini",
+          model: "gpt-4o-mini",
           messages,
           temperature: 0.7,
         }),
@@ -1991,7 +2001,7 @@ User: ${message}`;
           "Authorization": `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: "gpt-5-mini",
+          model: "gpt-4o-mini",
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: message }
@@ -2523,7 +2533,7 @@ User: ${message}`;
         baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
       });
       const response = await openai.chat.completions.create({
-        model: "gpt-5-mini",
+        model: "gpt-4o-mini",
         messages: [
           {
             role: "system",
@@ -2846,7 +2856,7 @@ User: ${message}`;
       });
 
       const response = await openai.chat.completions.create({
-        model: "gpt-5-mini",
+        model: "gpt-4o-mini",
         messages: [
           {
             role: "system",
@@ -2917,7 +2927,7 @@ Respond with ONLY the JSON object, no markdown.`
           - experienceLevel (string - "entry" | "intermediate" | "senior" | "executive")`;
 
           const response = await openai.chat.completions.create({
-            model: "gpt-5-mini",
+            model: "gpt-4o-mini",
             messages: [
               { role: "system", content: seedPrompt },
               { role: "user", content: "Source 20 fresh global job listings across multiple categories and locations as of today." }
@@ -2996,7 +3006,7 @@ Respond with ONLY the JSON object, no markdown.`
       - experienceLevel (string - "entry" | "intermediate" | "senior" | "executive")`;
 
       const response = await openai.chat.completions.create({
-        model: "gpt-5-mini",
+        model: "gpt-4o-mini",
         messages: [
           {
             role: "system",
@@ -3425,7 +3435,7 @@ Never make up information. If unsure, say "Let me check the lesson content" and 
           "Authorization": `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: "gpt-5-mini",
+          model: "gpt-4o-mini",
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: message },
@@ -3535,7 +3545,7 @@ Never make up information. If unsure, say "Let me check the lesson content" and 
       });
 
       const response = await openai.chat.completions.create({
-        model: "gpt-5-mini",
+        model: "gpt-4o-mini",
         messages: [
           {
             role: "system",
@@ -3580,7 +3590,7 @@ My name: ${userName || 'Candidate'}`
       const requestedTypes = types?.length > 0 ? types.join(", ") : "jobs, apprenticeships, bursaries, learnerships, internships, graduate programmes";
 
       const response = await openai.chat.completions.create({
-        model: "gpt-5-mini",
+        model: "gpt-4o-mini",
         messages: [
           {
             role: "system",
@@ -8000,7 +8010,7 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
         ].join("\n");
 
         const completion = await openai.chat.completions.create({
-          model: "gpt-5-mini",
+          model: "gpt-4o-mini",
           messages: [
             { role: "system", content: systemPrompt },
             {
@@ -8773,7 +8783,7 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
         body: JSON.stringify({
-          model: "gpt-5-mini",
+          model: "gpt-4o-mini",
           messages: [
             {
               role: "system",

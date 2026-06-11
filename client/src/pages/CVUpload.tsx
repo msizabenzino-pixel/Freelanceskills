@@ -107,7 +107,7 @@ const defaultForm: ProfileFormData = {
   hourlyRate: "", location: "", experienceLevel: "", category: "",
   certifications: "", photo: "", portfolioUrl: "", linkedinUrl: "",
   githubUrl: "", languages: [], availability: "Available now",
-  availableNow: true, phone: "", tagline: "",
+  availableNow: false, phone: "", tagline: "",
 };
 
 function fireConfetti() {
@@ -141,16 +141,16 @@ function fireConfetti() {
 function parseResponse(data: any, prev: ProfileFormData): ProfileFormData {
   return {
     ...prev,
-    firstName: data.firstName || prev.firstName,
-    lastName: data.lastName || prev.lastName,
-    title: data.title || prev.title,
-    bio: data.bio || prev.bio,
+    firstName: data.firstName != null ? data.firstName : prev.firstName,
+    lastName: data.lastName != null ? data.lastName : prev.lastName,
+    title: data.title != null ? data.title : prev.title,
+    bio: data.bio != null ? data.bio : prev.bio,
     skills: data.skills?.length ? data.skills : prev.skills,
-    hourlyRate: data.hourlyRate?.toString() || prev.hourlyRate,
-    location: data.location || prev.location,
-    experienceLevel: data.experienceLevel || prev.experienceLevel,
-    category: data.category || prev.category,
-    certifications: data.certifications || prev.certifications,
+    hourlyRate: data.hourlyRate != null ? data.hourlyRate.toString() : prev.hourlyRate,
+    location: data.location != null ? data.location : prev.location,
+    experienceLevel: data.experienceLevel != null ? data.experienceLevel : prev.experienceLevel,
+    category: data.category != null ? data.category : prev.category,
+    certifications: data.certifications != null ? data.certifications : prev.certifications,
   };
 }
 
@@ -298,6 +298,32 @@ export default function CVUpload() {
     }
   }, [toast]);
 
+  // Auto-save draft every 30 seconds (O4)
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (phase === "review" && (formData.firstName || formData.title)) {
+        localStorage.setItem("cvupload_draft", JSON.stringify({ formData, portfolioProjects, phase }));
+      }
+    }, 30000);
+    return () => clearInterval(timer);
+  }, [formData, portfolioProjects, phase]);
+
+  // Restore draft on mount (O4)
+  useEffect(() => {
+    const draft = localStorage.getItem("cvupload_draft");
+    if (draft) {
+      try {
+        const parsed = JSON.parse(draft);
+        if (parsed.formData?.firstName || parsed.formData?.title) {
+          setFormData((prev) => ({ ...prev, ...parsed.formData }));
+          if (parsed.portfolioProjects) setPortfolioProjects(parsed.portfolioProjects);
+          if (parsed.phase === "review") setPhase("review");
+          toast({ title: "Draft restored", description: "Your previous work was saved. Keep going!" });
+        }
+      } catch {}
+    }
+  }, []);
+
   useEffect(() => {
     apiFetch("/api/profile")
       .then(r => r.ok ? r.json() : null)
@@ -435,7 +461,9 @@ export default function CVUpload() {
         if (pts?.success) toast({ title: `+${pts.points} points earned!`, description: "Keep building your profile to unlock more rewards." });
       } catch {}
       toast({ title: "Your profile is now LIVE! 🎉", description: res?.message || "Employers can now find and hire you on FreelanceSkills." });
-      setTimeout(() => setLocation("/dashboard"), 1800);
+      // Clear draft since profile is published
+      localStorage.removeItem("cvupload_draft");
+      setTimeout(() => setLocation("/dashboard"), 3500);
     },
     onError: (error: Error) => {
       const msg = error.message || "";

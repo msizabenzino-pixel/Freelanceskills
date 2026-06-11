@@ -179,12 +179,17 @@ function SkeletonCard() {
   );
 }
 
+type SortOption = "rating" | "rate-low" | "rate-high" | "jobs";
+
 export default function FindTalent() {
   const [view, setView] = useState<"list" | "map">("list");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [searchInput, setSearchInput] = useState("");
   const [locationInput, setLocationInput] = useState("");
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
+  const [sortBy, setSortBy] = useState<SortOption>("rating");
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 24;
   const { formatRate } = useCurrency();
 
   const { data: platformStats } = useQuery<any>({
@@ -207,21 +212,31 @@ export default function FindTalent() {
   if (activeFilters.verified) params.set("verified", activeFilters.verified);
   if (activeFilters.maxRate) params.set("maxRate", activeFilters.maxRate);
   if (activeFilters.minRating) params.set("minRating", activeFilters.minRating);
+  if (activeFilters.minJobs) params.set("minJobs", activeFilters.minJobs);
+  params.set("limit", String(PAGE_SIZE));
+  params.set("offset", String((page - 1) * PAGE_SIZE));
 
-  const { data, isLoading, isError } = useQuery<{ freelancers: FreelancerResult[]; total: number }>({
-    queryKey: ["freelancers", debouncedSearch, debouncedLocation, activeFilters],
+  const { data, isLoading, isError, refetch } = useQuery<{ freelancers: FreelancerResult[]; total: number }>({
+    queryKey: ["freelancers", debouncedSearch, debouncedLocation, activeFilters, sortBy, page],
     queryFn: async () => {
       const res = await fetch(`/api/talent/search?${params.toString()}`);
       if (!res.ok) throw new Error("Failed to load freelancers");
       return res.json();
     },
     staleTime: 30000,
+    retry: 2,
+    retryDelay: 1000,
   });
 
-  const freelancers: FreelancerResult[] = (data?.freelancers || []).map((f, i) => ({
-    ...f,
-    coords: MAP_COORDS[i % MAP_COORDS.length],
-  }));
+  const freelancers: FreelancerResult[] = (data?.freelancers || [])
+    .map((f, i) => ({ ...f, coords: MAP_COORDS[i % MAP_COORDS.length] }))
+    .sort((a, b) => {
+      if (sortBy === "rating") return (b.rating ?? 0) - (a.rating ?? 0);
+      if (sortBy === "rate-low") return (a.hourlyRateCents ?? 0) - (b.hourlyRateCents ?? 0);
+      if (sortBy === "rate-high") return (b.hourlyRateCents ?? 0) - (a.hourlyRateCents ?? 0);
+      if (sortBy === "jobs") return (b.completedJobs ?? 0) - (a.completedJobs ?? 0);
+      return 0;
+    });
 
   const selectedPro = selectedId ? freelancers.find((f) => f.id === selectedId) : null;
 
@@ -232,6 +247,7 @@ export default function FindTalent() {
       else next[key] = value;
       return next;
     });
+    setPage(1);
   }, []);
 
   return (
@@ -367,11 +383,24 @@ export default function FindTalent() {
                   </button>
                 );
               })}
-              {data && (
-                <span className="text-xs text-slate-500 ml-auto whitespace-nowrap font-medium">
-                  {data.total} freelancer{data.total !== 1 ? "s" : ""}
-                </span>
-              )}
+              <div className="flex items-center gap-2 ml-auto">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as SortOption)}
+                  className="bg-slate-900 border border-slate-700/60 text-slate-400 text-xs rounded-full px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-500/30"
+                  data-testid="select-sort"
+                >
+                  <option value="rating">Sort: Top Rated</option>
+                  <option value="rate-low">Sort: Rate (Low → High)</option>
+                  <option value="rate-high">Sort: Rate (High → Low)</option>
+                  <option value="jobs">Sort: Most Jobs</option>
+                </select>
+                {data && (
+                  <span className="text-xs text-slate-500 whitespace-nowrap font-medium">
+                    {data.total} freelancer{data.total !== 1 ? "s" : ""}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -385,7 +414,7 @@ export default function FindTalent() {
             ) : isError ? (
               <div className="text-center py-20">
                 <p className="text-muted-foreground">Failed to load freelancers. Please try again.</p>
-                <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>Retry</Button>
+                <Button variant="outline" className="mt-4" onClick={() => refetch()} data-testid="button-retry-search">Retry</Button>
               </div>
             ) : freelancers.length === 0 ? (
               <div data-testid="empty-state">
@@ -411,7 +440,9 @@ export default function FindTalent() {
                         </Button>
                       </div>
                     </div>
-                    <p className="text-xs text-center text-muted-foreground mb-4 uppercase tracking-wider font-semibold">Sample profiles</p>
+                    <div className="text-center mb-4">
+                      <span className="inline-block px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-xs text-slate-400 font-semibold uppercase tracking-wider">Sample profiles — Coming soon</span>
+                    </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 opacity-50 pointer-events-none select-none">
                       {[
                         { name: "Amara Osei", title: "Full-Stack Developer", location: "Accra, Ghana", skills: ["React", "Node.js", "PostgreSQL"], rate: "R 520/hr", rating: 4.9, jobs: 43 },
@@ -468,10 +499,40 @@ export default function FindTalent() {
                 ))}
               </div>
             )}
+            {/* Pagination */}
+            {data && data.total > PAGE_SIZE && (
+              <div className="flex items-center justify-center gap-3 mt-8 mb-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page <= 1}
+                  data-testid="button-prev-page"
+                >
+                  Previous
+                </Button>
+                <span className="text-xs text-slate-500">
+                  Page {page} of {Math.ceil(data.total / PAGE_SIZE)}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage(p => Math.min(Math.ceil(data.total / PAGE_SIZE), p + 1))}
+                  disabled={page >= Math.ceil(data.total / PAGE_SIZE)}
+                  data-testid="button-next-page"
+                >
+                  Next
+                </Button>
+              </div>
+            )}
           </div>
         ) : (
           <div className="relative w-full h-[calc(100vh-180px)] bg-slate-900 overflow-hidden">
             <div className="absolute inset-0 opacity-40 bg-[url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Map_of_Pretoria%2C_South_Africa.svg/2000px-Map_of_Pretoria%2C_South_Africa.svg.png')] bg-cover bg-center grayscale" />
+            <div className="absolute top-4 left-4 z-30 bg-slate-900/80 backdrop-blur-sm px-3 py-2 rounded-lg border border-slate-700">
+              <p className="text-xs font-bold text-white">Map View</p>
+              <p className="text-[10px] text-slate-400">{freelancers.length} freelancer{freelancers.length !== 1 ? "s" : ""} shown</p>
+            </div>
 
             {isLoading && (
               <div className="absolute inset-0 flex items-center justify-center bg-slate-950/60 z-10">

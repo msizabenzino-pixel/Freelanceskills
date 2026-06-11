@@ -37,7 +37,7 @@ export interface IStorage {
   listFreelancerProfiles(): Promise<Profile[]>;
   countOpenDisputesForFreelancer(freelancerUserId: string): Promise<number>;
   savePortfolioProject(userId: string, project: { title: string; description: string; link: string; technologies: string[] }): Promise<Profile | undefined>;
-  searchFreelancers(query?: string, location?: string, opts?: { verifiedOnly?: boolean; availableNow?: boolean; maxRateCents?: number; minRating?: number; limit?: number; offset?: number }): Promise<Profile[]>;
+  searchFreelancers(query?: string, location?: string, opts?: { verifiedOnly?: boolean; availableNow?: boolean; maxRateCents?: number; minRating?: number; minJobs?: number; limit?: number; offset?: number }): Promise<Profile[]>;
 
   // Service Package operations (TaskRabbit-style)
   createServicePackage(pkg: InsertServicePackage): Promise<ServicePackage>;
@@ -284,6 +284,7 @@ class DatabaseStorage implements IStorage {
       availableNow?: boolean;
       maxRateCents?: number;
       minRating?: number;
+      minJobs?: number;
       limit?: number;
       offset?: number;
     }
@@ -314,6 +315,10 @@ class DatabaseStorage implements IStorage {
 
     if (opts?.minRating) {
       conditions.push(sql`${profiles.rating} >= ${opts.minRating}`);
+    }
+
+    if (opts?.minJobs) {
+      conditions.push(sql`${profiles.completedJobs} >= ${opts.minJobs}`);
     }
 
     const limit = opts?.limit ?? 50;

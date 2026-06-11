@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -10,6 +10,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { apiFetch } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 
 type Role = "freelancer" | "client" | null;
 
@@ -83,6 +84,7 @@ export function OnboardingCarousel() {
   const [step, setStep] = useState<Step>("slides");
   const [selectedRole, setSelectedRole] = useState<Role>(null);
   const { isAuthenticated, isLoading } = useAuth();
+  const { toast } = useToast();
   const profileCheckedRef = useRef(false);
   const showTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -92,9 +94,12 @@ export function OnboardingCarousel() {
   const [customSkill, setCustomSkill] = useState("");
   const [selectedRate, setSelectedRate] = useState<string | null>(null);
   const [location, setLocation] = useState("");
+  const [customLocation, setCustomLocation] = useState("");
+  const [showCustomLocation, setShowCustomLocation] = useState(false);
   const [bio, setBio] = useState("");
   const [headline, setHeadline] = useState("");
   const [portfolioUrls, setPortfolioUrls] = useState<string[]>(["", "", ""]);
+  const [portfolioUrlErrors, setPortfolioUrlErrors] = useState<boolean[]>([false, false, false]);
 
   // Client state
   const [selectedHireType, setSelectedHireType] = useState<string | null>(null);
@@ -198,21 +203,23 @@ export function OnboardingCarousel() {
           role: selectedRole || "client",
           skills: selectedSkills,
           rateMinCents: selectedRate ? Number(selectedRate) : 0,
-          location,
+          location: location === "Other" ? customLocation || "Other" : location,
           bio,
           headline,
           portfolioUrls: filledUrls,
         });
-      } catch (_) {
-        // Non-fatal — continue even if API call fails
+      } catch (err: any) {
+        console.warn("[onboarding] DB save failed:", err?.message || err);
+        // Non-fatal — still navigate, but warn user data is local only
+        toast({ variant: "destructive", title: "Profile save failed", description: "Your choices were saved locally. Please try again later." });
       }
     }
 
     // 3. Navigate
     setIsVisible(false);
     setTimeout(() => {
-      if (selectedRole === "freelancer") window.location.href = "/cv-upload";
-      else if (selectedRole === "client") window.location.href = "/post-job";
+      if (selectedRole === "freelancer") window.location.assign("/cv-upload");
+      else if (selectedRole === "client") window.location.assign("/post-job");
     }, 200);
   };
 
@@ -274,6 +281,12 @@ export function OnboardingCarousel() {
 
   if (!isVisible) return null;
 
+  const reduced = useReducedMotion();
+  const motionProps = reduced ? { initial: false, animate: false, exit: false, transition: { duration: 0 } } : {};
+  const slideProps = reduced ? { initial: false, animate: false, exit: false, transition: { duration: 0 } } : { initial: { opacity: 0, x: 24 }, animate: { opacity: 1, x: 0 }, exit: { opacity: 0, x: -24 }, transition: { duration: 0.25 } };
+  const stepProps = reduced ? { initial: false, animate: false, exit: false, transition: { duration: 0 } } : { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -12 }, transition: { duration: 0.25 } };
+  const progressPercent = Math.max(0, Math.min(100, (activeDot / Math.max(1, totalDots - 1)) * 100));
+
   return (
     <AnimatePresence>
       <motion.div
@@ -282,6 +295,7 @@ export function OnboardingCarousel() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
+        {...motionProps}
       >
         <motion.div
           className="relative w-full max-w-lg overflow-hidden rounded-2xl border bg-card shadow-2xl"
@@ -291,18 +305,26 @@ export function OnboardingCarousel() {
           data-testid="onboarding-carousel"
         >
           <div className="p-8 md:p-10">
+            {/* Progress bar */}
+            <div className="mb-6" aria-label={`Onboarding progress: ${Math.round(progressPercent)}% complete`}>
+              <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
+                <span className="font-semibold">Step {activeDot + 1} of {totalDots}</span>
+                <span>{Math.round(progressPercent)}%</span>
+              </div>
+              <div className="h-2 w-full rounded-full bg-slate-800 overflow-hidden">
+                <div className="h-full rounded-full bg-primary transition-all duration-300" style={{ width: `${progressPercent}%` }} />
+              </div>
+            </div>
+
             <AnimatePresence mode="wait">
 
               {/* ── Intro slides ────────────────────────────── */}
               {step === "slides" && (
                 <motion.div
                   key={`slide-${currentSlide}`}
-                  initial={{ opacity: 0, x: 24 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -24 }}
-                  transition={{ duration: 0.25 }}
                   className="flex flex-col items-center text-center"
                   data-testid={`onboarding-slide-${currentSlide}`}
+                  {...slideProps}
                 >
                   <div className={cn("mb-8 flex h-40 w-full items-center justify-center rounded-xl bg-gradient-to-br", slides[currentSlide].gradient)}>
                     {slides[currentSlide].icon}
@@ -316,12 +338,9 @@ export function OnboardingCarousel() {
               {step === "role" && (
                 <motion.div
                   key="role-step"
-                  initial={{ opacity: 0, x: 24 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -24 }}
-                  transition={{ duration: 0.25 }}
                   className="flex flex-col items-center text-center"
                   data-testid="onboarding-role-step"
+                  {...slideProps}
                 >
                   <h2 className="mb-2 text-2xl font-bold tracking-tight">What brings you here?</h2>
                   <p className="mb-8 text-muted-foreground text-sm">We'll personalise your experience based on your goal.</p>
@@ -358,11 +377,8 @@ export function OnboardingCarousel() {
               {step === "skills" && (
                 <motion.div
                   key="skills-step"
-                  initial={{ opacity: 0, x: 24 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -24 }}
-                  transition={{ duration: 0.25 }}
                   data-testid="onboarding-skills-step"
+                  {...stepProps}
                 >
                   <h2 className="text-xl font-bold mb-1">What are your top skills?</h2>
                   <p className="text-sm text-muted-foreground mb-4">Pick up to 10 — we'll match you to the right jobs first.</p>
@@ -437,11 +453,8 @@ export function OnboardingCarousel() {
               {step === "rate" && (
                 <motion.div
                   key="rate-step"
-                  initial={{ opacity: 0, x: 24 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -24 }}
-                  transition={{ duration: 0.25 }}
                   data-testid="onboarding-rate-step"
+                  {...stepProps}
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <DollarSign className="w-5 h-5 text-emerald-500" />
@@ -474,11 +487,8 @@ export function OnboardingCarousel() {
               {step === "location" && (
                 <motion.div
                   key="location-step"
-                  initial={{ opacity: 0, x: 24 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -24 }}
-                  transition={{ duration: 0.25 }}
                   data-testid="onboarding-location-step"
+                  {...stepProps}
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <MapPin className="w-5 h-5 text-emerald-500" />
@@ -486,10 +496,13 @@ export function OnboardingCarousel() {
                   </div>
                   <p className="text-sm text-muted-foreground mb-6">Clients prefer local talent. You can work remotely too.</p>
                   <div className="space-y-3">
-                    {["Johannesburg", "Cape Town", "Durban", "Pretoria", "Port Elizabeth", "Bloemfontein", "Remote / Anywhere"].map(city => (
+                    {["Johannesburg", "Cape Town", "Durban", "Pretoria", "Port Elizabeth", "Bloemfontein", "Remote / Anywhere", "Other"].map(city => (
                       <button
                         key={city}
-                        onClick={() => setLocation(city)}
+                        onClick={() => {
+                          setLocation(city);
+                          if (city === "Other") { setShowCustomLocation(true); } else { setShowCustomLocation(false); }
+                        }}
                         className={cn(
                           "w-full flex items-center gap-3 p-3 rounded-xl border-2 transition-all text-left hover:border-primary hover:bg-primary/5",
                           location === city ? "border-primary bg-primary/10" : "border-border"
@@ -499,6 +512,18 @@ export function OnboardingCarousel() {
                         <span className="text-sm font-medium">{city}</span>
                       </button>
                     ))}
+                    {showCustomLocation && (
+                      <div className="mt-2">
+                        <Input
+                          placeholder="e.g. Polokwane, East London, Accra..."
+                          value={customLocation}
+                          onChange={e => setCustomLocation(e.target.value)}
+                          className="h-10"
+                          data-testid="input-custom-location"
+                        />
+                        <p className="text-xs text-muted-foreground mt-1">Tell us where you are — we'll match you with nearby clients.</p>
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               )}
@@ -506,11 +531,8 @@ export function OnboardingCarousel() {
               {step === "bio" && (
                 <motion.div
                   key="bio-step"
-                  initial={{ opacity: 0, x: 24 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -24 }}
-                  transition={{ duration: 0.25 }}
                   data-testid="onboarding-bio-step"
+                  {...stepProps}
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <User className="w-5 h-5 text-emerald-500" />
@@ -519,8 +541,10 @@ export function OnboardingCarousel() {
                   <p className="text-sm text-muted-foreground mb-6">A strong headline and bio get you 3x more invites.</p>
                   <div className="space-y-4">
                     <div>
-                      <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">Professional Headline</label>
+                      <label htmlFor="onboarding-headline" className="text-xs font-semibold text-muted-foreground mb-1.5 block">Professional Headline</label>
+                      <span id="bio-label" className="sr-only">Bio about your professional experience</span>
                       <Input
+                        id="onboarding-headline"
                         placeholder="e.g. Senior React Developer & UI Designer"
                         value={headline}
                         onChange={e => setHeadline(e.target.value)}
@@ -531,12 +555,16 @@ export function OnboardingCarousel() {
                     <div>
                       <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">Bio (2+ sentences)</label>
                       <textarea
+                        id="onboarding-bio"
                         value={bio}
                         onChange={e => setBio(e.target.value)}
                         placeholder="I help startups build fast, beautiful web apps..."
                         className="w-full h-24 rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
                         data-testid="input-bio"
+                        aria-labelledby="bio-label"
+                        aria-describedby="bio-hint"
                       />
+                      <span id="bio-hint" className="sr-only">Write a short bio about your professional experience. Minimum 2 sentences recommended.</span>
                       <p className="text-xs text-muted-foreground mt-1">{bio.length} characters</p>
                     </div>
                   </div>
@@ -546,11 +574,8 @@ export function OnboardingCarousel() {
               {step === "portfolio" && (
                 <motion.div
                   key="portfolio-step"
-                  initial={{ opacity: 0, x: 24 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -24 }}
-                  transition={{ duration: 0.25 }}
                   data-testid="onboarding-portfolio-step"
+                  {...stepProps}
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <LinkIcon className="w-5 h-5 text-emerald-500" />
@@ -559,19 +584,26 @@ export function OnboardingCarousel() {
                   <p className="text-sm text-muted-foreground mb-5">Optional — paste links to your GitHub, Behance, Dribbble, or any project URL. You can always add more later.</p>
                   <div className="space-y-3">
                     {portfolioUrls.map((url, i) => (
-                      <div key={i} className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0">{i + 1}</div>
-                        <Input
-                          placeholder={i === 0 ? "https://github.com/yourname" : i === 1 ? "https://behance.net/yourname" : "https://yourproject.com"}
-                          value={url}
-                          onChange={e => {
-                            const updated = [...portfolioUrls];
-                            updated[i] = e.target.value;
-                            setPortfolioUrls(updated);
-                          }}
-                          className="h-9 text-sm"
-                          data-testid={`portfolio-url-${i}`}
-                        />
+                      <div key={i}>
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0">{i + 1}</div>
+                          <Input
+                            placeholder={i === 0 ? "https://github.com/yourname" : i === 1 ? "https://behance.net/yourname" : "https://yourproject.com"}
+                            value={url}
+                            onChange={e => {
+                              const updated = [...portfolioUrls];
+                              updated[i] = e.target.value;
+                              setPortfolioUrls(updated);
+                              const isValid = !e.target.value || e.target.value.match(/^https?:\/\/.+/);
+                              const errs = [...portfolioUrlErrors]; errs[i] = !isValid; setPortfolioUrlErrors(errs);
+                            }}
+                            className={cn("h-9 text-sm", portfolioUrlErrors[i] && "border-red-500 focus-visible:ring-red-500")}
+                            data-testid={`portfolio-url-${i}`}
+                          />
+                        </div>
+                        {portfolioUrlErrors[i] && (
+                          <p className="text-xs text-red-500 ml-8 mt-1">Please enter a valid URL (https://...)</p>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -585,11 +617,8 @@ export function OnboardingCarousel() {
               {step === "hire_type" && (
                 <motion.div
                   key="hire-type-step"
-                  initial={{ opacity: 0, x: 24 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -24 }}
-                  transition={{ duration: 0.25 }}
                   data-testid="onboarding-hire-type-step"
+                  {...stepProps}
                 >
                   <h2 className="text-xl font-bold mb-1">What kind of help do you need?</h2>
                   <p className="text-sm text-muted-foreground mb-6">This helps us show you the right freelancers.</p>
@@ -616,11 +645,8 @@ export function OnboardingCarousel() {
               {step === "budget" && (
                 <motion.div
                   key="budget-step"
-                  initial={{ opacity: 0, x: 24 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -24 }}
-                  transition={{ duration: 0.25 }}
                   data-testid="onboarding-budget-step"
+                  {...stepProps}
                 >
                   <h2 className="text-xl font-bold mb-1">What's your budget range?</h2>
                   <p className="text-sm text-muted-foreground mb-6">Helps us match you to freelancers in your range.</p>
