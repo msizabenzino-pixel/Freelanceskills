@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import compression from "compression";
 import { registerRoutes } from "./routes";
+import { startVerificationCron } from "./verificationCron";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 import { setupSocket } from "./socket";
@@ -349,6 +350,9 @@ app.use((req, res, next) => {
 
 
   await registerRoutes(httpServer, app);
+
+  // ── C04: Top Performer nightly evaluation (02:00 SAST) ───────────────────
+  startVerificationCron();
 
   // ── Static uploads directory ────────────────────────────────────────────────
   const uploadsDir = path.join(process.cwd(), "uploads");

@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import {
   Menu, X, LogOut, Briefcase, Search, Bell, MessageSquare,
   User, ChevronDown, LayoutDashboard, Settings, Trophy, BookOpen,
-  Sparkles, Globe, FileText, Moon, Sun, Wallet, Award
+  Sparkles, Globe, FileText, Moon, Sun, Wallet, Award, ShieldCheck
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { apiFetch } from "@/lib/api";
@@ -148,6 +148,7 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
           {navLink("/find-talent", "Find Talent", "link-find-talent")}
           {navLink("/academy", "Learn", "link-academy")}
           {navLink("/pricing", "Pricing", "link-pricing")}
+          {navLink("/how-it-works", "How It Works", "link-how-it-works")}
           {navLink("/why-us", "Why Us", "link-why-us")}
         </div>
 
@@ -339,6 +340,7 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
               { href: "/academy", label: "Learn & Upskill", icon: BookOpen, color: "text-amber-500" },
               { href: "/explore", label: "Explore", icon: Sparkles, color: "text-pink-500" },
               { href: "/pricing", label: "Pricing", icon: Wallet, color: "text-emerald-500" },
+              { href: "/how-it-works", label: "How It Works", icon: ShieldCheck, color: "text-blue-500" },
               { href: "/why-us", label: "Why FreelanceSkills", icon: Award, color: "text-primary" },
             ].map(({ href, label, icon: Icon, color }) => (
               <Link key={href} href={href}>

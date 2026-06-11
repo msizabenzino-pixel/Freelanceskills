@@ -19,7 +19,7 @@ import {
   fraudFlags, auditLogs, escrowTransactions, premiumTiers, disputes, users
 } from "@shared/schema";
 import { db, pool } from "./db";
-import { eq, and, or, sql, desc, count } from "drizzle-orm";
+import { eq, and, or, sql, desc, count, isNull } from "drizzle-orm";
 
 export interface IStorage {
   // Job operations
@@ -33,6 +33,9 @@ export interface IStorage {
   getProfile(userId: string): Promise<Profile | undefined>;
   getProfileById(id: string): Promise<Profile | undefined>;
   updateProfile(userId: string, updates: Partial<InsertProfile>): Promise<Profile | undefined>;
+  updateProfileById(id: string, updates: Partial<InsertProfile>): Promise<Profile | undefined>;
+  listFreelancerProfiles(): Promise<Profile[]>;
+  countOpenDisputesForFreelancer(freelancerUserId: string): Promise<number>;
   savePortfolioProject(userId: string, project: { title: string; description: string; link: string; technologies: string[] }): Promise<Profile | undefined>;
   searchFreelancers(query?: string, location?: string, opts?: { verifiedOnly?: boolean; availableNow?: boolean; maxRateCents?: number; minRating?: number; limit?: number; offset?: number }): Promise<Profile[]>;
 
@@ -234,6 +237,31 @@ class DatabaseStorage implements IStorage {
       .where(eq(profiles.userId, userId))
       .returning();
     return profile;
+  }
+
+  async updateProfileById(id: string, updates: Partial<InsertProfile>): Promise<Profile | undefined> {
+    const [profile] = await db
+      .update(profiles)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(profiles.id, id))
+      .returning();
+    return profile;
+  }
+
+  async listFreelancerProfiles(): Promise<Profile[]> {
+    return db.select().from(profiles).where(eq(profiles.userType, "freelancer"));
+  }
+
+  async countOpenDisputesForFreelancer(freelancerUserId: string): Promise<number> {
+    const [row] = await db
+      .select({ c: count() })
+      .from(disputes)
+      .where(and(
+        eq(disputes.freelancerId, freelancerUserId),
+        isNull(disputes.resolvedAt),
+        isNull(disputes.closedAt),
+      ));
+    return Number(row?.c ?? 0);
   }
 
   async savePortfolioProject(userId: string, project: { title: string; description: string; link: string; technologies: string[] }): Promise<Profile | undefined> {

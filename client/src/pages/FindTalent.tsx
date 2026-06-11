@@ -70,7 +70,8 @@ function FreelancerCard({ f, onSelect, selected }: { f: FreelancerResult; onSele
     <Card
       className={cn(
         "p-6 hover:shadow-lg transition-all cursor-pointer group",
-        selected && "ring-2 ring-primary"
+        selected && "ring-2 ring-primary",
+        f.topPerformer && "border border-amber-600"
       )}
       onClick={() => onSelect(f.id)}
       data-testid={`card-freelancer-${f.id}`}

@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { ShieldCheck, Award, Crown, BadgeCheck } from "lucide-react";
+import { ShieldCheck, Crown, BadgeCheck, Star } from "lucide-react";
 
 export type BadgeTier = "identity" | "skills" | "top_performer";
 
@@ -33,11 +33,11 @@ const BADGE_CONFIG: Record<BadgeTier, {
   skills: {
     label: "Skills Verified",
     shortLabel: "Skills Verified",
-    Icon: Award,
-    bg: "bg-sky-500/10",
-    text: "text-sky-600",
-    border: "border-sky-500/30",
-    ring: "ring-sky-500/20",
+    Icon: Star,
+    bg: "bg-teal-500/10",
+    text: "text-teal-600",
+    border: "border-teal-500/30",
+    ring: "ring-teal-500/20",
     tooltip: "Passed a category-specific skills assessment with 75%+ score",
   },
   top_performer: {

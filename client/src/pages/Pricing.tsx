@@ -57,7 +57,7 @@ export default function Pricing() {
                 Simple, Honest Pricing. No Surprises.
               </h1>
               <p className="text-lg sm:text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto" data-testid="text-pricing-subheadline">
-                We built FreelanceSkills.net on one principle: the person doing the work should know exactly what they'll earn, and the person hiring should know exactly what they'll pay. This page shows you everything.
+                The person doing the work knows exactly what they earn. The person hiring knows exactly what they pay. Everything is here.
               </p>
             </div>
           </div>
@@ -71,18 +71,19 @@ export default function Pricing() {
                 <div className="bg-emerald-500/10 p-2.5 rounded-lg text-emerald-400">
                   <Wallet className="w-5 h-5" />
                 </div>
-                <h2 className="text-2xl sm:text-3xl font-bold text-white">For Clients — What You Pay</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold text-white">What You Pay as a Client</h2>
               </div>
 
               <Card className="bg-slate-900 border-slate-800 p-6 sm:p-8 mb-8">
                 <h3 className="text-lg font-semibold text-white mb-3">Posting a Job</h3>
                 <p className="text-slate-400 leading-relaxed">
-                  Posting a job on FreelanceSkills.net is completely free. No subscription required. No listing fee. You pay nothing until you hire.
+                  Posting a job is free. No subscription required. No listing fee. You pay nothing until you hire.
                 </p>
               </Card>
 
               <Card className="bg-slate-900 border-slate-800 p-6 sm:p-8 mb-8">
                 <h3 className="text-lg font-semibold text-white mb-3">Hiring a Freelancer</h3>
+                <p className="text-emerald-400 font-semibold mb-4" data-testid="text-client-service-fee">Platform Service Fee: 8% of project value</p>
                 <p className="text-slate-400 leading-relaxed mb-6">
                   When you confirm a hire and fund the project, FreelanceSkills.net charges a single platform service fee of <strong className="text-white">8%</strong> on the total project value. This fee covers:
                 </p>
@@ -138,7 +139,7 @@ export default function Pricing() {
                 <div className="bg-amber-500/10 p-2.5 rounded-lg text-amber-400">
                   <Percent className="w-5 h-5" />
                 </div>
-                <h2 className="text-2xl sm:text-3xl font-bold text-white">For Freelancers — What You Earn</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold text-white">What You Earn as a Freelancer</h2>
               </div>
 
               <Card className="bg-slate-900 border-slate-800 p-6 sm:p-8 mb-8">
@@ -233,7 +234,7 @@ export default function Pricing() {
               <div className="grid sm:grid-cols-2 gap-4">
                 {NEVER_CHARGES.map((item, i) => (
                   <div key={i} className="flex items-start gap-3 bg-slate-900 border border-slate-800 rounded-xl p-5">
-                    <Ban className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                     <span className="text-slate-300">{item}</span>
                   </div>
                 ))}

@@ -27,12 +27,15 @@ function StepCard({ number, title, children, icon: Icon }: { number: number; tit
   );
 }
 
-function GuaranteeCard({ title, forWho, icon: Icon, items }: { title: string; forWho: string; icon: any; items: string[] }) {
+function GuaranteeCard({ title, forWho, icon: Icon, items, accent = "emerald" }: { title: string; forWho: string; icon: any; items: string[]; accent?: "emerald" | "blue" }) {
+  const tone = accent === "blue"
+    ? { bg: "bg-blue-500/5", border: "border-blue-500/30", iconBg: "bg-blue-500/10", icon: "text-blue-500", check: "text-blue-500" }
+    : { bg: "bg-emerald-500/5", border: "border-emerald-500/30", iconBg: "bg-emerald-500/10", icon: "text-emerald-500", check: "text-emerald-500" };
   return (
-    <div className="bg-card border border-border rounded-2xl p-6 md:p-8" data-testid={`guarantee-${forWho}`}>
+    <div className={`${tone.bg} border ${tone.border} rounded-2xl p-6 md:p-8`} data-testid={`guarantee-${forWho}`}>
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-          <Icon className="w-6 h-6 text-emerald-500" />
+        <div className={`w-12 h-12 rounded-xl ${tone.iconBg} flex items-center justify-center`}>
+          <Icon className={`w-6 h-6 ${tone.icon}`} />
         </div>
         <div>
           <h3 className="text-lg font-bold text-foreground">{title}</h3>
@@ -42,7 +45,7 @@ function GuaranteeCard({ title, forWho, icon: Icon, items }: { title: string; fo
       <ul className="space-y-3">
         {items.map((item, i) => (
           <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground">
-            <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+            <CheckCircle2 className={`w-4 h-4 ${tone.check} mt-0.5 shrink-0`} />
             <span>{item}</span>
           </li>
         ))}
@@ -146,7 +149,7 @@ export default function PaymentProtection() {
         </div>
 
         {/* What Happens If Something Goes Wrong */}
-        <div className="bg-secondary/50 py-20">
+        <div id="disputes" className="bg-secondary/50 py-20 scroll-mt-24">
           <div className="container mx-auto px-4 md:px-6">
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-2 bg-amber-500/10 text-amber-600 rounded-full px-4 py-2 mb-4 text-sm font-medium">
@@ -283,6 +286,7 @@ export default function PaymentProtection() {
               title="You Are Guaranteed Payment"
               forWho="Freelancers"
               icon={Lock}
+              accent="blue"
               items={[
                 "Once funds are in escrow, you are guaranteed payment for work that meets the agreed brief.",
                 "No client can withhold payment without cause.",

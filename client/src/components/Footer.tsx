@@ -104,6 +104,7 @@ export function Footer() {
               <li><Link href="/post-job" className="hover:text-primary transition-colors py-2 block" data-testid="link-post-job">Post a Job</Link></li>
               <li><Link href="/pricing" className="hover:text-primary transition-colors py-2 block" data-testid="link-pricing">Pricing</Link></li>
               <li><Link href="/payment-protection" className="hover:text-primary transition-colors py-2 block" data-testid="link-payment-protection">Payment Protection</Link></li>
+              <li><Link href="/how-it-works" className="hover:text-primary transition-colors py-2 block" data-testid="link-how-it-works">How It Works</Link></li>
               <li><Link href="/why-us" className="hover:text-primary transition-colors py-2 block" data-testid="link-why-us">Why FreelanceSkills</Link></li>
             </ul>
           </div>
@@ -131,6 +132,7 @@ export function Footer() {
               <li><Link href="/enterprise" className="hover:text-primary transition-colors py-2 block" data-testid="link-enterprise">Enterprise</Link></li>
               <li><Link href="/referral" className="hover:text-primary transition-colors py-2 block" data-testid="link-referral">Referral Program</Link></li>
               <li><Link href="/resolution-center" className="hover:text-primary transition-colors py-2 block" data-testid="link-resolution-center">Resolution Center</Link></li>
+              <li><Link href="/payment-protection#disputes" className="hover:text-primary transition-colors py-2 block" data-testid="link-dispute-resolution">Dispute Resolution</Link></li>
               <li><Link href="/support" className="hover:text-primary transition-colors py-2 block" data-testid="link-faq">FAQ</Link></li>
               <li><Link href="/support" className="hover:text-primary transition-colors py-2 block" data-testid="link-contact">Contact</Link></li>
             </ul>

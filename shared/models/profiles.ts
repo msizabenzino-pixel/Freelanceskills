@@ -1,9 +1,16 @@
 import { sql } from "drizzle-orm";
-import { pgTable, varchar, text, integer, timestamp, boolean, index } from "drizzle-orm/pg-core";
+import { pgTable, varchar, text, integer, timestamp, boolean, json, index } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { users } from "./auth";
 import { userTypeEnum, profileStatusEnum, profileRoleEnum, kycStatusEnum } from "./enums";
+
+export type ProCredential = {
+  title: string;
+  issuer?: string;
+  year?: string;
+  url?: string;
+};
 
 export const profiles = pgTable(
   "profiles",
@@ -60,6 +67,12 @@ export const profiles = pgTable(
     skillsVerifiedAt: timestamp("skills_verified_at"),
     topPerformerAt: timestamp("top_performer_at"),
     onTimeDeliveryRate: integer("on_time_delivery_rate"), // 0-100
+    // Verification tier model (0=none, 1=identity, 2=identity+skills, 3=pro)
+    verificationTier: integer("verification_tier").notNull().default(0),
+    skillsVerifiedCategory: text("skills_verified_category"),
+    isProVerified: boolean("is_pro_verified").notNull().default(false),
+    proVerifiedAt: timestamp("pro_verified_at"),
+    proCredentials: json("pro_credentials").$type<ProCredential[]>().default([]),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },

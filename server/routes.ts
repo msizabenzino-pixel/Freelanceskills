@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { computeVerificationTier } from "./verificationCron";
 import { setupAuth, registerAuthRoutes, getUser, getUserId, requireAuth, requireAdmin, requireClient, requireFreelancer, requireKyc, requireOwnership, clearProfileCache } from "./replit_integrations/auth";
 import { ACADEMY_COURSES, getAcademyStats } from "./academyData";
 
@@ -9266,6 +9267,84 @@ VUMA_META:{"actions":["label|/path","label|/path"],"language":"en","suggestions"
       });
     } catch (error) {
       res.status(200).json({ totalFreelancers: 8400, totalEarnedZar: 47000000 });
+    }
+  });
+
+  // ─── C04: Verification Tier model — admin verify + public status ──────────
+  const resolveFreelancerProfile = async (id: string) =>
+    (await storage.getProfileById(id)) || (await storage.getProfile(id));
+
+  app.patch("/api/admin/freelancer/:id/verify-identity", requireAdmin, async (req, res) => {
+    try {
+      const profile = await resolveFreelancerProfile(req.params.id);
+      if (!profile) return res.status(404).json({ message: "Freelancer profile not found" });
+      const verified = req.body?.verified !== false;
+      const verificationTier = computeVerificationTier({ ...profile, identityVerified: verified });
+      const updated = await storage.updateProfileById(profile.id, {
+        identityVerified: verified,
+        identityVerifiedAt: verified ? new Date() : null,
+        verificationTier,
+      } as any);
+      res.json({ ok: true, profileId: profile.id, verificationTier, profile: updated });
+    } catch (e: any) {
+      res.status(500).json({ message: e?.message || "Failed to verify identity" });
+    }
+  });
+
+  app.patch("/api/admin/freelancer/:id/verify-skills", requireAdmin, async (req, res) => {
+    try {
+      const profile = await resolveFreelancerProfile(req.params.id);
+      if (!profile) return res.status(404).json({ message: "Freelancer profile not found" });
+      const verified = req.body?.verified !== false;
+      const category = typeof req.body?.category === "string" ? req.body.category : (profile as any).skillsVerifiedCategory ?? null;
+      const verificationTier = computeVerificationTier({ ...profile, skillsVerified: verified });
+      const updated = await storage.updateProfileById(profile.id, {
+        skillsVerified: verified,
+        skillsVerifiedCategory: verified ? category : null,
+        skillsVerifiedAt: verified ? new Date() : null,
+        verificationTier,
+      } as any);
+      res.json({ ok: true, profileId: profile.id, verificationTier, profile: updated });
+    } catch (e: any) {
+      res.status(500).json({ message: e?.message || "Failed to verify skills" });
+    }
+  });
+
+  app.patch("/api/admin/freelancer/:id/verify-pro", requireAdmin, async (req, res) => {
+    try {
+      const profile = await resolveFreelancerProfile(req.params.id);
+      if (!profile) return res.status(404).json({ message: "Freelancer profile not found" });
+      const verified = req.body?.verified !== false;
+      const credentials = Array.isArray(req.body?.credentials) ? req.body.credentials : ((profile as any).proCredentials ?? []);
+      const verificationTier = computeVerificationTier({ ...profile, isProVerified: verified });
+      const updated = await storage.updateProfileById(profile.id, {
+        isProVerified: verified,
+        isPro: verified ? true : profile.isPro,
+        proVerifiedAt: verified ? new Date() : null,
+        proCredentials: credentials,
+        verificationTier,
+      } as any);
+      res.json({ ok: true, profileId: profile.id, verificationTier, profile: updated });
+    } catch (e: any) {
+      res.status(500).json({ message: e?.message || "Failed to verify pro status" });
+    }
+  });
+
+  // Public — returns the verification tier + public badge flags only
+  app.get("/api/freelancer/:id/verification-status", async (req, res) => {
+    try {
+      const profile = await resolveFreelancerProfile(req.params.id);
+      if (!profile) return res.status(404).json({ message: "Freelancer profile not found" });
+      res.json({
+        verificationTier: (profile as any).verificationTier ?? 0,
+        identityVerified: !!profile.identityVerified,
+        skillsVerified: !!profile.skillsVerified,
+        topPerformer: !!profile.topPerformer,
+        isProVerified: !!(profile as any).isProVerified,
+        skillsVerifiedCategory: (profile as any).skillsVerifiedCategory ?? null,
+      });
+    } catch (e: any) {
+      res.status(500).json({ message: e?.message || "Failed to load verification status" });
     }
   });
 
