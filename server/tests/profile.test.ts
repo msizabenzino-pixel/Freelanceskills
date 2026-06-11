@@ -6,7 +6,8 @@ import { db } from "../db";
 import { users } from "@shared/models/auth";
 import { profiles } from "@shared/models/profiles";
 import { eq, like } from "drizzle-orm";
-import { setupAuth, isAuthenticated } from "../replit_integrations/auth/replitAuth";
+import { registerRoutes } from "../routes";
+import { setupAuth } from "../replit_integrations/auth/replitAuth";
 
 // ── Test helpers ─────────────────────────────────────────────────────────────
 
@@ -43,12 +44,24 @@ async function createTestProfile(userId: string, overrides?: Partial<typeof prof
   return profile;
 }
 
-// Injects a mock session with userId into requests
+// Injects a mock session with userId into requests.
+// Must be registered BEFORE registerRoutes so the real route handlers see it.
 function injectSession(userId: string) {
   return (req: any, _res: any, next: any) => {
     (req.session as any).userId = userId;
     next();
   };
+}
+
+// Build a real app with the production routes registered.
+async function makeTestApp(userId: string) {
+  const app = express();
+  app.use(express.json({ limit: "2mb" }));
+  setupAuth(app);
+  app.use(injectSession(userId));
+  const httpServer = createServer(app);
+  await registerRoutes(httpServer, app);
+  return { app, httpServer };
 }
 
 // ── Cleanup ─────────────────────────────────────────────────────────────────
@@ -78,29 +91,13 @@ describe("Profile endpoints", () => {
     });
     await createTestProfile(user.id, { bio: "Bio", title: "Dev" });
 
-    const app = express();
-    app.use(express.json({ limit: "2mb" }));
-    setupAuth(app);
-    app.use(injectSession(user.id));
-
-    // Mount the route under test
-    app.get("/api/profile", isAuthenticated, async (req: any, res) => {
-      const userId = (req.session as any).userId;
-      const profile = await db.select().from(profiles).where(eq(profiles.userId, userId)).limit(1);
-      const userRow = await db.select().from(users).where(eq(users.id, userId)).limit(1);
-      if (!profile.length) return res.json(null);
-      res.json({
-        ...profile[0],
-        firstName: userRow[0]?.firstName || "",
-        lastName: userRow[0]?.lastName || "",
-      });
-    });
-
+    const { app } = await makeTestApp(user.id);
     const res = await request(app).get("/api/profile");
 
     expect(res.status).toBe(200);
     expect(res.body.firstName).toBe("Alice");
     expect(res.body.lastName).toBe("Smith");
+    expect(res.body.fullName).toBe("Alice Smith");
     expect(res.body.bio).toBe("Bio");
   });
 
@@ -113,56 +110,7 @@ describe("Profile endpoints", () => {
     });
     await createTestProfile(user.id, { bio: "Original bio", title: "Dev" });
 
-    const app = express();
-    app.use(express.json({ limit: "2mb" }));
-    setupAuth(app);
-    app.use(injectSession(user.id));
-
-    // Mount the route under test
-    app.patch("/api/profile", isAuthenticated, async (req: any, res) => {
-      const userId = (req.session as any).userId;
-      const { firstName, lastName, bio, title, skills, hourlyRate, location, portfolioProjects } = req.body;
-
-      const safeData: any = {
-        ...(bio !== undefined && { bio }),
-        ...(title !== undefined && { title }),
-        ...(skills !== undefined && { skills: Array.isArray(skills) ? skills : [] }),
-        ...(hourlyRate !== undefined && { hourlyRate }),
-        ...(location !== undefined && { location }),
-      };
-      if (portfolioProjects !== undefined) {
-        safeData.portfolioProjects = Array.isArray(portfolioProjects) && portfolioProjects.length > 0
-          ? portfolioProjects
-          : null;
-      }
-
-      // Update users
-      if (firstName !== undefined || lastName !== undefined) {
-        await db.update(users).set({
-          ...(firstName !== undefined && { firstName: String(firstName).slice(0, 50) || null }),
-          ...(lastName !== undefined && { lastName: String(lastName).slice(0, 50) || null }),
-          updatedAt: new Date(),
-        }).where(eq(users.id, userId));
-      }
-
-      // Update profile
-      const [updated] = await db
-        .update(profiles)
-        .set({ ...safeData, updatedAt: new Date() })
-        .where(eq(profiles.userId, userId))
-        .returning();
-
-      if (!updated) return res.status(404).json({ message: "Profile not found" });
-
-      // Return merged shape
-      const userRow = await db.select().from(users).where(eq(users.id, userId)).limit(1);
-      res.json({
-        ...updated,
-        firstName: userRow[0]?.firstName || null,
-        lastName: userRow[0]?.lastName || null,
-      });
-    });
-
+    const { app } = await makeTestApp(user.id);
     const res = await request(app)
       .patch("/api/profile")
       .send({
@@ -199,65 +147,7 @@ describe("Profile endpoints", () => {
     });
     // No profile yet — go-live should create one
 
-    const app = express();
-    app.use(express.json({ limit: "2mb" }));
-    setupAuth(app);
-    app.use(injectSession(user.id));
-
-    // Mount the route under test
-    app.post("/api/profile/go-live", isAuthenticated, async (req: any, res) => {
-      const userId = (req.session as any).userId;
-      const { bio, title, skills, hourlyRate, location, portfolioProjects, firstName, lastName } = req.body;
-
-      const saveData: any = {
-        bio: bio || null,
-        title: title || null,
-        skills: Array.isArray(skills) ? skills : [],
-        hourlyRate: (typeof hourlyRate === "number" && hourlyRate > 0) ? hourlyRate : 0,
-        location: location || null,
-        publishedProfile: true,
-        publishedAt: new Date(),
-        userType: "freelancer",
-        portfolioProjects: (Array.isArray(portfolioProjects) && portfolioProjects.length > 0)
-          ? portfolioProjects
-          : null,
-      };
-
-      await db.transaction(async (tx) => {
-        await tx.insert(users).values({ id: userId }).onConflictDoNothing();
-        if (firstName || lastName) {
-          await tx.update(users).set({
-            ...(firstName !== undefined && { firstName: String(firstName).slice(0, 50) || null }),
-            ...(lastName !== undefined && { lastName: String(lastName).slice(0, 50) || null }),
-            updatedAt: new Date(),
-          }).where(eq(users.id, userId));
-        }
-
-        const [existing] = await tx
-          .select({ id: profiles.id })
-          .from(profiles)
-          .where(eq(profiles.userId, userId));
-
-        if (existing) {
-          await tx.update(profiles).set({ ...saveData, updatedAt: new Date() }).where(eq(profiles.userId, userId));
-        } else {
-          await tx.insert(profiles).values({ ...saveData, userId });
-        }
-      });
-
-      const [profile] = await db.select().from(profiles).where(eq(profiles.userId, userId)).limit(1);
-      const userRow = await db.select().from(users).where(eq(users.id, userId)).limit(1);
-
-      res.json({
-        success: true,
-        profile: {
-          ...profile,
-          firstName: userRow[0]?.firstName || null,
-          lastName: userRow[0]?.lastName || null,
-        },
-      });
-    });
-
+    const { app } = await makeTestApp(user.id);
     const res = await request(app)
       .post("/api/profile/go-live")
       .send({
@@ -303,32 +193,7 @@ describe("Profile endpoints", () => {
     });
     await createTestProfile(user.id, { bio: "Initial bio" });
 
-    const app = express();
-    app.use(express.json({ limit: "2mb" }));
-    setupAuth(app);
-    app.use(injectSession(user.id));
-
-    // Patch endpoint
-    app.patch("/api/profile", isAuthenticated, async (req: any, res) => {
-      const userId = (req.session as any).userId;
-      const { firstName, lastName } = req.body;
-      await db.update(users).set({
-        ...(firstName !== undefined && { firstName }),
-        ...(lastName !== undefined && { lastName }),
-      }).where(eq(users.id, userId));
-      await db.update(profiles).set({ bio: req.body.bio }).where(eq(profiles.userId, userId));
-      const [profile] = await db.select().from(profiles).where(eq(profiles.userId, userId)).limit(1);
-      const userRow = await db.select().from(users).where(eq(users.id, userId)).limit(1);
-      res.json({ ...profile, firstName: userRow[0]?.firstName || null });
-    });
-
-    // GET endpoint
-    app.get("/api/profile", isAuthenticated, async (req: any, res) => {
-      const userId = (req.session as any).userId;
-      const [profile] = await db.select().from(profiles).where(eq(profiles.userId, userId)).limit(1);
-      const userRow = await db.select().from(users).where(eq(users.id, userId)).limit(1);
-      res.json({ ...profile, firstName: userRow[0]?.firstName || null });
-    });
+    const { app } = await makeTestApp(user.id);
 
     // First request: update names
     const res1 = await request(app)
@@ -345,6 +210,86 @@ describe("Profile endpoints", () => {
     const res2 = await request(app).get("/api/profile");
     expect(res2.status).toBe(200);
     expect(res2.body.firstName).toBe("New");
+  });
+
+  // ── N6: URL HTML-entity decoding ─────────────────────────────────────────
+  it("GET /api/profile returns clean URLs with HTML entities decoded", async () => {
+    const user = await createTestUser({
+      firstName: "Url",
+      lastName: "Test",
+      email: `${testId()}@example.com`,
+    });
+    await createTestProfile(user.id, {
+      bio: "Dev",
+      portfolioUrl: "https:&#x2F;&#x2F;test.com",
+      linkedinUrl: "https:&#x2F;&#x2F;linkedin.com&#x2F;in&#x2F;test",
+      githubUrl: "https:&#x2F;&#x2F;github.com&#x2F;test",
+    });
+
+    const { app } = await makeTestApp(user.id);
+    const res = await request(app).get("/api/profile");
+
+    expect(res.status).toBe(200);
+    expect(res.body.portfolioUrl).toBe("https://test.com");
+    expect(res.body.linkedinUrl).toBe("https://linkedin.com/in/test");
+    expect(res.body.githubUrl).toBe("https://github.com/test");
+  });
+
+  // ── N7: PATCH stores clean URLs (writes decoded values) ──────────────────
+  it("PATCH /api/profile writes clean URLs by decoding HTML entities in input", async () => {
+    const user = await createTestUser({
+      firstName: "Url",
+      lastName: "Writer",
+      email: `${testId()}@example.com`,
+    });
+    await createTestProfile(user.id, { bio: "Dev" });
+
+    const { app } = await makeTestApp(user.id);
+    const res = await request(app)
+      .patch("/api/profile")
+      .send({
+        portfolioUrl: "https:&#x2F;&#x2F;new.com",
+        linkedinUrl: "https:&#x2F;&#x2F;linkedin.com&#x2F;in&#x2F;new",
+      });
+
+    expect(res.status).toBe(200);
+    expect(res.body.portfolioUrl).toBe("https://new.com");
+    expect(res.body.linkedinUrl).toBe("https://linkedin.com/in/new");
+
+    // Verify DB state
+    const [savedProfile] = await db
+      .select()
+      .from(profiles)
+      .where(eq(profiles.userId, user.id));
+    expect(savedProfile.portfolioUrl).toBe("https://new.com");
+    expect(savedProfile.linkedinUrl).toBe("https://linkedin.com/in/new");
+  });
+
+  // ── N8: Public /api/profile/:id returns decoded URLs ─────────────────────
+  it("GET /api/profile/:id returns decoded URLs for public profile", async () => {
+    const user = await createTestUser({
+      firstName: "Public",
+      lastName: "User",
+      email: `${testId()}@example.com`,
+    });
+    await createTestProfile(user.id, {
+      bio: "Public bio",
+      portfolioUrl: "https:&#x2F;&#x2F;public.com",
+      publishedProfile: true,
+    });
+
+    // No session needed for public profile
+    const app = express();
+    app.use(express.json({ limit: "2mb" }));
+    const httpServer = createServer(app);
+    await registerRoutes(httpServer, app);
+
+    const res = await request(app).get(`/api/profile/${user.id}`);
+    expect(res.status).toBe(200);
+    expect(res.body.bio).toBe("Public bio");
+    expect(res.body.portfolioUrl).toBe("https://public.com");
+    expect(res.body.firstName).toBe("Public");
+    expect(res.body.lastName).toBe("User");
   });
 });
 
@@ -367,17 +312,18 @@ describe("Auth middleware", () => {
       throw new Error("DB pool exhausted — temporary");
     };
 
-    const brokenApp = express();
-    brokenApp.use(express.json());
-    setupAuth(brokenApp);
-    brokenApp.use((req: any, _res: any, next: any) => {
+    const app = express();
+    app.use(express.json());
+    setupAuth(app);
+    app.use((req: any, _res: any, next: any) => {
       (req.session as any).userId = "some-user-id";
       next();
     });
-    brokenApp.use(isAuthenticated);
-    brokenApp.get("/api/test-auth", (_req, res) => res.json({ ok: true }));
 
-    const res = await request(brokenApp).get("/api/test-auth");
+    const httpServer = createServer(app);
+    await registerRoutes(httpServer, app);
+
+    const res = await request(app).get("/api/profile");
     // The loadProfile code path should return 503 with SERVICE_UNAVAILABLE
     // when DB is unreachable, not 401 (which would log everyone out).
     expect(res.status).toBe(503);

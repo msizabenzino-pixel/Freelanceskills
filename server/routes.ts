@@ -784,6 +784,10 @@ export async function registerRoutes(
 
       const merged = {
         ...profile,
+        portfolioUrl: sanitizeUrl(profile.portfolioUrl),
+        linkedinUrl: sanitizeUrl(profile.linkedinUrl),
+        githubUrl: sanitizeUrl(profile.githubUrl),
+        photoUrl: sanitizeUrl(profile.photoUrl),
         firstName: userRow?.firstName || null,
         lastName: userRow?.lastName || null,
         profileImageUrl: userRow?.profileImageUrl || null,
