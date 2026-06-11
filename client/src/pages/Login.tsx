@@ -97,22 +97,51 @@ export default function Login() {
     setAuthError(null);
     setIsLoading(true);
     try {
+      // 1. Try Firebase first
       await loginWithEmail({ email, password });
-      // Sync Express session before any navigation — closes the Firebase → server gap
       await syncSessionNow();
       toast({ title: "Welcome back!", description: "You are now logged in." });
       handlePostAuthRedirect();
-    } catch (err: any) {
-      const message =
-        err?.message?.includes("auth/invalid-credential") ||
-        err?.message?.includes("auth/wrong-password") ||
-        err?.message?.includes("auth/user-not-found")
-          ? "Incorrect email or password. Please try again."
-          : err?.message?.includes("auth/too-many-requests")
-          ? "Too many failed attempts. Please wait a few minutes and try again."
-          : err?.message || "Login failed. Please check your credentials and try again.";
-      setAuthError(message);
-      toast({ title: "Login failed", description: message, variant: "destructive" });
+    } catch (firebaseErr: any) {
+      const isCredentialError =
+        firebaseErr?.message?.includes("auth/invalid-credential") ||
+        firebaseErr?.message?.includes("auth/wrong-password") ||
+        firebaseErr?.message?.includes("auth/user-not-found") ||
+        firebaseErr?.code === "auth/invalid-credential";
+
+      if (isCredentialError) {
+        // 2. Firebase has no record of this account — try server-side (PostgreSQL) login
+        try {
+          const res = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ email, password }),
+          });
+
+          if (res.ok) {
+            toast({ title: "Welcome back!", description: "You are now logged in." });
+            handlePostAuthRedirect();
+            return;
+          }
+
+          // Server also rejected — wrong credentials
+          const data = await res.json().catch(() => ({}));
+          const msg = data?.message || "Incorrect email or password. Please try again.";
+          setAuthError(msg);
+          toast({ title: "Login failed", description: msg, variant: "destructive" });
+        } catch {
+          setAuthError("Incorrect email or password. Please try again.");
+          toast({ title: "Login failed", description: "Incorrect email or password. Please try again.", variant: "destructive" });
+        }
+      } else {
+        const message =
+          firebaseErr?.message?.includes("auth/too-many-requests")
+            ? "Too many failed attempts. Please wait a few minutes and try again."
+            : firebaseErr?.message || "Login failed. Please check your credentials and try again.";
+        setAuthError(message);
+        toast({ title: "Login failed", description: message, variant: "destructive" });
+      }
     } finally {
       setIsLoading(false);
     }
