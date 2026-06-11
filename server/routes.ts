@@ -9,6 +9,7 @@ import { getPopularCategories, getRecommended, getTopRatedWeek, getTradesNearMe,
 import { trackEvent, recordGigView, recordSearch, recordCategoryView, toggleSavedGig } from "./tracking";
 import { evaluateProfileCompletion } from "./profileCompletion";
 import { mapGigCard } from "./discoveryShared";
+import { eq } from "drizzle-orm";
 
 async function awardPoints(userId: string, action: string): Promise<void> {
   if (!userId) return;
@@ -583,11 +584,10 @@ export async function registerRoutes(
       // Join users table to get name + email
       const { db: _db } = await import("./db");
       const { users: usersTable } = await import("../shared/models/auth");
-      const { eq: eqFn } = await import("drizzle-orm");
       const [userRow] = await _db
         .select({ firstName: usersTable.firstName, lastName: usersTable.lastName, email: usersTable.email, profileImageUrl: usersTable.profileImageUrl })
         .from(usersTable)
-        .where(eqFn(usersTable.id, userId))
+        .where(eq(usersTable.id, userId))
         .limit(1);
 
       res.json({
@@ -625,11 +625,10 @@ export async function registerRoutes(
       try {
         const { db: _db } = await import("./db");
         const { users: usersTable } = await import("../shared/models/auth");
-        const { eq: eqFn } = await import("drizzle-orm");
         const [row] = await _db
           .select({ firstName: usersTable.firstName, lastName: usersTable.lastName, email: usersTable.email, profileImageUrl: usersTable.profileImageUrl })
           .from(usersTable)
-          .where(eqFn(usersTable.id, userId))
+          .where(eq(usersTable.id, userId))
           .limit(1);
         userRow = row;
       } catch (err) {
