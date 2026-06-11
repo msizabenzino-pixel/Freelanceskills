@@ -125,10 +125,39 @@ export default function Auth() {
   };
 
   const loginMutation = useMutation({
-    mutationFn: loginWithEmail,
-    onSuccess: async (user) => {
+    mutationFn: async (creds: { email: string; password: string }) => {
+      // 1. Try Firebase first
+      try {
+        const user = await loginWithEmail(creds);
+        return { user, via: "firebase" as const };
+      } catch (firebaseErr: any) {
+        const isCredentialError =
+          firebaseErr?.message?.includes("auth/invalid-credential") ||
+          firebaseErr?.message?.includes("auth/wrong-password") ||
+          firebaseErr?.message?.includes("auth/user-not-found") ||
+          firebaseErr?.code === "auth/invalid-credential";
+
+        if (!isCredentialError) throw firebaseErr;
+
+        // 2. Firebase doesn't know this account — try server-side (PostgreSQL) login
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(creds),
+        });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data?.message || "Incorrect email or password. Please try again.");
+        }
+        const serverUser = await res.json();
+        return { user: serverUser, via: "server" as const };
+      }
+    },
+    onSuccess: async ({ user, via }) => {
       trackFirebaseEvent("login", { method: "password" }).catch(() => {});
       queryClient.setQueryData(["/api/auth/user"], user);
+      if (via === "firebase") await syncSessionNow();
       await completeAuthSuccess(user);
     },
     onError: (error: Error) => {
@@ -137,7 +166,34 @@ export default function Auth() {
   });
 
   const registerMutation = useMutation({
-    mutationFn: registerWithEmail,
+    mutationFn: async (data: typeof formData) => {
+      // Create Firebase account
+      const user = await registerWithEmail({
+        email: data.email,
+        password: data.password,
+        firstName: data.firstName.trim(),
+        lastName: data.lastName.trim(),
+      });
+
+      // Also save to PostgreSQL so server-side login works as fallback
+      try {
+        await fetch("/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            email: data.email,
+            password: data.password,
+            firstName: data.firstName.trim(),
+            lastName: data.lastName.trim(),
+          }),
+        });
+      } catch {
+        // Non-fatal — Firebase account was created, PostgreSQL is bonus fallback
+      }
+
+      return user;
+    },
     onSuccess: async (user) => {
       try {
         await upsertJobApplicationProfile({
