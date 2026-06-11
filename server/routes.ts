@@ -803,8 +803,12 @@ export async function registerRoutes(
           rating: f.rating ? f.rating / 100 : null,
           completedJobs: f.completedJobs,
           isPro: f.isPro,
-          verified: f.kycStatus === "verified",
+          verified: f.kycStatus === "verified" || f.identityVerified,
           kycStatus: f.kycStatus,
+          identityVerified: f.identityVerified,
+          skillsVerified: f.skillsVerified,
+          topPerformer: f.topPerformer,
+          onTimeDeliveryRate: f.onTimeDeliveryRate,
           country: f.country || "ZA",
           avatarInitials: initials || "FS",
         };

@@ -1,522 +1,290 @@
-import { useEffect, useRef, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { useLocation } from "wouter";
-import { useCountry } from "@/components/CountrySelector";
-import { useAuth } from "@/hooks/use-auth";
-import { useMutation } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
-import { activateFreePlan } from "@/lib/firebaseAppData";
-import { savePendingAuthRedirect, savePendingPlanSelection } from "@/lib/authRedirect";
-import { 
-  Check, 
-  Shield, 
-  CreditCard, 
-  Wallet,
-  Building2,
-  Clock,
-  Globe,
-  Calculator,
-  ChevronDown,
-  ChevronUp,
-  Lock,
-  Zap,
-  Crown,
-  HelpCircle,
-  CheckCircle2,
-  MapPin
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Link } from "wouter";
+import {
+  CheckCircle2, ShieldCheck, Wallet, CreditCard, Landmark, Zap,
+  ArrowRight, CircleDollarSign, Percent, Ban, Lock, Truck, HeartHandshake
 } from "lucide-react";
 
-const WITHDRAWAL_METHODS_BASE = [
-  { 
-    name: "Bank Transfer (EFT)", 
-    fee: "Free", 
-    time: "1-3 business days",
-    minAmountZar: 100,
-    icon: Building2
-  },
-  { 
-    name: "PayFast Instant", 
-    fee: "1.5%", 
-    time: "Instant",
-    minAmountZar: 50,
-    icon: Zap
-  },
-  { 
-    name: "PayFast Payout", 
-    fee: "1.5%", 
-    time: "2-5 business days",
-    minAmountZar: 188,
-    icon: Wallet
-  },
-  { 
-    name: "Wise (TransferWise)", 
-    fee: "0.5%", 
-    time: "1-2 business days",
-    minAmountZar: 377, // ~$20 equivalent
-    icon: Globe
-  },
+const CLIENT_FEE_ROWS = [
+  { value: "R500", fee: "R40", total: "R540" },
+  { value: "R2,000", fee: "R160", total: "R2,160" },
+  { value: "R5,000", fee: "R400", total: "R5,400" },
+  { value: "R15,000", fee: "R1,200", total: "R16,200" },
+  { value: "R50,000", fee: "R4,000", total: "R54,000" },
 ];
 
-const CURRENCIES = [
-  { code: "ZAR", name: "South African Rand", symbol: "R", flag: "🇿🇦" },
-  { code: "USD", name: "US Dollar", symbol: "$", flag: "🇺🇸" },
-  { code: "EUR", name: "Euro", symbol: "€", flag: "🇪🇺" },
-  { code: "GBP", name: "British Pound", symbol: "£", flag: "🇬🇧" },
-  { code: "BWP", name: "Botswana Pula", symbol: "P", flag: "🇧🇼" },
-  { code: "NAD", name: "Namibian Dollar", symbol: "N$", flag: "🇳🇦" },
-  { code: "MZN", name: "Mozambican Metical", symbol: "MT", flag: "🇲🇿" },
-  { code: "SZL", name: "Swazi Lilangeni", symbol: "E", flag: "🇸🇿" },
+const FREELANCER_FEE_ROWS = [
+  { value: "R500", fee: "R50", takeHome: "R450" },
+  { value: "R2,000", fee: "R200", takeHome: "R1,800" },
+  { value: "R5,000", fee: "R500", takeHome: "R4,500" },
+  { value: "R15,000", fee: "R1,500", takeHome: "R13,500" },
+  { value: "R50,000", fee: "R5,000", takeHome: "R45,000" },
 ];
 
-const FAQ_ITEMS = [
-  {
-    q: "When do I pay the commission?",
-    a: "Commission is only charged when you successfully complete a job and receive payment. There are no upfront fees or monthly charges on the Free plan."
-  },
-  {
-    q: "How does escrow protection work?",
-    a: "When a client books your service, they pay upfront. The money is held securely by FreelanceSkills until you deliver the work and the client approves it. This protects both parties."
-  },
-  {
-    q: "Can I set my own prices in any currency?",
-    a: "Yes! You can set your prices in ZAR or any supported currency. Clients will see prices converted to their local currency at current exchange rates."
-  },
-  {
-    q: "How long does withdrawal take?",
-    a: "Bank transfers take 1-3 business days. PayFast Instant withdrawals are available immediately for a small fee. International transfers via PayFast or Wise take 2-5 business days."
-  },
-  {
-    q: "Is there a minimum withdrawal amount?",
-    a: "Yes, the minimum depends on your withdrawal method. Minimums vary by method and are displayed in your local currency."
-  },
+const NEVER_CHARGES = [
+  "A fee to create a profile or browse jobs",
+  "A subscription to stay active on the platform",
+  "A penalty for withdrawing a proposal",
+  "A fee to receive payment once a project is approved",
+  "A conversion fee if a client later hires you directly (after 12 months)",
+];
+
+const PAYMENT_METHODS = [
+  { icon: Zap, label: "Instant EFT (via Ozow)" },
+  { icon: CreditCard, label: "Debit & Credit Card (Visa, Mastercard)" },
+  { icon: Wallet, label: "PayShap" },
+  { icon: Landmark, label: "Manual EFT (same-day for R10,000+)" },
 ];
 
 export default function Pricing() {
-  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
-  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
-  const [, navigate] = useLocation();
-  const { country, formatPrice } = useCountry();
-  const { user, isLoading: authLoading } = useAuth();
-  const { toast } = useToast();
-  const currencySymbol = country.currency.symbol;
-
-  const exampleJob = 500000; // 5000 ZAR in cents
-  const freeEarnings = exampleJob * 0.9;
-  const proEarnings = exampleJob * 0.95;
-  const proSavings = proEarnings - freeEarnings;
-  const proMonthlyPrice = 7900; // 79 ZAR in cents
-  const proYearlyPrice = Math.round(proMonthlyPrice * 12 * 0.8); // 20% off = 75840 cents = R758/yr
-  const proYearlyPerMonth = Math.round(proYearlyPrice / 12); // ~6320 cents = R63/mo
-
-  const activePrice = billingPeriod === "monthly" ? proMonthlyPrice : proYearlyPrice;
-  const checkoutParams = billingPeriod === "monthly"
-    ? `price=7900&duration=Monthly`
-    : `price=${proYearlyPrice}&duration=Yearly`;
-
-  const WITHDRAWAL_METHODS = WITHDRAWAL_METHODS_BASE.map(method => ({
-    ...method,
-    minAmount: formatPrice(method.minAmountZar * 100)
-  }));
-
-  const activateFreeMutation = useMutation({
-    mutationFn: async () => {
-      if (!user?.id) throw new Error("Please sign in to activate your plan.");
-      await activateFreePlan(user.id);
-    },
-    onSuccess: () => {
-      toast({
-        title: "Free plan activated",
-        description: "Your account is now on the Free plan.",
-      });
-      navigate("/dashboard");
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Activation failed",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-  const autoActivatedRef = useRef(false);
-
-  const handleFreePlanStart = () => {
-    if (authLoading) return;
-    if (!user?.id) {
-      // Save the free plan selection so it auto-activates after login
-      savePendingPlanSelection({
-        planType: "free",
-        selectedAt: new Date().toISOString(),
-      });
-      // Redirect to the unified auth page with dashboard as the post-login destination
-      const redirectTo = "/dashboard";
-      savePendingAuthRedirect(redirectTo);
-      navigate(`/auth?redirect=${encodeURIComponent(redirectTo)}&plan=free`);
-      return;
-    }
-    activateFreeMutation.mutate();
-  };
-
-  useEffect(() => {
-    if (typeof window === "undefined" || !user?.id) return;
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("activate") === "free" && !activateFreeMutation.isPending && !autoActivatedRef.current) {
-      autoActivatedRef.current = true;
-      activateFreeMutation.mutate();
-    }
-  }, [user?.id, activateFreeMutation.isPending]);
-
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-slate-950 flex flex-col">
       <Navbar />
-      
-      <main id="main-content">
-      <div className="bg-primary text-white pt-32 pb-20">
-        <div className="container mx-auto px-4 md:px-6 text-center">
-          <h1 className="text-4xl md:text-5xl font-display font-bold mb-6">Simple, Transparent Pricing</h1>
-          <p className="text-xl text-white/80 max-w-2xl mx-auto">
-            No hidden fees. No monthly charges on the Free plan. Only pay when you earn.
-          </p>
-        </div>
-      </div>
-
-      <div className="container mx-auto px-4 md:px-6 -mt-16 pb-12">
-        {/* Billing toggle */}
-        <div className="flex justify-center mb-10">
-          <div className="inline-flex items-center bg-white rounded-full shadow-lg border border-border p-1.5 gap-1" data-testid="toggle-billing-period">
-            <button
-              onClick={() => setBillingPeriod("monthly")}
-              data-testid="button-billing-monthly"
-              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${billingPeriod === "monthly" ? "bg-primary text-white shadow" : "text-muted-foreground hover:text-foreground"}`}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => setBillingPeriod("yearly")}
-              data-testid="button-billing-yearly"
-              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all flex items-center gap-2 ${billingPeriod === "yearly" ? "bg-primary text-white shadow" : "text-muted-foreground hover:text-foreground"}`}
-            >
-              Yearly
-              <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${billingPeriod === "yearly" ? "bg-white/20 text-white" : "bg-emerald-500/20 text-emerald-400"}`}>SAVE 20%</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {/* Free Tier */}
-          <div className="bg-card rounded-2xl shadow-xl border border-border overflow-hidden flex flex-col">
-            <div className="p-8 flex-1">
-              <h3 className="text-xl font-bold text-primary mb-2">Basic</h3>
-              <div className="text-4xl font-display font-bold mb-4">Free</div>
-              <p className="text-muted-foreground mb-6">Perfect for getting started.</p>
-              
-              <div className="bg-amber-500/10 rounded-lg p-3 mb-6 border border-amber-500/20">
-                <div className="text-center">
-                  <span className="text-2xl font-bold text-amber-400">10%</span>
-                  <p className="text-xs text-amber-300/80">commission on completed jobs</p>
-                </div>
-              </div>
-              
-              <ul className="space-y-3">
-                {[
-                  "Unlimited job applications",
-                  "Create service packages",
-                  "In-app messaging",
-                  "Escrow payment protection",
-                  "Basic profile",
-                  "Standard support"
-                ].map((feature, i) => (
-                  <li key={i} className="flex items-start gap-3 text-sm" data-testid={`item-feature-free-${i}`}>
-                    <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="p-8 bg-muted/30 border-t border-border">
-              <Button
-                variant="outline"
-                className="w-full font-bold"
-                data-testid="button-get-started-free"
-                onClick={handleFreePlanStart}
-                disabled={activateFreeMutation.isPending || authLoading}
-              >
-                {activateFreeMutation.isPending ? "Activating..." : authLoading ? "Checking account..." : "Get Started Free"}
-              </Button>
-            </div>
-          </div>
-
-          {/* Pro Tier */}
-          <div className="bg-gradient-to-b from-slate-800 to-slate-900 text-slate-50 rounded-2xl shadow-2xl border-2 border-emerald-500/50 relative overflow-hidden flex flex-col transform md:-translate-y-4 ring-4 ring-emerald-500/10">
-            <div className="absolute top-0 right-0 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider flex items-center gap-1" data-testid="badge-most-popular">
-              <Crown className="h-3 w-3" />
-              Premium
-            </div>
-            
-            <div className="p-8 flex-1">
-              <h3 className="text-xl font-bold text-emerald-400 mb-2">Premium Talent</h3>
-              <div className="flex flex-col mb-4">
-                <div className="flex items-baseline gap-1">
-                  <span className="text-5xl font-display font-bold text-primary" data-testid="text-pro-price">{formatPrice(activePrice)}</span>
-                  <span className="text-muted-foreground font-medium">
-                    {billingPeriod === "monthly" ? "/ month" : "/ year"}
-                  </span>
-                </div>
-                {billingPeriod === "yearly" && (
-                  <p className="text-sm text-primary/70 mt-1" data-testid="text-yearly-equivalent">
-                    {formatPrice(proYearlyPerMonth)} / month — billed annually
-                  </p>
-                )}
-                <div className="mt-2 flex flex-wrap gap-2">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 uppercase tracking-wide">
-                    SAVE 50% on commission
-                  </span>
-                  {billingPeriod === "yearly" && (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/15 text-amber-400 border border-amber-500/25 uppercase tracking-wide" data-testid="badge-yearly-saving">
-                      SAVE 20% vs monthly
-                    </span>
-                  )}
-                </div>
-              </div>
-              <p className="text-slate-300 mb-6">Unlock exclusive global opportunities and premium tools.</p>
-              
-              <div className="bg-emerald-500/10 rounded-lg p-3 mb-6 border border-emerald-500/20">
-                <div className="text-center">
-                  <span className="text-3xl font-bold text-emerald-400" data-testid="text-pro-commission">5%</span>
-                  <p className="text-xs text-emerald-300/80 font-semibold uppercase tracking-tight">commission - maximize your earnings</p>
-                </div>
-              </div>
-              
-              <ul className="space-y-3">
-                {[
-                  "Early access to Global Jobs",
-                  "Verified Premium Badge",
-                  "Top placement in Search",
-                  "Featured on Global Homepage",
-                  "Direct Client Video Chat",
-                  "Market-leading AI Analytics",
-                  "24/7 Dedicated Support"
-                ].map((feature, i) => (
-                  <li key={i} className="flex items-start gap-3 text-sm" data-testid={`item-feature-pro-${i}`}>
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-                    <span className="font-medium text-slate-200">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="p-8 bg-emerald-500/5 border-t border-emerald-500/15">
-              <Button className="w-full bg-emerald-600 text-white hover:bg-emerald-500 font-bold h-12 shadow-lg rounded-full shadow-emerald-900/30" data-testid="button-upgrade-pro" onClick={() => navigate(`/checkout?title=Premium+Talent+Subscription&freelancer=FreelanceSkills&${checkoutParams}&location=Global&rating=5&reviews=0`)}>
-                Start Free Trial
-              </Button>
-            </div>
-          </div>
-
-          {/* Business Tier */}
-          <div className="bg-card rounded-2xl shadow-xl border border-border overflow-hidden flex flex-col">
-            <div className="p-8 flex-1">
-              <h3 className="text-xl font-bold text-primary mb-2">Enterprise</h3>
-              <div className="text-4xl font-display font-bold mb-4" data-testid="text-enterprise-price">Custom</div>
-              <p className="text-muted-foreground mb-6">For companies hiring at scale.</p>
-              
-              <ul className="space-y-3">
-                {[
-                  "Dedicated Account Manager",
-                  "Consolidated Invoicing",
-                  "Custom Legal Contracts",
-                  "Bulk Recruitment Tools",
-                  "API Access",
-                  "Custom integrations"
-                ].map((feature, i) => (
-                  <li key={i} className="flex items-start gap-3 text-sm" data-testid={`item-feature-enterprise-${i}`}>
-                    <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="p-8 bg-muted/30 border-t border-border">
-              <Button variant="outline" className="w-full font-bold" data-testid="button-contact-sales" onClick={() => navigate("/support")}>Contact Sales</Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Savings Calculator */}
-        <div className="max-w-2xl mx-auto mt-12 bg-muted rounded-xl p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Calculator className="h-5 w-5 text-primary" />
-            <h3 className="font-semibold">See Your Savings</h3>
-          </div>
-          <p className="text-sm text-muted-foreground mb-4">On a {formatPrice(exampleJob)} job:</p>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-slate-800/60 rounded-lg p-4 border border-slate-700">
-              <p className="text-sm text-slate-400">Free Plan (10%)</p>
-              <p className="text-2xl font-bold text-white">{formatPrice(freeEarnings)}</p>
-              <p className="text-xs text-slate-400">You earn</p>
-            </div>
-            <div className="bg-emerald-500/10 rounded-lg p-4 border border-emerald-500/25">
-              <p className="text-sm text-emerald-400">Pro Plan (5%)</p>
-              <p className="text-2xl font-bold text-emerald-400">{formatPrice(proEarnings)}</p>
-              <p className="text-xs text-emerald-300/70">You earn {formatPrice(proSavings)} more!</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Escrow Section */}
-      <section className="py-16 bg-muted">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <Shield className="h-12 w-12 text-primary mx-auto mb-4" />
-              <h2 className="text-3xl font-bold mb-4">Escrow Payment Protection</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Your money is always safe. We hold payments securely until work is delivered and approved.
+      <main id="main-content" className="flex-1">
+        {/* Hero */}
+        <section className="relative bg-slate-900 border-b border-slate-800 py-20 sm:py-28">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-900/20 via-slate-900 to-slate-950" />
+          <div className="container mx-auto px-4 md:px-6 relative">
+            <div className="max-w-3xl mx-auto text-center">
+              <Badge variant="outline" className="mb-6 border-emerald-500/30 text-emerald-400 bg-emerald-500/10">
+                <CircleDollarSign className="w-3.5 h-3.5 mr-1.5" /> Transparent Fees
+              </Badge>
+              <h1 className="text-3xl sm:text-5xl font-bold text-white mb-6 tracking-tight" data-testid="text-pricing-headline">
+                Simple, Honest Pricing. No Surprises.
+              </h1>
+              <p className="text-lg sm:text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto" data-testid="text-pricing-subheadline">
+                We built FreelanceSkills.net on one principle: the person doing the work should know exactly what they'll earn, and the person hiring should know exactly what they'll pay. This page shows you everything.
               </p>
             </div>
+          </div>
+        </section>
 
-            <div className="grid md:grid-cols-4 gap-6">
-              {[
-                { step: 1, title: "Client Pays", desc: "Funds secured before work starts" },
-                { step: 2, title: "Work Begins", desc: "You complete the task or milestone" },
-                { step: 3, title: "Client Approves", desc: "They review and approve delivery" },
-                { step: 4, title: "You Get Paid", desc: "Funds released within 24 hours" },
-              ].map((item) => (
-                <div key={item.step} className="text-center">
-                  <div className="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-3 text-lg font-bold">
-                    {item.step}
-                  </div>
-                  <h4 className="font-semibold mb-1">{item.title}</h4>
-                  <p className="text-sm text-muted-foreground">{item.desc}</p>
+        {/* For Clients */}
+        <section className="py-16 sm:py-24">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="max-w-4xl mx-auto">
+              <div className="flex items-center gap-3 mb-10">
+                <div className="bg-emerald-500/10 p-2.5 rounded-lg text-emerald-400">
+                  <Wallet className="w-5 h-5" />
                 </div>
-              ))}
-            </div>
+                <h2 className="text-2xl sm:text-3xl font-bold text-white">For Clients — What You Pay</h2>
+              </div>
 
-            <div className="mt-8 bg-card rounded-xl p-6 border">
-              <h4 className="font-semibold mb-4 flex items-center gap-2">
-                <Lock className="h-5 w-5 text-green-600" />
-                Milestone Payments
-              </h4>
-              <p className="text-muted-foreground mb-4">
-                For larger projects, split payments into milestones. Funds are released as each milestone is completed and approved.
+              <Card className="bg-slate-900 border-slate-800 p-6 sm:p-8 mb-8">
+                <h3 className="text-lg font-semibold text-white mb-3">Posting a Job</h3>
+                <p className="text-slate-400 leading-relaxed">
+                  Posting a job on FreelanceSkills.net is completely free. No subscription required. No listing fee. You pay nothing until you hire.
+                </p>
+              </Card>
+
+              <Card className="bg-slate-900 border-slate-800 p-6 sm:p-8 mb-8">
+                <h3 className="text-lg font-semibold text-white mb-3">Hiring a Freelancer</h3>
+                <p className="text-slate-400 leading-relaxed mb-6">
+                  When you confirm a hire and fund the project, FreelanceSkills.net charges a single platform service fee of <strong className="text-white">8%</strong> on the total project value. This fee covers:
+                </p>
+                <ul className="space-y-3 mb-8">
+                  {[
+                    "Secure escrow holding of your funds",
+                    "Fraud screening and identity verification of all freelancers",
+                    "Access to our dispute resolution team",
+                    "Payment processing and transaction security",
+                    "Platform support throughout the project",
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-3 text-slate-300">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+
+                <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">What Does That Look Like in Practice?</h4>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-slate-700">
+                        <th className="text-left py-3 px-4 text-slate-400 font-semibold">Project Value</th>
+                        <th className="text-left py-3 px-4 text-slate-400 font-semibold">Platform Fee (8%)</th>
+                        <th className="text-left py-3 px-4 text-slate-400 font-semibold">Total You Pay</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {CLIENT_FEE_ROWS.map((row, i) => (
+                        <tr key={i} className="border-b border-slate-800/50">
+                          <td className="py-3 px-4 text-white font-medium">{row.value}</td>
+                          <td className="py-3 px-4 text-slate-400">{row.fee}</td>
+                          <td className="py-3 px-4 text-emerald-400 font-semibold">{row.total}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-xs text-slate-500 mt-4">
+                  No hidden fees. No currency conversion charges for ZAR transactions. No cancellation penalties if you close a job before hiring.
+                </p>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* For Freelancers */}
+        <section className="py-16 sm:py-24 bg-slate-900/50 border-y border-slate-800">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="max-w-4xl mx-auto">
+              <div className="flex items-center gap-3 mb-10">
+                <div className="bg-amber-500/10 p-2.5 rounded-lg text-amber-400">
+                  <Percent className="w-5 h-5" />
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-bold text-white">For Freelancers — What You Earn</h2>
+              </div>
+
+              <Card className="bg-slate-900 border-slate-800 p-6 sm:p-8 mb-8">
+                <h3 className="text-lg font-semibold text-white mb-3">Joining & Bidding</h3>
+                <p className="text-slate-400 leading-relaxed">
+                  Creating a FreelanceSkills.net profile is free. Submitting proposals is free. You never pay to be discovered.
+                </p>
+              </Card>
+
+              <Card className="bg-slate-900 border-slate-800 p-6 sm:p-8 mb-8">
+                <h3 className="text-lg font-semibold text-white mb-3">When You Win Work</h3>
+                <p className="text-slate-400 leading-relaxed mb-6">
+                  FreelanceSkills.net charges a freelancer service fee of <strong className="text-white">10%</strong> on every project paid through the platform. This fee is deducted at payout — you never pay it upfront.
+                </p>
+
+                <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Your Take-Home on Every Job</h4>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-slate-700">
+                        <th className="text-left py-3 px-4 text-slate-400 font-semibold">Project Value</th>
+                        <th className="text-left py-3 px-4 text-slate-400 font-semibold">Our Fee (10%)</th>
+                        <th className="text-left py-3 px-4 text-slate-400 font-semibold">You Receive</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {FREELANCER_FEE_ROWS.map((row, i) => (
+                        <tr key={i} className="border-b border-slate-800/50">
+                          <td className="py-3 px-4 text-white font-medium">{row.value}</td>
+                          <td className="py-3 px-4 text-slate-400">{row.fee}</td>
+                          <td className="py-3 px-4 text-emerald-400 font-semibold">{row.takeHome}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Card>
+
+              <Card className="bg-slate-900 border-slate-800 p-6 sm:p-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <HeartHandshake className="w-5 h-5 text-emerald-400" />
+                  <h3 className="text-lg font-semibold text-white">Loyalty Reward — Lower Fees as You Grow</h3>
+                </div>
+                <p className="text-slate-400 leading-relaxed">
+                  We reward freelancers who build long-term relationships on the platform. Once you have earned <strong className="text-white">R50,000</strong> with a single client, your service fee with that client drops to <strong className="text-white">5%</strong>. We want you to grow here, not leave.
+                </p>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Payment Methods */}
+        <section className="py-16 sm:py-24">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="max-w-4xl mx-auto">
+              <div className="flex items-center gap-3 mb-10">
+                <div className="bg-blue-500/10 p-2.5 rounded-lg text-blue-400">
+                  <CreditCard className="w-5 h-5" />
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-bold text-white">Payment Methods Accepted</h2>
+              </div>
+              <p className="text-slate-400 leading-relaxed mb-8">
+                We support the following payment methods for South African transactions:
               </p>
-              <div className="flex gap-2">
-                <div className="flex-1 h-3 bg-green-500 rounded-l-full"></div>
-                <div className="flex-1 h-3 bg-green-500"></div>
-                <div className="flex-1 h-3 bg-amber-400"></div>
-                <div className="flex-1 h-3 bg-muted rounded-r-full"></div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {PAYMENT_METHODS.map((method, i) => (
+                  <Card key={i} className="bg-slate-900 border-slate-800 p-5 flex items-center gap-4">
+                    <div className="bg-slate-800 p-2.5 rounded-lg">
+                      <method.icon className="w-5 h-5 text-blue-400" />
+                    </div>
+                    <span className="text-slate-300 font-medium">{method.label}</span>
+                  </Card>
+                ))}
               </div>
-              <div className="flex justify-between text-xs text-muted-foreground mt-2">
-                <span>Milestone 1 ✓</span>
-                <span>Milestone 2 ✓</span>
-                <span>Milestone 3 (current)</span>
-                <span>Milestone 4</span>
-              </div>
+              <p className="text-sm text-slate-500 mt-6">
+                All transactions are processed in South African Rand (ZAR). No currency conversion fees apply to local projects.
+              </p>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Withdrawal Methods */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <Wallet className="h-12 w-12 text-primary mx-auto mb-4" />
-              <h2 className="text-3xl font-bold mb-4">Withdrawal Options</h2>
-              <p className="text-muted-foreground">Get your money quickly with multiple payout options</p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              {WITHDRAWAL_METHODS.map((method, i) => (
-                <div key={i} className="bg-card rounded-xl p-6 border hover:shadow-md transition-shadow">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
-                      <method.icon className="h-6 w-6 text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold">{method.name}</h4>
-                      <div className="grid grid-cols-3 gap-2 mt-2 text-sm">
-                        <div>
-                          <p className="text-muted-foreground">Fee</p>
-                          <p className="font-medium text-green-600">{method.fee}</p>
-                        </div>
-                        <div>
-                          <p className="text-muted-foreground">Speed</p>
-                          <p className="font-medium">{method.time}</p>
-                        </div>
-                        <div>
-                          <p className="text-muted-foreground">Min</p>
-                          <p className="font-medium">{method.minAmount}</p>
-                        </div>
-                      </div>
-                    </div>
+        {/* What We Never Charge */}
+        <section className="py-16 sm:py-24 bg-slate-900/50 border-y border-slate-800">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="max-w-4xl mx-auto">
+              <div className="flex items-center gap-3 mb-10">
+                <div className="bg-red-500/10 p-2.5 rounded-lg text-red-400">
+                  <Ban className="w-5 h-5" />
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-bold text-white">What We Will Never Charge You</h2>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {NEVER_CHARGES.map((item, i) => (
+                  <div key={i} className="flex items-start gap-3 bg-slate-900 border border-slate-800 rounded-xl p-5">
+                    <Ban className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+                    <span className="text-slate-300">{item}</span>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Currencies */}
-      <section className="py-16 bg-muted">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <Globe className="h-12 w-12 text-primary mx-auto mb-4" />
-              <h2 className="text-3xl font-bold mb-4">Multi-Currency Support</h2>
-              <p className="text-muted-foreground">Work with clients worldwide in their preferred currency</p>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {CURRENCIES.map((currency) => (
-                <div key={currency.code} className="bg-card rounded-lg p-4 text-center border">
-                  <span className="text-2xl mb-2 block">{currency.flag}</span>
-                  <p className="font-semibold">{currency.code}</p>
-                  <p className="text-sm text-muted-foreground">{currency.name}</p>
+        {/* Trust & CTA */}
+        <section className="py-16 sm:py-24">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="max-w-4xl mx-auto">
+              <div className="grid sm:grid-cols-3 gap-6 mb-12">
+                <div className="text-center">
+                  <div className="bg-emerald-500/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <ShieldCheck className="w-6 h-6 text-emerald-400" />
+                  </div>
+                  <h3 className="font-semibold text-white mb-2">Escrow Protected</h3>
+                  <p className="text-sm text-slate-400">Every rand is held in secure escrow until work is approved.</p>
                 </div>
-              ))}
+                <div className="text-center">
+                  <div className="bg-blue-500/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Lock className="w-6 h-6 text-blue-400" />
+                  </div>
+                  <h3 className="font-semibold text-white mb-2">PCI-DSS Compliant</h3>
+                  <p className="text-sm text-slate-400">We never store card numbers. All payments are fully encrypted.</p>
+                </div>
+                <div className="text-center">
+                  <div className="bg-amber-500/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Truck className="w-6 h-6 text-amber-400" />
+                  </div>
+                  <h3 className="font-semibold text-white mb-2">Fast Payouts</h3>
+                  <p className="text-sm text-slate-400">Freelancers receive funds within 24 hours via EFT or PayShap.</p>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <Link href="/payment-protection">
+                  <Button variant="outline" className="mb-4 mr-3">
+                    <ShieldCheck className="w-4 h-4 mr-2" /> How Escrow Works
+                  </Button>
+                </Link>
+                <Link href="/post-job">
+                  <Button className="bg-primary text-white hover:bg-primary/90 font-bold shadow-lg">
+                    Post a Job Free <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            <div className="text-center mb-12">
-              <HelpCircle className="h-12 w-12 text-primary mx-auto mb-4" />
-              <h2 className="text-3xl font-bold mb-4">Frequently Asked Questions</h2>
-            </div>
-
-            <div className="space-y-3">
-              {FAQ_ITEMS.map((faq, i) => (
-                <div key={i} className="bg-card rounded-lg border overflow-hidden">
-                  <button
-                    onClick={() => setExpandedFaq(expandedFaq === i ? null : i)}
-                    className="w-full p-4 text-left flex items-center justify-between hover:bg-muted"
-                    data-testid={`button-faq-toggle-${i}`}
-                  >
-                    <span className="font-medium" data-testid={`text-faq-question-${i}`}>{faq.q}</span>
-                    {expandedFaq === i ? (
-                      <ChevronUp className="h-5 w-5 text-muted-foreground" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                    )}
-                  </button>
-                  {expandedFaq === i && (
-                    <div className="px-4 pb-4 text-muted-foreground" data-testid={`text-faq-answer-${i}`}>{faq.a}</div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
+        </section>
       </main>
       <Footer />
     </div>

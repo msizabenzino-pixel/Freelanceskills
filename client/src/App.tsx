@@ -96,6 +96,8 @@ const AdminRoles = lazy(() => import("@/pages/admin/Roles"));
 const AdminAdminUsers = lazy(() => import("@/pages/admin/AdminUsers"));
 const AdminAuditLogs = lazy(() => import("@/pages/admin/AuditLogs"));
 const AdminSecurity = lazy(() => import("@/pages/admin/Security"));
+const PaymentProtection = lazy(() => import("@/pages/PaymentProtection"));
+const WhyUs = lazy(() => import("@/pages/WhyUs"));
 const AdminSystemSettings = lazy(() => import("@/pages/admin/SystemSettings"));
 const AdminMonitoring = lazy(() => import("@/pages/admin/Monitoring"));
 const AdminAiTools = lazy(() => import("@/pages/admin/AiTools"));
@@ -251,6 +253,8 @@ function Router() {
         <Route path="/vuma" component={Vuma} />
         <Route path="/vuma-live" component={VumaLive} />
         <Route path="/ai-smart-match" component={AISmartMatch} />
+        <Route path="/payment-protection" component={PaymentProtection} />
+        <Route path="/why-us" component={WhyUs} />
         {/* Alias routes for SEO / nav */}
         <Route path="/help" component={Support} />
         <Route path="/contact" component={Support} />

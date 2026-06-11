@@ -58,6 +58,11 @@ export function calcStrength(data: StrengthInput): StrengthResult {
   if ((data.languages ?? []).length > 0) score += 5; else tips.push("Add languages you speak");
   if (data.availability) score += 5; else tips.push("Set your availability");
 
+  // Verification badge bonuses (Section 5 of revamp)
+  if ((data as any).identityVerified) score += 5;
+  if ((data as any).skillsVerified) score += 5;
+  if ((data as any).topPerformer) score += 10;
+
   const level = [...LEVELS].reverse().find((l) => score >= l.min) ?? LEVELS[0];
   return {
     score,

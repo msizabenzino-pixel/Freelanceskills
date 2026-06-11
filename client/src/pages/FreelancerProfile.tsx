@@ -5,13 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Star, MapPin, ShieldCheck, Clock, MessageSquare, Loader2, Edit, ExternalLink, Award, Briefcase, Zap, PlusCircle } from "lucide-react";
+import { Star, MapPin, ShieldCheck, Clock, MessageSquare, Loader2, Edit, ExternalLink, Award, Briefcase, Zap, PlusCircle, GraduationCap, History } from "lucide-react";
 import { Link, useLocation, useParams } from "wouter";
 import { useCurrency } from "@/lib/currency";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { PortfolioUploader } from "@/components/PortfolioUploader";
 import { LevelBadge, getLevelFromStats } from "@/components/LevelBadge";
+import { BadgeStack, BadgeTierDisplay } from "@/components/VerificationBadge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -75,6 +76,9 @@ async function fetchProfileUnified(id: string): Promise<FirebaseFreelancerProfil
         experienceLevel: p.experienceLevel || "",
         availability: p.availability || "",
         role: p.role || "freelancer",
+        certifications: (p as any).certifications || "",
+        workHistoryJson: (p as any).workHistoryJson || "",
+        languages: (p as any).languages || [],
         onboardingCompleted: true,
         updatedAt: new Date(p.updatedAt),
       };
@@ -265,6 +269,14 @@ export default function FreelancerProfile() {
                 </div>
 
                 <h1 className="text-xl sm:text-2xl font-bold text-white mb-2" data-testid="text-freelancer-name">{displayName}</h1>
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <BadgeStack
+                    identityVerified={(profile as any).identityVerified}
+                    skillsVerified={(profile as any).skillsVerified}
+                    topPerformer={(profile as any).topPerformer}
+                    size="sm"
+                  />
+                </div>
                 <div className="flex items-center justify-center gap-2 mb-3">
                   <LevelBadge
                     level={getLevelFromStats(reviews.length, (profile as any).rating ?? 0, 0)}
@@ -395,6 +407,38 @@ export default function FreelancerProfile() {
                   )}
                 </ul>
               </div>
+
+              {/* Certifications Section */}
+              {(profile as any).certifications && (
+                <div className="bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-800">
+                  <h3 className="font-bold text-lg mb-4">Certifications</h3>
+                  <ul className="space-y-3">
+                    {(profile as any).certifications.split(",").map((cert: string, i: number) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <div className="bg-emerald-500/10 p-2 rounded-lg text-emerald-400 mt-1"><GraduationCap className="w-4 h-4" /></div>
+                        <div>
+                          <div className="font-semibold text-sm text-white">{cert.trim()}</div>
+                          <div className="text-xs text-slate-400">Verified credential</div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Languages Section */}
+              {(profile as any).languages && (profile as any).languages.length > 0 && (
+                <div className="bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-800">
+                  <h3 className="font-bold text-lg mb-4">Languages</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {(profile as any).languages.map((lang: string, i: number) => (
+                      <Badge key={i} variant="secondary" className="px-3 py-1 bg-slate-800/60 text-slate-300">
+                        {lang}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="lg:col-span-2 space-y-6">

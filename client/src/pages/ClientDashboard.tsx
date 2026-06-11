@@ -106,7 +106,14 @@ function ApplicantCard({
             </div>
           )}
           <div className="min-w-0">
-            <p className="font-semibold text-white text-sm truncate">{applicant.freelancerName}</p>
+            <div className="flex items-center gap-2">
+              <p className="font-semibold text-white text-sm truncate">{applicant.freelancerName}</p>
+              {applicant.employabilityScore && applicant.employabilityScore >= 80 && (
+                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 font-semibold uppercase tracking-wide" data-testid={`top-match-${applicant.id}`}>
+                  Top Match
+                </span>
+              )}
+            </div>
             {applicant.profileTitle && (
               <p className="text-xs text-slate-400 truncate">{applicant.profileTitle}</p>
             )}

@@ -1,0 +1,62 @@
+WAR ROOM PROTOCOL ACTIVATED — SUPREME EXECUTION MODE
+
+You are now the combined senior leadership and engineering strike team behind Fiverr, Upwork, and top African marketplaces. This is a direct order from the Founder & CEO. No excuses. No partial implementation. Zero tolerance for remaining bugs.
+
+The attached document "FreelanceSkills_Platform_Revamp_AZ.docx" is now LAW. You and every agent under your control will execute EVERY SINGLE SENTENCE in this document thoroughly and completely.
+
+Begin IMMEDIATE full-scale implementation across all sections:
+
+**MANDATORY EXECUTION CHECKLIST (Implement in this order):**
+
+1. **Fee Transparency Page** (/pricing)
+   - Create full standalone page with exact copy from Section 3.
+   - Tables, fee breakdowns, loyalty rewards — verbatim.
+
+2. **Escrow & Payment Protection Page** (/payment-protection)
+   - Create full page with exact copy from Section 4.
+   - Step-by-step, guarantees, dispute process, FAQs.
+
+3. **Trust Architecture — 3-Tier Badge System** (Section 5)
+   - Implement Identity Verified, Skills Verified, Top Performer badges.
+   - Update schema, profile display, search cards, and dashboard.
+   - Make badges highly visible everywhere.
+
+4. **Homepage Revamp** (Section 6)
+   - Full above-the-fold, trust bar, social proof, How It Works, Categories, Why Us — exactly as specified.
+
+5. **AI / Smart Brief Builder** (Section 7)
+   - Implement guided job post flow with 6 questions and structured output.
+
+6. **Freelancer Profile Page & Edit Flow** (Section 8)
+   - Complete revamp with badges, completion meter, skills chips, portfolio, etc.
+   - Fix ALL persistence issues permanently (data must survive logout/login).
+   - Edit Profile must pre-populate everything reliably.
+
+7. **Client-Side Experience** (Section 9)
+   - Proposal inbox, contract/milestone management, reviews.
+
+8. **Onboarding Flows** (Section 13)
+   - Complete Freelancer 7-step and Client 4-step guided experiences.
+   - Auto-save, resume, profile completeness enforcement.
+
+9. **All Remaining Sections**
+   - Skilled Trades enhancements, Mobile optimizations, Dispute System foundation, Competitive Positioning page (/why-us), SEO landing page structure, etc.
+
+**Technical Standards (Non-Negotiable):**
+- Use existing Drizzle ORM + PostgreSQL with proper relations and transactions.
+- All protected routes must have correct Firebase + Express auth.
+- TanStack Query mutations must include auth headers (fix all 401s).
+- Mobile-first, dark mode, fast loading.
+- Every form uses React Hook Form + Zod.
+- Real-time features via Socket.io where relevant.
+- All copy from the document must be used verbatim.
+
+After completing the full implementation, respond with the EXACT following message:
+
+"✅ WAR ROOM PROTOCOL COMPLETE — FULL PLATFORM REVAMP EXECUTED. Every section of the Revamp Strategy Document has been implemented to the highest standard. FreelanceSkills.net now matches or exceeds Fiverr/Upwork quality in trust, onboarding, profiles, and payments."
+
+Then provide:
+- Brief summary of major features deployed.
+- Test checklist covering key user journeys (new freelancer onboarding, edit profile, job posting, application submit, etc.).
+
+This is a direct war room order. Execute with absolute precision and urgency. The reputation of the platform and founder depends on this. Begin now.

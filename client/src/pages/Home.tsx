@@ -353,7 +353,7 @@ export default function Home() {
   const [heroMode, setHeroMode] = useState<"search" | "ai">("search");
   const [applyJob, setApplyJob] = useState<{ title: string; company: string; budget: string; location: string } | null>(null);
   const [profileCompletion] = useState(42);
-  const [activeCategory, setActiveCategory] = useState("Development");
+  const [activeCategory, setActiveCategory] = useState("Skilled Trades");
 
   const { data: realJobsData } = useQuery<any>({
     queryKey: ["/api/aggregated-jobs", { limit: 6, sortBy: "recent" }],
@@ -410,6 +410,10 @@ export default function Home() {
   };
 
   const discoveryCategories = [
+    {
+      name: "Skilled Trades",
+      topics: ["Electricians", "Plumbers", "Carpenters", "Painters", "HVAC Technicians", "General Contractors"],
+    },
     {
       name: "Creative & Design",
       topics: ["Logo Designers", "Brand Identity", "UI/UX Designers", "Canva Designers", "Presentation Designers", "Illustrators"],
@@ -475,20 +479,19 @@ export default function Home() {
               <AnimatedCounter value={totalJobs} duration={1500} />+ Real Jobs · Updated Every 30 Min · Verified Marketplace
             </motion.div>
 
-            {/* Headline */}
+            {/* Headline — Section 6 spec: "Africa's Skills-First Freelance Marketplace" */}
             <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
               className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.06] mb-4">
-              <span className="text-white">Africa's #1 Platform for</span><br />
+              <span className="text-white">Africa's</span><br />
               <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500 bg-clip-text text-transparent">
-                Skills &amp; Opportunity
+                Skills-First Freelance Marketplace
               </span>
             </motion.h1>
 
-            {/* Sub */}
+            {/* Sub — Section 6 spec: verbatim sub-headline */}
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-base md:text-lg text-slate-400 max-w-xl mx-auto mb-6 leading-relaxed">
-              Find work. Hire verified talent. Get paid safely — all in one place.<br />
-              <span className="text-emerald-400 font-semibold">54 African countries · {totalJobs > 0 ? `${totalJobs.toLocaleString()}+` : "11,400+"} live jobs</span>
+              className="text-base md:text-lg text-slate-400 max-w-2xl mx-auto mb-6 leading-relaxed">
+              From Cape Town developers to Johannesburg electricians — hire verified South African talent with your money protected every step.
             </motion.p>
 
             {/* Hero Input — Search or AI Brief Mode */}
@@ -543,25 +546,20 @@ export default function Home() {
               )}
             </motion.div>
 
-            {/* CTAs — visible immediately after search, above the fold */}
+            {/* CTAs — Section 6 spec: Primary = Post a Job Free (client), Secondary = Join as Freelancer */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }}
               className="flex flex-wrap items-center justify-center gap-2.5 mb-5">
-              <Link href="/auth?mode=register"
-                className="group inline-flex items-center gap-2 px-6 py-3 sm:px-7 sm:py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm sm:text-base shadow-xl shadow-emerald-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                data-testid="button-hero-join-free">
-                <BadgeCheck className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="sm:hidden">Join Free</span>
-                <span className="hidden sm:inline">Join Free — Create Your Profile</span>
-              </Link>
-              <Link href="/jobs"
-                className="group inline-flex items-center gap-2 px-6 py-3 sm:px-7 sm:py-4 rounded-2xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 text-white font-bold text-sm sm:text-base backdrop-blur-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
-                data-testid="button-hero-browse-jobs">
-                Browse Jobs <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-              </Link>
               <Link href="/post-job"
+                className="group inline-flex items-center gap-2 px-6 py-3 sm:px-7 sm:py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm sm:text-base shadow-xl shadow-emerald-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                data-testid="button-hero-post-job">
+                <Briefcase className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="sm:hidden">Post Job</span>
+                <span className="hidden sm:inline">Post a Job Free</span>
+              </Link>
+              <Link href="/cv-upload"
                 className="group inline-flex items-center gap-2 px-6 py-3 sm:px-7 sm:py-4 rounded-2xl border border-slate-700 hover:border-emerald-500/40 text-slate-300 hover:text-emerald-400 font-semibold text-sm sm:text-base transition-all hover:bg-emerald-500/5"
-                data-testid="button-hero-post-project">
-                <Briefcase className="w-4 h-4 sm:w-5 sm:h-5" /> Hire Talent
+                data-testid="button-hero-join-freelancer">
+                <BadgeCheck className="w-4 h-4 sm:w-5 sm:h-5" /> Join as a Freelancer
               </Link>
             </motion.div>
 
@@ -602,6 +600,7 @@ export default function Home() {
                       <span className="text-xs text-emerald-400 font-semibold">{activeCategory}</span>
                     </div>
                     <div className="text-sm text-slate-300 leading-relaxed">
+                      {activeCategory === "Skilled Trades" && "Verified electricians, plumbers, carpenters, and contractors ready for your next project."}
                       {activeCategory === "Development" && "From websites to AI systems, hire builders with real execution power."}
                       {activeCategory === "Creative & Design" && "Branding, logos, UI and visuals that make the first impression count."}
                       {activeCategory === "Writing" && "Conversion copy, thought leadership, SEO and content that wins trust."}
@@ -673,19 +672,25 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Stats bar — numbers driven by live DB */}
+        {/* Trust bar immediately below hero — Section 6 spec: "8,400+ Verified Freelancers | R47M+ Earned | Escrow Protected | ZAR Payments" */}
         <div className="absolute bottom-0 left-0 right-0 border-t border-slate-800/60 bg-slate-950/80 backdrop-blur-sm">
           <div className="container mx-auto px-4 md:px-6 py-4">
-            <div className="flex flex-wrap justify-center gap-x-10 gap-y-2">
+            <div className="flex flex-wrap justify-center gap-x-8 gap-y-2">
               {[
-                { value: totalJobs > 0 ? totalJobs : 11400, suffix: "+", label: "Live Jobs" },
-                { value: totalFreelancers > 0 ? totalFreelancers : 8200, suffix: "+", label: "Freelancers" },
-                { value: 54, suffix: " Countries", label: "African Reach" },
-                { value: 10, suffix: "%", label: "Platform Fee" },
+                { icon: Users, value: totalFreelancers > 0 ? totalFreelancers : 8400, suffix: "+", label: "Verified Freelancers" },
+                { icon: Banknote, value: 47, suffix: "M+", label: "Earned on Platform", format: "prefix" as const },
+                { icon: Lock, value: "Escrow", suffix: "", label: "Protected", format: "text" as const },
+                { icon: ShieldCheck, value: "ZAR", suffix: "", label: "Payments", format: "text" as const },
               ].map((stat, i) => (
-                <div key={i} className="text-center" data-testid={`stat-hero-${i}`}>
-                  <div className="text-lg font-black text-emerald-400"><AnimatedCounter value={stat.value} duration={2000} />{stat.suffix}</div>
-                  <div className="text-[10px] text-slate-500 uppercase tracking-wider font-medium">{stat.label}</div>
+                <div key={i} className="flex items-center gap-2 text-center" data-testid={`trust-bar-${i}`}>
+                  <stat.icon className="w-4 h-4 text-emerald-400" />
+                  <div>
+                    <span className="text-sm font-black text-emerald-400">
+                      {stat.format === "text" ? stat.value : stat.format === "prefix" ? `R${stat.value}${stat.suffix}` : <AnimatedCounter value={stat.value as number} duration={2000} />}
+                      {stat.format !== "text" && stat.format !== "prefix" ? stat.suffix : ""}
+                    </span>
+                    <span className="text-[10px] text-slate-500 uppercase tracking-wider font-medium ml-1">{stat.label}</span>
+                  </div>
                 </div>
               ))}
             </div>
@@ -904,40 +909,25 @@ export default function Home() {
         <section className="py-20 bg-gradient-to-b from-slate-900/40 to-slate-950 border-y border-slate-800/50" aria-labelledby="pillars-heading" data-testid="section-value-pillars">
           <div className="container mx-auto px-4 md:px-6">
             <div className="text-center max-w-2xl mx-auto mb-5">
-              <h2 id="pillars-heading" className="text-3xl md:text-4xl font-black text-white mb-4">Why Freelancers Choose FreelanceSkills</h2>
-              <p className="text-slate-400 text-lg">Every feature was built for Africa's reality — not Silicon Valley's assumptions.</p>
+              <h2 id="pillars-heading" className="text-3xl md:text-4xl font-black text-white mb-4">Why FreelanceSkills</h2>
+              <p className="text-slate-400 text-lg">Built for Africa. Every rand protected. Verified talent only.</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               {[
                 {
-                  icon: BadgeCheck, color: "from-emerald-500/20 to-teal-500/10 border-emerald-500/20", iconColor: "text-emerald-400",
-                  title: "Verified Skills & Endorsements", badge: "Skills-tested + ID-verified",
-                  desc: "Multi-layer verification: ID, skills assessments, and portfolio review. Real, tested proof — not just soft endorsements.",
+                  icon: Globe, color: "from-teal-500/20 to-emerald-500/10 border-teal-500/20", iconColor: "text-teal-400",
+                  title: "Built for Africa", badge: "Not a Silicon Valley clone",
+                  desc: "ZAR payments, SA escrow, M-Pesa, mobile money, and support that understands SARS, CIPC, and BEE. Built for Africa's reality.",
                 },
                 {
                   icon: Lock, color: "from-blue-500/20 to-indigo-500/10 border-blue-500/20", iconColor: "text-blue-400",
-                  title: "Secure Escrow & Instant ZAR Payouts", badge: "100% payment protection",
-                  desc: "Funds held in escrow until work is approved. Instant ZAR bank transfers. No ghost clients, no unpaid invoices.",
+                  title: "Every Rand Protected", badge: "100% payment protection",
+                  desc: "Escrow on every project. 14-day money-back guarantee. Instant ZAR bank transfers. No ghost clients, no unpaid invoices.",
                 },
                 {
-                  icon: Brain, color: "from-violet-500/20 to-purple-500/10 border-violet-500/20", iconColor: "text-violet-400",
-                  title: "AI Smart Matching + Skills Path", badge: "Your personal career AI",
-                  desc: "Our AI surfaces the highest-ROI opportunities + builds a personalised learning path to get you there faster.",
-                },
-                {
-                  icon: Banknote, color: "from-amber-500/20 to-orange-500/10 border-amber-500/20", iconColor: "text-amber-400",
-                  title: "Transparent Fees — Only When You Earn", badge: "No monthly fees, ever",
-                  desc: "Nothing until you get paid. Low success fee only on completed work. No subscriptions required to find clients.",
-                },
-                {
-                  icon: Globe, color: "from-teal-500/20 to-emerald-500/10 border-teal-500/20", iconColor: "text-teal-400",
-                  title: "Built for Africa — Local + Global", badge: "54 countries, one platform",
-                  desc: "SA escrow, Kenyan mobile money, Nigerian bank transfers. ZAR + M-Pesa + mobile money. We handle cross-border African payments.",
-                },
-                {
-                  icon: Headphones, color: "from-rose-500/20 to-pink-500/10 border-rose-500/20", iconColor: "text-rose-400",
-                  title: "24/7 SA Support + 48h Disputes", badge: "Real humans, real help",
-                  desc: "WhatsApp, call, or live chat. Our team understands SARS, CIPC, and BEE. Disputes resolved in under 48 hours.",
+                  icon: BadgeCheck, color: "from-emerald-500/20 to-teal-500/10 border-emerald-500/20", iconColor: "text-emerald-400",
+                  title: "Verified Talent Only", badge: "ID + Skills + Portfolio",
+                  desc: "Every freelancer is ID-verified and skills-tested. Real portfolio reviews. No fake profiles. Hire with confidence.",
                 },
               ].map((pillar, i) => (
                 <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}

@@ -39,6 +39,7 @@ export const profiles = pgTable(
     deletedBy: varchar("deleted_by", { length: 50 }),
     deleteReason: text("delete_reason"),
     portfolioProjectsJson: text("portfolio_projects_json"),
+    workHistoryJson: text("work_history_json"),
     // Extended profile fields
     photoUrl: text("photo_url"),
     certifications: text("certifications"),
@@ -51,6 +52,14 @@ export const profiles = pgTable(
     tagline: text("tagline"),
     experienceLevel: text("experience_level"),
     category: text("category"),
+    // 3-Tier Trust Badge System
+    identityVerified: boolean("identity_verified").notNull().default(false),
+    skillsVerified: boolean("skills_verified").notNull().default(false),
+    topPerformer: boolean("top_performer").notNull().default(false),
+    identityVerifiedAt: timestamp("identity_verified_at"),
+    skillsVerifiedAt: timestamp("skills_verified_at"),
+    topPerformerAt: timestamp("top_performer_at"),
+    onTimeDeliveryRate: integer("on_time_delivery_rate"), // 0-100
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },

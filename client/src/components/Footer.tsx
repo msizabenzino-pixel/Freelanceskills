@@ -103,6 +103,8 @@ export function Footer() {
               <li><Link href="/services" className="hover:text-primary transition-colors py-2 block" data-testid="link-find-talent">Find Talent</Link></li>
               <li><Link href="/post-job" className="hover:text-primary transition-colors py-2 block" data-testid="link-post-job">Post a Job</Link></li>
               <li><Link href="/pricing" className="hover:text-primary transition-colors py-2 block" data-testid="link-pricing">Pricing</Link></li>
+              <li><Link href="/payment-protection" className="hover:text-primary transition-colors py-2 block" data-testid="link-payment-protection">Payment Protection</Link></li>
+              <li><Link href="/why-us" className="hover:text-primary transition-colors py-2 block" data-testid="link-why-us">Why FreelanceSkills</Link></li>
             </ul>
           </div>
 
@@ -115,6 +117,7 @@ export function Footer() {
               <li><Link href="/explore" className="hover:text-primary transition-colors py-2 block" data-testid="link-opportunity-finder">AI Opportunity Finder</Link></li>
               <li><Link href="/jobs" className="hover:text-primary transition-colors py-2 block" data-testid="link-browse-jobs">Browse Jobs</Link></li>
               <li><Link href="/pricing" className="hover:text-primary transition-colors py-2 block" data-testid="link-fees-earnings">Fees & Earnings</Link></li>
+              <li><Link href="/payment-protection" className="hover:text-primary transition-colors py-2 block" data-testid="link-talent-payment-protection">Payment Protection</Link></li>
             </ul>
           </div>
 

@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { LevelBadge, getLevelFromStats } from "@/components/LevelBadge";
+import { BadgeStack } from "@/components/VerificationBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -34,6 +35,10 @@ interface FreelancerResult {
   kycStatus: string;
   country: string;
   avatarInitials: string;
+  identityVerified?: boolean;
+  skillsVerified?: boolean;
+  topPerformer?: boolean;
+  onTimeDeliveryRate?: number | null;
   coords?: { top: string; left: string };
 }
 
@@ -81,7 +86,7 @@ function FreelancerCard({ f, onSelect, selected }: { f: FreelancerResult; onSele
               </Avatar>
             </div>
           </div>
-          {f.verified && (
+          {(f.verified || f.identityVerified) && (
             <div className="absolute -bottom-1 -right-1 bg-slate-900 rounded-full p-0.5 border border-emerald-500/40 shadow-lg">
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
             </div>
@@ -90,6 +95,14 @@ function FreelancerCard({ f, onSelect, selected }: { f: FreelancerResult; onSele
 
         <div className="w-full">
           <h3 className="font-bold text-base text-white leading-tight">{f.name}</h3>
+          <div className="flex justify-center mt-1 mb-1">
+            <BadgeStack
+              identityVerified={f.identityVerified}
+              skillsVerified={f.skillsVerified}
+              topPerformer={f.topPerformer}
+              size="xs"
+            />
+          </div>
           <div className="flex justify-center mt-1 mb-0.5">
             <LevelBadge
               level={f.isPro ? "pro" : getLevelFromStats(f.completedJobs ?? 0, f.rating ?? 0, 0)}

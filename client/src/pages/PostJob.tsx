@@ -54,6 +54,25 @@ export default function PostJob() {
   const [error, setError] = useState<string | null>(null);
   const [successJobId, setSuccessJobId] = useState<string | null>(null);
 
+  // Hydrate from AI Brief Generator URL params
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const urlTitle = params.get("title");
+    const urlDescription = params.get("description");
+    const urlBudgetMin = params.get("budgetMin");
+    const urlBudgetMax = params.get("budgetMax");
+    const urlSkills = params.get("skills");
+    const urlTimeline = params.get("timeline");
+    const urlJobType = params.get("jobType");
+
+    if (urlTitle) setTitle(urlTitle);
+    if (urlDescription) setDescription(urlDescription);
+    if (urlBudgetMin && urlBudgetMax) setBudget(urlBudgetMax);
+    if (urlSkills) setSkills(urlSkills.split(",").filter(Boolean));
+    if (urlTimeline) setDescription((prev) => prev ? `${prev}\n\nTimeline: ${urlTimeline}` : `Timeline: ${urlTimeline}`);
+    if (urlJobType) setDescription((prev) => prev ? `${prev}\n\nType: ${urlJobType}` : `Type: ${urlJobType}`);
+  }, []);
+
   const generateMutation = useMutation({
     mutationFn: async (): Promise<{ description: string; suggestedBudget: { min: number; max: number } }> => {
       const response = await fetch("/api/ai/generate-job-post", {
