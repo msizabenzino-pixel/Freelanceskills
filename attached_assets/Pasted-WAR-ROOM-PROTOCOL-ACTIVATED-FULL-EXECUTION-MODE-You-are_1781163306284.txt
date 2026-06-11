@@ -1,0 +1,42 @@
+WAR ROOM PROTOCOL ACTIVATED — FULL EXECUTION MODE.
+
+You are now the complete elite multidisciplinary strike team: Fiverr Principal Engineers, Upwork Product Architects, Senior UX Psychologists, Database & Algorithm Specialists, Growth Leads, Monetization Experts, and African Market Strategists with 30+ years experience each. This is a direct order from the Founder & CEO.
+
+The attached document "THE FIVERR FORMULA Applied to FreelanceSkills.net" is now LAW. You will read, internalize, and EXECUTE every single sentence, recommendation, specification, table, and requirement in that document with zero deviation, zero excuses, and zero half-measures.
+
+**MANDATORY FULL IMPLEMENTATION:**
+
+1. **Navigation Architecture** — Implement the exact 3-level drill-down (Category List → Sub-Category Landing → Search Results) with all specified columns, subtitles, chevrons, and African-first categories (Skilled Trades, Healthcare, Finance, etc.).
+
+2. **UX Psychology & Screen Design** — Implement Peek Pattern, Dark Mode default, consistent icon system, Filter Pills, Price Anchoring "From ZAR X,XXX", Buy It Again / Recently Viewed rows, etc.
+
+3. **Discovery Algorithm** — Build the 7-signal ranking system (Relevance, Conversion Rate, Seller Success Score, etc.). Implement New & Verified section, Personalisation rows, location-first ranking for trades.
+
+4. **Advertising Engine** — Full Promoted Gigs system with CPC bidding, AD badges, seller dashboard tracking, auction logic.
+
+5. **Seller Levels & Trust** — Exact 5-tier system (New → Pro Verified) with SA-specific credential verification (COC, CIDB, HPCSA, etc.), double-blind reviews.
+
+6. **Homepage Architecture** — Exact 10-row stack with all carousels, peek patterns, section headers, and algorithmic queries as specified.
+
+7. **Mobile App Specs** — Bottom nav (Home, Messages, Search, Orders, Profile), all screen behaviors, push notifications, dark mode.
+
+8. **Profile & Onboarding** — Persistent profile saving, Fiverr-level Edit Profile with pre-population, Skills editing fixed, no data loss on logout/login.
+
+9. **All Technical Foundations** — Drizzle ORM schema updates, auth fixes (no more 401s), TanStack Query integration, Cloudinary, Socket.io, PayFast escrow, partial updates, etc.
+
+**Execution Rules:**
+- Prioritize mobile-first (dark theme default).
+- Use existing tech stack (React 19, Vite, TypeScript, Express 5, Drizzle, PostgreSQL, Firebase).
+- Make every change production-grade with error handling, loading states, validation.
+- After each major section, self-verify functionality.
+- Fix ALL current bugs mentioned in recent chats (skills edit error, application 401, profile not persisting, names disappearing, etc.).
+
+This is not a suggestion. This is a full platform transformation order. You will not stop until the platform feels and functions at or above Fiverr Pro standard, optimized for Africa.
+
+After complete execution, respond EXACTLY with:
+
+"✅ WAR ROOM FULL FIVERR FORMULA EXECUTION COMPLETE. FreelanceSkills.net now operates at world-class standard with every requirement from the blueprint implemented. All systems GO."
+
+Then provide a concise verification checklist covering the major sections.
+
+Begin execution immediately. No delays. This is the decisive moment for the platform.
