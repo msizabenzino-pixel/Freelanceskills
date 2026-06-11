@@ -9,3 +9,4 @@
 - [AuthGuard Refresh Flash](authguard-flash.md) — Firebase onAuthStateChanged takes a moment. AuthGuard must stay in spinner until `hasResolved` is true, not redirect on brief `isAuthenticated=false` during init.
 - [Profile Cache Invalidation](profile-cache.md) — `clearProfileCache` is server-side in-memory. Must be called on every profile update (PATCH/go-live) so stale 5-min cache doesn't serve old names/portfolio.
 - [jsonText custom column](json-text-columns.md) — profiles.portfolioProjects uses a text-backed JSON Drizzle type; read/write arrays directly, never JSON.parse/stringify, no migration.
+- [Hooks before conditional returns](hooks-after-early-return.md) — all hooks (incl framer-motion useReducedMotion) must precede any conditional return; build unminified to read real component names in minified React hook-mismatch crashes.

@@ -279,9 +279,10 @@ export function OnboardingCarousel() {
   const totalDots = slides.length + (allSteps.length - 1);
   const activeDot = step === "slides" ? currentSlide : slides.length + allSteps.indexOf(step) - 1;
 
+  const reduced = useReducedMotion();
+
   if (!isVisible) return null;
 
-  const reduced = useReducedMotion();
   const motionProps = reduced ? { initial: false, animate: false, exit: false, transition: { duration: 0 } } : {};
   const slideProps = reduced ? { initial: false, animate: false, exit: false, transition: { duration: 0 } } : { initial: { opacity: 0, x: 24 }, animate: { opacity: 1, x: 0 }, exit: { opacity: 0, x: -24 }, transition: { duration: 0.25 } };
   const stepProps = reduced ? { initial: false, animate: false, exit: false, transition: { duration: 0 } } : { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -12 }, transition: { duration: 0.25 } };
