@@ -583,10 +583,11 @@ export async function registerRoutes(
       // Join users table to get name + email
       const { db: _db } = await import("./db");
       const { users: usersTable } = await import("../shared/models/auth");
+      const { eq: eqFn } = await import("drizzle-orm");
       const [userRow] = await _db
         .select({ firstName: usersTable.firstName, lastName: usersTable.lastName, email: usersTable.email, profileImageUrl: usersTable.profileImageUrl })
         .from(usersTable)
-        .where(eq(usersTable.id, userId))
+        .where(eqFn(usersTable.id, userId))
         .limit(1);
 
       res.json({
@@ -624,13 +625,16 @@ export async function registerRoutes(
       try {
         const { db: _db } = await import("./db");
         const { users: usersTable } = await import("../shared/models/auth");
+        const { eq: eqFn } = await import("drizzle-orm");
         const [row] = await _db
           .select({ firstName: usersTable.firstName, lastName: usersTable.lastName, email: usersTable.email, profileImageUrl: usersTable.profileImageUrl })
           .from(usersTable)
-          .where(eq(usersTable.id, userId))
+          .where(eqFn(usersTable.id, userId))
           .limit(1);
         userRow = row;
-      } catch { /* non-fatal */ }
+      } catch (err) {
+        console.error("[profile/:id] user lookup failed:", err);
+      }
 
       res.setHeader("Cache-Control", "public, max-age=60, s-maxage=120, stale-while-revalidate=300");
       res.setHeader("Vary", "Accept-Encoding");
