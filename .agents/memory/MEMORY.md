@@ -6,3 +6,5 @@
 - [db:push is unsafe here](db-push-drift.md) — never run drizzle-kit push; apply schema changes via idempotent SQL DDL to avoid data-loss prompts/drift.
 - [Category taxonomy gap](category-taxonomy-gap.md) — frontend category slugs (skilled-trades) don't match stored gig category tokens (trades/tech); log display names + token-ILIKE match in Recommended.
 - [service_packages schema/DB drift](service-packages-drift.md) — DB may lack is_promoted/promoted_bid cols the schema defines; full-row select from servicePackages 500s until ALTER adds them.
+- [AuthGuard Refresh Flash](authguard-flash.md) — Firebase onAuthStateChanged takes a moment. AuthGuard must stay in spinner until `hasResolved` is true, not redirect on brief `isAuthenticated=false` during init.
+- [Profile Cache Invalidation](profile-cache.md) — `clearProfileCache` is server-side in-memory. Must be called on every profile update (PATCH/go-live) so stale 5-min cache doesn't serve old names/portfolio.

@@ -10,14 +10,16 @@ interface AuthGuardProps {
 }
 
 export function AuthGuard({ children, message = "Sign in to access this page." }: AuthGuardProps) {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, hasResolved } = useAuth();
   const [, navigate] = useLocation();
   const currentPath =
     typeof window !== "undefined"
       ? `${window.location.pathname}${window.location.search}`
       : "/";
 
-  if (isLoading) {
+  // During the initial Firebase auth resolution window, keep showing spinner
+  // so the user never sees a login flash when refreshing an authenticated page.
+  if (isLoading || !hasResolved) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col">
         <Navbar />

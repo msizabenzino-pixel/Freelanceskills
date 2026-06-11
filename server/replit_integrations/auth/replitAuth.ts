@@ -3,6 +3,7 @@ import type { Express, Request, Response, NextFunction, RequestHandler } from "e
 import connectPg from "connect-pg-simple";
 import { db } from "../../db";
 import { profiles } from "@shared/models/profiles";
+import { users } from "@shared/models/auth";
 import { eq } from "drizzle-orm";
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -72,15 +73,17 @@ async function loadProfile(userId: string): Promise<SessionUser | null> {
     return cached.user;
   }
 
-  // 2. Fetch from DB
+  // 2. Fetch from DB — JOIN users so names come from the canonical users table
   try {
-    const [profile] = await db
+    const rows = await db
       .select()
       .from(profiles)
+      .leftJoin(users, eq(users.id, profiles.userId))
       .where(eq(profiles.userId, userId))
       .limit(1);
 
-    if (!profile) {
+    const row = rows[0];
+    if (!row) {
       // Fallback: user exists but no profile — treat as minimal client
       const minimal: SessionUser = {
         userId,
@@ -94,25 +97,30 @@ async function loadProfile(userId: string): Promise<SessionUser | null> {
       return minimal;
     }
 
-    const user: SessionUser = {
+    const profile = row.profiles;
+    const user = row.users;
+
+    const enriched: SessionUser = {
       userId,
       userType: profile.userType,
       role: profile.role,
       status: profile.status,
       kycStatus: profile.kycStatus,
       isPro: profile.isPro,
-      email: profile.email || undefined,
-      firstName: profile.firstName || undefined,
-      lastName: profile.lastName || undefined,
-      profileImageUrl: profile.profileImageUrl || undefined,
+      email: user?.email || undefined,
+      firstName: user?.firstName || undefined,
+      lastName: user?.lastName || undefined,
+      profileImageUrl: user?.profileImageUrl || undefined,
       _enrichedAt: Date.now(),
     };
 
-    profileCache.set(userId, { user, expiresAt: Date.now() + PROFILE_CACHE_TTL });
-    return user;
+    profileCache.set(userId, { user: enriched, expiresAt: Date.now() + PROFILE_CACHE_TTL });
+    return enriched;
   } catch (err) {
     console.error("[auth] loadProfile failed:", (err as Error).message);
-    return null;
+    // CRITICAL: DB error must NOT be treated as "session invalid" — that causes
+    // mass logout on temporary DB hiccups. Return a flag the caller can use.
+    return "__DB_ERROR__" as any;
   }
 }
 
@@ -137,6 +145,14 @@ export const isAuthenticated: RequestHandler = async (req, res, next) => {
 
   // Load enriched profile
   const user = await loadProfile(userId);
+  if (user === "__DB_ERROR__" as any) {
+    return res.status(503).json({
+      success: false,
+      code: "SERVICE_UNAVAILABLE",
+      message: "We're experiencing a brief issue. Please wait a moment and try again.",
+      hint: "This is temporary — your session is still valid.",
+    });
+  }
   if (!user) {
     return res.status(401).json({
       success: false,

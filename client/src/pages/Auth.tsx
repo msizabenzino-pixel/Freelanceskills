@@ -177,7 +177,7 @@ export default function Auth() {
 
       // Also save to PostgreSQL so server-side login works as fallback
       try {
-        await fetch("/api/auth/register", {
+        const res = await fetch("/api/auth/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
@@ -188,8 +188,12 @@ export default function Auth() {
             lastName: data.lastName.trim(),
           }),
         });
-      } catch {
-        // Non-fatal — Firebase account was created, PostgreSQL is bonus fallback
+        if (!res.ok) {
+          const errBody = await res.json().catch(() => ({}));
+          console.warn("[register] PostgreSQL fallback failed:", errBody.message || res.status);
+        }
+      } catch (netErr) {
+        console.warn("[register] PostgreSQL fallback network error:", (netErr as Error).message);
       }
 
       return user;

@@ -49,6 +49,7 @@ async function clearServerSession(): Promise<void> {
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasResolved, setHasResolved] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const lastSyncedUid = useRef<string | null>(null);
 
@@ -56,6 +57,7 @@ export function useAuth() {
     if (!isFirebaseConfigured || !firebaseAuth) {
       setUser(null);
       setIsLoading(false);
+      setHasResolved(true);
       return;
     }
 
@@ -78,6 +80,7 @@ export function useAuth() {
         }
       }
       setIsLoading(false);
+      setHasResolved(true);
     });
 
     return () => unsubscribe();
@@ -99,6 +102,7 @@ export function useAuth() {
   return {
     user,
     isLoading,
+    hasResolved,
     isAuthenticated: Boolean(user),
     logout,
     isLoggingOut,

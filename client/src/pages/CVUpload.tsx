@@ -399,7 +399,7 @@ export default function CVUpload() {
           tagline: data.tagline,
           experienceLevel: data.experienceLevel,
           category: data.category,
-          portfolioProjects: portfolioProjects.length > 0 ? portfolioProjects : null,
+          portfolioProjectsJson: portfolioProjects.length > 0 ? JSON.stringify(portfolioProjects) : null,
         },
       });
     },
@@ -409,8 +409,29 @@ export default function CVUpload() {
       fireConfetti();
       if (user?.id) {
         try {
-          await saveFreelancerProfile({ userId: user.id, fullName: `${formData.firstName} ${formData.lastName}`.trim() || user.displayName || "Freelancer", profilePhotoUrl: formData.photo || "", bio: formData.bio, title: formData.title, skills: formData.skills, expertise: [], categories: formData.category ? [formData.category] : [], hourlyRate: formData.hourlyRate ? Math.round(parseFloat(formData.hourlyRate) * 100) : 0, location: formData.location, portfolioLinks: formData.portfolioUrl ? [formData.portfolioUrl] : [], experienceLevel: formData.experienceLevel, availability: formData.availability, role: "freelancer", onboardingCompleted: true, publishedProfile: true });
-        } catch {}
+          await saveFreelancerProfile({
+            userId: user.id,
+            fullName: `${formData.firstName} ${formData.lastName}`.trim() || user.displayName || "Freelancer",
+            profilePhotoUrl: formData.photo || "",
+            bio: formData.bio,
+            title: formData.title,
+            skills: formData.skills,
+            expertise: [],
+            categories: formData.category ? [formData.category] : [],
+            hourlyRate: formData.hourlyRate ? Math.round(parseFloat(formData.hourlyRate) * 100) : 0,
+            location: formData.location,
+            portfolioLinks: portfolioProjects.length > 0
+              ? portfolioProjects.map((p) => p.link).filter(Boolean)
+              : (formData.portfolioUrl ? [formData.portfolioUrl] : []),
+            experienceLevel: formData.experienceLevel,
+            availability: formData.availability,
+            role: "freelancer",
+            onboardingCompleted: true,
+            publishedProfile: true,
+          });
+        } catch (fsErr) {
+          console.warn("[CVUpload] Firestore sync non-fatal:", (fsErr as Error).message);
+        }
       }
       // CRITICAL: mark onboarding completed so carousel never shows again
       localStorage.setItem("onboarding_completed", "true");

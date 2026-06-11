@@ -697,16 +697,23 @@ export async function registerRoutes(
   app.patch("/api/profile", isAuthenticated, async (req: any, res) => {
     try {
       const userId = (req.session as any).userId;
-      const { userId: _u, id: _i, isPro: _p, firstName, lastName, ...rawData } = req.body;
-      const safeData = {
+      const { userId: _u, id: _i, isPro: _p, firstName, lastName, portfolioProjects, ...rawData } = req.body;
+
+      // CRITICAL: Convert portfolioProjects array → portfolioProjectsJson string
+      const safeData: any = {
         ...rawData,
         ...(rawData.bio !== undefined && { bio: sanitizeText(rawData.bio, 2000) }),
         ...(rawData.title !== undefined && { title: sanitizeText(rawData.title, 150) }),
         ...(rawData.tagline !== undefined && { tagline: sanitizeText(rawData.tagline, 300) }),
       };
+      if (portfolioProjects !== undefined) {
+        safeData.portfolioProjectsJson = Array.isArray(portfolioProjects) && portfolioProjects.length > 0
+          ? JSON.stringify(portfolioProjects)
+          : null;
+      }
 
       // Update firstName/lastName in users table if provided
-      if (firstName || lastName) {
+      if (firstName !== undefined || lastName !== undefined) {
         try {
           const { db: _db } = await import("./db");
           const { users: usersTable } = await import("../shared/models/auth");
@@ -729,10 +736,30 @@ export async function registerRoutes(
         return res.status(404).json({ message: "Profile not found" });
       }
 
-      res.json(profile);
+      // CRITICAL: Return merged profile + users shape so frontend has firstName/lastName
+      const { db: _db } = await import("./db");
+      const { users: usersTable } = await import("../shared/models/auth");
+      const { inArray } = await import("drizzle-orm");
+      const userRows = await _db
+        .select({ firstName: usersTable.firstName, lastName: usersTable.lastName, profileImageUrl: usersTable.profileImageUrl })
+        .from(usersTable)
+        .where(eq(usersTable.id, userId));
+      const userRow = userRows[0];
+
+      const merged = {
+        ...profile,
+        firstName: userRow?.firstName || null,
+        lastName: userRow?.lastName || null,
+        profileImageUrl: userRow?.profileImageUrl || null,
+      };
+
+      // Invalidate cached session data so next request sees updated names
+      clearProfileCache(userId);
+
+      res.json(merged);
     } catch (error) {
       console.error("Error updating profile:", error);
-      res.status(500).json({ message: "Failed to update profile" });
+      res.status(500).json({ message: "Failed to update profile. Please try again in a moment." });
     }
   });
 
@@ -2587,9 +2614,27 @@ User: ${message}`;
         profile = await storage.createProfile({ ...saveData, userId });
       }
 
+      // Return merged shape with names from users table
+      const { db: __db } = await import("./db");
+      const { users: usersT } = await import("../shared/models/auth");
+      const userRows = await __db
+        .select({ firstName: usersT.firstName, lastName: usersT.lastName, profileImageUrl: usersT.profileImageUrl })
+        .from(usersT)
+        .where(eq(usersT.id, userId));
+      const userRow = userRows[0];
+      const merged = {
+        ...profile,
+        firstName: userRow?.firstName || null,
+        lastName: userRow?.lastName || null,
+        profileImageUrl: userRow?.profileImageUrl || null,
+      };
+
+      // Invalidate cached session data
+      clearProfileCache(userId);
+
       console.log(`[go-live] User ${userId} profile saved & published atomically`);
       awardPoints(userId, "profile_complete");
-      res.json({ success: true, message: "Your profile is now LIVE and visible to employers! 🎉", profile });
+      res.json({ success: true, message: "Your profile is now LIVE and visible to employers! 🎉", profile: merged });
     } catch (err: any) {
       console.error("[go-live] Error:", err);
       const userId = (req.session as any)?.userId;

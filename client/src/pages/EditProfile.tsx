@@ -224,7 +224,7 @@ export default function EditProfile() {
       // Save to Postgres
       const updated = await apiPatch<any>("/api/profile", payload);
 
-      // Sync to Firestore (keep real-time in sync)
+      // Sync to Firestore (keep real-time in sync) — do NOT publish on save
       await saveFreelancerProfile({
         userId: user.id,
         fullName: `${data.firstName} ${data.lastName}`.trim(),
@@ -241,11 +241,7 @@ export default function EditProfile() {
         availability: data.availability || "",
         role: "freelancer",
         onboardingCompleted: true,
-        publishedProfile: true,
-        completedJobs: 0,
-        rating: 0,
-        responseRate: 96,
-        isPro: false,
+        // CRITICAL: Don't force publishedProfile=true on save — let user control publish
         updatedAt: new Date(),
       });
 
@@ -254,7 +250,7 @@ export default function EditProfile() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/profile", user?.id] });
       queryClient.invalidateQueries({ queryKey: ["/api/profile-status", user?.id] });
-      toast({ title: "Profile saved", description: "Your changes have been saved and published." });
+      toast({ title: "Profile saved", description: "Your changes have been saved." });
       setSavedTabs((prev) => new Set(prev).add(activeTab));
     },
     onError: (err: any) => {
