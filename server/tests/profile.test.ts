@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterAll } from "vitest";
+import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import express from "express";
 import { createServer } from "http";
 import request from "supertest";
@@ -6,7 +6,7 @@ import { db } from "../db";
 import { users } from "@shared/models/auth";
 import { profiles } from "@shared/models/profiles";
 import { eq, like } from "drizzle-orm";
-import { setupAuth } from "../replit_integrations/auth/replitAuth";
+import { setupAuth, isAuthenticated } from "../replit_integrations/auth/replitAuth";
 import { registerRoutes } from "../routes";
 
 // ── Test helpers ─────────────────────────────────────────────────────────────
@@ -115,10 +115,9 @@ describe("Profile endpoints", () => {
     expect(res.body.skills).toEqual(["React", "TypeScript"]);
     expect(res.body.hourlyRate).toBe(50000);
     expect(res.body.location).toBe("Cape Town");
-    expect(res.body.portfolioProjectsJson).toBeTruthy();
-    // Verify JSON string was stored correctly
-    const parsed = JSON.parse(res.body.portfolioProjectsJson);
-    expect(parsed[0].title).toBe("Project A");
+    expect(Array.isArray(res.body.portfolioProjects)).toBe(true);
+    expect(res.body.portfolioProjects[0].title).toBe("Project A");
+    expect(res.body.portfolioProjects[0].link).toBe("https://example.com/a");
   });
 
   // ── N3: POST /api/profile/go-live publishes profile and returns success ──
@@ -209,27 +208,34 @@ describe("Auth middleware", () => {
 
   // ── N9: DB error in loadProfile returns 503, not 401 ──────────────────────
   it("isAuthenticated returns 503 (service unavailable) when DB is unreachable, not 401", async () => {
-    // The loadProfile function returns "__DB_ERROR__" when DB throws.
-    // We verify the code path exists by checking the error response structure.
-    // For a real test, we'd mock the DB layer to throw. Here we test the
-    // happy-path still works with the correct error structure.
+    // Directly overwrite the DB query builder so the shared db module (used by
+    // replitAuth.ts loadProfile) throws. This is more reliable than spyOn
+    // because the db object is shared across the same module instance.
+    const dbModule = await import("../db");
+    const realDb = dbModule.db;
+    const originalSelect = (realDb as any).select;
+    (realDb as any).select = vi.fn().mockImplementation(() => {
+      throw new Error("DB pool exhausted — temporary");
+    });
+
     const brokenApp = express();
     brokenApp.use(express.json());
-    brokenApp.use(
-      (req: any, _res: any, next: any) => {
-        (req.session as any).userId = "nonexistent-user-id";
-        next();
-      },
-    );
+    brokenApp.use((req: any, _res: any, next: any) => {
+      (req.session as any).userId = "some-user-id";
+      next();
+    });
     setupAuth(brokenApp);
+    // Mount only the middleware under test — no full route registry
+    brokenApp.use(isAuthenticated);
+    brokenApp.get("/api/test-auth", (_req, res) => res.json({ ok: true }));
     const httpServer = createServer(brokenApp);
-    await registerRoutes(httpServer, brokenApp);
 
-    const res = await request(brokenApp).get("/api/profile");
-    // Nonexistent user => 401 (not 503, because DB is working)
-    // The key assertion: when DB is unreachable, we get 503 with SERVICE_UNAVAILABLE.
-    // We verify the structure exists by checking the normal 401 response.
-    expect(res.status).toBe(401);
-    expect(res.body.code).toBe("UNAUTHORIZED");
+    const res = await request(brokenApp).get("/api/test-auth");
+    // The loadProfile code path should return 503 with SERVICE_UNAVAILABLE
+    // when DB is unreachable, not 401 (which would log everyone out).
+    expect(res.status).toBe(503);
+    expect(res.body.code).toBe("SERVICE_UNAVAILABLE");
+
+    (realDb as any).select = originalSelect;
   });
 });
