@@ -45,6 +45,26 @@ function sanitizeText(input: unknown, maxLength = 5000): string {
     .slice(0, maxLength);
 }
 
+function decodeHtmlEntities(str: string): string {
+  return str
+    .replace(/&#x2F;/g, "/")
+    .replace(/&#x27;/g, "'")
+    .replace(/&#x22;/g, '"')
+    .replace(/&#x3C;/g, "<")
+    .replace(/&#x3E;/g, ">")
+    .replace(/&#x26;/g, "&")
+    .replace(/&#x2B;/g, "+")
+    .replace(/&#x2C;/g, ",")
+    .replace(/&#x3B;/g, ";")
+    .replace(/&#x3A;/g, ":");
+}
+
+function sanitizeUrl(input: unknown): string | null {
+  if (typeof input !== "string" || !input.trim()) return null;
+  const decoded = decodeHtmlEntities(input.trim());
+  return decoded.slice(0, 2048);
+}
+
 export async function registerRoutes(
   httpServer: Server,
   app: Express
@@ -571,6 +591,10 @@ export async function registerRoutes(
 
       res.json({
         ...profile,
+        portfolioUrl: sanitizeUrl(profile.portfolioUrl),
+        linkedinUrl: sanitizeUrl(profile.linkedinUrl),
+        githubUrl: sanitizeUrl(profile.githubUrl),
+        photoUrl: sanitizeUrl(profile.photoUrl),
         firstName: userRow?.firstName || "",
         lastName: userRow?.lastName || "",
         email: userRow?.email || "",
@@ -612,6 +636,10 @@ export async function registerRoutes(
       res.setHeader("Vary", "Accept-Encoding");
       res.json({
         ...profile,
+        portfolioUrl: sanitizeUrl(profile.portfolioUrl),
+        linkedinUrl: sanitizeUrl(profile.linkedinUrl),
+        githubUrl: sanitizeUrl(profile.githubUrl),
+        photoUrl: sanitizeUrl(profile.photoUrl),
         firstName: userRow?.firstName || "",
         lastName: userRow?.lastName || "",
         fullName: `${userRow?.firstName || ""} ${userRow?.lastName || ""}`.trim(),
@@ -704,6 +732,9 @@ export async function registerRoutes(
         ...(rawData.bio !== undefined && { bio: sanitizeText(rawData.bio, 2000) }),
         ...(rawData.title !== undefined && { title: sanitizeText(rawData.title, 150) }),
         ...(rawData.tagline !== undefined && { tagline: sanitizeText(rawData.tagline, 300) }),
+        ...(rawData.portfolioUrl !== undefined && { portfolioUrl: sanitizeUrl(rawData.portfolioUrl) }),
+        ...(rawData.linkedinUrl !== undefined && { linkedinUrl: sanitizeUrl(rawData.linkedinUrl) }),
+        ...(rawData.githubUrl !== undefined && { githubUrl: sanitizeUrl(rawData.githubUrl) }),
       };
       if (portfolioProjects !== undefined) {
         safeData.portfolioProjects = Array.isArray(portfolioProjects) && portfolioProjects.length > 0
@@ -1023,9 +1054,9 @@ export async function registerRoutes(
           experienceLevel: prof.experienceLevel,
           certifications: prof.certifications,
           languages: prof.languages,
-          portfolioUrl: prof.portfolioUrl,
-          linkedinUrl: prof.linkedinUrl,
-          githubUrl: prof.githubUrl,
+          portfolioUrl: sanitizeUrl(prof.portfolioUrl),
+          linkedinUrl: sanitizeUrl(prof.linkedinUrl),
+          githubUrl: sanitizeUrl(prof.githubUrl),
           portfolioProjects: prof.portfolioProjects,
         })
         .from(sp)
@@ -1069,9 +1100,9 @@ export async function registerRoutes(
         experienceLevel: row.experienceLevel,
         certifications: row.certifications,
         languages: row.languages || [],
-        portfolioUrl: row.portfolioUrl,
-        linkedinUrl: row.linkedinUrl,
-        githubUrl: row.githubUrl,
+        portfolioUrl: sanitizeUrl(row.portfolioUrl),
+        linkedinUrl: sanitizeUrl(row.linkedinUrl),
+        githubUrl: sanitizeUrl(row.githubUrl),
         portfolioProjects: Array.isArray(row.portfolioProjects) ? row.portfolioProjects : [],
         reviews: reviews.map((r) => ({
           id: r.id,
@@ -2565,9 +2596,9 @@ User: ${message}`;
         photoUrl: photoUrl || null,
         certifications: certifications || null,
         languages: Array.isArray(languages) ? languages : [],
-        linkedinUrl: linkedinUrl || null,
-        githubUrl: githubUrl || null,
-        portfolioUrl: portfolioUrl || null,
+        linkedinUrl: sanitizeUrl(linkedinUrl),
+        githubUrl: sanitizeUrl(githubUrl),
+        portfolioUrl: sanitizeUrl(portfolioUrl),
         availability: availability || null,
         availableNow: Boolean(availableNow),
         tagline: tagline || null,
@@ -2690,9 +2721,9 @@ User: ${message}`;
       photoUrl: photoUrl || null,
       certifications: certifications || null,
       languages: Array.isArray(languages) ? languages : [],
-      linkedinUrl: linkedinUrl || null,
-      githubUrl: githubUrl || null,
-      portfolioUrl: portfolioUrl || null,
+      linkedinUrl: sanitizeUrl(linkedinUrl),
+      githubUrl: sanitizeUrl(githubUrl),
+      portfolioUrl: sanitizeUrl(portfolioUrl),
       availability: availability || null,
       availableNow: Boolean(availableNow),
       tagline: tagline || null,

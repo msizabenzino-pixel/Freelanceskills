@@ -315,6 +315,9 @@ function Router() {
         <Route path="/help" component={Support} />
         <Route path="/contact" component={Support} />
         <Route path="/find-talent" component={FindTalent} />
+        <Route path="/freelancer/:id">
+          <Redirect to={"/profile/" + window.location.pathname.split("/").pop()} />
+        </Route>
         <Route path="/freelancer-profile/:id">
           <Redirect to={"/profile/" + window.location.pathname.split("/").pop()} />
         </Route>
