@@ -90,13 +90,19 @@ export function GigCard({ gig, displayMode = "list", showAd, onSave, isSaved }: 
           alt={gig.sellerName}
           className="w-8 h-8 rounded-full object-cover"
         />
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1" data-testid={`badge-tier-gig-${gig.id}`}>
           <span className="text-sm font-semibold text-white">{gig.sellerName}</span>
-          {gig.verificationTier >= 1 && (
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+          {gig.verificationTier === 1 && (
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" aria-label="ID Verified" />
+          )}
+          {gig.verificationTier === 2 && (
+            <span className="flex items-center gap-0.5" aria-label="Skills Verified">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <Star className="w-3.5 h-3.5 fill-teal-400 text-teal-400" />
+            </span>
           )}
           {gig.verificationTier >= 3 && (
-            <Crown className="w-3.5 h-3.5 text-amber-400" />
+            <Crown className="w-3.5 h-3.5 text-amber-400" aria-label="Top Performer" />
           )}
         </div>
       </div>
