@@ -10,3 +10,4 @@
 - [Profile Cache Invalidation](profile-cache.md) — `clearProfileCache` is server-side in-memory. Must be called on every profile update (PATCH/go-live) so stale 5-min cache doesn't serve old names/portfolio.
 - [jsonText custom column](json-text-columns.md) — profiles.portfolioProjects uses a text-backed JSON Drizzle type; read/write arrays directly, never JSON.parse/stringify, no migration.
 - [Hooks before conditional returns](hooks-after-early-return.md) — all hooks (incl framer-motion useReducedMotion) must precede any conditional return; build unminified to read real component names in minified React hook-mismatch crashes.
+- [Session Auth Fallback](session-auth-fallback.md) — useAuth must check GET /api/auth/user when Firebase returns null; Login.tsx must hard-reload (window.location.href) after PostgreSQL fallback login so the session cookie is picked up.

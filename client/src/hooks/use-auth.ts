@@ -73,6 +73,26 @@ export function useAuth() {
         }
         setUser(mapFirebaseUserOrNull(firebaseUser));
       } else {
+        // No Firebase user — check if there's a server-side session
+        // (email/password users registered outside Firebase land here).
+        try {
+          const res = await fetch("/api/auth/user", { credentials: "include" });
+          if (res.ok) {
+            const serverUser = await res.json();
+            setUser({
+              id: serverUser.id,
+              email: serverUser.email ?? "",
+              firstName: serverUser.firstName ?? null,
+              lastName: serverUser.lastName ?? null,
+              profileImageUrl: serverUser.profileImageUrl ?? null,
+            });
+            setIsLoading(false);
+            setHasResolved(true);
+            return;
+          }
+        } catch {
+          // network error — fall through to null
+        }
         setUser(null);
         if (lastSyncedUid.current !== null) {
           lastSyncedUid.current = null;

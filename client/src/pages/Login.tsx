@@ -121,7 +121,9 @@ export default function Login() {
 
           if (res.ok) {
             toast({ title: "Welcome back!", description: "You are now logged in." });
-            handlePostAuthRedirect();
+            // Hard reload so useAuth re-runs and picks up the server session cookie
+            const redirect = consumePendingAuthRedirect() ?? "/dashboard";
+            window.location.href = redirect;
             return;
           }
 
