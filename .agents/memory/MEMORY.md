@@ -11,3 +11,7 @@
 - [jsonText custom column](json-text-columns.md) — profiles.portfolioProjects uses a text-backed JSON Drizzle type; read/write arrays directly, never JSON.parse/stringify, no migration.
 - [Hooks before conditional returns](hooks-after-early-return.md) — all hooks (incl framer-motion useReducedMotion) must precede any conditional return; build unminified to read real component names in minified React hook-mismatch crashes.
 - [Session Auth Fallback](session-auth-fallback.md) — useAuth must check GET /api/auth/user when Firebase returns null; Login.tsx must hard-reload (window.location.href) after PostgreSQL fallback login so the session cookie is picked up.
+- [SERVICE_CATEGORIES is objects array](service-categories-shape.md) — SERVICE_CATEGORIES from @shared/categories is {id,name,icon,...}[] NOT string[]; always use cat.id/cat.name in SelectItem, never render cat directly (React #31).
+- [Profile upsert for new users](profile-upsert.md) — PATCH /api/profile must SELECT then INSERT if no row exists; pure UPDATE returns no row for new users who skipped CV upload, causing 404.
+- [Firestore sync non-blocking](firestore-non-blocking.md) — saveFreelancerProfile() inside a mutation must use .catch() not await; Firebase errors for PostgreSQL-only session users must not trigger onError and block the success toast.
+- [Navbar authLoading skeleton](navbar-auth-loading.md) — useAuth returns isLoading; Navbar must render a neutral skeleton (not "Log In") while authLoading is true, so authenticated users don't see a "Log In" flash on page load.

@@ -40,12 +40,20 @@ const AVAILABILITY_OPTIONS = ["Available now", "Available in 1 week", "Available
 const EXPERIENCE_LEVELS = ["entry", "intermediate", "expert", "master"] as const;
 
 const SKILL_SUGGESTIONS: Record<string, string[]> = {
-  "web-development": ["React", "Next.js", "TypeScript", "Node.js", "PostgreSQL", "Tailwind CSS", "AWS", "Docker"],
-  "graphic-design": ["Figma", "Photoshop", "Illustrator", "After Effects", "Framer", "Canva"],
+  "programming": ["React", "Next.js", "TypeScript", "Node.js", "PostgreSQL", "Tailwind CSS", "AWS", "Docker"],
+  "engineering": ["AutoCAD", "SolidWorks", "MATLAB", "PLC Programming", "Circuit Design", "Revit"],
+  "healthcare": ["Patient Care", "Clinical Research", "Medical Writing", "Health IT", "HIPAA Compliance"],
+  "trades": ["Electrical Wiring", "Plumbing", "Welding", "HVAC", "Carpentry", "Blueprint Reading"],
+  "handyman": ["Home Repairs", "Painting", "Tiling", "Assembly", "Maintenance"],
+  "automotive": ["Vehicle Diagnostics", "Engine Repair", "Panel Beating", "Auto Electrical"],
+  "design": ["Figma", "Photoshop", "Illustrator", "After Effects", "Framer", "Canva", "UI/UX"],
   "writing": ["Copywriting", "SEO Writing", "Content Strategy", "Blog Writing", "Technical Writing"],
-  "digital-marketing": ["Google Ads", "Facebook Ads", "SEO", "Email Marketing", "Analytics"],
-  "video": ["Premiere Pro", "After Effects", "DaVinci Resolve", "Motion Graphics"],
-  "default": ["Communication", "Problem Solving", "Leadership", "Project Management", "Excel"],
+  "marketing": ["Google Ads", "Facebook Ads", "SEO", "Email Marketing", "Google Analytics", "Social Media"],
+  "business": ["Business Analysis", "Project Management", "Excel", "PowerPoint", "Financial Modeling"],
+  "events": ["Event Planning", "Venue Management", "Catering Coordination", "Audio/Visual"],
+  "education": ["Curriculum Design", "Tutoring", "E-Learning", "Assessment Design", "Lesson Planning"],
+  "ai_services": ["Prompt Engineering", "ChatGPT", "Machine Learning", "Python", "Data Analysis", "LangChain"],
+  "default": ["Communication", "Problem Solving", "Leadership", "Project Management", "Microsoft Office"],
 };
 
 /* ── Zod Schema ──────────────────────────────────────────────────────────── */
@@ -220,8 +228,10 @@ export default function EditProfile() {
       // Save to Postgres
       const updated = await apiPatch<any>("/api/profile", payload);
 
-      // Sync to Firestore (keep real-time in sync) — do NOT publish on save
-      await saveFreelancerProfile({
+      // Sync to Firestore in the background — non-blocking so a Firebase error
+      // (e.g. user authenticated via PostgreSQL only, no Firebase account)
+      // never prevents the success toast from appearing.
+      saveFreelancerProfile({
         userId: user.id,
         fullName: `${data.firstName} ${data.lastName}`.trim(),
         profilePhotoUrl: data.photoUrl || "",
@@ -237,8 +247,9 @@ export default function EditProfile() {
         availability: data.availability || "",
         role: "freelancer",
         onboardingCompleted: true,
-        // CRITICAL: Don't force publishedProfile=true on save — let user control publish
         updatedAt: new Date(),
+      }).catch((e: unknown) => {
+        console.warn("[EditProfile] Firestore sync failed (non-critical):", e);
       });
 
       return updated;
@@ -378,9 +389,8 @@ export default function EditProfile() {
 
   /* Suggested skills based on category */
   const suggestedSkills = useMemo(() => {
-    const cat = form.watch("category");
-    return SKILL_SUGGESTIONS[cat] || SKILL_SUGGESTIONS.default;
-  }, [form.watch("category")]);
+    return SKILL_SUGGESTIONS[watched.category ?? ""] || SKILL_SUGGESTIONS.default;
+  }, [watched.category]);
 
   /* Form submit handler */
   const onSubmit = form.handleSubmit((data) => {
@@ -547,7 +557,7 @@ export default function EditProfile() {
                           </SelectTrigger>
                           <SelectContent>
                             {SERVICE_CATEGORIES.map((cat) => (
-                              <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                              <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
                             ))}
                           </SelectContent>
                         </Select>

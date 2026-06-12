@@ -32,7 +32,7 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [profileStatus, setProfileStatus] = useState<"none" | "draft" | "published" | "loading" | null>(null);
   const [location, navigate] = useLocation();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading, logout } = useAuth();
   const { isDark, toggle: toggleDarkMode } = useDarkMode();
   const searchRef = useRef<HTMLInputElement>(null);
 
@@ -164,7 +164,9 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
             {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
 
-          {isAuthenticated ? (
+          {authLoading ? (
+            <div className="hidden md:flex w-8 h-8 rounded-full bg-muted/40 animate-pulse" aria-hidden="true" />
+          ) : isAuthenticated ? (
             <>
               {/* Messages */}
               <Link href="/messages">
@@ -369,7 +371,7 @@ export function Navbar({ topOffset = 0 }: NavbarProps) {
 
             <div className="h-px bg-border my-2" />
 
-            {isAuthenticated ? (
+            {authLoading ? null : isAuthenticated ? (
               <>
                 <div className="flex items-center gap-3 px-3 py-2 mb-1">
                   <Avatar className="h-8 w-8">

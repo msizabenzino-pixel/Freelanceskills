@@ -776,16 +776,29 @@ export async function registerRoutes(
             .where(eq(usersTable.id, userId));
         }
 
-        const [updated] = await tx
-          .update(profilesTable)
-          .set({ ...safeData, updatedAt: new Date() })
-          .where(eq(profilesTable.userId, userId))
-          .returning();
-        return updated;
+        const [existing] = await tx
+          .select({ id: profilesTable.id })
+          .from(profilesTable)
+          .where(eq(profilesTable.userId, userId));
+
+        if (existing) {
+          const [updated] = await tx
+            .update(profilesTable)
+            .set({ ...safeData, updatedAt: new Date() })
+            .where(eq(profilesTable.userId, userId))
+            .returning();
+          return updated;
+        } else {
+          const [inserted] = await tx
+            .insert(profilesTable)
+            .values({ userId, ...safeData, createdAt: new Date(), updatedAt: new Date() })
+            .returning();
+          return inserted;
+        }
       });
 
       if (!profile) {
-        return res.status(404).json({ message: "Profile not found" });
+        return res.status(500).json({ message: "Failed to save profile" });
       }
 
       // CRITICAL: Return merged profile + users shape so frontend has firstName/lastName
