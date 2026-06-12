@@ -49,6 +49,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@stripe/stripe-js": "^8.9.0",
     "@tanstack/react-query": "^5.60.5",
+    "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.2.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/compression": "^1.8.1",
