@@ -7,7 +7,7 @@ import { users } from "@shared/models/auth";
 import { profiles } from "@shared/models/profiles";
 import { eq, like } from "drizzle-orm";
 import { registerRoutes } from "../routes";
-import { setupAuth, isAuthenticated } from "../replit_integrations/auth/replitAuth";
+import { setupAuth, isAuthenticated, getUser } from "../replit_integrations/auth/replitAuth";
 
 // ── Test helpers ─────────────────────────────────────────────────────────────
 
@@ -59,6 +59,27 @@ async function makeTestApp(userId: string) {
   app.use(express.json({ limit: "2mb" }));
   setupAuth(app);
   app.use(injectSession(userId));
+  const httpServer = createServer(app);
+  await registerRoutes(httpServer, app);
+  return { app, httpServer };
+}
+
+// Like makeTestApp but adds a /api/whoami route that returns req.__user directly.
+// This lets tests read the CACHED profile data (what isAuthenticated loaded from
+// profileCache) rather than a fresh DB query — essential for cache-invalidation tests.
+async function makeTestAppWithWhoami(userId: string) {
+  const app = express();
+  app.use(express.json({ limit: "2mb" }));
+  setupAuth(app);
+  app.use(injectSession(userId));
+
+  // Register the whoami endpoint BEFORE registerRoutes so it doesn't clash.
+  // It deliberately returns req.__user (the isAuthenticated cache result) not a DB fetch.
+  app.get("/api/whoami", isAuthenticated, (req, res) => {
+    const user = getUser(req);
+    res.json(user ?? null);
+  });
+
   const httpServer = createServer(app);
   await registerRoutes(httpServer, app);
   return { app, httpServer };
@@ -184,32 +205,68 @@ describe("Profile endpoints", () => {
     expect(savedProfile.publishedAt).toBeTruthy();
   });
 
-  // ── N5: Profile cache is cleared after update ─────────────────────────────
-  it("PATCH /api/profile clears cached session data so stale names are not served", async () => {
+  // ── N5: profileCache is cleared by PATCH (real cache-invalidation test) ────
+  //
+  // Strategy:
+  //   1. Prime the in-memory profileCache by calling /api/whoami (isAuthenticated
+  //      loads from DB and stores the SessionUser in profileCache).
+  //   2. Directly UPDATE the users table to a different name — WITHOUT going
+  //      through the route, so clearProfileCache is NOT called and the cache
+  //      remains warm with the old name.
+  //   3. NEGATIVE CONTROL: /api/whoami still returns the OLD cached name, proving
+  //      the cache is live. (If the cache TTL had expired or didn't exist, this
+  //      step would return the new DB value and the test design would be invalid.)
+  //   4. Call PATCH /api/profile (which calls clearProfileCache internally).
+  //   5. /api/whoami now returns the PATCHED name because the cache was busted
+  //      and isAuthenticated had to reload from DB.
+  //
+  // This test FAILS if clearProfileCache is removed from the PATCH handler,
+  // because step 5 would still return the old cached name from step 1–3.
+  it("PATCH /api/profile clears profileCache so next isAuthenticated call loads fresh names from DB", async () => {
     const user = await createTestUser({
-      firstName: "Old",
-      lastName: "Name",
+      firstName: "CacheOld",
+      lastName: "CacheLast",
       email: `${testId()}@example.com`,
     });
     await createTestProfile(user.id, { bio: "Initial bio" });
 
-    const { app } = await makeTestApp(user.id);
+    const { app } = await makeTestAppWithWhoami(user.id);
 
-    // First request: update names
-    const res1 = await request(app)
+    // ── Step 1: Prime the profileCache ──────────────────────────────────────
+    const prime = await request(app).get("/api/whoami");
+    expect(prime.status).toBe(200);
+    expect(prime.body.firstName).toBe("CacheOld"); // Cache is now warm
+
+    // ── Step 2: Directly update the users table (no route, no clearProfileCache)
+    await db
+      .update(users)
+      .set({ firstName: "DirectDbName" })
+      .where(eq(users.id, user.id));
+
+    // ── Step 3: NEGATIVE CONTROL — cache is still warm; old name served ──────
+    const stale = await request(app).get("/api/whoami");
+    expect(stale.status).toBe(200);
+    // If this assertion fails it means the cache already expired or never existed —
+    // the test setup itself would be invalid. A 5-min TTL is far above test duration.
+    expect(stale.body.firstName).toBe("CacheOld"); // still stale ← proves cache is live
+
+    // ── Step 4: PATCH via the route (calls clearProfileCache internally) ─────
+    const patch = await request(app)
       .patch("/api/profile")
       .send({
-        firstName: "New",
-        lastName: "Name",
-        bio: "Updated bio",
+        firstName: "CacheNew",
+        lastName: "CacheLast",
+        bio: "Patched bio",
       });
-    expect(res1.status).toBe(200);
-    expect(res1.body.firstName).toBe("New");
+    expect(patch.status).toBe(200);
+    expect(patch.body.firstName).toBe("CacheNew"); // PATCH response is DB-fresh
 
-    // Second request: GET profile should see the new names immediately
-    const res2 = await request(app).get("/api/profile");
-    expect(res2.status).toBe(200);
-    expect(res2.body.firstName).toBe("New");
+    // ── Step 5: isAuthenticated now reloads from DB (cache was busted) ───────
+    const fresh = await request(app).get("/api/whoami");
+    expect(fresh.status).toBe(200);
+    // Without clearProfileCache in the PATCH handler, this would still return
+    // "CacheOld" (the cached value). With it, the DB value "CacheNew" is served.
+    expect(fresh.body.firstName).toBe("CacheNew"); // ← proves clearProfileCache fired
   });
 
   // ── N6: URL HTML-entity decoding on read ─────────────────────────────────────
