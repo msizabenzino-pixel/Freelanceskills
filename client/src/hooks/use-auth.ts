@@ -35,14 +35,21 @@ export async function syncSessionNow(): Promise<void> {
   }
 }
 
+/**
+ * Destroy the server-side session and clear the session cookie.
+ * Always resolves — errors are logged but never thrown.
+ */
 async function clearServerSession(): Promise<void> {
   try {
-    await fetch("/api/auth/clear-session", {
+    const res = await fetch("/api/auth/logout", {
       method: "POST",
       credentials: "include",
     });
+    if (!res.ok) {
+      console.warn("[use-auth] /api/auth/logout returned", res.status);
+    }
   } catch (err) {
-    console.warn("[use-auth] Session clear failed (non-critical):", err);
+    console.warn("[use-auth] clearServerSession failed (non-critical):", err);
   }
 }
 
@@ -52,12 +59,34 @@ export function useAuth() {
   const [hasResolved, setHasResolved] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const lastSyncedUid = useRef<string | null>(null);
+  // Guard: while logout is in flight, block onAuthStateChanged from
+  // re-authenticating via GET /api/auth/user (which would still succeed
+  // if signOut fires before the session is destroyed).
+  const loggingOutRef = useRef(false);
 
   useEffect(() => {
     if (!isFirebaseConfigured || !firebaseAuth) {
-      setUser(null);
-      setIsLoading(false);
-      setHasResolved(true);
+      // No Firebase — check for a server-side session (email/password users).
+      fetch("/api/auth/user", { credentials: "include" })
+        .then(async (res) => {
+          if (res.ok) {
+            const serverUser = await res.json();
+            setUser({
+              id: serverUser.id,
+              email: serverUser.email ?? "",
+              firstName: serverUser.firstName ?? null,
+              lastName: serverUser.lastName ?? null,
+              profileImageUrl: serverUser.profileImageUrl ?? null,
+            });
+          } else {
+            setUser(null);
+          }
+        })
+        .catch(() => setUser(null))
+        .finally(() => {
+          setIsLoading(false);
+          setHasResolved(true);
+        });
       return;
     }
 
@@ -73,30 +102,37 @@ export function useAuth() {
         }
         setUser(mapFirebaseUserOrNull(firebaseUser));
       } else {
-        // No Firebase user — check if there's a server-side session
-        // (email/password users registered outside Firebase land here).
-        try {
-          const res = await fetch("/api/auth/user", { credentials: "include" });
-          if (res.ok) {
-            const serverUser = await res.json();
-            setUser({
-              id: serverUser.id,
-              email: serverUser.email ?? "",
-              firstName: serverUser.firstName ?? null,
-              lastName: serverUser.lastName ?? null,
-              profileImageUrl: serverUser.profileImageUrl ?? null,
-            });
-            setIsLoading(false);
-            setHasResolved(true);
-            return;
+        // No Firebase user — but skip re-auth check if logout is in progress.
+        // Without this guard, signOut() fires onAuthStateChanged immediately,
+        // which races GET /api/auth/user while the session is still live,
+        // and re-authenticates the user before the session is destroyed.
+        if (!loggingOutRef.current) {
+          try {
+            const res = await fetch("/api/auth/user", { credentials: "include" });
+            if (res.ok) {
+              const serverUser = await res.json();
+              setUser({
+                id: serverUser.id,
+                email: serverUser.email ?? "",
+                firstName: serverUser.firstName ?? null,
+                lastName: serverUser.lastName ?? null,
+                profileImageUrl: serverUser.profileImageUrl ?? null,
+              });
+              setIsLoading(false);
+              setHasResolved(true);
+              return;
+            }
+          } catch {
+            // network error — fall through to null
           }
-        } catch {
-          // network error — fall through to null
         }
         setUser(null);
         if (lastSyncedUid.current !== null) {
           lastSyncedUid.current = null;
-          await clearServerSession();
+          // Only clear server session here if NOT already in logout flow.
+          if (!loggingOutRef.current) {
+            await clearServerSession();
+          }
         }
       }
       setIsLoading(false);
@@ -108,14 +144,29 @@ export function useAuth() {
 
   const logout = async () => {
     setIsLoggingOut(true);
+    loggingOutRef.current = true;
     try {
-      await logoutFirebaseUser();
+      // 1. Destroy the server session FIRST — before Firebase signOut.
+      //    This ensures that when onAuthStateChanged fires, any concurrent
+      //    GET /api/auth/user call already returns 401.
       await clearServerSession();
+
+      // 2. Sign out from Firebase (fires onAuthStateChanged, which is now guarded).
+      await logoutFirebaseUser();
+
       lastSyncedUid.current = null;
       setUser(null);
+
+      // 3. Hard-navigate to home — clears all React state and forces a fresh
+      //    session check, which will correctly return unauthenticated.
+      window.location.href = "/";
+    } catch (err) {
+      console.error("[logout] error:", err);
+      // Still navigate away — user should not be stuck on the page.
       window.location.href = "/";
     } finally {
       setIsLoggingOut(false);
+      loggingOutRef.current = false;
     }
   };
 

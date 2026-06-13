@@ -240,11 +240,9 @@ export function registerAuthRoutes(app: Express): void {
 
   app.post("/api/auth/logout", (req, res) => {
     req.session.destroy((err) => {
-      if (err) {
-        return res.status(500).json({ message: "Failed to log out" });
-      }
-      res.clearCookie("connect.sid");
-      res.json({ message: "Logged out" });
+      if (err) console.error("[logout] session destroy error:", err);
+      res.clearCookie("connect.sid", { path: "/" });
+      res.json({ ok: true, message: "Logged out" });
     });
   });
 
@@ -320,12 +318,12 @@ export function registerAuthRoutes(app: Express): void {
     }
   });
 
-  // Clear the server session when Firebase user logs out.
+  // Clear the server session when Firebase user logs out (alias for /logout).
   app.post("/api/auth/clear-session", (req, res) => {
     req.session.destroy((err) => {
       if (err) console.error("[clear-session] Error:", err);
-      res.clearCookie("connect.sid");
-      res.json({ success: true, message: "Session cleared" });
+      res.clearCookie("connect.sid", { path: "/" });
+      res.json({ ok: true, message: "Session cleared" });
     });
   });
 

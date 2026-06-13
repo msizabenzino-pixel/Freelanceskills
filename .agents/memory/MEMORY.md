@@ -15,3 +15,4 @@
 - [Profile upsert for new users](profile-upsert.md) — PATCH /api/profile must SELECT then INSERT if no row exists; pure UPDATE returns no row for new users who skipped CV upload, causing 404.
 - [Firestore sync non-blocking](firestore-non-blocking.md) — saveFreelancerProfile() inside a mutation must use .catch() not await; Firebase errors for PostgreSQL-only session users must not trigger onError and block the success toast.
 - [Navbar authLoading skeleton](navbar-auth-loading.md) — useAuth returns isLoading; Navbar must render a neutral skeleton (not "Log In") while authLoading is true, so authenticated users don't see a "Log In" flash on page load.
+- [Logout race condition](logout-race.md) — clearServerSession() must be called BEFORE logoutFirebaseUser(); signOut fires onAuthStateChanged immediately which re-auths via GET /api/auth/user while session is still live.
